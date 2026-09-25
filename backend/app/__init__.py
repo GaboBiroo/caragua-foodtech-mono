@@ -1,0 +1,1 @@
+"""Caraguá FoodTech Backend Package."""

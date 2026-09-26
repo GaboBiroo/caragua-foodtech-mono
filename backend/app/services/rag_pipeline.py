@@ -257,8 +257,4 @@ class RAGPipelineService:
                     lines.append(f"    * Nota {rev['rating']}/5.0: \"{rev['comment'] or 'Avaliação sem texto'}\" (Peso temporal: {rev['decay_weight']})")
             
             lines.append("")
-
         return "\n".join(lines)
-'''
-
-FILES["backend/app/services/__init__.py"] = '"""Business Services Package."""\n'

@@ -1,5 +1,9 @@
-import numpy as np
 from typing import Tuple, Dict, Any
+
+try:
+    import numpy as np
+except ImportError:
+    np = None
 
 class ReviewFraudDetector:
     """

@@ -23,9 +23,15 @@ if sys.platform == "win32":
     sys.stdout.reconfigure(encoding="utf-8")
     sys.stderr.reconfigure(encoding="utf-8")
 
-BASE_DIR = Path(__file__).resolve().parent / "caragua-foodtech-mono"
+_here = Path(__file__).resolve().parent
+if (_here / "backend").exists():
+    BASE_DIR = _here
+else:
+    BASE_DIR = _here / "caragua-foodtech-mono"
+
 BACKEND_DIR = BASE_DIR / "backend"
 WEB_ADMIN_DIR = BASE_DIR / "web-admin"
+MOBILE_DIR = BASE_DIR / "mobile"
 
 def log_step(step_num: int, title: str):
     print("\n" + "=" * 80)
@@ -54,7 +60,8 @@ def main():
     print(f"Diretório Base: {BASE_DIR}")
     assert BACKEND_DIR.exists(), f"Diretório {BACKEND_DIR} não encontrado!"
     assert WEB_ADMIN_DIR.exists(), f"Diretório {WEB_ADMIN_DIR} não encontrado!"
-    print("[OK] Estrutura monorepo confirmada.")
+    assert MOBILE_DIR.exists(), f"Diretório {MOBILE_DIR} não encontrado!"
+    print("[OK] Estrutura monorepo confirmada (backend, web-admin, mobile).")
 
     # Etapa 2: Validação Sintática de Todos os Arquivos Python
     log_step(2, "Compilação e Checagem Sintática de Código (Python 3.11+)")

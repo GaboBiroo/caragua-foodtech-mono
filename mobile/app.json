@@ -22,7 +22,10 @@
         "backgroundColor": "#0f172a"
       },
       "package": "br.edu.modulo.caraguafoodtech",
-      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ]
     },
     "plugins": [
       "expo-router",
@@ -33,7 +36,8 @@
         {
           "backgroundColor": "#0f172a"
         }
-      ]
+      ],
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true

@@ -1,10 +1,13 @@
+# ==============================================================================
+# CARAGUÁ FOODTECH — .gitignore Consolidado Monorepo
+# ==============================================================================
+
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
-env/
 build/
 develop-eggs/
 dist/
@@ -17,41 +20,92 @@ parts/
 sdist/
 var/
 wheels/
+share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-.venv
+MANIFEST
+.venv/
 venv/
 ENV/
+env/
+env.bak/
+venv.bak/
 
-# Environment Variables
+# Ambientes Virtuais e Variáveis de Ambiente
 .env
 .env.local
-.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+!*.env.example
 
-# Node / Next.js
-web-admin/node_modules/
+# Node / NPM / Yarn / PNPM
+node_modules/
+*/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+.npm
+
+# Next.js (Web Admin)
 web-admin/.next/
 web-admin/out/
 web-admin/build/
-.npm
 *.tsbuildinfo
 next-env.d.ts
 
-# Playwright
+# Expo & React Native (Mobile)
+mobile/.expo/
+mobile/.expo-shared/
+mobile/web-build/
+mobile/dist/
+.expo/
+.expo-shared/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+
+# Playwright & Scraping
 test-results/
 playwright-report/
 blob-report/
 playwright/.cache/
 
-# Databases & Docker Volumes
+# Databases, Caches & Volumes Docker
 postgres_data/
 redis_data/
+*.sqlite
 *.sqlite3
 *.db
 
-# IDE & OS
-.vscode/
+# Logs e Relatórios
+logs/
+*.log
+coverage/
+*.lcov
+.nyc_output
+
+# IDEs e Editores
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
 .idea/
+*.sublime-workspace
+*.sublime-project
+
+# Sistema Operacional
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+desktop.ini

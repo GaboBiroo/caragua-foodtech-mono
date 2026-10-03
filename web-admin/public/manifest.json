@@ -1,0 +1,17 @@
+{
+  "name": "Caragu\u00e1 FoodTech",
+  "short_name": "Caragu\u00e1Food",
+  "description": "Agregador Gastron\u00f4mico Hiperlocal com IA & RAG de 5 Est\u00e1gios em Caraguatatuba/SP",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#0ea5e9",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

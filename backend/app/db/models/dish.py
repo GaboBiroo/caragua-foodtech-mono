@@ -1,6 +1,6 @@
 import uuid
 from typing import Optional, List, TYPE_CHECKING
-from sqlalchemy import String, Float, Boolean, ForeignKey, Text, JSON
+from sqlalchemy import String, Float, Boolean, ForeignKey, Text, JSON, Index
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from pgvector.sqlalchemy import Vector
@@ -13,7 +13,8 @@ class Dish(Base, TimestampMixin):
     """
     Entidade Prato/Item de Cardápio:
     Incorpora restrições alimentares severas (Food Safety) e vetor semântico
-    (pgvector) para busca por similaridade de cosseno (<->).
+    (pgvector) indexado com HNSW (Hierarchical Navigable Small World) para
+    consultas sub-10ms em APIs conversacionais com busca por cosseno (<=>).
     """
     __tablename__ = "dishes"
 
@@ -43,12 +44,22 @@ class Dish(Base, TimestampMixin):
     allergens: Mapped[List[str]] = mapped_column(JSON, default=list, nullable=False) # Ex: ["crustaceos", "amendoim"]
     is_available: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
-    # Embedding Vetorial do Prato (pgvector)
-    # Representa semanticamente o nome, descrição e ingredientes para busca por cosseno
+    # Embedding Vetorial do Prato (pgvector 1536 dimensões)
     embedding = mapped_column(Vector(1536), nullable=True)
 
     # Relacionamento
     restaurant: Mapped["Restaurant"] = relationship("Restaurant", back_populates="dishes")
+
+    # Índice HNSW para busca por similaridade de cosseno ultrarrápida (<=>)
+    __table_args__ = (
+        Index(
+            "idx_dishes_embedding_hnsw",
+            embedding,
+            postgresql_using="hnsw",
+            postgresql_with={"m": 16, "ef_construction": 64},
+            postgresql_ops={"embedding": "vector_cosine_ops"},
+        ),
+    )
 
     def __repr__(self) -> str:
         return f"<Dish(name='{self.name}', price={self.price}, restaurant_id={self.restaurant_id})>"

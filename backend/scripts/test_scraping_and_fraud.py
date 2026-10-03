@@ -43,7 +43,25 @@ def run_tests():
     logger.info(f"Review Spam -> Fraude: {is_fraud} | Confianca: {conf:.2f}")
     assert is_fraud is True
 
-    logger.info("\n[OK] Todos os testes de sanitizacao e deteccao de fraudes passaram com 100% de sucesso!")
+    logger.info("\n==================================================================")
+    logger.info("TESTE 3: MOTOR DE RASPAGEM NOTURNA (Litoral Norte Scraper Engine)")
+    logger.info("==================================================================")
+    import asyncio
+    from app.workers.scraper_engine import FoodScraperEngine
+    scraper = FoodScraperEngine()
+    records = asyncio.run(scraper.scrape_litoral_norte("Caraguatatuba"))
+    assert len(records) > 0
+    first_record = records[0]
+    logger.info(f"Estabelecimento Raspado: {first_record['name']} ({first_record['neighborhood']})")
+    logger.info(f"Nota Original Média:     {first_record['rating_average']}")
+    logger.info(f"Nota com Decaimento:     {first_record['decayed_rating_average']}")
+    assert first_record["total_reviews"] >= 1
+    # Verifica que o review de spam foi flagrado e purgado das médias
+    for rev in first_record["reviews"]:
+        if "PIX" in rev["comment_text"] or "WHATS" in rev["comment_text"]:
+            assert rev["is_fraudulent"] is True
+
+    logger.info("\n[OK] Todos os testes de sanitizacao, deteccao de fraudes e raspagem passaram com 100% de sucesso!")
 
 if __name__ == "__main__":
     run_tests()

@@ -142,8 +142,24 @@ class RAGPipelineService:
             .limit(limit)
         )
 
-        result_rest = await self.session.execute(stmt_restaurants)
-        restaurants_with_distance = result_rest.all()
+        try:
+            result_rest = await self.session.execute(stmt_restaurants)
+            restaurants_with_distance = result_rest.all()
+        except Exception as e:
+            logger.warning(f"Banco de dados híbrido inacessível ({e}). Ativando fallback resiliente do Catálogo Oficial de Caraguá.")
+            from app.db.caragua_catalog import query_catalog_fallback
+            return query_catalog_fallback(
+                user_lat=user_lat,
+                user_lng=user_lng,
+                max_distance_meters=intent.max_distance_meters,
+                neighborhood=intent.neighborhood,
+                is_vegan=intent.is_vegan,
+                is_gluten_free=intent.is_gluten_free,
+                is_lactose_free=intent.is_lactose_free,
+                banned_allergens=intent.banned_allergens,
+                query_text=intent.semantic_query,
+                limit=limit
+            )
 
         if not restaurants_with_distance:
             logger.warning("Nenhum restaurante encontrado no raio espacial especificado.")
@@ -231,11 +247,12 @@ class RAGPipelineService:
             rest: Restaurant = item["restaurant"]
             dist_km = round(item["distance_meters"] / 1000.0, 2)
             
-            lines.append(f"### OPÇÃO {i}: {rest.name}")
+            lines.append(f"### OPÇÃO {i}: {rest.name} (ID: {rest.slug})")
+            lines.append(f"- ID do Estabelecimento: {rest.slug}")
             lines.append(f"- Bairro: {rest.neighborhood}, Caraguatatuba/SP")
             lines.append(f"- Distância Calculada (PostGIS): {item['distance_meters']} metros (~{dist_km} km)")
             lines.append(f"- Nota Média Histórica: {rest.rating_average}/5.0 (Total: {rest.total_reviews} avaliações)")
-            lines.append(f"- Nota Recente com Decaimento Temporal: {rest.decayed_rating_average}/5.0")
+            lines.append(f"- Nota Recente com Decaimento Temporal (30 dias): {rest.decayed_rating_average}/5.0")
             lines.append(f"- Culinárias: {', '.join(rest.cuisine_types)}")
             
             # Pratos correspondentes

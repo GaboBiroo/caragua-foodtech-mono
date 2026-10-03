@@ -1,9 +1,24 @@
 import './globals.css';
-import { Sidebar } from '@/components/Sidebar';
+import { Metadata, Viewport } from 'next';
 
-export const metadata = {
-  title: 'Caraguá FoodTech - Painel de Administração',
-  description: 'Web Admin para Moderação do Agregador Gastronômico com RAG e PostGIS',
+export const metadata: Metadata = {
+  title: 'Caraguá FoodTech — Agregador Gastronômico com IA',
+  description: 'Plataforma gastronômica hiperlocal com IA & RAG de 5 Estágios em Caraguatatuba/SP',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'Caraguá FoodTech',
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: '#0ea5e9',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
 };
 
 export default function RootLayout({
@@ -13,11 +28,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR">
-      <body className="flex min-h-screen bg-slate-950 text-slate-100 antialiased font-sans">
-        <Sidebar />
-        <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
-          {children}
-        </div>
+      <head>
+        <link rel="apple-touch-icon" href="/icon.svg" />
+      </head>
+      <body className="min-h-screen bg-slate-950 text-slate-100 antialiased font-sans">
+        {children}
       </body>
     </html>
   );

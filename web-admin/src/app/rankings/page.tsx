@@ -63,11 +63,11 @@ export default function RankingsPage() {
       <div className="p-8 max-w-7xl mx-auto space-y-8">
         <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
           <h3 className="text-base font-semibold text-white mb-1">
-            Impacto do Decaimento Exponencial de Notas (Half-Life = 180 dias)
+            Impacto do Decaimento Exponencial de Notas (Half-Life = 30 dias • ~90% peso recente)
           </h3>
           <p className="text-xs text-slate-400 mb-6">
-            O algoritmo penaliza avaliações antigas (e.g. trocas de chef ou nova gestão) e
-            privilegia a consistência recente dos restaurantes de Caraguatatuba.
+            O algoritmo penaliza avaliações antigas (e.g. sazonalidade do verão anterior ou troca de gestão) e
+            privilegia a consistência recente dos estabelecimentos de Caraguatatuba com meia-vida de 30 dias.
           </p>
 
           <div className="overflow-x-auto">

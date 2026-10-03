@@ -1,0 +1,14 @@
+{
+  "name": "caragua-foodtech-mono",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix web-admin run dev",
+    "build": "npm --prefix web-admin run build",
+    "start": "npm --prefix web-admin run start",
+    "lint": "npm --prefix web-admin run lint"
+  },
+  "dependencies": {
+    "next": "14.2.3"
+  }
+}

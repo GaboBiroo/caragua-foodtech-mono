@@ -29,7 +29,8 @@ class Settings(BaseSettings):
     REDIS_HOST: str = "localhost"
     REDIS_PORT: int = 6379
 
-    # Modelos de IA e Embeddings
+    # Modelos de IA e Embeddings (Ecossistema Anthropic Claude e OpenAI)
+    ANTHROPIC_API_KEY: str = Field(default="", description="Chave da Anthropic Claude (preferencial conforme página 10 do TCC)")
     OPENAI_API_KEY: str = Field(default="", description="Chave da OpenAI para embeddings e RAG")
     OLLAMA_BASE_URL: str = "http://localhost:11434"
     EMBEDDING_MODEL_NAME: str = "text-embedding-3-small"

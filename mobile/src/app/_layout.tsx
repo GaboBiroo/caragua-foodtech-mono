@@ -1,20 +1,19 @@
-import React from "react";
-import { Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { JacquinFAB } from "@/components/ai/JacquinFAB";
-import { AIBottomSheet } from "@/components/ai/AIBottomSheet";
-import "../global.css";
+import React from 'react';
+import { Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { JacquinPraianoFAB } from '@/components/ai/JacquinPraianoFAB';
+import { useAppStore } from '@/store/useAppStore';
+import '../global.css';
 
 // ==============================================================================
-// Root Layout — Provider Wrapper Global do App
-// Envolve toda a aplicação com:
-// 1. GestureHandlerRootView (necessário para Reanimated/BottomSheet)
-// 2. TanStack Query Provider (cache e sincronização com FastAPI)
-// 3. StatusBar translúcida (Liquid Glass requer transparência total)
-// 4. Jacquin Praiano FAB flutuante (sempre visível)
-// 5. AI BottomSheet (overlay do chat)
+// Root Layout — Topologia Global de Navegação (Expo Router)
+// Conforme especificado na Página 1 e 2 do Documento Arquitetural:
+// 1. Provedores essenciais (QueryClient, GestureHandler)
+// 2. Apresentação modal 'formSheet' para a rota /chat (Screen 2)
+// 3. Rota paramétrica /restaurant/[id] (Screen 3)
+// 4. JacquinPraianoFAB flutuante operando nativamente a 120fps
 // ==============================================================================
 
 const queryClient = new QueryClient({
@@ -27,6 +26,8 @@ const queryClient = new QueryClient({
 });
 
 export default function RootLayout() {
+  const { isAIStreaming } = useAppStore();
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <QueryClientProvider client={queryClient}>
@@ -34,16 +35,36 @@ export default function RootLayout() {
         <Stack
           screenOptions={{
             headerShown: false,
-            contentStyle: { backgroundColor: "#020617" },
-            animation: "fade",
+            contentStyle: { backgroundColor: '#020617' },
           }}
         >
-          <Stack.Screen name="(tabs)" />
+          {/* Navegação por abas principal */}
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+
+          {/* Screen 2: Modal formSheet para Chat com Jacquin Praiano */}
+          <Stack.Screen
+            name="chat"
+            options={{
+              presentation: 'formSheet',
+              sheetAllowedDetents: [0.5, 0.85],
+              sheetGrabberVisible: true,
+              sheetCornerRadius: 28,
+              headerShown: false,
+            }}
+          />
+
+          {/* Screen 3: Perfil do Restaurante com Parallax */}
+          <Stack.Screen
+            name="restaurant/[id]"
+            options={{
+              headerShown: false,
+              animation: 'slide_from_right',
+            }}
+          />
         </Stack>
-        {/* O Jacquin Praiano flutua sobre todas as telas */}
-        <JacquinFAB />
-        {/* BottomSheet de chat com a IA */}
-        <AIBottomSheet />
+
+        {/* Mascote Flutuante Vivo no canto inferior direito */}
+        <JacquinPraianoFAB isProcessing={isAIStreaming} />
       </QueryClientProvider>
     </GestureHandlerRootView>
   );

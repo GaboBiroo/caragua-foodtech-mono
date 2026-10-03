@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <rect width="512" height="512" rx="128" fill="url(#bgGrad)"/>
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0284c7"/>
+      <stop offset="1" stop-color="#0f172a"/>
+    </linearGradient>
+  </defs>
+  <!-- Onda Caiçara -->
+  <path d="M64 360 C 140 310, 200 390, 280 340 C 360 290, 420 370, 448 350 L 448 448 L 64 448 Z" fill="#38bdf8" opacity="0.3"/>
+  <path d="M64 380 C 140 330, 210 410, 290 360 C 370 310, 410 390, 448 370 L 448 448 L 64 448 Z" fill="#0284c7" opacity="0.6"/>
+  <!-- Chapéu de Chef -->
+  <path d="M256 120 C 220 120, 200 150, 190 180 C 160 180, 140 210, 150 240 C 160 260, 180 270, 200 270 L 312 270 C 332 270, 352 260, 362 240 C 372 210, 352 180, 322 180 C 312 150, 292 120, 256 120 Z" fill="#ffffff"/>
+  <rect x="195" y="270" width="122" height="30" rx="6" fill="#f8fafc"/>
+  <line x1="205" y1="285" x2="307" y2="285" stroke="#0284c7" stroke-width="4" stroke-linecap="round"/>
+</svg>

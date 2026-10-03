@@ -14,9 +14,9 @@ logging.basicConfig(level=logging.INFO)
 async def run_nightly_etl() -> None:
     """
     Rotina de Execução em Lote da Madrugada (Nightly Batch Ingestion).
-    1. Executa o reprocessamento de decaimento temporal em todas as avaliações.
-    2. Recalcula as médias ponderadas dos restaurantes.
-    3. Purga fraudes detectadas.
+    1. Executa o reprocessamento de decaimento temporal em todas as avaliações (meia-vida de 30 dias).
+    2. Recalcula as médias ponderadas dos restaurantes valorizando a consistência recente.
+    3. Purga fraudes detectadas pelo modelo benchmark Mackenzie.
     """
     logger.info("Iniciando rotina de processamento noturno...")
     fraud_detector = ReviewFraudDetector()
@@ -50,8 +50,8 @@ async def run_nightly_etl() -> None:
                 if rev.is_fraudulent:
                     continue
 
-                # Aplica decaimento temporal (meia vida de 180 dias)
-                decay_weight = rev.calculate_decay(half_life_days=180.0)
+                # Aplica decaimento temporal com meia vida de 30 dias (conforme página 9 do documento)
+                decay_weight = rev.calculate_decay(half_life_days=30.0)
                 valid_ratings.append(rev.original_rating)
                 weighted_ratings.append(rev.effective_rating)
 

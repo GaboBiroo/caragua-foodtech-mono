@@ -15,7 +15,7 @@ export default function ProfileScreen() {
         <Text style={styles.title}>Suas Preferências</Text>
 
         <View style={styles.content}>
-          <GlassCard intensity="medium" className="p-5 mx-4 mb-4">
+          <GlassCard intensity={45} className="p-5 mx-4 mb-4">
             <View style={styles.prefRow}>
               <View>
                 <Text style={styles.prefTitle}>Sou Celíaco</Text>
@@ -30,7 +30,7 @@ export default function ProfileScreen() {
             </View>
           </GlassCard>
 
-          <GlassCard intensity="medium" className="p-5 mx-4 mb-4">
+          <GlassCard intensity={45} className="p-5 mx-4 mb-4">
             <View style={styles.prefRow}>
               <View>
                 <Text style={styles.prefTitle}>Sou Vegano</Text>
@@ -45,13 +45,13 @@ export default function ProfileScreen() {
             </View>
           </GlassCard>
 
-          <GlassCard intensity="light" accentBorder className="p-5 mx-4">
+          <GlassCard intensity={30} className="p-5 mx-4 border-teal-500/30">
             <Text style={styles.footerTitle}>Caraguá FoodTech v1.0.0</Text>
             <Text style={styles.footerText}>
-              TCC — Centro Universitário Módulo{" "}
+              TCC — Centro Universitário Módulo
             </Text>
             <Text style={styles.footerText}>
-              Pipeline RAG de 5 Estágios | PostGIS + pgvector
+              Pipeline RAG de 5 Estágios | PostGIS + pgvector (HNSW)
             </Text>
           </GlassCard>
         </View>

@@ -1,127 +1,135 @@
-import { Header } from '@/components/Header';
-import { MetricCard } from '@/components/MetricCard';
+'use client';
 
-export default function DashboardPage() {
-  return (
-    <main className="flex-1">
-      <Header title="Visão Geral do Ecossistema Gastronômico" />
-      <div className="p-8 space-y-8 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <MetricCard
-            title="Restaurantes em Caraguá"
-            value="48"
-            subtitle="Mapeados com índices PostGIS e Uber H3"
-            icon="📍"
-            badge="100% Georref"
-          />
-          <MetricCard
-            title="Itens de Cardápio"
-            value="1.240"
-            subtitle="Vetorizados com pgvector (Vector 1536)"
-            icon="🍲"
-            badge="Semântica Ativa"
-          />
-          <MetricCard
-            title="Avaliações Auditadas"
-            value="3.890"
-            subtitle="Higienizadas conforme LGPD (Art. 5º e 6º)"
-            icon="💬"
-            badge="Anonimizado"
-          />
-          <MetricCard
-            title="Fraudes Detectadas (SMOTE)"
-            value="7.8%"
-            subtitle="Expurgadas das médias via Random Forest"
-            icon="🛡️"
-            badge="Mackenzie 2024"
-          />
-        </div>
+import React, { useState, useEffect } from 'react';
+import { ConsumerApp } from '@/components/consumer/ConsumerApp';
+import { IPhoneMockup } from '@/components/IPhoneMockup';
+import { AdminView } from '@/components/admin/AdminView';
+import { RAGArchitectureView } from '@/components/admin/RAGArchitectureView';
+import { Smartphone, ShieldCheck, Brain, Maximize2, Minimize2 } from 'lucide-react';
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
-            <h3 className="text-base font-semibold text-white mb-2">
-              Arquitetura RAG de 5 Estágios em Produção
-            </h3>
-            <p className="text-xs text-slate-400 mb-6">
-              Pipeline híbrido determinístico prevenindo alucinações e garantindo Food Safety.
-            </p>
-            <div className="space-y-4">
-              <div className="flex items-start gap-4 p-3 bg-slate-950/60 rounded-lg border border-slate-800/60">
-                <span className="w-6 h-6 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold text-xs shrink-0">1</span>
-                <div>
-                  <h4 className="text-sm font-medium text-white">Extração de Intenção Estruturada</h4>
-                  <p className="text-xs text-slate-400">Pydantic V2 isola culinária, orçamento e alérgenos proibidos.</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4 p-3 bg-slate-950/60 rounded-lg border border-slate-800/60">
-                <span className="w-6 h-6 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold text-xs shrink-0">2</span>
-                <div>
-                  <h4 className="text-sm font-medium text-white">Enriquecimento Dinâmico</h4>
-                  <p className="text-xs text-slate-400">Acopla coordenadas GPS reais em Caraguatatuba e histórico situacional.</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4 p-3 bg-slate-950/60 rounded-lg border border-slate-800/60">
-                <span className="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-xs shrink-0">3</span>
-                <div>
-                  <h4 className="text-sm font-medium text-white">Busca Híbrida: PostGIS + pgvector</h4>
-                  <p className="text-xs text-slate-400">ST_DWithin delimita raio métrico cartesiano e cosseno (&lt;-&gt;) ordena itens.</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4 p-3 bg-slate-950/60 rounded-lg border border-slate-800/60">
-                <span className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs shrink-0">4</span>
-                <div>
-                  <h4 className="text-sm font-medium text-white">Injeção de Contexto Factual</h4>
-                  <p className="text-xs text-slate-400">Âncora rígida de pratos auditados sem risco de alucinação dietética.</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4 p-3 bg-slate-950/60 rounded-lg border border-slate-800/60">
-                <span className="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold text-xs shrink-0">5</span>
-                <div>
-                  <h4 className="text-sm font-medium text-white">Streaming Gerativo SSE</h4>
-                  <p className="text-xs text-slate-400">LLM Manager sintetiza a narrativa caiçara entregando tokens via HTTP Stream.</p>
-                </div>
-              </div>
-            </div>
-          </div>
+export default function MasterPage() {
+  const [activeMode, setActiveMode] = useState<'mobile' | 'admin' | 'rag'>('mobile');
+  const [isFullScreenMobile, setIsFullScreenMobile] = useState(false);
+  const [isMobileScreen, setIsMobileScreen] = useState(false);
 
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 flex flex-col justify-between">
-            <div>
-              <h3 className="text-base font-semibold text-white mb-2">
-                Bairros Monitorados em Caraguatatuba
-              </h3>
-              <p className="text-xs text-slate-400 mb-6">
-                Discretização espacial de malhas territoriais com suporte a H3.
-              </p>
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div className="p-3 bg-slate-950 rounded-lg border border-slate-800">
-                  <span className="text-xs font-semibold text-sky-400 block">Martin de Sá</span>
-                  <span className="text-slate-300 font-medium">14 Estabelecimentos</span>
-                </div>
-                <div className="p-3 bg-slate-950 rounded-lg border border-slate-800">
-                  <span className="text-xs font-semibold text-sky-400 block">Centro</span>
-                  <span className="text-slate-300 font-medium">18 Estabelecimentos</span>
-                </div>
-                <div className="p-3 bg-slate-950 rounded-lg border border-slate-800">
-                  <span className="text-xs font-semibold text-sky-400 block">Indaiá</span>
-                  <span className="text-slate-300 font-medium">9 Estabelecimentos</span>
-                </div>
-                <div className="p-3 bg-slate-950 rounded-lg border border-slate-800">
-                  <span className="text-xs font-semibold text-sky-400 block">Porto Novo</span>
-                  <span className="text-slate-300 font-medium">7 Estabelecimentos</span>
-                </div>
-              </div>
-            </div>
+  // Detecta se está acessando diretamente de um smartphone (Safari iOS / Chrome Android)
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobileScreen(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
-            <div className="mt-8 p-4 bg-sky-950/40 border border-sky-800/40 rounded-lg flex items-center justify-between">
-              <div>
-                <p className="text-xs text-sky-300 font-medium">Lote da Madrugada (Nightly ETL)</p>
-                <p className="text-[11px] text-slate-400">Última execução: Hoje às 03:00 (100% de integridade)</p>
-              </div>
-              <span className="text-xs font-bold text-sky-400 bg-sky-900/60 px-2 py-1 rounded">OK</span>
-            </div>
-          </div>
-        </div>
+  // Se o usuário estiver acessando de um smartphone real, renderiza 100% tela cheia
+  if (isMobileScreen || isFullScreenMobile) {
+    return (
+      <div className="fixed inset-0 w-full h-full bg-slate-950 overflow-hidden">
+        {isFullScreenMobile && !isMobileScreen && (
+          <button
+            onClick={() => setIsFullScreenMobile(false)}
+            className="fixed top-3 right-3 z-50 p-2 rounded-full bg-slate-900/80 backdrop-blur-md border border-slate-700 text-slate-300 hover:text-white"
+            title="Voltar ao Mockup"
+          >
+            <Minimize2 className="w-4 h-4" />
+          </button>
+        )}
+        <ConsumerApp />
       </div>
-    </main>
+    );
+  }
+
+  // Visualização Desktop: Mockup iPhone Pro Centralizado com Barra de Troca de Modos
+  return (
+    <div className="min-h-screen bg-slate-950 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(14,165,233,0.15),rgba(255,255,255,0))] text-slate-100 flex flex-col">
+      
+      {/* Barra Superior em Vidro Flutuante */}
+      <header className="sticky top-0 z-50 px-6 py-3 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-sky-500 to-teal-500 flex items-center justify-center font-black text-white text-sm shadow-lg shadow-sky-500/20">
+            CF
+          </div>
+          <div>
+            <h1 className="font-bold text-white text-sm leading-tight">
+              Caraguá FoodTech <span className="text-sky-400 font-normal">| Plataforma Integrada</span>
+            </h1>
+            <p className="text-[11px] text-slate-400">TCC ADS • Centro Universitário Módulo</p>
+          </div>
+        </div>
+
+        {/* Switcher de Modos */}
+        <div className="flex items-center gap-1.5 p-1 bg-slate-950 rounded-xl border border-slate-800">
+          <button
+            onClick={() => setActiveMode('mobile')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition ${
+              activeMode === 'mobile'
+                ? 'bg-sky-600 text-white shadow-md shadow-sky-600/30'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Smartphone className="w-3.5 h-3.5" /> App do Usuário (Simulador iPhone)
+          </button>
+
+          <button
+            onClick={() => setActiveMode('admin')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition ${
+              activeMode === 'admin'
+                ? 'bg-sky-600 text-white shadow-md shadow-sky-600/30'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <ShieldCheck className="w-3.5 h-3.5" /> Painel Admin & Moderação
+          </button>
+
+          <button
+            onClick={() => setActiveMode('rag')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition ${
+              activeMode === 'rag'
+                ? 'bg-sky-600 text-white shadow-md shadow-sky-600/30'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Brain className="w-3.5 h-3.5" /> Arquitetura RAG & LLMs Regionais
+          </button>
+        </div>
+
+        {/* Botão de Expandir Mobile */}
+        <div className="flex items-center gap-2">
+          {activeMode === 'mobile' && (
+            <button
+              onClick={() => setIsFullScreenMobile(true)}
+              className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-medium flex items-center gap-1.5 border border-slate-700 transition"
+              title="Expandir para tela cheia"
+            >
+              <Maximize2 className="w-3.5 h-3.5" /> Tela Cheia
+            </button>
+          )}
+        </div>
+      </header>
+
+      {/* Conteúdo Central */}
+      <main className="flex-1 p-6 flex items-center justify-center overflow-y-auto">
+        {activeMode === 'mobile' && (
+          <div className="py-4">
+            <IPhoneMockup>
+              <ConsumerApp />
+            </IPhoneMockup>
+          </div>
+        )}
+
+        {activeMode === 'admin' && (
+          <div className="w-full">
+            <AdminView />
+          </div>
+        )}
+
+        {activeMode === 'rag' && (
+          <div className="w-full">
+            <RAGArchitectureView />
+          </div>
+        )}
+      </main>
+    </div>
   );
 }

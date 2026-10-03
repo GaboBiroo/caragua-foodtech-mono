@@ -15,7 +15,8 @@ export default function RAGTestPage() {
     setOutput("");
 
     try {
-      const response = await fetch("http://localhost:8000/api/v1/search/rag", {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://192.168.100.67:8000/api/v1";
+      const response = await fetch(`${apiUrl}/search/rag`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

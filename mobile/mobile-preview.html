@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Caraguá FoodTech — Visualização no iPhone</title>
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(15, 23, 42, 0.75);
+      --card-border: rgba(56, 189, 248, 0.2);
+      --accent-cyan: #38bdf8;
+      --accent-gold: #f59e0b;
+      --accent-emerald: #10b981;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    body {
+      background: radial-gradient(circle at 50% 10%, #1e293b 0%, #090d16 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 30px 20px;
+    }
+    .container {
+      max-width: 820px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .header .badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--accent-cyan);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+    .header h1 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #ffffff 30%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+    .header p {
+      color: var(--text-muted);
+      font-size: 15px;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 768px) {
+      .card-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .glass-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .glass-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+    }
+    .glass-card.gold::before {
+      background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
+    }
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+    .qr-wrapper {
+      background: #ffffff;
+      padding: 14px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      margin-bottom: 20px;
+      display: inline-block;
+    }
+    .qr-wrapper img {
+      display: block;
+      width: 220px;
+      height: 220px;
+      object-fit: contain;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 15px rgba(2, 132, 199, 0.35);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(2, 132, 199, 0.5);
+    }
+    .btn-gold {
+      background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 15px rgba(217, 119, 6, 0.35);
+    }
+    .btn-gold:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(217, 119, 6, 0.5);
+    }
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      margin-top: 8px;
+    }
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .steps-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 24px;
+    }
+    .steps-card h3 {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent-cyan);
+    }
+    .step-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .step-number {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--accent-cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+    .step-text strong {
+      display: block;
+      color: #ffffff;
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+    .step-text p {
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    .links-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .footer {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 12px;
+      margin-top: 20px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <span class="badge">TCC ADS — CENTRO UNIVERSITÁRIO MÓDULO</span>
+      <h1>Caraguá FoodTech Mobile</h1>
+      <p>Agregador Gastronômico Hiperlocal com IA & RAG de 5 Estágios. Escaneie abaixo com a câmera do iPhone para visualizar a aplicação imediatamente.</p>
+    </div>
+
+    <div class="card-grid">
+      <!-- Card Expo Go -->
+      <div class="glass-card">
+        <h2 class="card-title">📱 Opção 1: Expo Go (Nativo)</h2>
+        <p class="card-subtitle">Abra com a experiência nativa iOS a 120fps (Reanimated 3 + Liquid Glass + Haptics).</p>
+        <div class="qr-wrapper">
+          <img src="data:image/png;base64,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" alt="QR Code Expo Go">
+        </div>
+        <a href="exp://192.168.100.67:8082" class="btn btn-primary">Abrir no Expo Go no iPhone</a>
+        <button class="btn btn-outline" onclick="navigator.clipboard.writeText('exp://192.168.100.67:8082'); alert('URL copiada: exp://192.168.100.67:8082')">
+          📋 Copiar Link exp://
+        </button>
+      </div>
+
+      <!-- Card Safari Web -->
+      <div class="glass-card gold">
+        <h2 class="card-title">🌐 Opção 2: Safari / Web Mobile</h2>
+        <p class="card-subtitle">Abra diretamente no navegador Safari do iPhone sem precisar instalar nenhum app.</p>
+        <div class="qr-wrapper">
+          <img src="data:image/png;base64,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" alt="QR Code Safari Web">
+        </div>
+        <a href="http://192.168.100.67:8082" target="_blank" class="btn btn-gold">Abrir no Safari do iPhone</a>
+        <button class="btn btn-outline" onclick="navigator.clipboard.writeText('http://192.168.100.67:8082'); alert('URL copiada: http://192.168.100.67:8082')">
+          📋 Copiar Link http://
+        </button>
+      </div>
+    </div>
+
+    <!-- Guia Rápido iPhone -->
+    <div class="steps-card">
+      <h3>📋 Passo a Passo para o iPhone da Sua Esposa</h3>
+      <div class="step-item">
+        <div class="step-number">1</div>
+        <div class="step-text">
+          <strong>Conexão na Mesma Rede Wi-Fi</strong>
+          <p>Certifique-se de que o iPhone está conectado na mesma rede Wi-Fi que este computador (IP LAN: <code>192.168.100.67</code>).</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-number">2</div>
+        <div class="step-text">
+          <strong>Aponte a Câmera Nativa do iPhone</strong>
+          <p>Abra o aplicativo nativo <strong>Câmera</strong> do iPhone e aponte para um dos QR Codes acima.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-number">3</div>
+        <div class="step-text">
+          <strong>Toque na Notificação Amarela</strong>
+          <p>Para o <strong>Expo Go</strong>, toque para abrir no aplicativo Expo. Para a <strong>Web</strong>, toque no link amarelo que abrirá instantaneamente no Safari.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Outros Portais do Sistema -->
+    <div class="steps-card">
+      <h3>🚀 Portais do Ecossistema em Funcionamento</h3>
+      <div class="links-grid">
+        <a href="http://192.168.100.67:3000" target="_blank" class="btn btn-outline">
+          📊 Web Admin Dashboard (http://192.168.100.67:3000)
+        </a>
+        <a href="http://192.168.100.67:8000/docs" target="_blank" class="btn btn-outline">
+          ⚡ API FastAPI Swagger (http://192.168.100.67:8000/docs)
+        </a>
+      </div>
+    </div>
+
+    <div class="footer">
+      Desenvolvido por <strong>Gabriel Rodrigues (@GaboBiroo)</strong> para o TCC em Análise e Desenvolvimento de Sistemas.<br>
+      Caraguatatuba/SP — Litoral Norte Paulista • 192.168.100.67
+    </div>
+  </div>
+</body>
+</html>

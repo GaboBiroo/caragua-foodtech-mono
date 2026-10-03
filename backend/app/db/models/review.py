@@ -15,9 +15,10 @@ class Review(Base, TimestampMixin):
     """
     Entidade Avaliação:
     Implementa:
-    1. Despersonalização LGPD (author_hash).
+    1. Despersonalização LGPD (author_hash SHA-256).
     2. Detecção de fraudes estatística (Random Forest + SMOTE do estudo Mackenzie).
-    3. Algoritmo de decaimento temporal de relevância (Time-Decay Weight).
+    3. Algoritmo de Decaimento Temporal Exponencial (Time-Decay Weight) com meia-vida
+       estrita de 30 dias para neutralizar a sazonalidade e valorizar consistência recente.
     4. Embedding vetorial de sentimento do comentário.
     """
     __tablename__ = "reviews"
@@ -46,9 +47,10 @@ class Review(Base, TimestampMixin):
     is_fraudulent: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, index=True)
     fraud_confidence_score: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
 
-    # Algoritmo de Decaimento Temporal:
-    # weight = exp(-lambda * delta_t_em_dias), onde lambda = ln(2) / meia_vida
-    # Garante que reviews antigas de estabelecimentos sob nova gestão percam peso
+    # Algoritmo de Decaimento Temporal Exponencial:
+    # W(t) = exp(-lambda * delta_t_em_dias), onde lambda = ln(2) / meia_vida (30 dias)
+    # N_t = N_0 * exp(-lambda * t)
+    # Garante que resenhas efetuadas ao longo do mês atual somem ~90% da pontuação
     time_decay_weight: Mapped[float] = mapped_column(Float, default=1.0, nullable=False)
     effective_rating: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
 
@@ -58,10 +60,11 @@ class Review(Base, TimestampMixin):
     # Relacionamento
     restaurant: Mapped["Restaurant"] = relationship("Restaurant", back_populates="reviews")
 
-    def calculate_decay(self, half_life_days: float = 180.0) -> float:
+    def calculate_decay(self, half_life_days: float = 30.0) -> float:
         """
         Calcula o peso exponencial decrescente da avaliação com base na sua idade.
-        Meia-vida padrão: 180 dias (6 meses).
+        Meia-vida de 30 dias (conforme especificação da página 9 do documento arquitetural).
+        lambda = ln(2) / 30 ~= 0.0231
         """
         now = datetime.now(timezone.utc)
         delta_days = max(0.0, (now - self.review_date).total_seconds() / 86400.0)

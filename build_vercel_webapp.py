@@ -61,38 +61,51 @@ def ensure_dirs():
 # ==============================================================================
 
 def write_vercel_and_pwa_configs():
-    log("Gerando vercel.json e package.json na raiz...")
+    log("Gerando vercel.json e package.json com Next.js 14.2.24...")
     
-    # vercel.json na raiz
+    # vercel.json na raiz limpo para deteccao automatica zero-config na Vercel
     vercel_json = {
-        "$schema": "https://openapi.vercel.sh/vercel.json",
-        "framework": "nextjs",
-        "installCommand": "npm --prefix web-admin install",
-        "buildCommand": "npm --prefix web-admin run build",
-        "outputDirectory": "web-admin/.next"
+        "$schema": "https://openapi.vercel.sh/vercel.json"
     }
     with open(ROOT_DIR / "vercel.json", "w", encoding="utf-8") as f:
         json.dump(vercel_json, f, indent=2)
 
-    # package.json na raiz
-    root_package = {
+    # package.json completo na raiz e em web-admin
+    full_package = {
         "name": "caragua-foodtech-mono",
         "version": "1.0.0",
         "private": True,
         "scripts": {
-            "dev": "npm --prefix web-admin run dev",
-            "build": "npm --prefix web-admin run build",
-            "start": "npm --prefix web-admin run start",
-            "lint": "npm --prefix web-admin run lint"
+            "dev": "next dev",
+            "build": "next build",
+            "start": "next start",
+            "lint": "next lint"
         },
         "dependencies": {
-            "next": "14.2.3"
+            "clsx": "^2.1.1",
+            "lucide-react": "^0.378.0",
+            "next": "^14.2.24",
+            "react": "^18.2.0",
+            "react-dom": "^18.2.0",
+            "tailwind-merge": "^2.3.0"
+        },
+        "devDependencies": {
+            "@types/node": "^20.12.7",
+            "@types/react": "^18.3.1",
+            "@types/react-dom": "^18.3.0",
+            "autoprefixer": "^10.4.19",
+            "postcss": "^8.4.38",
+            "tailwindcss": "^3.4.3",
+            "typescript": "^5.4.5"
         }
     }
     with open(ROOT_DIR / "package.json", "w", encoding="utf-8") as f:
-        json.dump(root_package, f, indent=2)
+        json.dump(full_package, f, indent=2)
 
-    # web-admin/next.config.js tolerante para Vercel
+    with open(WEB_ADMIN_DIR / "package.json", "w", encoding="utf-8") as f:
+        json.dump(full_package, f, indent=2)
+
+    # next.config.js tolerante para Vercel
     next_config = """/** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
@@ -110,6 +123,8 @@ const nextConfig = {
 module.exports = nextConfig;
 """
     with open(WEB_ADMIN_DIR / "next.config.js", "w", encoding="utf-8") as f:
+        f.write(next_config)
+    with open(ROOT_DIR / "next.config.js", "w", encoding="utf-8") as f:
         f.write(next_config)
 
     # public/manifest.json para PWA no iPhone
@@ -2694,24 +2709,48 @@ export async function POST(req: NextRequest) {
 
     log("[OK] Route Handlers Serverless gravadas com sucesso.")
 
-# ==============================================================================
-# 8. TESTE DE BUILD E COMMIT/PUSH NO GIT
-# ==============================================================================
+def sync_to_root():
+    import shutil
+    log("Sincronizando arquivos do Next.js para a raiz do monorepo...")
+    # configs
+    for cfg in ["next.config.js", "tailwind.config.js", "postcss.config.js", "tsconfig.json"]:
+        src_file = WEB_ADMIN_DIR / cfg
+        if src_file.exists():
+            shutil.copy2(src_file, ROOT_DIR / cfg)
+    
+    # public
+    root_public = ROOT_DIR / "public"
+    root_public.mkdir(parents=True, exist_ok=True)
+    for f in (WEB_ADMIN_DIR / "public").glob("*"):
+        if f.is_file():
+            shutil.copy2(f, root_public / f.name)
+            
+    # src
+    root_src = ROOT_DIR / "src"
+    if root_src.exists():
+        shutil.rmtree(root_src)
+    shutil.copytree(WEB_ADMIN_DIR / "src", root_src)
+    log("[OK] Diretórios src, public e configs sincronizados na raiz.")
 
 def run_build_and_git_push():
-    log("Iniciando 'npm run build' em web-admin para validação pré-deploy...")
-    res = subprocess.run("npm run build", shell=True, cwd=str(WEB_ADMIN_DIR))
-    if res.returncode != 0:
-        print("[!] Erro durante o npm run build. Verifique o log acima.")
-        sys.exit(res.returncode)
+    log("Instalando dependencias na raiz (npm install)...")
+    res_inst = subprocess.run("npm install", shell=True, cwd=str(ROOT_DIR))
+    if res_inst.returncode != 0:
+        print("[!] Erro durante npm install na raiz.")
+        sys.exit(res_inst.returncode)
 
-    log("[OK] Build de produção Next.js finalizado com 100% de sucesso!")
+    log("Executando 'npm run build' na raiz para validação pré-deploy Vercel...")
+    res_build = subprocess.run("npm run build", shell=True, cwd=str(ROOT_DIR))
+    if res_build.returncode != 0:
+        print("[!] Erro durante npm run build na raiz.")
+        sys.exit(res_build.returncode)
+    log("[OK] Build da raiz concluído com 100% de sucesso!")
 
     # Executa git add, commit e push
     log("Adicionando alterações ao Git...")
     subprocess.run("git add .", shell=True, cwd=str(ROOT_DIR))
 
-    commit_msg = "feat: Web App definitivo pronto para deploy na Vercel (Next.js 14 + Liquid Glass + PWA + Serverless RAG)"
+    commit_msg = "fix(vercel): deploy zero-config na raiz com Next.js 14.2.24 e PWA"
     log(f"Criando commit: '{commit_msg}'...")
     subprocess.run(f'git commit -m "{commit_msg}"', shell=True, cwd=str(ROOT_DIR))
 
@@ -2737,6 +2776,7 @@ def main():
     write_desktop_and_admin_views()
     write_master_page()
     write_serverless_api_routes()
+    sync_to_root()
     run_build_and_git_push()
 
 if __name__ == "__main__":

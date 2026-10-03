@@ -51,7 +51,9 @@ lerna-debug.log*
 .pnpm-debug.log*
 .npm
 
-# Next.js (Web Admin)
+# Next.js (Root & Web Admin)
+.next/
+out/
 web-admin/.next/
 web-admin/out/
 web-admin/build/

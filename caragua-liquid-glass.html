@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Caraguá FoodTech — Apple Liquid Glass Edition</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    * {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .glass-surface {
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.16), 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+    }
+    .glass-elevated {
+      background: rgba(255, 255, 255, 0.10);
+      backdrop-filter: blur(32px) saturate(200%);
+      -webkit-backdrop-filter: blur(32px) saturate(200%);
+      border: 1px solid rgba(255, 255, 255, 0.20);
+      box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.35), 0 25px 50px -12px rgba(0, 0, 0, 0.75);
+    }
+    .glass-pill {
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .glass-pill-active {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.3);
+    }
+    @keyframes pulseSlow {
+      0%, 100% { transform: scale(1); opacity: 0.15; }
+      50% { transform: scale(1.05); opacity: 0.22; }
+    }
+    .ambient-glow-1 { animation: pulseSlow 8s ease-in-out infinite; }
+    .ambient-glow-2 { animation: pulseSlow 11s ease-in-out infinite reverse; }
+  </style>
+</head>
+<body class="bg-[#07090E] text-zinc-100 min-h-screen selection:bg-teal-500/30 selection:text-teal-200 overflow-x-hidden">
+
+  <!-- ========================================== -->
+  <!-- AMBIENT MESH LIGHTS FIXAS -->
+  <!-- ========================================== -->
+  <div class="fixed -top-40 -left-20 w-[550px] h-[550px] bg-teal-600/15 rounded-full blur-[140px] pointer-events-none z-0 ambient-glow-1"></div>
+  <div class="fixed -top-40 right-0 w-[650px] h-[650px] bg-indigo-700/15 rounded-full blur-[160px] pointer-events-none z-0 ambient-glow-2"></div>
+  <div class="fixed bottom-0 left-1/3 w-[500px] h-[500px] bg-rose-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
+
+  <!-- ========================================== -->
+  <!-- 1. DESKTOP WIDESCREEN REAL (md:flex) -->
+  <!-- ========================================== -->
+  <div class="hidden md:flex min-h-screen relative z-10 max-w-7xl mx-auto px-6 py-6 gap-8">
+    
+    <!-- SIDEBAR ESQUERDA FLUTUANTE -->
+    <aside class="w-64 lg:w-72 sticky top-6 h-[calc(100vh-3rem)] flex flex-col justify-between p-5 rounded-3xl glass-surface">
+      <div>
+        <!-- Brand -->
+        <div class="flex items-center gap-3 pb-6 border-b border-white/[0.08]">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-teal-500 to-indigo-500 flex items-center justify-center font-black text-slate-950 text-base shadow-lg shadow-teal-500/25">
+            CF
+          </div>
+          <div>
+            <h1 class="font-semibold text-white text-sm tracking-tight leading-tight">Caraguá FoodTech</h1>
+            <p class="text-[11px] text-zinc-400">TCC ADS • Módulo</p>
+          </div>
+        </div>
+
+        <!-- Menu de Navegação -->
+        <nav class="mt-6 space-y-1.5" id="desktopNav">
+          <button onclick="setTab('feed')" data-tab="feed" class="nav-btn w-full px-4 py-3 rounded-2xl text-xs font-semibold flex items-center justify-between transition-all duration-300 text-white glass-pill-active">
+            <span class="flex items-center gap-3"><i data-lucide="sparkles" class="w-4 h-4 text-teal-400"></i> Feed & Timeline</span>
+          </button>
+          <button onclick="setTab('search')" data-tab="search" class="nav-btn w-full px-4 py-3 rounded-2xl text-xs font-semibold flex items-center justify-between transition-all duration-300 text-zinc-400 hover:text-white hover:bg-white/[0.04]">
+            <span class="flex items-center gap-3"><i data-lucide="search" class="w-4 h-4 text-teal-400"></i> Busca Spotlight & IA</span>
+          </button>
+          <button onclick="setTab('radar')" data-tab="radar" class="nav-btn w-full px-4 py-3 rounded-2xl text-xs font-semibold flex items-center justify-between transition-all duration-300 text-zinc-400 hover:text-white hover:bg-white/[0.04]">
+            <span class="flex items-center gap-3"><i data-lucide="trending-up" class="w-4 h-4 text-teal-400"></i> Radar 30d & Rankings</span>
+          </button>
+          <button onclick="setTab('review')" data-tab="review" class="nav-btn w-full px-4 py-3 rounded-2xl text-xs font-semibold flex items-center justify-between transition-all duration-300 text-zinc-400 hover:text-white hover:bg-white/[0.04]">
+            <span class="flex items-center gap-3"><i data-lucide="pen-square" class="w-4 h-4 text-teal-400"></i> Avaliar Restaurante</span>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">+50 CR</span>
+          </button>
+          <button onclick="setTab('credits')" data-tab="credits" class="nav-btn w-full px-4 py-3 rounded-2xl text-xs font-semibold flex items-center justify-between transition-all duration-300 text-zinc-400 hover:text-white hover:bg-white/[0.04]">
+            <span class="flex items-center gap-3"><i data-lucide="coins" class="w-4 h-4 text-teal-400"></i> Créditos Nitro & B2B</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Carteira de Créditos na Base -->
+      <div class="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.07] space-y-2">
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-zinc-400">Minha Carteira:</span>
+          <span class="font-mono font-bold text-amber-300 flex items-center gap-1">
+            <i data-lucide="coins" class="w-3.5 h-3.5"></i> <span id="desktopCreditDisplay">250</span> CR
+          </span>
+        </div>
+        <div class="w-full bg-white/[0.06] h-1.5 rounded-full overflow-hidden">
+          <div id="creditBar" class="bg-amber-400 h-full rounded-full transition-all duration-500" style="width: 50%;"></div>
+        </div>
+        <p class="text-[10px] text-zinc-500 font-mono">Nível: Caiçara Connoisseur</p>
+      </div>
+    </aside>
+
+    <!-- ÁREA CENTRAL (FEED / SPOTLIGHT / RADAR / AVALIAR / CRÉDITOS) -->
+    <main class="flex-1 min-w-0 max-w-3xl space-y-6">
+      
+      <!-- HEADER SPOTLIGHT & SELETOR DE POLOS -->
+      <div class="p-5 rounded-3xl glass-surface space-y-4">
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-mono text-zinc-400 uppercase tracking-wider">Polos Gastronômicos de Caraguá:</span>
+          <span class="text-[11px] font-mono text-teal-400 flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse"></span>
+            <span id="activeLLMName">LLM Manager Central</span>
+          </span>
+        </div>
+
+        <!-- Seletor de Bairros -->
+        <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar" id="neighborhoodPills">
+          <button onclick="setNeighborhood('todos', 'LLM Manager Central')" data-bairro="todos" class="bairro-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap glass-pill-active text-white">Todos de Caraguá</button>
+          <button onclick="setNeighborhood('martim', 'LLM Martim de Sá • v2.4')" data-bairro="martim" class="bairro-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap text-zinc-400 hover:text-white glass-pill">Martim de Sá</button>
+          <button onclick="setNeighborhood('centro', 'LLM Centro Histórico • v2.1')" data-bairro="centro" class="bairro-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap text-zinc-400 hover:text-white glass-pill">Centro</button>
+          <button onclick="setNeighborhood('indaia', 'LLM Indaiá • v2.3')" data-bairro="indaia" class="bairro-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap text-zinc-400 hover:text-white glass-pill">Indaiá</button>
+          <button onclick="setNeighborhood('massaguacu', 'LLM Massaguaçu & Cocanha • v1.9')" data-bairro="massaguacu" class="bairro-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap text-zinc-400 hover:text-white glass-pill">Massaguaçu</button>
+          <button onclick="setNeighborhood('porto-novo', 'LLM Porto Novo & Sul • v1.8')" data-bairro="porto-novo" class="bairro-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap text-zinc-400 hover:text-white glass-pill">Porto Novo</button>
+        </div>
+
+        <div class="px-4 py-2.5 rounded-2xl bg-white/[0.02] border border-white/[0.06] flex items-center justify-between text-xs text-zinc-300">
+          <span id="neighborhoodTagline" class="text-zinc-400 truncate max-w-md">Panorama consolidado dos 5 polos gastronômicos de Caraguatatuba</span>
+          <button onclick="openJacquin()" class="text-teal-400 hover:text-teal-300 font-semibold flex items-center gap-1 shrink-0 ml-2">
+            <span>Consultar Concierge</span> <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- CONTEÚDO PRINCIPAL (RENDERIZADO DINAMICAMENTE) -->
+      <div id="tabContent"></div>
+    </main>
+
+    <!-- PAINEL DIREITO CONTEXTUAL -->
+    <aside class="hidden xl:block w-80 sticky top-6 h-[calc(100vh-3rem)] overflow-y-auto space-y-6 no-scrollbar">
+      
+      <!-- Card Mascote Jacquin Praiano -->
+      <div class="p-5 rounded-3xl glass-surface text-center">
+        <div class="flex justify-center mb-3">
+          <div id="avatarJacquinDesktop"></div>
+        </div>
+        <h3 class="font-semibold text-white text-sm">Chef Jacquin Praiano</h3>
+        <p class="text-xs text-zinc-400 mt-0.5 mb-3 leading-relaxed">
+          Concierge RAG 5 Estágios treinado na culinária caiçara de Caraguatatuba.
+        </p>
+        <button onclick="openJacquin()" class="w-full py-2.5 rounded-2xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-semibold text-xs flex items-center justify-center gap-2 shadow-lg shadow-teal-500/20 transition">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+          <span>Perguntar ao Chef</span>
+        </button>
+      </div>
+
+      <!-- Dicas Personalizadas em Tempo Real -->
+      <div class="p-5 rounded-3xl glass-surface space-y-3">
+        <div class="flex items-center justify-between">
+          <h4 class="text-xs font-semibold text-white uppercase tracking-wider flex items-center gap-1.5">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-teal-400"></i> Dicas para Você (IA)
+          </h4>
+          <span class="text-[10px] font-mono text-zinc-500">Live</span>
+        </div>
+        <div class="space-y-2.5" id="personalizedTipsContainer">
+          <!-- Renderizado via JS -->
+        </div>
+      </div>
+
+      <!-- Spikes em Tempo Real -->
+      <div class="p-5 rounded-3xl glass-surface space-y-3">
+        <h4 class="text-xs font-semibold text-white uppercase tracking-wider flex items-center gap-1.5">
+          <i data-lucide="trending-up" class="w-3.5 h-3.5 text-amber-400"></i> Spikes em Tempo Real
+        </h4>
+        <div class="p-3 rounded-2xl bg-white/[0.02] border border-white/[0.06] text-xs text-zinc-400 space-y-1">
+          <span class="text-teal-300 font-mono text-[11px] block">Martim de Sá • Há 18 min</span>
+          <p class="text-zinc-300 leading-snug">
+            Isca de badejo subiu para 4.95 na Super Nota após troca de óleo e novo lote fresco da colônia Z-8.
+          </p>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 2. LAYOUT MOBILE NATIVO (md:hidden) -->
+  <!-- ========================================== -->
+  <div class="md:hidden min-h-screen pb-28 relative z-10">
+    <header class="sticky top-0 z-40 px-4 py-3 bg-[#07090E]/80 backdrop-blur-2xl border-b border-white/[0.08]">
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-teal-500 to-indigo-500 flex items-center justify-center font-black text-slate-950 text-xs shadow-md">
+            CF
+          </div>
+          <div>
+            <h1 class="font-semibold text-white text-xs leading-none">Caraguá FoodTech</h1>
+            <span class="text-[10px] text-zinc-400 font-mono">IA Caiçara & RAG</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 font-mono text-xs text-amber-300 bg-white/[0.05] px-2.5 py-1 rounded-xl border border-white/[0.10]">
+          <i data-lucide="coins" class="w-3.5 h-3.5"></i>
+          <span id="mobileCreditDisplay">250</span> CR
+        </div>
+      </div>
+
+      <!-- Bairros Mobile -->
+      <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+        <button onclick="setNeighborhood('todos', 'LLM Manager Central')" class="px-3 py-1 rounded-xl text-[11px] font-semibold whitespace-nowrap bg-teal-500/20 border border-teal-400/40 text-teal-200">Todos</button>
+        <button onclick="setNeighborhood('martim', 'LLM Martim de Sá')" class="px-3 py-1 rounded-xl text-[11px] font-semibold whitespace-nowrap bg-white/[0.04] text-zinc-400">Martim de Sá</button>
+        <button onclick="setNeighborhood('centro', 'LLM Centro Histórico')" class="px-3 py-1 rounded-xl text-[11px] font-semibold whitespace-nowrap bg-white/[0.04] text-zinc-400">Centro</button>
+        <button onclick="setNeighborhood('indaia', 'LLM Indaiá')" class="px-3 py-1 rounded-xl text-[11px] font-semibold whitespace-nowrap bg-white/[0.04] text-zinc-400">Indaiá</button>
+        <button onclick="setNeighborhood('massaguacu', 'LLM Massaguaçu')" class="px-3 py-1 rounded-xl text-[11px] font-semibold whitespace-nowrap bg-white/[0.04] text-zinc-400">Massaguaçu</button>
+        <button onclick="setNeighborhood('porto-novo', 'LLM Porto Novo')" class="px-3 py-1 rounded-xl text-[11px] font-semibold whitespace-nowrap bg-white/[0.04] text-zinc-400">Porto Novo</button>
+      </div>
+    </header>
+
+    <div class="p-4" id="tabContentMobile"></div>
+
+    <!-- Floating Action Button Jacquin Mobile -->
+    <button onclick="openJacquin()" class="fixed bottom-24 right-4 z-40 p-2 rounded-full glass-elevated shadow-2xl transition active:scale-95">
+      <div id="avatarJacquinMobile"></div>
+    </button>
+
+    <!-- Bottom Dock iOS 18 Mobile -->
+    <div class="fixed bottom-4 left-4 right-4 z-40 glass-elevated rounded-full p-1.5 shadow-[0_20px_40px_rgba(0,0,0,0.8)] flex items-center justify-around">
+      <button onclick="setTab('feed')" class="px-3 py-2 rounded-full flex flex-col items-center gap-1 text-teal-300">
+        <i data-lucide="sparkles" class="w-4 h-4"></i>
+        <span class="text-[10px] font-medium leading-none">Feed</span>
+      </button>
+      <button onclick="setTab('search')" class="px-3 py-2 rounded-full flex flex-col items-center gap-1 text-zinc-400">
+        <i data-lucide="search" class="w-4 h-4"></i>
+        <span class="text-[10px] font-medium leading-none">Busca</span>
+      </button>
+      <button onclick="setTab('radar')" class="px-3 py-2 rounded-full flex flex-col items-center gap-1 text-zinc-400">
+        <i data-lucide="trending-up" class="w-4 h-4"></i>
+        <span class="text-[10px] font-medium leading-none">Radar</span>
+      </button>
+      <button onclick="setTab('review')" class="px-3 py-2 rounded-full flex flex-col items-center gap-1 text-zinc-400">
+        <i data-lucide="pen-square" class="w-4 h-4"></i>
+        <span class="text-[10px] font-medium leading-none">Avaliar</span>
+      </button>
+      <button onclick="setTab('credits')" class="px-3 py-2 rounded-full flex flex-col items-center gap-1 text-zinc-400">
+        <i data-lucide="coins" class="w-4 h-4"></i>
+        <span class="text-[10px] font-medium leading-none">Nitro</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- JACQUIN CONCIERGE DRAWER EM LIQUID GLASS -->
+  <!-- ========================================== -->
+  <div id="jacquinDrawer" class="fixed inset-0 z-50 pointer-events-none opacity-0 transition-opacity duration-300">
+    <div onclick="closeJacquin()" class="absolute inset-0 bg-black/60 backdrop-blur-md pointer-events-auto"></div>
+    <div id="drawerPanel" class="absolute top-0 right-0 bottom-0 w-full max-w-lg bg-[#07090E]/95 border-l border-white/[0.12] backdrop-blur-3xl shadow-[-20px_0_50px_rgba(0,0,0,0.8)] flex flex-col pointer-events-auto transform translate-x-full transition-transform duration-300">
+      
+      <!-- Drawer Header -->
+      <div class="p-5 border-b border-white/[0.08] bg-white/[0.02] flex items-center justify-between">
+        <div class="flex items-center gap-3.5">
+          <div id="avatarJacquinDrawer"></div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="font-semibold text-white tracking-tight text-base">Chef Jacquin Praiano</h3>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-mono tracking-wide bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">RAG 5 ESTÁGIOS</span>
+            </div>
+            <p class="text-xs text-zinc-400">Concierge Hiperlocal com Inteligência Caiçara</p>
+          </div>
+        </div>
+        <button onclick="closeJacquin()" class="w-9 h-9 rounded-full glass-pill flex items-center justify-center text-zinc-400 hover:text-white transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Status RAG -->
+      <div class="px-5 py-2.5 bg-white/[0.03] border-b border-white/[0.06] flex items-center justify-between text-[11px] text-zinc-400">
+        <div class="flex items-center gap-1.5">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-teal-400"></i>
+          <span>Orquestrador: <strong class="text-zinc-200">LLM Manager Central</strong></span>
+        </div>
+        <span class="text-emerald-400 flex items-center gap-1 font-mono">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Online (120ms)
+        </span>
+      </div>
+
+      <!-- Mensagens -->
+      <div class="flex-1 overflow-y-auto p-5 space-y-4" id="chatMessages">
+        <div class="flex flex-col items-start">
+          <span class="mb-1 text-[10px] font-mono text-teal-300/80 bg-teal-500/10 px-2 py-0.5 rounded-md border border-teal-500/20">
+            LLM Manager Central ⇄ Llama-3-70b-Caraguá
+          </span>
+          <div class="max-w-[90%] p-4 rounded-2xl rounded-bl-none bg-white/[0.05] border border-white/[0.10] text-zinc-200 text-sm leading-relaxed shadow-lg">
+            Olá! Sou o Chef Érick Jacquin Praiano, seu concierge hiperlocal de Caraguatatuba. Meu motor RAG de 5 estágios audita dados em tempo real do Google Maps, iFood e comunidades de pescadores locais. Em que posso te ajudar hoje?
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Chips -->
+      <div class="p-3 bg-white/[0.02] border-t border-white/[0.06] flex gap-2 overflow-x-auto no-scrollbar">
+        <button onclick="sendChatMessage('Qual o melhor camarão de Caraguá?')" class="px-3 py-1.5 rounded-full text-xs whitespace-nowrap glass-pill text-zinc-300 hover:text-white transition flex items-center gap-1.5 shrink-0">
+          <i data-lucide="sparkles" class="w-3 h-3 text-teal-400"></i> Melhor Camarão
+        </button>
+        <button onclick="sendChatMessage('Onde comer Azul-Marinho tradicional?')" class="px-3 py-1.5 rounded-full text-xs whitespace-nowrap glass-pill text-zinc-300 hover:text-white transition flex items-center gap-1.5 shrink-0">
+          <i data-lucide="sparkles" class="w-3 h-3 text-teal-400"></i> Azul-Marinho
+        </button>
+        <button onclick="sendChatMessage('Opções 100% veganas e seguras')" class="px-3 py-1.5 rounded-full text-xs whitespace-nowrap glass-pill text-zinc-300 hover:text-white transition flex items-center gap-1.5 shrink-0">
+          <i data-lucide="shield-check" class="w-3 h-3 text-emerald-400"></i> 100% Vegano
+        </button>
+        <button onclick="sendChatMessage('Melhores promoções ativas agora')" class="px-3 py-1.5 rounded-full text-xs whitespace-nowrap glass-pill text-zinc-300 hover:text-white transition flex items-center gap-1.5 shrink-0">
+          <i data-lucide="zap" class="w-3 h-3 text-rose-400"></i> Promoções Ativas
+        </button>
+      </div>
+
+      <!-- Chat Input -->
+      <div class="p-4 border-t border-white/[0.08] bg-[#07090E]">
+        <form onsubmit="handleFormChat(event)" class="flex items-center gap-2">
+          <input id="chatInput" type="text" placeholder="Pergunte ao Chef Jacquin..." class="flex-1 bg-white/[0.05] border border-white/[0.12] rounded-2xl px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-teal-400/60 transition">
+          <button type="submit" class="w-11 h-11 rounded-2xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold flex items-center justify-center transition shadow-lg shadow-teal-500/20">
+            <i data-lucide="send" class="w-4 h-4"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- JAVASCRIPT REATIVO PURO & DATASET -->
+  <!-- ========================================== -->
+  <script>
+    // SVG Fiel do Jacquin Praiano
+    const JACQUIN_SVG = (size = 64) => `
+      <svg style="width:${size}px; height:${size}px;" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" class="drop-shadow-[0_8px_16px_rgba(42,157,143,0.35)] select-none">
+        <defs>
+          <linearGradient id="bgGrad" x1="100" y1="10" x2="100" y2="190" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#1E3A34" />
+            <stop offset="50%" stopColor="#132E29" />
+            <stop offset="100%" stopColor="#0B1A17" />
+          </linearGradient>
+          <linearGradient id="borderGrad" x1="30" y1="10" x2="170" y2="190" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#34D399" />
+            <stop offset="45%" stopColor="#2A9D8F" />
+            <stop offset="100%" stopColor="#0D9488" />
+          </linearGradient>
+          <linearGradient id="hatGrad" x1="100" y1="20" x2="100" y2="90" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#FFFFFF" />
+            <stop offset="85%" stopColor="#F1F5F9" />
+            <stop offset="100%" stopColor="#CBD5E1" />
+          </linearGradient>
+          <linearGradient id="shirtGrad" x1="100" y1="140" x2="100" y2="200" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#10B981" />
+            <stop offset="50%" stopColor="#059669" />
+            <stop offset="100%" stopColor="#047857" />
+          </linearGradient>
+        </defs>
+        <!-- 1. MOLDURA OVAL VERDE-ÁGUA COM BORDA DUPLA -->
+        <ellipse cx="100" cy="100" rx="90" ry="90" fill="url(#bgGrad)" />
+        <ellipse cx="100" cy="100" rx="90" ry="90" stroke="url(#borderGrad)" stroke-width="5.5" />
+        <ellipse cx="100" cy="100" rx="83" ry="83" stroke="#6EE7B7" stroke-width="1.2" stroke-dasharray="5 3" opacity="0.6" />
+        <!-- 2. CAMISA HAVAIANA VERDE-ESMERALDA -->
+        <path d="M 46 150 Q 100 138 154 150 Q 166 182 168 190 Q 100 200 32 190 Q 34 182 46 150 Z" fill="url(#shirtGrad)" />
+        <path d="M 78 143 L 100 162 L 72 166 Z" fill="#047857" />
+        <path d="M 122 143 L 100 162 L 128 166 Z" fill="#047857" />
+        <path d="M 58 160 Q 64 154 70 160 Q 64 166 58 160 Z" fill="#FFFFFF" opacity="0.75" />
+        <circle cx="64" cy="160" r="2.5" fill="#FEF08A" />
+        <path d="M 132 162 Q 138 156 144 162 Q 138 168 132 162 Z" fill="#FFFFFF" opacity="0.75" />
+        <circle cx="138" cy="162" r="2.5" fill="#FEF08A" />
+        <path d="M 88 178 Q 94 172 100 178 Q 94 184 88 178 Z" fill="#FFFFFF" opacity="0.7" />
+        <circle cx="94" cy="178" r="2" fill="#FEF08A" />
+        <!-- 3. ROSTO & PESCOÇO CAIÇARA -->
+        <rect x="88" y="132" width="24" height="20" rx="6" fill="#F5D0A9" />
+        <ellipse cx="100" cy="116" rx="34" ry="30" fill="#F5D0A9" />
+        <ellipse cx="65" cy="116" rx="5" ry="8" fill="#E8B888" />
+        <ellipse cx="135" cy="116" rx="5" ry="8" fill="#E8B888" />
+        <path d="M 92 134 Q 100 139 108 134" stroke="#8D5B4C" stroke-width="2" stroke-linecap="round" fill="none" />
+        <!-- 4. CHAPÉU DE CHEF FRANCÊS -->
+        <rect x="74" y="86" width="52" height="13" rx="4" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1" />
+        <path d="M 73 87 C 62 80 56 60 70 48 C 76 42 86 42 90 46 C 94 36 106 36 110 46 C 114 42 124 42 130 48 C 144 60 138 80 127 87 Z" fill="url(#hatGrad)" stroke="#CBD5E1" stroke-width="1.5" />
+        <path d="M 86 52 Q 88 74 88 86" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" opacity="0.8" />
+        <path d="M 100 44 Q 100 70 100 86" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" opacity="0.8" />
+        <path d="M 114 52 Q 112 74 112 86" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" opacity="0.8" />
+        <!-- 5. ÓCULOS ESCUROS QUADRADOS COM REFLEXO BRANCO -->
+        <rect x="96" y="107" width="8" height="3.5" rx="1" fill="#18181B" />
+        <rect x="73" y="101" width="24" height="18" rx="4" fill="#09090B" stroke="#18181B" stroke-width="2.5" />
+        <path d="M 85 103 L 94 103 L 89 116 L 80 116 Z" fill="#FFFFFF" opacity="0.45" />
+        <rect x="103" y="101" width="24" height="18" rx="4" fill="#09090B" stroke="#18181B" stroke-width="2.5" />
+        <path d="M 115 103 L 124 103 L 119 116 L 110 116 Z" fill="#FFFFFF" opacity="0.45" />
+        <!-- 6. BIGODE CASTANHO ESCURO CURVADO -->
+        <path d="M 100 123 C 92 120 74 121 72 131 C 74 135 84 133 93 129 C 98 127 100 125 100 125 C 100 125 102 127 107 129 C 116 133 126 135 128 131 C 126 121 108 120 100 123 Z" fill="#3E2723" stroke="#271612" stroke-width="1.2" />
+        <path d="M 72 131 Q 68 127 69 123" stroke="#3E2723" stroke-width="2.2" stroke-linecap="round" />
+        <path d="M 128 131 Q 132 127 131 123" stroke="#3E2723" stroke-width="2.2" stroke-linecap="round" />
+        <!-- 7. MÃO COM SINAL DE POSITIVO (JOINHA) -->
+        <path d="M 152 148 C 152 140 156 134 160 134 C 163 134 165 138 165 146 L 165 155 Z" fill="#F5D0A9" stroke="#E8B888" stroke-width="1.2" />
+        <rect x="146" y="152" width="20" height="18" rx="6" fill="#F5D0A9" stroke="#E8B888" stroke-width="1.2" />
+        <ellipse cx="161" cy="138" rx="2" ry="2.5" fill="#FFE8D6" opacity="0.8" />
+      </svg>
+    `;
+
+    // Estado da Aplicação
+    let currentTab = 'feed';
+    let currentNeighborhood = 'todos';
+    let userCredits = 250;
+    let likedPosts = new Set(['p-1']);
+    let likedCategories = ['Frutos do Mar'];
+
+    const RESTAURANTS = [
+      {
+        id: "r-canto-bravo",
+        name: "Quiosque Canto Bravo",
+        neighborhood: "Martim de Sá",
+        distanceKm: 1.2,
+        decayedRating: 4.88,
+        ratingRaw: 4.65,
+        totalReviews: 412,
+        isVerified: true,
+        promo: "Isca de Badejo com 15% OFF até 18h",
+        dishes: [
+          { id: "d-1", name: "Isca de Badejo com Molho Tártaro Caiçara", price: 68.0, isVegan: false, isGlutenFree: true, isPromo: true, img: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=800&q=80", desc: "Badejo fresquinho da colônia Z-8 empanado no panko com raspas de limão-cravo." },
+          { id: "d-2", name: "Casquinha de Siri Gratinada", price: 28.0, isVegan: false, isGlutenFree: true, isPromo: false, img: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=800&q=80", desc: "Carne pura de siri catado na barra da enseada com queijo canastra gratinado." },
+          { id: "d-acai", name: "Açaí Orgânico da Mata Atlântica", price: 32.0, isVegan: true, isGlutenFree: true, isPromo: false, img: "https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?auto=format&fit=crop&w=800&q=80", desc: "Polpa pura de açaí com banana da serra e castanhas brasileiras tostadas." }
+        ]
+      },
+      {
+        id: "r-cantina-caicara",
+        name: "Cantina Caiçara Tradição",
+        neighborhood: "Centro",
+        distanceKm: 2.1,
+        decayedRating: 4.94,
+        ratingRaw: 4.70,
+        totalReviews: 320,
+        isVerified: true,
+        promo: "Azul-Marinho com Pirão + Sobremesa Grátis",
+        dishes: [
+          { id: "d-3", name: "Azul-Marinho Tradicional com Pirão", price: 75.0, isVegan: false, isGlutenFree: true, isPromo: false, img: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80", desc: "Patrimônio imaterial caiçara: peixe fresco com banana da terra verde da serra. (Contém peixe - NÃO é vegetariano)." },
+          { id: "d-4", name: "Moqueca Vegana de Palmito Pupunha", price: 58.0, isVegan: true, isGlutenFree: true, isPromo: true, img: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80", desc: "Palmito pupunha fresco cultivado no Litoral Norte, banana da serra e leite de coco artesanal. 100% Livre de origem animal." }
+        ]
+      },
+      {
+        id: "r-mar-terra",
+        name: "Mar & Terra Gourmet",
+        neighborhood: "Indaiá",
+        distanceKm: 0.8,
+        decayedRating: 4.79,
+        ratingRaw: 4.52,
+        totalReviews: 198,
+        isVerified: true,
+        promo: "Festival de Camarão Rosa: Risoto em Dobro no Jantar",
+        dishes: [
+          { id: "d-5", name: "Risoto de Camarão Rosa com Limão Siciliano", price: 89.0, isVegan: false, isGlutenFree: true, isPromo: true, img: "https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=800&q=80", desc: "Camarões rosa gigantes selecionados flambados com arroz arbóreo al dente." },
+          { id: "d-6", name: "Picanha Caiçara na Brasa", price: 95.0, isVegan: false, isGlutenFree: true, isPromo: false, img: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80", desc: "Picanha maturada na brasa de lenha nobre com farofa crocante de banana." }
+        ]
+      },
+      {
+        id: "r-emporio-verde",
+        name: "Empório & Bistrô Verde Mar",
+        neighborhood: "Indaiá",
+        distanceKm: 1.5,
+        decayedRating: 4.96,
+        ratingRaw: 4.91,
+        totalReviews: 145,
+        isVerified: true,
+        promo: "Bowl Caiçara + Suco Prensado com 20% OFF",
+        dishes: [
+          { id: "d-7", name: "Bowl Caiçara de Quinoa, Shimeji e Castanhas", price: 49.0, isVegan: true, isGlutenFree: true, isPromo: true, img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80", desc: "Quinoa real, shimeji salteado no azeite, chips de banana da terra e castanhas. Certificado 100% Vegano." },
+          { id: "d-8", name: "Hambúrguer Artesanal de Grão de Bico e Shimeji", price: 42.0, isVegan: true, isGlutenFree: false, isPromo: false, img: "https://images.unsplash.com/photo-1520072959219-c595dc870360?auto=format&fit=crop&w=800&q=80", desc: "Blend de grão de bico e cogumelos, maionese de abacate caiçara e brioche vegano." }
+        ]
+      },
+      {
+        id: "r-tainha-dourada",
+        name: "Quiosque & Peixaria Tainha Dourada",
+        neighborhood: "Massaguaçu",
+        distanceKm: 8.4,
+        decayedRating: 4.85,
+        ratingRaw: 4.60,
+        totalReviews: 280,
+        isVerified: true,
+        promo: "Tainha na Brasa com Farofa de Camarão: 20% OFF",
+        dishes: [
+          { id: "d-9", name: "Tainha na Brasa com Farofa de Camarão Seco", price: 110.0, isVegan: false, isGlutenFree: true, isPromo: true, img: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=800&q=80", desc: "Tainha recheada na brasa de chão direto dos pescadores da Cocanha." }
+        ]
+      },
+      {
+        id: "r-rancho-ostras",
+        name: "Rancho das Ostras & Petiscos",
+        neighborhood: "Porto Novo",
+        distanceKm: 5.2,
+        decayedRating: 4.92,
+        ratingRaw: 4.75,
+        totalReviews: 210,
+        isVerified: true,
+        promo: "Dúzia de Ostras Depuradas por R$ 48",
+        dishes: [
+          { id: "d-10", name: "Ostras Vivas Depuradas ao Limão-Cravo", price: 48.0, isVegan: false, isGlutenFree: true, isPromo: true, img: "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=800&q=80", desc: "Ostras frescas da cooperativa do Rio Juqueriquerê abertas na hora." },
+          { id: "d-11", name: "Pastel Vegano de Palmito Pupunha", price: 18.0, isVegan: true, isGlutenFree: false, isPromo: false, img: "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=800&q=80", desc: "Massa crocante artesanal com palmito pupunha refogado com ervas da serra." }
+        ]
+      }
+    ];
+
+    const POSTS = [
+      { id: "p-1", restId: "r-canto-bravo", restName: "Quiosque Canto Bravo", neighborhood: "Martim de Sá", dist: 1.2, dish: "Isca de Badejo com Molho Tártaro Caiçara", price: 68.0, isPromo: true, promoTag: "Promoção Ativa • 15% OFF", isVegan: false, isGluten: true, likes: 142, reviews: 19, img: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=1000&q=85", desc: "Badejo fresquinho dos barcos da enseada! Empanado na farinha panko com raspas de limão-cravo.", llm: "LLM Martim de Sá: 94% de aprovação em crocância nas últimas 48h. Spike positivo de avaliações após novo lote de pescadores locais." },
+      { id: "p-2", restId: "r-mar-terra", restName: "Mar & Terra Gourmet", neighborhood: "Indaiá", dist: 0.8, dish: "Risoto de Camarão Rosa com Limão Siciliano", price: 89.0, isPromo: true, promoTag: "Festival do Camarão • 2x1 no Jantar", isVegan: false, isGluten: true, likes: 218, reviews: 34, img: "https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=1000&q=85", desc: "Festival de Camarão Rosa na orla do Indaiá! Arroz arbóreo al dente finalizado com camarões rosa grelhados.", llm: "LLM Indaiá: Super Nota de 30 dias subindo para 4.79. Camarões rosa frescos auditados pelo sistema RAG." },
+      { id: "p-3", restId: "r-emporio-verde", restName: "Empório & Bistrô Verde Mar", neighborhood: "Indaiá", dist: 1.5, dish: "Bowl Caiçara de Quinoa, Shimeji e Castanhas", price: 49.0, isPromo: true, promoTag: "100% Vegano • Food Safety Certificado", isVegan: true, isGluten: true, likes: 185, reviews: 22, img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1000&q=85", desc: "Alimentação consciente e 100% segura! Shimeji fresco, quinoa real, chips de banana e castanhas brasileiras.", llm: "LLM Indaiá / Food Safety: Cozinha 100% livre de pescados ou produtos de origem animal. 0% risco de contaminação cruzada." },
+      { id: "p-4", restId: "r-cantina-caicara", restName: "Cantina Caiçara Tradição", neighborhood: "Centro", dist: 2.1, dish: "Azul-Marinho Tradicional com Pirão", price: 75.0, isPromo: false, isVegan: false, isGluten: true, likes: 290, reviews: 45, img: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1000&q=85", desc: "O sabor centenário caiçara: peixe fresco com banana da terra verde da serra, cozido no tacho de barro.", llm: "LLM Centro Histórico: Prato ícone da cultura caiçara de Caraguá. Nota 5.0 nas últimas 4 semanas pela preservação histórica." },
+      { id: "p-5", restId: "r-rancho-ostras", restName: "Rancho das Ostras & Petiscos", neighborhood: "Porto Novo", dist: 5.2, dish: "Ostras Vivas Depuradas ao Limão-Cravo", price: 48.0, isPromo: true, promoTag: "Dúzia Especial • Produtor Juqueriquerê", isVegan: false, isGluten: true, likes: 164, reviews: 15, img: "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1000&q=85", desc: "Direto da cooperativa de maricultores do Rio Juqueriquerê: ostras vivas abertas na hora.", llm: "LLM Porto Novo: Maricultura limpa com depuração controlada. Excelente aceitação entre moradores locais." }
+    ];
+
+    // Inicialização dos Avatares
+    function initAvatars() {
+      document.getElementById('avatarJacquinDesktop').innerHTML = JACQUIN_SVG(74);
+      document.getElementById('avatarJacquinMobile').innerHTML = JACQUIN_SVG(46);
+      document.getElementById('avatarJacquinDrawer').innerHTML = JACQUIN_SVG(48);
+    }
+
+    // Navegação de Abas
+    function setTab(tab) {
+      currentTab = tab;
+      
+      // Atualiza botões da Sidebar
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        if (btn.dataset.tab === tab) {
+          btn.className = "nav-btn w-full px-4 py-3 rounded-2xl text-xs font-semibold flex items-center justify-between transition-all duration-300 text-white glass-pill-active";
+        } else {
+          btn.className = "nav-btn w-full px-4 py-3 rounded-2xl text-xs font-semibold flex items-center justify-between transition-all duration-300 text-zinc-400 hover:text-white hover:bg-white/[0.04]";
+        }
+      });
+
+      renderTabContent();
+    }
+
+    // Seletor de Bairros
+    function setNeighborhood(bairro, llmName) {
+      currentNeighborhood = bairro;
+      document.getElementById('activeLLMName').innerText = llmName;
+
+      document.querySelectorAll('.bairro-btn').forEach(btn => {
+        if (btn.dataset.bairro === bairro) {
+          btn.className = "bairro-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap glass-pill-active text-white";
+        } else {
+          btn.className = "bairro-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap text-zinc-400 hover:text-white glass-pill";
+        }
+      });
+
+      renderTabContent();
+    }
+
+    // Curtir Post
+    function toggleLike(postId, category) {
+      if (likedPosts.has(postId)) {
+        likedPosts.delete(postId);
+      } else {
+        likedPosts.add(postId);
+        likedCategories.push(category);
+      }
+      renderPersonalizedTips();
+      renderTabContent();
+    }
+
+    // Recomendações Dinâmicas para Você
+    function renderPersonalizedTips() {
+      const container = document.getElementById('personalizedTipsContainer');
+      const isVegan = likedCategories.some(c => c.toLowerCase().includes('vegano'));
+
+      if (isVegan) {
+        container.innerHTML = `
+          <div class="p-3 rounded-2xl bg-white/[0.03] border border-white/[0.07] space-y-1">
+            <div class="flex items-center justify-between text-xs">
+              <strong class="text-zinc-200">Moqueca Vegana de Pupunha</strong>
+              <span class="text-[10px] font-mono text-emerald-400">Food Safety 100%</span>
+            </div>
+            <p class="text-[11px] text-zinc-400">Cantina Caiçara Tradição</p>
+            <p class="text-[10px] text-zinc-500 leading-snug">Zero contaminação marinha, recomendado pelo seu perfil vegano.</p>
+          </div>
+          <div class="p-3 rounded-2xl bg-white/[0.03] border border-white/[0.07] space-y-1">
+            <div class="flex items-center justify-between text-xs">
+              <strong class="text-zinc-200">Bowl Caiçara de Quinoa</strong>
+              <span class="text-[10px] font-mono text-teal-400">Super Nota 4.96</span>
+            </div>
+            <p class="text-[11px] text-zinc-400">Empório Verde Mar</p>
+            <p class="text-[10px] text-zinc-500 leading-snug">Cogumelos frescos e banana da terra regional.</p>
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <div class="p-3 rounded-2xl bg-white/[0.03] border border-white/[0.07] space-y-1">
+            <div class="flex items-center justify-between text-xs">
+              <strong class="text-zinc-200">Risoto de Camarão Rosa</strong>
+              <span class="text-[10px] font-mono text-teal-400">Super Nota 4.79</span>
+            </div>
+            <p class="text-[11px] text-zinc-400">Mar & Terra Gourmet (Indaiá)</p>
+            <p class="text-[10px] text-zinc-500 leading-snug">Baseado no seu gosto por frutos do mar e porções de praia.</p>
+          </div>
+          <div class="p-3 rounded-2xl bg-white/[0.03] border border-white/[0.07] space-y-1">
+            <div class="flex items-center justify-between text-xs">
+              <strong class="text-zinc-200">Isca de Badejo com Panko</strong>
+              <span class="text-[10px] font-mono text-teal-400">Promoção Ativa</span>
+            </div>
+            <p class="text-[11px] text-zinc-400">Quiosque Canto Bravo (Martim de Sá)</p>
+            <p class="text-[10px] text-zinc-500 leading-snug">Spike de crocância de 94% detectado nas últimas 48h.</p>
+          </div>
+        `;
+      }
+    }
+
+    // Renderização do Conteúdo de Cada Aba
+    function renderTabContent() {
+      const containerDesktop = document.getElementById('tabContent');
+      const containerMobile = document.getElementById('tabContentMobile');
+
+      let html = '';
+
+      if (currentTab === 'feed') {
+        // FILTRAGEM DE POSTS PELO BAIRRO
+        const filtered = POSTS.filter(p => {
+          if (currentNeighborhood === 'todos') return true;
+          return p.neighborhood.toLowerCase().includes(currentNeighborhood);
+        });
+
+        html = `
+          <div class="space-y-8">
+            ${filtered.map(post => {
+              const isLiked = likedPosts.has(post.id);
+              const rest = RESTAURANTS.find(r => r.id === post.restId);
+              return `
+                <article class="glass-surface rounded-3xl overflow-hidden transition-all duration-300 hover:border-white/[0.18]">
+                  <!-- Header do Post -->
+                  <div class="p-5 flex items-center justify-between border-b border-white/[0.06]">
+                    <div class="flex items-center gap-3.5">
+                      <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-teal-500/30 to-indigo-500/30 border border-white/[0.15] flex items-center justify-center font-bold text-teal-300 text-sm shadow-md">
+                        ${post.restName.substring(0, 2).toUpperCase()}
+                      </div>
+                      <div>
+                        <div class="flex items-center gap-2">
+                          <h3 class="font-semibold text-white tracking-tight text-sm md:text-base">${post.restName}</h3>
+                          <span class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-amber-500/10 text-amber-300 border border-amber-500/25">Produtor Caiçara</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-zinc-400 mt-0.5">
+                          <span class="flex items-center gap-1"><i data-lucide="map-pin" class="w-3 h-3 text-teal-400"></i> ${post.neighborhood}</span>
+                          <span>•</span>
+                          <span class="font-mono text-zinc-400">${post.dist} km</span>
+                        </div>
+                      </div>
+                    </div>
+                    ${rest ? `
+                      <div class="text-right">
+                        <div class="flex items-center gap-1 justify-end">
+                          <span class="font-mono text-base font-bold text-white tracking-tighter">${rest.decayedRating.toFixed(2)}</span>
+                          <span class="text-amber-400 text-sm">★</span>
+                        </div>
+                        <span class="text-[10px] text-zinc-400 font-mono block">Super Nota (30d)</span>
+                      </div>
+                    ` : ''}
+                  </div>
+
+                  <!-- Imagem do Prato com Banners -->
+                  <div class="relative aspect-[16/10] md:aspect-[16/9] overflow-hidden bg-black/40">
+                    <img src="${post.img}" alt="${post.dish}" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105" loading="lazy">
+                    ${post.isPromo ? `
+                      <div class="absolute top-4 left-4 z-10 px-3 py-1.5 rounded-2xl bg-rose-950/80 backdrop-blur-xl border border-rose-500/40 text-rose-200 text-xs font-semibold flex items-center gap-2 shadow-xl">
+                        <i data-lucide="zap" class="w-3.5 h-3.5 text-rose-400 fill-rose-400"></i>
+                        <span>${post.promoTag}</span>
+                      </div>
+                    ` : ''}
+                    ${post.isVegan ? `
+                      <div class="absolute top-4 right-4 z-10 px-3 py-1 rounded-xl bg-emerald-950/80 backdrop-blur-xl border border-emerald-500/40 text-emerald-300 text-xs font-semibold flex items-center gap-1.5 shadow-lg">
+                        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                        100% Vegano
+                      </div>
+                    ` : ''}
+                    <div class="absolute bottom-4 right-4 z-10 px-3.5 py-1.5 rounded-2xl bg-black/70 backdrop-blur-xl border border-white/20 text-white font-mono font-bold text-sm shadow-xl">
+                      R$ ${post.price.toFixed(2)}
+                    </div>
+                  </div>
+
+                  <!-- Síntese da IA e Legenda -->
+                  <div class="p-5 space-y-4">
+                    <div class="p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.07] flex items-start gap-3">
+                      <i data-lucide="sparkles" class="w-4 h-4 text-teal-400 shrink-0 mt-0.5"></i>
+                      <div class="text-xs leading-relaxed text-zinc-300">
+                        <strong class="text-teal-300 font-semibold block mb-0.5">Síntese da IA Regional:</strong>
+                        ${post.llm}
+                      </div>
+                    </div>
+
+                    <div>
+                      <h4 class="text-base font-semibold text-white tracking-tight mb-1">${post.dish}</h4>
+                      <p class="text-sm text-zinc-400 leading-relaxed">${post.desc}</p>
+                    </div>
+
+                    <!-- Barra de Ações -->
+                    <div class="pt-3 border-t border-white/[0.06] flex items-center justify-between">
+                      <div class="flex items-center gap-2">
+                        <button onclick="toggleLike('${post.id}', '${post.isVegan ? '100% Vegano' : 'Frutos do Mar'}')" class="px-3 py-2 rounded-2xl border flex items-center gap-2 text-xs font-semibold transition ${isLiked ? 'bg-rose-500/20 border-rose-500/40 text-rose-300' : 'glass-pill text-zinc-300'}">
+                          <i data-lucide="heart" class="w-4 h-4 ${isLiked ? 'fill-rose-400 text-rose-400' : 'text-zinc-400'}"></i>
+                          <span>${post.likes + (isLiked ? 1 : 0)}</span>
+                        </button>
+                        <button onclick="setTab('review')" class="px-3 py-2 rounded-2xl glass-pill text-zinc-300 hover:text-white flex items-center gap-2 text-xs font-semibold">
+                          <i data-lucide="message-square" class="w-4 h-4 text-zinc-400"></i>
+                          <span>${post.reviews} Avaliações</span>
+                        </button>
+                      </div>
+
+                      <button onclick="openReviewModalFor('${rest ? rest.id : ''}')" class="px-3.5 py-2 rounded-2xl bg-teal-500/15 hover:bg-teal-500/25 border border-teal-400/30 text-teal-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition">
+                        <span>Avaliar (+50 CR)</span>
+                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </div>
+                  </div>
+                </article>
+              `;
+            }).join('')}
+          </div>
+        `;
+      } else if (currentTab === 'search') {
+        html = renderSearchTabHTML();
+      } else if (currentTab === 'radar') {
+        html = renderRadarTabHTML();
+      } else if (currentTab === 'review') {
+        html = renderReviewTabHTML();
+      } else if (currentTab === 'credits') {
+        html = renderCreditsTabHTML();
+      }
+
+      containerDesktop.innerHTML = html;
+      containerMobile.innerHTML = html;
+      lucide.createIcons();
+    }
+
+    // ABA DE BUSCA SPOTLIGHT COM FOOD SAFETY ESTRITO
+    let currentSearchFilter = 'todos';
+    let searchQueryText = '';
+
+    function renderSearchTabHTML() {
+      // Filtragem com Guardrail Estrito de Food Safety
+      const isVeganSearch = currentSearchFilter === 'vegano' || searchQueryText.toLowerCase().includes('vegan');
+      const isGlutenSearch = currentSearchFilter === 'gluten';
+      const isPromoSearch = currentSearchFilter === 'promo';
+      const isSeafoodSearch = currentSearchFilter === 'frutos_mar';
+
+      let results = [];
+      RESTAURANTS.forEach(r => {
+        r.dishes.forEach(d => {
+          // GUARDRAIL: Jamais retornar peixe ou carne se vegano
+          if (isVeganSearch && !d.isVegan) return;
+          if (isGlutenSearch && !d.isGlutenFree) return;
+          if (isPromoSearch && !d.isPromo) return;
+          if (isSeafoodSearch && d.isVegan) return;
+
+          if (searchQueryText.trim()) {
+            const q = searchQueryText.toLowerCase();
+            const matchName = d.name.toLowerCase().includes(q);
+            const matchDesc = d.desc.toLowerCase().includes(q);
+            const matchRest = r.name.toLowerCase().includes(q);
+            if (!matchName && !matchDesc && !matchRest) return;
+          }
+
+          results.push({ dish: d, rest: r });
+        });
+      });
+
+      return `
+        <div class="space-y-6">
+          <!-- Spotlight Input -->
+          <div class="relative flex items-center glass-elevated rounded-3xl p-2.5 transition">
+            <div class="pl-3.5 pr-2 text-zinc-400"><i data-lucide="search" class="w-5 h-5 text-teal-400"></i></div>
+            <input type="text" oninput="handleSearchInput(this.value)" value="${searchQueryText}" placeholder="Pesquise por prato ou ingrediente (ex: 'camarão', 'palmito', 'moqueca')..." class="w-full bg-transparent border-none text-white text-sm md:text-base placeholder-zinc-500 focus:outline-none">
+            <div class="hidden md:flex items-center gap-1 px-2.5 py-1 rounded-xl bg-white/[0.06] border border-white/[0.10] text-[11px] font-mono text-zinc-400">
+              <span>Spotlight</span> <kbd class="px-1 py-0.5 rounded bg-black/40 text-[10px]">⌘K</kbd>
+            </div>
+          </div>
+
+          <!-- Filtros em Vidro -->
+          <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+            <button onclick="setSearchFilter('todos')" class="px-4 py-2 rounded-2xl text-xs font-semibold whitespace-nowrap ${currentSearchFilter === 'todos' ? 'glass-pill-active text-white' : 'glass-pill text-zinc-400'}">Todos os Pratos</button>
+            <button onclick="setSearchFilter('promo')" class="px-4 py-2 rounded-2xl text-xs font-semibold whitespace-nowrap ${currentSearchFilter === 'promo' ? 'glass-pill-active text-white' : 'glass-pill text-zinc-400'}"><i data-lucide="zap" class="w-3.5 h-3.5 text-rose-400 inline mr-1"></i> Em Promoção Agora</button>
+            <button onclick="setSearchFilter('frutos_mar')" class="px-4 py-2 rounded-2xl text-xs font-semibold whitespace-nowrap ${currentSearchFilter === 'frutos_mar' ? 'glass-pill-active text-white' : 'glass-pill text-zinc-400'}">Frutos do Mar & Camarão</button>
+            <button onclick="setSearchFilter('vegano')" class="px-4 py-2 rounded-2xl text-xs font-semibold whitespace-nowrap ${currentSearchFilter === 'vegano' ? 'glass-pill-active text-white' : 'glass-pill text-zinc-400'}"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-400 inline mr-1"></i> 100% Vegano (Food Safety)</button>
+            <button onclick="setSearchFilter('gluten')" class="px-4 py-2 rounded-2xl text-xs font-semibold whitespace-nowrap ${currentSearchFilter === 'gluten' ? 'glass-pill-active text-white' : 'glass-pill text-zinc-400'}">Sem Glúten (Celíaco)</button>
+          </div>
+
+          ${isVeganSearch ? `
+            <div class="p-4 rounded-2xl bg-emerald-950/40 border border-emerald-500/30 backdrop-blur-2xl flex items-start gap-3 shadow-lg">
+              <i data-lucide="shield-check" class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5"></i>
+              <div class="text-xs leading-relaxed">
+                <strong class="text-emerald-300 font-semibold block mb-0.5">Modo Food Safety Ativo (Zero Contaminação Marinha):</strong>
+                Pescados, frutos do mar e carnes foram rigorosamente bloqueados. O prato patrimonial <em>Azul-Marinho</em> leva peixe e não é exibido aqui. Apenas preparações 100% vegetais auditadas estão visíveis.
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- Resultados Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            ${results.map(({ dish, rest }) => `
+              <div class="p-4 rounded-3xl glass-surface flex flex-col justify-between">
+                <div>
+                  <div class="relative aspect-[16/10] rounded-2xl overflow-hidden mb-3 bg-black/40">
+                    <img src="${dish.img}" alt="${dish.name}" class="w-full h-full object-cover">
+                    ${dish.isPromo ? `<span class="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-lg bg-rose-950/80 text-rose-300 text-[10px] font-bold">PROMOÇÃO</span>` : ''}
+                    ${dish.isVegan ? `<span class="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-lg bg-emerald-950/80 text-emerald-300 text-[10px] font-bold flex items-center gap-1"><i data-lucide="shield-check" class="w-3 h-3 text-emerald-400"></i> Vegano</span>` : ''}
+                  </div>
+                  <div class="flex items-center justify-between text-xs text-zinc-400 mb-1">
+                    <span class="font-medium text-zinc-300 truncate">${rest.name}</span>
+                    <span class="font-mono text-teal-400 text-[11px]">${rest.neighborhood}</span>
+                  </div>
+                  <h4 class="font-semibold text-white tracking-tight text-sm mb-1">${dish.name}</h4>
+                  <p class="text-xs text-zinc-400 leading-relaxed line-clamp-2 mb-3">${dish.desc}</p>
+                </div>
+                <div class="pt-3 border-t border-white/[0.06] flex items-center justify-between">
+                  <div>
+                    <span class="text-sm font-mono font-bold text-teal-300 block">R$ ${dish.price.toFixed(2)}</span>
+                    <span class="text-[10px] text-zinc-400 font-mono">★ ${rest.decayedRating.toFixed(2)} Super Nota</span>
+                  </div>
+                  <button onclick="openReviewModalFor('${rest.id}')" class="px-3 py-1.5 rounded-xl glass-pill text-xs font-semibold text-zinc-300 hover:text-white">Avaliar</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function setSearchFilter(filter) {
+      currentSearchFilter = filter;
+      renderTabContent();
+    }
+
+    function handleSearchInput(val) {
+      searchQueryText = val;
+      renderTabContent();
+    }
+
+    // ABA DE RADAR 30D & EVOLUÇÃO
+    function renderRadarTabHTML() {
+      const topList = [...RESTAURANTS].sort((a,b) => b.decayedRating - a.decayedRating);
+      return `
+        <div class="space-y-8">
+          <!-- Estatísticas -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="p-5 rounded-3xl glass-surface">
+              <span class="text-xs text-zinc-400 block mb-1">Avaliações Monitoradas</span>
+              <div class="font-mono text-2xl font-bold text-white">1.420</div>
+              <p class="text-[11px] text-zinc-500 mt-1 font-mono">Google Maps + iFood + App</p>
+            </div>
+            <div class="p-5 rounded-3xl glass-surface">
+              <span class="text-xs text-zinc-400 block mb-1">Detector Anti-Fraude</span>
+              <div class="font-mono text-2xl font-bold text-emerald-300">38 Bots Expurgados</div>
+              <p class="text-[11px] text-zinc-500 mt-1 font-mono">Filtro Z-Score > 3.2</p>
+            </div>
+            <div class="p-5 rounded-3xl glass-surface">
+              <span class="text-xs text-zinc-400 block mb-1">Decaimento Temporal</span>
+              <div class="font-mono text-2xl font-bold text-amber-300">λ = 30 Dias</div>
+              <p class="text-[11px] text-zinc-500 mt-1 font-mono">Ponderação Exponencial Recente</p>
+            </div>
+          </div>
+
+          <!-- Gráfico SVG de Curva Suave -->
+          <div class="p-6 rounded-3xl glass-surface">
+            <div class="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-white/[0.08] gap-2">
+              <div>
+                <h3 class="text-base font-semibold text-white tracking-tight flex items-center gap-2">
+                  <i data-lucide="trending-up" class="w-4 h-4 text-teal-400"></i>
+                  Evolução: Nota Bruta vs Super Nota de 30 Dias
+                </h3>
+                <p class="text-xs text-zinc-400 mt-0.5">A curva verde demonstra como o algoritmo capta melhorias do chef recente.</p>
+              </div>
+              <div class="flex items-center gap-4 text-xs font-mono">
+                <span class="text-teal-400 flex items-center gap-1.5"><span class="w-3 h-1 rounded-full bg-teal-400"></span> Super Nota (30d)</span>
+                <span class="text-zinc-500 flex items-center gap-1.5"><span class="w-3 h-1 rounded-full bg-zinc-600"></span> Média Bruta</span>
+              </div>
+            </div>
+
+            <div class="pt-6">
+              <svg viewBox="0 0 600 180" class="w-full h-44 overflow-visible">
+                <line x1="40" y1="20" x2="580" y2="20" stroke="rgba(255,255,255,0.06)" stroke-dasharray="4 4" />
+                <line x1="40" y1="70" x2="580" y2="70" stroke="rgba(255,255,255,0.06)" stroke-dasharray="4 4" />
+                <line x1="40" y1="120" x2="580" y2="120" stroke="rgba(255,255,255,0.06)" stroke-dasharray="4 4" />
+                <path d="M 50 130 C 150 120, 250 90, 350 60 C 450 40, 520 30, 570 24 L 570 160 L 50 160 Z" fill="rgba(20,184,166,0.15)" />
+                <path d="M 50 130 C 150 128, 250 125, 350 120 C 450 115, 520 110, 570 105" fill="none" stroke="#52525B" stroke-width="2" stroke-dasharray="6 4" />
+                <path d="M 50 130 C 150 120, 250 90, 350 60 C 450 40, 520 30, 570 24" fill="none" stroke="#14B8A6" stroke-width="3.5" stroke-linecap="round" />
+                <circle cx="570" cy="24" r="5" fill="#14B8A6" stroke="#07090E" stroke-width="2" />
+                <text x="570" y="16" fill="#14B8A6" font-size="11" font-family="monospace" text-anchor="middle">4.94 (Hoje)</text>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Leaderboard -->
+          <div class="p-6 rounded-3xl glass-surface space-y-3">
+            <h3 class="text-base font-semibold text-white tracking-tight mb-4 flex items-center gap-2">
+              <i data-lucide="award" class="w-4 h-4 text-amber-400"></i>
+              Ranking Oficial de Caraguatatuba (Super Nota 30d)
+            </h3>
+            ${topList.map((r, idx) => `
+              <div class="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.07] flex items-center justify-between gap-4">
+                <div class="flex items-center gap-3.5 min-w-0">
+                  <span class="w-8 h-8 rounded-xl flex items-center justify-center font-mono font-bold text-xs ${idx === 0 ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'bg-white/[0.05] text-zinc-400'}">#${idx+1}</span>
+                  <div class="min-w-0">
+                    <h4 class="font-semibold text-white text-sm truncate">${r.name}</h4>
+                    <p class="text-xs text-zinc-400 truncate">${r.neighborhood} • ${r.totalReviews} avaliações</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="font-mono text-base font-bold text-teal-300">${r.decayedRating.toFixed(2)} ★</div>
+                  <span class="text-[10px] text-zinc-500 font-mono">Bruta: ${r.ratingRaw.toFixed(2)}</span>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    // ABA DE AVALIAÇÃO
+    let reviewSelectedRest = RESTAURANTS[0].id;
+    function renderReviewTabHTML() {
+      return `
+        <div class="space-y-8">
+          <form onsubmit="handleFormReview(event)" class="p-6 md:p-8 rounded-3xl glass-surface space-y-6">
+            <div class="border-b border-white/[0.08] pb-5">
+              <div class="flex items-center gap-2 text-teal-400 text-xs font-mono uppercase tracking-wider mb-1">
+                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                <span>Ações Decisivas da Comunidade</span>
+              </div>
+              <h3 class="text-xl font-semibold text-white tracking-tight">Avaliar Restaurante com Garantia de Auditoria</h3>
+              <p class="text-xs text-zinc-400 mt-1 leading-relaxed">Sua crítica impacta diretamente a Super Nota de 30 dias e premia você com +50 Créditos Nitro.</p>
+            </div>
+
+            <div class="space-y-2">
+              <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider">Selecione o Estabelecimento:</label>
+              <select id="reviewRestSelect" class="w-full bg-white/[0.06] border border-white/[0.12] rounded-2xl px-4 py-3 text-sm text-white focus:outline-none">
+                ${RESTAURANTS.map(r => `
+                  <option value="${r.id}" ${r.id === reviewSelectedRest ? 'selected' : ''} class="bg-slate-900 text-white">${r.name} — ${r.neighborhood} (${r.decayedRating.toFixed(2)} ★)</option>
+                `).join('')}
+              </select>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+              <div class="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.07] space-y-2">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-semibold text-zinc-200">Qualidade do Prato</span>
+                  <span id="scoreQualityVal" class="font-mono text-teal-400 font-bold">5.0 ★</span>
+                </div>
+                <input type="range" min="1" max="5" value="5" oninput="document.getElementById('scoreQualityVal').innerText = this.value + '.0 ★'" class="w-full accent-teal-400 cursor-pointer">
+              </div>
+              <div class="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.07] space-y-2">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-semibold text-zinc-200">Atendimento & Rapidez</span>
+                  <span id="scoreServiceVal" class="font-mono text-teal-400 font-bold">5.0 ★</span>
+                </div>
+                <input type="range" min="1" max="5" value="5" oninput="document.getElementById('scoreServiceVal').innerText = this.value + '.0 ★'" class="w-full accent-teal-400 cursor-pointer">
+              </div>
+              <div class="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.07] space-y-2">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-semibold text-zinc-200">Custo-Benefício</span>
+                  <span id="scoreCostVal" class="font-mono text-teal-400 font-bold">4.0 ★</span>
+                </div>
+                <input type="range" min="1" max="5" value="4" oninput="document.getElementById('scoreCostVal').innerText = this.value + '.0 ★'" class="w-full accent-teal-400 cursor-pointer">
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider">Crítica Detalhada (Mínimo de contexto caiçara):</label>
+              <textarea id="reviewCommentText" rows="4" placeholder="Descreva o prato degustado, o ponto do peixe ou camarão, o atendimento no local..." class="w-full bg-white/[0.05] border border-white/[0.12] rounded-2xl p-4 text-sm text-white placeholder-zinc-500 focus:outline-none leading-relaxed"></textarea>
+            </div>
+
+            <div class="flex items-center justify-between pt-2">
+              <span class="text-xs font-mono text-amber-300 flex items-center gap-1.5"><i data-lucide="coins" class="w-4 h-4 text-amber-400"></i> Recompensa: +50 Créditos</span>
+              <button type="submit" class="px-6 py-3.5 rounded-2xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-semibold text-sm flex items-center gap-2 shadow-lg shadow-teal-500/25 transition">
+                <span>Publicar Avaliação Auditada</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+      `;
+    }
+
+    function openReviewModalFor(restId) {
+      if (restId) reviewSelectedRest = restId;
+      setTab('review');
+    }
+
+    function handleFormReview(e) {
+      e.preventDefault();
+      const text = document.getElementById('reviewCommentText').value;
+      if (!text.trim()) return;
+
+      userCredits += 50;
+      updateCreditDisplays();
+
+      alert("🎉 Avaliação registrada com sucesso! Você ganhou +50 Créditos Nitro e a Super Nota do restaurante foi atualizada!");
+      setTab('feed');
+    }
+
+    // ABA DE CRÉDITOS & B2B
+    function renderCreditsTabHTML() {
+      return `
+        <div class="space-y-8">
+          <div class="p-6 md:p-8 rounded-3xl bg-gradient-to-br from-amber-500/10 via-teal-500/10 to-indigo-500/10 glass-surface">
+            <span class="text-xs font-mono text-amber-300 uppercase tracking-widest block mb-1">Saldo de Créditos Ativos</span>
+            <div class="flex items-center gap-3">
+              <span class="font-mono text-4xl md:text-5xl font-black text-white tracking-tight">${userCredits}</span>
+              <span class="text-sm font-semibold text-zinc-400 font-mono">CRÉDITOS NITRO</span>
+            </div>
+            <p class="text-xs text-zinc-400 mt-2">Nível de Confiabilidade: <strong class="text-teal-300">Caiçara Connoisseur (Nível 4)</strong></p>
+          </div>
+
+          <div class="space-y-4">
+            <h3 class="text-base font-semibold text-white tracking-tight flex items-center gap-2">
+              <i data-lucide="zap" class="w-4 h-4 text-amber-400"></i> Vantagens Nitro Disponíveis
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="p-5 rounded-3xl glass-surface flex flex-col justify-between">
+                <div>
+                  <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-amber-500/10 text-amber-300 border border-amber-500/20 inline-block mb-2">Popular</span>
+                  <h4 class="font-semibold text-white text-sm mb-1.5">Destacar Avaliação no Topo</h4>
+                  <p class="text-xs text-zinc-400 leading-relaxed mb-4">Sua crítica ganha borda prismática Liquid Glass no feed por 7 dias.</p>
+                </div>
+                <div class="pt-3 border-t border-white/[0.06] flex items-center justify-between">
+                  <span class="font-mono text-sm font-bold text-amber-400">100 CR</span>
+                  <button onclick="redeemPerk(100, 'Destaque no Topo')" class="px-3 py-1.5 rounded-xl glass-pill text-xs font-semibold text-white">Resgatar</button>
+                </div>
+              </div>
+
+              <div class="p-5 rounded-3xl glass-surface flex flex-col justify-between">
+                <div>
+                  <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-teal-500/10 text-teal-300 border border-teal-500/20 inline-block mb-2">Peso 1.5x</span>
+                  <h4 class="font-semibold text-white text-sm mb-1.5">Selo Morador Verificado</h4>
+                  <p class="text-xs text-zinc-400 leading-relaxed mb-4">Concede peso 1.5x na equação matemática de decaimento para suas notas.</p>
+                </div>
+                <div class="pt-3 border-t border-white/[0.06] flex items-center justify-between">
+                  <span class="font-mono text-sm font-bold text-amber-400">150 CR</span>
+                  <button onclick="redeemPerk(150, 'Selo Morador Verificado')" class="px-3 py-1.5 rounded-xl glass-pill text-xs font-semibold text-white">Resgatar</button>
+                </div>
+              </div>
+
+              <div class="p-5 rounded-3xl glass-surface flex flex-col justify-between">
+                <div>
+                  <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 inline-block mb-2">B2B</span>
+                  <h4 class="font-semibold text-white text-sm mb-1.5">Resposta Oficial do Dono</h4>
+                  <p class="text-xs text-zinc-400 leading-relaxed mb-4">Permite responder críticas publicamente com crachá verificado da empresa.</p>
+                </div>
+                <div class="pt-3 border-t border-white/[0.06] flex items-center justify-between">
+                  <span class="font-mono text-sm font-bold text-amber-400">200 CR</span>
+                  <button onclick="redeemPerk(200, 'Resposta Oficial')" class="px-3 py-1.5 rounded-xl glass-pill text-xs font-semibold text-white">Resgatar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function redeemPerk(cost, title) {
+      if (userCredits < cost) {
+        alert("Saldo de créditos insuficiente! Avalie mais restaurantes para acumular.");
+        return;
+      }
+      userCredits -= cost;
+      updateCreditDisplays();
+      alert(`Vantagem '${title}' resgatada com sucesso!`);
+      renderTabContent();
+    }
+
+    function updateCreditDisplays() {
+      document.getElementById('desktopCreditDisplay').innerText = userCredits;
+      document.getElementById('mobileCreditDisplay').innerText = userCredits;
+      const bar = document.getElementById('creditBar');
+      if (bar) bar.style.width = Math.min(100, (userCredits / 500) * 100) + '%';
+    }
+
+    // DRAWER DO JACQUIN
+    function openJacquin() {
+      const d = document.getElementById('jacquinDrawer');
+      const p = document.getElementById('drawerPanel');
+      d.classList.remove('opacity-0', 'pointer-events-none');
+      p.classList.remove('translate-x-full');
+    }
+
+    function closeJacquin() {
+      const d = document.getElementById('jacquinDrawer');
+      const p = document.getElementById('drawerPanel');
+      d.classList.add('opacity-0', 'pointer-events-none');
+      p.classList.add('translate-x-full');
+    }
+
+    function handleFormChat(e) {
+      e.preventDefault();
+      const inp = document.getElementById('chatInput');
+      const val = inp.value;
+      if (!val.trim()) return;
+      sendChatMessage(val);
+      inp.value = '';
+    }
+
+    function sendChatMessage(text) {
+      const chat = document.getElementById('chatMessages');
+
+      // Adiciona mensagem do usuário
+      chat.innerHTML += `
+        <div class="flex flex-col items-end">
+          <div class="max-w-[85%] p-3.5 rounded-2xl rounded-br-none bg-gradient-to-r from-teal-500/20 to-teal-600/30 border border-teal-400/30 text-white text-sm leading-relaxed shadow-md">
+            ${text}
+          </div>
+        </div>
+      `;
+      chat.scrollTop = chat.scrollHeight;
+
+      setTimeout(() => {
+        const lower = text.toLowerCase();
+        let reply = '';
+        let tag = 'LLM Manager Central';
+        let isVegan = lower.includes('vegan') || lower.includes('vegetar') || lower.includes('sem carne');
+
+        if (isVegan) {
+          tag = 'LLM Manager ➔ Guardrail Food Safety';
+          reply = `
+            <div class="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-xs text-emerald-200 mb-2">
+              <strong class="text-emerald-300 block mb-0.5"><i data-lucide="shield-check" class="w-3.5 h-3.5 inline"></i> Segurança Alimentar Auditada:</strong>
+              Pescados e frutos do mar foram 100% expurgados desta consulta. O tradicional <strong>Azul-Marinho</strong> leva peixe e foi excluído. Abaixo estão as opções estritamente vegetais certificadas:
+            </div>
+            Para veganos e celíacos em Caraguá, a melhor experiência auditada é a <strong>Moqueca Vegana de Palmito Pupunha</strong> na Cantina Caiçara (Centro) e o <strong>Bowl Caiçara de Quinoa e Shimeji</strong> no Empório Verde Mar (Indaiá), ambos com nota máxima e cozinha higienizada sem risco de contaminação cruzada.
+          `;
+        } else if (lower.includes('camar')) {
+          tag = 'LLM Indaiá & Martim de Sá';
+          reply = `
+            Os dados auditados apontam dois grandes destaques de camarão nesta semana em Caraguatatuba:<br><br>
+            1. <strong>Risoto de Camarão Rosa</strong> no <em>Mar & Terra Gourmet</em> (Indaiá) com Super Nota de 4.79.<br>
+            2. <strong>Isca de Badejo & Camarão Sete-Barbas</strong> no <em>Quiosque Canto Bravo</em> (Martim de Sá) pé na areia com 94% de aprovação em crocância.
+          `;
+        } else if (lower.includes('azul') || lower.includes('marinho') || lower.includes('tradicion')) {
+          tag = 'LLM Centro Histórico ➔ Curadoria Caiçara';
+          reply = `
+            O <strong>Azul-Marinho</strong> é o maior patrimônio gastronômico caiçara de Caraguá! É feito com peixe nobre cozido lentamente com banana verde da serra, que solta o tanino e dá a cor azulada tradicional com pirão escaldado. A <em>Cantina Caiçara Tradição</em> no Centro Histórico é a guardiã oficial dessa receita.
+          `;
+        } else {
+          tag = 'LLM Scraper da Madrugada ➔ Radar Local';
+          reply = `
+            Analisando mais de 1.400 avaliações recentes em Caraguá... Recomendo priorizar os quiosques de Martim de Sá e restaurantes do Indaiá com a Super Nota de 30 dias para pegar a qualidade exata da equipe atual da cozinha!
+          `;
+        }
+
+        chat.innerHTML += `
+          <div class="flex flex-col items-start">
+            <span class="mb-1 text-[10px] font-mono text-teal-300/80 bg-teal-500/10 px-2 py-0.5 rounded-md border border-teal-500/20">
+              ${tag}
+            </span>
+            <div class="max-w-[90%] p-4 rounded-2xl rounded-bl-none bg-white/[0.05] border border-white/[0.10] text-zinc-200 text-sm leading-relaxed shadow-lg">
+              ${reply}
+            </div>
+          </div>
+        `;
+        chat.scrollTop = chat.scrollHeight;
+        lucide.createIcons();
+      }, 500);
+    }
+
+    // Inicialização da Página
+    window.addEventListener('DOMContentLoaded', () => {
+      initAvatars();
+      renderPersonalizedTips();
+      renderTabContent();
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>

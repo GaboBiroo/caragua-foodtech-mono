@@ -1,87 +1,168 @@
 import React from 'react';
 
-interface AvatarProps {
-  size?: number;
+interface JacquinAvatarProps {
   className?: string;
+  size?: number;
 }
 
-export function JacquinPraianoAvatar({ size = 56, className = "" }: AvatarProps) {
+export const JacquinPraianoAvatar: React.FC<JacquinAvatarProps> = ({
+  className = '',
+  size = 64,
+}) => {
   return (
     <div
       style={{ width: size, height: size }}
-      className={`relative rounded-full flex items-center justify-center overflow-hidden shrink-0 shadow-lg ${className}`}
+      className={`relative inline-flex items-center justify-center shrink-0 select-none ${className}`}
     >
       <svg
-        viewBox="0 0 120 120"
+        viewBox="0 0 200 200"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="w-full h-full"
+        className="w-full h-full drop-shadow-[0_8px_16px_rgba(42,157,143,0.35)]"
       >
         <defs>
-          <radialGradient id="ovalAquaGrad" cx="50%" cy="40%" r="60%">
-            <stop offset="0%" stopColor="#2dd4bf" />
-            <stop offset="70%" stopColor="#0d9488" />
-            <stop offset="100%" stopColor="#115e59" />
-          </radialGradient>
-          <linearGradient id="hatGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#ffffff" />
-            <stop offset="100%" stopColor="#e2e8f0" />
+          {/* Gradiente de Fundo Oval Verde-Água Praiano */}
+          <linearGradient id="bgGrad" x1="100" y1="10" x2="100" y2="190" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#1E3A34" />
+            <stop offset="50%" stopColor="#132E29" />
+            <stop offset="100%" stopColor="#0B1A17" />
           </linearGradient>
-          <linearGradient id="shirtGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#15803d" />
-            <stop offset="100%" stopColor="#166534" />
+
+          {/* Gradiente Borda Verde-Água #2A9D8F */}
+          <linearGradient id="borderGrad" x1="30" y1="10" x2="170" y2="190" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#34D399" />
+            <stop offset="45%" stopColor="#2A9D8F" />
+            <stop offset="100%" stopColor="#0D9488" />
           </linearGradient>
-          <linearGradient id="skinGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#fed7aa" />
-            <stop offset="100%" stopColor="#fdba74" />
+
+          {/* Gradiente Chapéu de Chef */}
+          <linearGradient id="hatGrad" x1="100" y1="20" x2="100" y2="90" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#FFFFFF" />
+            <stop offset="85%" stopColor="#F1F5F9" />
+            <stop offset="100%" stopColor="#CBD5E1" />
+          </linearGradient>
+
+          {/* Gradiente Camisa Havaiana Esmeralda */}
+          <linearGradient id="shirtGrad" x1="100" y1="140" x2="100" y2="200" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#10B981" />
+            <stop offset="50%" stopColor="#059669" />
+            <stop offset="100%" stopColor="#047857" />
           </linearGradient>
         </defs>
 
-        {/* Moldura Oval Verde-Agua Praiano */}
-        <rect width="120" height="120" rx="60" fill="url(#ovalAquaGrad)" />
-        <circle cx="60" cy="60" r="57" stroke="#5eead4" strokeWidth="2.5" opacity="0.8" />
+        {/* 1. MOLDURA OVAL PRINCIPAL (Verde-Água #2A9D8F com borda dupla) */}
+        <ellipse cx="100" cy="100" rx="90" ry="90" fill="url(#bgGrad)" />
+        <ellipse cx="100" cy="100" rx="90" ry="90" stroke="url(#borderGrad)" strokeWidth="5.5" />
+        <ellipse cx="100" cy="100" rx="83" ry="83" stroke="#6EE7B7" strokeWidth="1.2" strokeDasharray="5 3" opacity="0.6" />
 
-        {/* Camisa Havaiana Verde com Estampa Floral Caicara */}
-        <path d="M22 120 C 22 92, 40 85, 60 85 C 80 85, 98 92, 98 120 Z" fill="url(#shirtGrad)" />
-        <path d="M48 88 L 60 102 L 72 88 Z" fill="url(#skinGrad)" />
-        <circle cx="36" cy="100" r="4" fill="#ffffff" opacity="0.8" />
-        <circle cx="84" cy="100" r="4" fill="#ffffff" opacity="0.8" />
-        <circle cx="60" cy="112" r="3.5" fill="#ffffff" opacity="0.8" />
-        <path d="M34 104 Q 38 108 42 104" stroke="#ffffff" strokeWidth="1.5" fill="none" opacity="0.8" />
-        <path d="M78 104 Q 82 108 86 104" stroke="#ffffff" strokeWidth="1.5" fill="none" opacity="0.8" />
+        {/* 2. CAMISA HAVAIANA VERDE-ESMERALDA COM ESTAMPAS TROPICAIS */}
+        <g id="shirt">
+          <path
+            d="M 46 150 Q 100 138 154 150 Q 166 182 168 190 Q 100 200 32 190 Q 34 182 46 150 Z"
+            fill="url(#shirtGrad)"
+          />
+          {/* Gola da Camisa */}
+          <path d="M 78 143 L 100 162 L 72 166 Z" fill="#047857" />
+          <path d="M 122 143 L 100 162 L 128 166 Z" fill="#047857" />
+          {/* Estampas de Flores Tropicais e Folhas Brancas */}
+          <path d="M 58 160 Q 64 154 70 160 Q 64 166 58 160 Z" fill="#FFFFFF" opacity="0.75" />
+          <circle cx="64" cy="160" r="2.5" fill="#FEF08A" />
+          <path d="M 132 162 Q 138 156 144 162 Q 138 168 132 162 Z" fill="#FFFFFF" opacity="0.75" />
+          <circle cx="138" cy="162" r="2.5" fill="#FEF08A" />
+          <path d="M 88 178 Q 94 172 100 178 Q 94 184 88 178 Z" fill="#FFFFFF" opacity="0.7" />
+          <circle cx="94" cy="178" r="2" fill="#FEF08A" />
+          {/* Folhas de Palmeira Brancas */}
+          <path d="M 44 174 Q 52 168 58 176" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" opacity="0.65" />
+          <path d="M 148 175 Q 140 170 134 178" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" opacity="0.65" />
+          {/* Botões Centrais */}
+          <circle cx="100" cy="174" r="2" fill="#F8FAFC" />
+          <circle cx="100" cy="186" r="2" fill="#F8FAFC" />
+        </g>
 
-        {/* Rosto Carismatico do Chef */}
-        <circle cx="60" cy="62" r="22" fill="url(#skinGrad)" />
+        {/* 3. ROSTO & PESCOÇO CAIÇARA */}
+        <g id="head">
+          {/* Pescoço */}
+          <rect x="88" y="132" width="24" height="20" rx="6" fill="#F5D0A9" />
+          {/* Cabeça */}
+          <ellipse cx="100" cy="116" rx="34" ry="30" fill="#F5D0A9" />
+          {/* Orelhas */}
+          <ellipse cx="65" cy="116" rx="5" ry="8" fill="#E8B888" />
+          <ellipse cx="135" cy="116" rx="5" ry="8" fill="#E8B888" />
+          {/* Boca Sorrindo Sutil */}
+          <path d="M 92 134 Q 100 139 108 134" stroke="#8D5B4C" strokeWidth="2" strokeLinecap="round" fill="none" />
+        </g>
 
-        {/* Bigode Castanho Curvado Volumoso */}
-        <path
-          d="M44 68 C 50 63, 56 68, 60 66 C 64 68, 70 63, 76 68 C 80 72, 74 76, 60 72 C 46 76, 40 72, 44 68 Z"
-          fill="#5c3826"
-        />
+        {/* 4. CHAPÉU DE CHEF FRANCÊS (TOQUE BLANCHE VOLUMOSO COM VINCos) */}
+        <g id="chef-hat">
+          {/* Faixa Base do Chapéu */}
+          <rect x="74" y="86" width="52" height="13" rx="4" fill="#E2E8F0" stroke="#CBD5E1" strokeWidth="1" />
+          {/* Cúpula Alta com Dobras e Pregas */}
+          <path
+            d="M 73 87 C 62 80 56 60 70 48 C 76 42 86 42 90 46 C 94 36 106 36 110 46 C 114 42 124 42 130 48 C 144 60 138 80 127 87 Z"
+            fill="url(#hatGrad)"
+            stroke="#CBD5E1"
+            strokeWidth="1.5"
+          />
+          {/* Vincos de Volume no Tecido */}
+          <path d="M 86 52 Q 88 74 88 86" stroke="#CBD5E1" strokeWidth="1.5" strokeLinecap="round" opacity="0.8" />
+          <path d="M 100 44 Q 100 70 100 86" stroke="#CBD5E1" strokeWidth="1.5" strokeLinecap="round" opacity="0.8" />
+          <path d="M 114 52 Q 112 74 112 86" stroke="#CBD5E1" strokeWidth="1.5" strokeLinecap="round" opacity="0.8" />
+        </g>
 
-        {/* Oculos Escuros Quadrados Pretos */}
-        <rect x="41" y="52" width="16" height="11" rx="2.5" fill="#0f172a" stroke="#334155" strokeWidth="1.2" />
-        <rect x="63" y="52" width="16" height="11" rx="2.5" fill="#0f172a" stroke="#334155" strokeWidth="1.2" />
-        <line x1="57" y1="56" x2="63" y2="56" stroke="#0f172a" strokeWidth="2" />
-        <line x1="43" y1="54" x2="49" y2="60" stroke="#38bdf8" strokeWidth="1.2" strokeLinecap="round" opacity="0.8" />
-        <line x1="65" y1="54" x2="71" y2="60" stroke="#38bdf8" strokeWidth="1.2" strokeLinecap="round" opacity="0.8" />
+        {/* 5. ÓCULOS ESCUROS QUADRADOS PRETOS COM REFLEXO DIAGONAL */}
+        <g id="sunglasses">
+          {/* Ponte Central */}
+          <rect x="96" y="107" width="8" height="3.5" rx="1" fill="#18181B" />
+          {/* Lente e Armação Esquerda */}
+          <rect x="73" y="101" width="24" height="18" rx="4" fill="#09090B" stroke="#18181B" strokeWidth="2.5" />
+          {/* Reflexo Branco Diagonal Lente Esquerda */}
+          <path d="M 85 103 L 94 103 L 89 116 L 80 116 Z" fill="#FFFFFF" opacity="0.45" />
+          <path d="M 76 107 L 79 107 L 76 114 L 73 114 Z" fill="#FFFFFF" opacity="0.3" />
 
-        {/* Chapeu de Chef Branco Alto */}
-        <path
-          d="M38 46 C 30 38, 36 22, 48 20 C 52 14, 68 14, 72 20 C 84 22, 90 38, 82 46 Z"
-          fill="url(#hatGrad)"
-        />
-        <rect x="42" y="44" width="36" height="8" rx="2" fill="#ffffff" stroke="#cbd5e1" strokeWidth="0.8" />
-        <line x1="48" y1="48" x2="72" y2="48" stroke="#0d9488" strokeWidth="1" strokeLinecap="round" />
+          {/* Lente e Armação Direita */}
+          <rect x="103" y="101" width="24" height="18" rx="4" fill="#09090B" stroke="#18181B" strokeWidth="2.5" />
+          {/* Reflexo Branco Diagonal Lente Direita */}
+          <path d="M 115 103 L 124 103 L 119 116 L 110 116 Z" fill="#FFFFFF" opacity="0.45" />
+          <path d="M 106 107 L 109 107 L 106 114 L 103 114 Z" fill="#FFFFFF" opacity="0.3" />
+        </g>
 
-        {/* Mao Fazendo Sinal de Positivo Joinha */}
-        <g transform="translate(82, 76)">
-          <circle cx="10" cy="12" r="9" fill="url(#skinGrad)" stroke="#ea580c" strokeWidth="0.5" />
-          <rect x="7" y="0" width="6" height="10" rx="3" fill="url(#skinGrad)" />
-          <circle cx="10" cy="2" r="3" fill="url(#skinGrad)" />
-          <line x1="8" y1="8" x2="13" y2="8" stroke="#c2410c" strokeWidth="0.8" />
+        {/* 6. BIGODE CASTANHO ESCURO ESPESSO & CURVADO (ESTILO JACQUIN) */}
+        <g id="mustache">
+          <path
+            d="M 100 123
+               C 92 120 74 121 72 131
+               C 74 135 84 133 93 129
+               C 98 127 100 125 100 125
+               C 100 125 102 127 107 129
+               C 116 133 126 135 128 131
+               C 126 121 108 120 100 123 Z"
+            fill="#3E2723"
+            stroke="#271612"
+            strokeWidth="1.2"
+          />
+          {/* Pontas Curvadas Para Cima */}
+          <path d="M 72 131 Q 68 127 69 123" stroke="#3E2723" strokeWidth="2.2" strokeLinecap="round" />
+          <path d="M 128 131 Q 132 127 131 123" stroke="#3E2723" strokeWidth="2.2" strokeLinecap="round" />
+        </g>
+
+        {/* 7. MÃO COM SINAL DE POSITIVO ("JOINHA") NA LATERAL DIREITA */}
+        <g id="thumbs-up">
+          {/* Polegar Para Cima */}
+          <path
+            d="M 152 148 C 152 140 156 134 160 134 C 163 134 165 138 165 146 L 165 155 Z"
+            fill="#F5D0A9"
+            stroke="#E8B888"
+            strokeWidth="1.2"
+          />
+          {/* Punho Fechado */}
+          <rect x="146" y="152" width="20" height="18" rx="6" fill="#F5D0A9" stroke="#E8B888" strokeWidth="1.2" />
+          {/* Dobras dos Dedos */}
+          <path d="M 150 157 L 162 157" stroke="#D79E72" strokeWidth="1.2" strokeLinecap="round" />
+          <path d="M 150 162 L 162 162" stroke="#D79E72" strokeWidth="1.2" strokeLinecap="round" />
+          {/* Unha do Polegar */}
+          <ellipse cx="161" cy="138" rx="2" ry="2.5" fill="#FFE8D6" opacity="0.8" />
         </g>
       </svg>
     </div>
   );
-}
+};

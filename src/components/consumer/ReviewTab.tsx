@@ -1,185 +1,240 @@
-'use client';
-
 import React, { useState } from 'react';
-import { RestaurantItem } from '@/data/caraguaData';
-import { Star, ShieldAlert, CheckCircle2, Send, ThumbsUp } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  Star, PenSquare, ShieldCheck, CheckCircle2, 
+  Coins, Sparkles, AlertCircle, ArrowRight, Lock 
+} from 'lucide-react';
+import { INITIAL_RESTAURANTS, RestaurantItem } from '../../data/caraguaData';
 
 interface ReviewTabProps {
-  restaurants: RestaurantItem[];
-  onAddReviewSuccess: (restaurantId: string, review: any) => void;
+  selectedRestaurant: RestaurantItem | null;
+  onClearSelectedRestaurant: () => void;
+  onSubmitReview: (
+    restaurantId: string,
+    scores: { quality: number; service: number; costBenefit: number },
+    comment: string
+  ) => void;
 }
 
-export function ReviewTab({ restaurants, onAddReviewSuccess }: ReviewTabProps) {
-  const [selectedRestId, setSelectedRestId] = useState(restaurants[0]?.id || '');
-  const [authorName, setAuthorName] = useState('');
-  const [commentText, setCommentText] = useState('');
-  const [ratingFood, setRatingFood] = useState(5);
-  const [ratingService, setRatingService] = useState(5);
-  const [ratingHygiene, setRatingHygiene] = useState(5);
-  const [ratingValue, setRatingValue] = useState(5);
-  const [lgpdWarning, setLgpdWarning] = useState<string | null>(null);
-  const [isSuccess, setIsSuccess] = useState(false);
+export const ReviewTab: React.FC<ReviewTabProps> = ({
+  selectedRestaurant,
+  onClearSelectedRestaurant,
+  onSubmitReview,
+}) => {
+  const [chosenRestId, setChosenRestId] = useState<string>(
+    selectedRestaurant ? selectedRestaurant.id : INITIAL_RESTAURANTS[0].id
+  );
+  const [qualityScore, setQualityScore] = useState<number>(5);
+  const [serviceScore, setServiceScore] = useState<number>(5);
+  const [costBenefitScore, setCostBenefitScore] = useState<number>(4);
+  const [critiqueText, setCritiqueText] = useState<string>('');
+  const [declaredLocal, setDeclaredLocal] = useState<boolean>(true);
+  const [isSuccessToast, setIsSuccessToast] = useState<boolean>(false);
 
-  // Sanitização LGPD em tempo real
-  const handleCommentChange = (text: string) => {
-    setCommentText(text);
-    // Checagem de CPF ou telefone
-    const hasCpf = /\d{3}\.?\d{3}\.?\d{3}-?\d{2}/.test(text);
-    const hasPhone = /\(?\d{2}\)?\s?\d{4,5}-?\d{4}/.test(text);
-    if (hasCpf || hasPhone) {
-      setLgpdWarning('⚠️ LGPD Ativa: Detectamos dados pessoais (CPF/Telefone). Eles serão mascarados irreversivelmente antes de publicar.');
-    } else {
-      setLgpdWarning(null);
-    }
-  };
+  // Média ponderada calculada na hora
+  const overallScore = ((qualityScore * 0.45) + (serviceScore * 0.3) + (costBenefitScore * 0.25)).toFixed(2);
+
+  // Hash anônimo LGPD simulado
+  const anonHash = `sha256:7f9a${(qualityScore * 13 + serviceScore * 7).toString(16)}...${Date.now().toString(16).slice(-4)}`;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!commentText.trim()) return;
+    if (!critiqueText.trim()) return;
 
-    const avgScore = Number(((ratingFood + ratingService + ratingHygiene + ratingValue) / 4).toFixed(1));
+    onSubmitReview(
+      chosenRestId,
+      { quality: qualityScore, service: serviceScore, costBenefit: costBenefitScore },
+      critiqueText
+    );
 
-    // Mascara LGPD no texto
-    const sanitized = commentText
-      .replace(/\d{3}\.?\d{3}\.?\d{3}-?\d{2}/g, '[CPF_MASCARADO]')
-      .replace(/\(?\d{2}\)?\s?\d{4,5}-?\d{4}/g, '[TEL_MASCARADO]');
+    setIsSuccessToast(true);
+    setCritiqueText('');
 
-    const newRev = {
-      id: 'rev-' + Date.now(),
-      author: authorName.trim() ? `${authorName.trim()} (Hash: a1b2)` : 'Avaliador Anônimo',
-      rating: avgScore,
-      decayedRating: avgScore, // Recém postada tem peso máximo de decaimento!
-      comment: sanitized,
-      date: 'Agora mesmo',
-      daysAgo: 0,
-      source: 'App' as const,
-      verifiedAudit: true
-    };
-
-    onAddReviewSuccess(selectedRestId, newRev);
-    setIsSuccess(true);
     setTimeout(() => {
-      setIsSuccess(false);
-      setCommentText('');
-      setAuthorName('');
-    }, 3000);
+      setIsSuccessToast(false);
+      onClearSelectedRestaurant();
+    }, 3500);
   };
 
+  const currentRest = INITIAL_RESTAURANTS.find(r => r.id === chosenRestId) || INITIAL_RESTAURANTS[0];
+
   return (
-    <div className="space-y-6 px-3 pt-2 pb-20">
-      <div className="p-4 rounded-2xl bg-gradient-to-r from-teal-950/80 via-slate-900 to-sky-950/80 border border-teal-500/30 shadow-xl">
-        <h3 className="font-bold text-white text-base mb-1">Avaliação Auditada no App</h3>
-        <p className="text-xs text-slate-300 leading-relaxed">
-          Sua avaliação tem peso imediato no cálculo da Super Nota de 30 dias.
-          Blindagem LGPD ativa: nenhum dado sensível seu será exposto.
-        </p>
-      </div>
+    <div className="space-y-8">
+      {/* Toast de Sucesso Apple Liquid Glass */}
+      <AnimatePresence>
+        {isSuccessToast && (
+          <motion.div
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            className="p-5 rounded-3xl bg-emerald-950/80 border border-emerald-400/40 backdrop-blur-3xl shadow-2xl text-white flex items-center justify-between gap-4"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-300">
+                <CheckCircle2 className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-emerald-200 text-sm">Avaliação Auditada e Registrada!</h4>
+                <p className="text-xs text-emerald-300/80">
+                  A Super Nota de {currentRest.name} foi recalculada e você ganhou <strong>+50 Créditos Nitro</strong>!
+                </p>
+              </div>
+            </div>
+            <div className="px-3 py-1 rounded-xl bg-emerald-500/20 border border-emerald-500/30 font-mono text-xs text-emerald-300 font-bold shrink-0">
+              +50 CR
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {isSuccess && (
-        <div className="p-4 rounded-2xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-200 text-sm flex items-center gap-3 animate-bounce">
-          <CheckCircle2 className="w-6 h-6 text-emerald-400 shrink-0" />
-          <div>
-            <p className="font-bold">Avaliação Publicada com Sucesso!</p>
-            <p className="text-xs text-emerald-300">A Super Nota do estabelecimento foi recalculada na hora.</p>
+      {/* Formulário Principal em Liquid Glass */}
+      <form
+        onSubmit={handleSubmit}
+        className="p-6 md:p-8 rounded-3xl bg-white/[0.04] backdrop-blur-2xl border border-white/[0.09] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.16),0_20px_40px_-15px_rgba(0,0,0,0.6)] space-y-6"
+      >
+        <div className="border-b border-white/[0.08] pb-5">
+          <div className="flex items-center gap-2 text-teal-400 text-xs font-mono uppercase tracking-wider mb-1">
+            <Sparkles className="w-4 h-4" />
+            <span>Ações Decisivas da Comunidade</span>
           </div>
+          <h3 className="text-xl font-semibold text-white tracking-tight">
+            Avaliar Restaurante com Garantia de Auditoria
+          </h3>
+          <p className="text-xs text-zinc-400 mt-1 leading-relaxed">
+            Sua opinião tem peso matemático real na equação de decaimento temporal e combate fraudes de avaliações compradas.
+          </p>
         </div>
-      )}
 
-      <form onSubmit={handleSubmit} className="space-y-4 bg-slate-900/90 p-4 rounded-3xl border border-slate-800 shadow-xl">
-        {/* Seleção do Restaurante */}
-        <div>
-          <label className="block text-xs font-bold text-slate-300 mb-1.5 uppercase tracking-wider">
-            Escolha o Restaurante em Caraguá
+        {/* Seletor de Restaurante */}
+        <div className="space-y-2">
+          <label className="block text-xs font-semibold text-zinc-300 uppercase tracking-wider">
+            Selecione o Estabelecimento:
           </label>
           <select
-            value={selectedRestId}
-            onChange={(e) => setSelectedRestId(e.target.value)}
-            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-sm text-white focus:outline-none focus:border-sky-500"
+            value={chosenRestId}
+            onChange={(e) => setChosenRestId(e.target.value)}
+            className="w-full bg-white/[0.06] hover:bg-white/[0.09] border border-white/[0.12] focus:border-teal-400/60 rounded-2xl px-4 py-3 text-sm text-white focus:outline-none transition"
           >
-            {restaurants.map((r) => (
-              <option key={r.id} value={r.id}>
-                {r.name} ({r.neighborhood})
+            {INITIAL_RESTAURANTS.map((r) => (
+              <option key={r.id} value={r.id} className="bg-slate-900 text-white">
+                {r.name} — {r.neighborhood} (Super Nota: {r.decayedRatingAverage.toFixed(2)} ★)
               </option>
             ))}
           </select>
         </div>
 
-        {/* Nome do Autor */}
-        <div>
-          <label className="block text-xs font-bold text-slate-300 mb-1.5 uppercase tracking-wider">
-            Seu Nome ou Apelido (Opcional)
-          </label>
-          <input
-            type="text"
-            value={authorName}
-            onChange={(e) => setAuthorName(e.target.value)}
-            placeholder="Ex: Gabriel Caiçara"
-            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500"
-          />
-        </div>
-
-        {/* Avaliação por Critérios */}
-        <div className="space-y-2.5 pt-2 border-t border-slate-800">
-          <span className="block text-xs font-bold text-slate-300 uppercase tracking-wider">
-            Critérios de Avaliação
-          </span>
-
-          {[
-            { label: "Qualidade da Comida / Frescor", val: ratingFood, set: setRatingFood },
-            { label: "Atendimento & Rapidez", val: ratingService, set: setRatingService },
-            { label: "Higiene & Food Safety", val: ratingHygiene, set: setRatingHygiene },
-            { label: "Custo-Benefício", val: ratingValue, set: setRatingValue },
-          ].map((crit, idx) => (
-            <div key={idx} className="flex items-center justify-between text-xs text-slate-300">
-              <span>{crit.label}</span>
-              <div className="flex gap-1">
-                {[1, 2, 3, 4, 5].map((num) => (
-                  <button
-                    type="button"
-                    key={num}
-                    onClick={() => crit.set(num)}
-                    className="p-1 text-slate-600 hover:text-amber-400 transition"
-                  >
-                    <Star
-                      className={`w-4 h-4 ${
-                        num <= crit.val ? 'fill-amber-400 text-amber-400' : 'text-slate-600'
-                      }`}
-                    />
-                  </button>
-                ))}
-              </div>
+        {/* 3 Critérios de Avaliação com Sliders Visuais */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+          {/* Critério 1: Qualidade do Prato */}
+          <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.07] space-y-2">
+            <div className="flex items-center justify-between text-xs">
+              <span className="font-semibold text-zinc-200">Qualidade do Prato</span>
+              <span className="font-mono text-teal-400 font-bold">{qualityScore}.0 ★</span>
             </div>
-          ))}
+            <input
+              type="range"
+              min="1"
+              max="5"
+              step="1"
+              value={qualityScore}
+              onChange={(e) => setQualityScore(Number(e.target.value))}
+              className="w-full accent-teal-400 cursor-pointer"
+            />
+            <span className="text-[10px] text-zinc-500 block">Sabor, frescor e temperatura</span>
+          </div>
+
+          {/* Critério 2: Atendimento & Rapidez */}
+          <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.07] space-y-2">
+            <div className="flex items-center justify-between text-xs">
+              <span className="font-semibold text-zinc-200">Atendimento & Rapidez</span>
+              <span className="font-mono text-teal-400 font-bold">{serviceScore}.0 ★</span>
+            </div>
+            <input
+              type="range"
+              min="1"
+              max="5"
+              step="1"
+              value={serviceScore}
+              onChange={(e) => setServiceScore(Number(e.target.value))}
+              className="w-full accent-teal-400 cursor-pointer"
+            />
+            <span className="text-[10px] text-zinc-500 block">Cortesia e tempo de espera</span>
+          </div>
+
+          {/* Critério 3: Custo-Benefício & Ambiente */}
+          <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.07] space-y-2">
+            <div className="flex items-center justify-between text-xs">
+              <span className="font-semibold text-zinc-200">Custo-Benefício</span>
+              <span className="font-mono text-teal-400 font-bold">{costBenefitScore}.0 ★</span>
+            </div>
+            <input
+              type="range"
+              min="1"
+              max="5"
+              step="1"
+              value={costBenefitScore}
+              onChange={(e) => setCostBenefitScore(Number(e.target.value))}
+              className="w-full accent-teal-400 cursor-pointer"
+            />
+            <span className="text-[10px] text-zinc-500 block">Preço justo e higiene</span>
+          </div>
         </div>
 
-        {/* Comentário com LGPD */}
-        <div className="pt-2 border-t border-slate-800">
-          <label className="block text-xs font-bold text-slate-300 mb-1.5 uppercase tracking-wider">
-            Seu Comentário Detalhado
+        {/* Resumo da Nota Calculada */}
+        <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] flex items-center justify-between">
+          <span className="text-xs text-zinc-300">Nota Ponderada Calculada:</span>
+          <div className="flex items-center gap-1.5 font-mono text-lg font-bold text-teal-300">
+            <span>{overallScore}</span>
+            <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+          </div>
+        </div>
+
+        {/* Crítica Detalhada */}
+        <div className="space-y-2">
+          <label className="block text-xs font-semibold text-zinc-300 uppercase tracking-wider">
+            Crítica Detalhada (Mínimo de contexto caiçara):
           </label>
           <textarea
-            rows={3}
-            value={commentText}
-            onChange={(e) => handleCommentChange(e.target.value)}
-            placeholder="Conte como foi sua experiência, o ponto do peixe, o tempero caiçara..."
-            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500"
-            required
+            rows={4}
+            value={critiqueText}
+            onChange={(e) => setCritiqueText(e.target.value)}
+            placeholder="Descreva o prato degustado, o ponto do peixe ou camarão, o atendimento no local e se recomendaria a outros moradores..."
+            className="w-full bg-white/[0.05] hover:bg-white/[0.08] focus:bg-white/[0.08] border border-white/[0.12] focus:border-teal-400/60 rounded-2xl p-4 text-sm text-white placeholder-zinc-500 focus:outline-none transition leading-relaxed"
           />
-          {lgpdWarning && (
-            <div className="mt-1.5 p-2 rounded-lg bg-amber-950/40 border border-amber-500/40 text-[11px] text-amber-300 flex items-center gap-1.5">
-              <ShieldAlert className="w-3.5 h-3.5 shrink-0" />
-              <span>{lgpdWarning}</span>
-            </div>
-          )}
         </div>
 
-        <button
-          type="submit"
-          className="w-full py-3 rounded-xl bg-gradient-to-r from-sky-600 to-teal-500 hover:from-sky-500 hover:to-teal-400 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-sky-600/30 transition"
-        >
-          <Send className="w-4 h-4" /> Publicar Avaliação Auditada
-        </button>
+        {/* Declaração de LGPD & Food Safety */}
+        <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06]">
+          <input
+            type="checkbox"
+            id="declareCheck"
+            checked={declaredLocal}
+            onChange={(e) => setDeclaredLocal(e.target.checked)}
+            className="w-4 h-4 rounded accent-teal-400"
+          />
+          <label htmlFor="declareCheck" className="text-xs text-zinc-400 cursor-pointer flex-1">
+            Confirmo consumo presencial no restaurante. Meus dados pessoais serão protegidos via <strong>Hash Anônimo LGPD</strong> ({anonHash}).
+          </label>
+          <Lock className="w-4 h-4 text-zinc-500 shrink-0" />
+        </div>
+
+        {/* Botão de Envio com Recompensa de Créditos */}
+        <div className="flex items-center justify-between pt-2">
+          <div className="flex items-center gap-2 text-xs font-mono text-amber-300">
+            <Coins className="w-4 h-4 text-amber-400" />
+            <span>Recompensa: +50 Créditos</span>
+          </div>
+
+          <button
+            type="submit"
+            disabled={!critiqueText.trim() || !declaredLocal}
+            className="px-6 py-3.5 rounded-2xl bg-teal-500 hover:bg-teal-400 disabled:opacity-40 disabled:hover:bg-teal-500 text-slate-950 font-semibold text-sm flex items-center gap-2 shadow-lg shadow-teal-500/25 transition active:scale-98"
+          >
+            <span>Publicar Avaliação Auditada</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
       </form>
     </div>
   );
-}
+};

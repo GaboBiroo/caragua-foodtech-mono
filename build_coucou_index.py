@@ -1,0 +1,2304 @@
+# -*- coding: utf-8 -*-
+"""
+build_coucou_index.py
+Gera o arquivo index.html no padrão Coucou Tactile Editorial + Apple Liquid Glass + iFood UX.
+Código completo, espaçado, modular, com 7 vistas funcionais, Dynamic Island e Mascote Vivo a 60fps.
+"""
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent
+
+html_code = r'''<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Caraguá FoodTech — Agregador Gastronômico com IA & RAG Hiperlocal</title>
+
+  <!-- Tipografia Editorial: Plus Jakarta Sans, Instrument Serif e JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       1. DESIGN TOKENS: WARM COASTAL EDITORIAL (ALTO CONTRASTE & APPLE LIQUID GLASS)
+       ========================================================================== */
+    :root {
+      /* Superfícies & Fundos */
+      --bg-canvas: #F6F2EB;            /* Areia Quente Editorial / Warm Alabaster */
+      --bg-subtle: #EDE6DC;            /* Pedra suave para caixas técnicas e inputs */
+      --bg-card: #FFFFFF;              /* Branco puro para cards */
+      --bg-ocean-anchor: #0B2B26;       /* Verde-Oceano Profundo Sólido (Âncora de Contraste) */
+      --bg-island: #141413;             /* Grafite Profundo Apple/Coucou para a Dynamic Island */
+
+      /* Tints Cromáticos Suaves */
+      --bg-teal-tint: #F0FDFA;
+      --bg-amber-tint: #FFFBEB;
+      --bg-rose-tint: #FFF1F2;
+      --bg-emerald-tint: #ECFDF5;
+
+      /* Bordas Arquiteturais */
+      --border-hairline: #E2D9CC;
+      --border-strong: #D4D4D8;
+      --border-teal: #99F6E4;
+      --border-island: rgba(255, 255, 255, 0.14);
+
+      /* Tipografia & Hierarquia de Contraste */
+      --text-primary: #18181B;         /* Preto grafite de alta legibilidade AAA */
+      --text-secondary: #52525B;       /* Zinco escuro para subtítulos */
+      --text-muted: #71717A;           /* Cinza neutro para metadados */
+      --text-on-ocean: #F6F2EB;        /* Alabaster para texto sobre verde-oceano */
+
+      /* Cores de Acento & Semântica */
+      --accent-brand: #0D9488;         /* Verde-Água Caiçara Sólido */
+      --accent-brand-hover: #0F766E;
+      --accent-promo: #E11D48;         /* Coral / Vermelho Vibrante iFood */
+      --accent-safety: #059669;        /* Verde Esmeralda para Food Safety / Vegano */
+      --accent-credit: #D97706;        /* Âmbar Dourado para Super Nota e Nitro */
+
+      /* Fontes */
+      --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-serif: 'Instrument Serif', Georgia, serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+
+      /* Física de Animação (Figma Smart Animate & After Effects Springs) */
+      --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* Reset & Base */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-canvas);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    .mono {
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .serif {
+      font-family: var(--font-serif);
+      font-style: italic;
+    }
+
+    /* Ícones Vetoriais SVG Inline */
+    .ic {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.85;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+
+    /* ==========================================================================
+       2. COMPONENTES DE SUPERFÍCIE: APPLE LIQUID GLASS & CARDS TÁTEIS
+       ========================================================================== */
+    .glass {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 4px 20px -2px rgba(24, 24, 27, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-hairline);
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: 0 2px 6px rgba(20, 20, 19, 0.03), 0 14px 34px -10px rgba(20, 20, 19, 0.07);
+      transition: border-color 0.25s var(--ease), box-shadow 0.25s var(--ease), transform 0.25s var(--ease);
+    }
+
+    .card:hover {
+      border-color: var(--border-strong);
+      box-shadow: 0 4px 12px rgba(20, 20, 19, 0.05), 0 20px 40px -12px rgba(20, 20, 19, 0.10);
+    }
+
+    .nitro-card {
+      border: 2px solid var(--accent-brand) !important;
+      box-shadow: 0 10px 32px -8px rgba(13, 148, 136, 0.18) !important;
+    }
+
+    /* ==========================================================================
+       3. DYNAMIC ISLAND VIVA (INSPIRADA EM LOUIS-CFM/COUCOU)
+       ========================================================================== */
+    #isl {
+      position: fixed;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 50;
+      background: var(--bg-island);
+      color: var(--text-on-ocean);
+      border: 1px solid var(--border-island);
+      border-radius: 26px;
+      width: 220px;
+      height: 46px;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 12px 32px -6px rgba(14, 14, 13, 0.55), 0 2px 8px rgba(0, 0, 0, 0.25);
+      transition: width 0.45s var(--spring), height 0.45s var(--spring), border-radius 0.45s var(--ease);
+      user-select: none;
+    }
+
+    #isl:hover {
+      width: 340px;
+    }
+
+    #isl.exp {
+      width: min(540px, 94vw);
+      height: 168px;
+      border-radius: 30px;
+      cursor: default;
+    }
+
+    #isli {
+      padding: 8px 14px;
+      min-width: min(540px, 94vw);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    #isl .ir {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      height: 30px;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    #isl .pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #34D399;
+      animation: pulseGreen 1.6s infinite;
+      margin-left: auto;
+    }
+
+    #isl .ix {
+      opacity: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    #isl.exp .ix {
+      opacity: 1;
+      pointer-events: auto;
+      transition-delay: 0.12s;
+    }
+
+    @keyframes pulseGreen {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(1.2); }
+    }
+
+    /* ==========================================================================
+       4. MASCOTE INTERATIVO "CHEF JACQUIN PRAIANO" (60FPS CURSOR TRACKING)
+       ========================================================================== */
+    .jac {
+      overflow: visible;
+      display: inline-block;
+      vertical-align: middle;
+      transition: transform 0.2s var(--spring);
+    }
+
+    .jface {
+      transform: translate(calc(var(--dx, 0) * 1px), calc(var(--dy, 0) * 0.8px));
+      transition: transform 0.08s linear;
+    }
+
+    .jgl {
+      transform: translate(calc(var(--dx, 0) * 1.5px), calc(var(--dy, 0) * 1.2px));
+      transition: transform 0.08s linear;
+    }
+
+    .jhat {
+      transform: translate(calc(var(--dx, 0) * 0.4px), calc(var(--dy, 0) * 0.3px));
+      transition: transform 0.08s linear;
+    }
+
+    .jhand {
+      transform-box: fill-box;
+      transform-origin: 50% 100%;
+    }
+
+    .jac:hover .jhand {
+      animation: waveHand 0.85s var(--spring);
+    }
+
+    @keyframes waveHand {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-14deg); }
+      60% { transform: rotate(10deg); }
+    }
+
+    .jac.jump {
+      animation: happyJump 0.7s var(--spring);
+    }
+
+    @keyframes happyJump {
+      0% { transform: translateY(0); }
+      35% { transform: translateY(-16px) scaleY(1.05); }
+      70% { transform: translateY(0) scaleY(0.95); }
+      100% { transform: none; }
+    }
+
+    /* ==========================================================================
+       5. ESTRUTURA GERAL (GRID WIDESCREEN & RESPONSIVIDADE)
+       ========================================================================== */
+    .shell {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr) 320px;
+      max-width: 1480px;
+      margin: 0 auto;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Âncora Verde-Oceano (#0B2B26) */
+    nav {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 24px 16px;
+      background: var(--bg-ocean-anchor);
+      color: var(--text-on-ocean);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      overflow-y: auto;
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      z-index: 20;
+    }
+
+    nav .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding: 0 8px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      margin-bottom: 12px;
+    }
+
+    nav .brand b {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      display: block;
+      color: #FFFFFF;
+    }
+
+    nav .brand small {
+      color: #9DB8B1;
+      font-size: 11px;
+      font-family: var(--font-mono);
+    }
+
+    nav button {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      width: 100%;
+      padding: 11px 14px;
+      border: 0;
+      background: none;
+      border-radius: 14px;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 500;
+      color: #C9DDD8;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.2s, color 0.2s, transform 0.15s;
+    }
+
+    nav button:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #FFFFFF;
+    }
+
+    nav button.on {
+      background: #F6F2EB;
+      color: var(--bg-ocean-anchor);
+      font-weight: 700;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    nav .wal {
+      margin-top: auto;
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #FFFFFF;
+    }
+
+    /* Conteúdo Principal */
+    main {
+      padding: 82px 32px 80px;
+      min-width: 0;
+    }
+
+    main h2 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--text-primary);
+    }
+
+    main .sub {
+      color: var(--text-secondary);
+      margin: 4px 0 20px;
+      max-width: 68ch;
+      font-size: 15px;
+    }
+
+    /* Painel Direito (Contextual) */
+    aside {
+      padding: 82px 20px 40px;
+      border-left: 1px solid var(--border-hairline);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Hero Banner do Bairro Ativo */
+    .hero {
+      background: var(--bg-ocean-anchor);
+      color: var(--text-on-ocean);
+      border-radius: 28px;
+      padding: 28px 32px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-end;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+      box-shadow: 0 12px 36px -10px rgba(11, 43, 38, 0.35);
+    }
+
+    .hero h1 {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 44px;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: #F6F2EB;
+    }
+
+    .hero .eyebrow {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #7FD1C6;
+      margin-bottom: 4px;
+    }
+
+    .hero p {
+      color: #B7CFC9;
+      font-size: 14px;
+      margin-top: 6px;
+    }
+
+    .hero .btn {
+      background: rgba(255, 255, 255, 0.08);
+      color: #E9F3F0;
+      border-color: rgba(255, 255, 255, 0.18);
+    }
+
+    .hero .btn:hover {
+      border-color: rgba(255, 255, 255, 0.45);
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    .hero .btn.on {
+      background: #F6F2EB;
+      color: var(--bg-ocean-anchor);
+      border-color: #F6F2EB;
+      font-weight: 700;
+    }
+
+    .hero .btn.t {
+      background: var(--accent-brand);
+      border-color: var(--accent-brand);
+      color: #FFFFFF;
+    }
+
+    /* ==========================================================================
+       6. ELEMENTOS DE UI: BOTÕES, INPUTS, CHIPS & FOTOS
+       ========================================================================== */
+    .row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .sp {
+      justify-content: space-between;
+    }
+
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 18px;
+    }
+
+    .btn {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      border: 1px solid var(--border-hairline);
+      background: #FFFFFF;
+      color: var(--text-primary);
+      padding: 9px 15px;
+      border-radius: 14px;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s var(--ease);
+      user-select: none;
+    }
+
+    .btn:hover {
+      border-color: var(--border-strong);
+      transform: translateY(-1px);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn.p {
+      background: var(--text-primary);
+      color: #FFFFFF;
+      border-color: var(--text-primary);
+    }
+
+    .btn.p:hover {
+      background: #27272A;
+    }
+
+    .btn.t {
+      background: var(--accent-brand);
+      border-color: var(--accent-brand);
+      color: #FFFFFF;
+    }
+
+    .btn.t:hover {
+      background: var(--accent-brand-hover);
+    }
+
+    .btn.on {
+      background: var(--text-primary);
+      color: #FFFFFF;
+      border-color: var(--text-primary);
+    }
+
+    .chip {
+      display: inline-flex;
+      gap: 5px;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 99px;
+      background: var(--bg-subtle);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-hairline);
+    }
+
+    .chip.promo {
+      background: var(--bg-rose-tint);
+      color: var(--accent-promo);
+      border-color: #FECDD3;
+    }
+
+    .chip.safe {
+      background: var(--bg-emerald-tint);
+      color: var(--accent-safety);
+      border-color: #A7F3D0;
+    }
+
+    .chip.credit {
+      background: var(--bg-amber-tint);
+      color: var(--accent-credit);
+      border-color: #FDE68A;
+    }
+
+    .chip.teal {
+      background: var(--bg-teal-tint);
+      color: var(--accent-brand);
+      border-color: var(--border-teal);
+    }
+
+    input, select, textarea {
+      font-family: var(--font-sans);
+      font-size: 14px;
+      padding: 10px 14px;
+      border: 1px solid var(--border-hairline);
+      border-radius: 14px;
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      width: 100%;
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent-brand);
+      background: #FFFFFF;
+      box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+    }
+
+    input[type="checkbox"] {
+      width: auto;
+      accent-color: var(--accent-brand);
+      cursor: pointer;
+    }
+
+    input[type="range"] {
+      padding: 0;
+      accent-color: var(--accent-brand);
+      cursor: pointer;
+    }
+
+    label.tg {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      font-size: 14px;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    /* Fotografia Gastronômica com Efeito Editorial */
+    .photo {
+      position: relative;
+      aspect-ratio: 16 / 10;
+      border-radius: 18px;
+      background-position: center;
+      background-size: 102%;
+      margin: 12px 0;
+      overflow: hidden;
+      transition: background-size 0.65s var(--ease);
+    }
+
+    .card:hover .photo {
+      background-size: 110%;
+    }
+
+    .photo .badges {
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      z-index: 2;
+    }
+
+    .photo .chip {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    /* Caixa de Síntese RAG & Alertas Food Safety */
+    .ai-box {
+      background: var(--bg-teal-tint);
+      border: 1px solid var(--border-teal);
+      border-radius: 16px;
+      padding: 14px 16px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .safe-banner {
+      background: var(--accent-safety);
+      color: #FFFFFF;
+      border-radius: 16px;
+      padding: 14px 18px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 14px;
+    }
+
+    /* Tabelas & Pré-formatados Técnicos */
+    pre {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-hairline);
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 12px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+
+    td, th {
+      text-align: left;
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--border-hairline);
+    }
+
+    th {
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    tr[data-sel] {
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    tr[data-sel]:hover {
+      background: var(--bg-teal-tint);
+    }
+
+    /* Avaliações Auditadas & Respostas Oficiais */
+    .rev {
+      border-top: 1px solid var(--border-hairline);
+      padding: 12px 0;
+      font-size: 14px;
+    }
+
+    .reply-box {
+      margin-top: 8px;
+      padding: 10px 14px;
+      border-left: 3px solid var(--accent-brand);
+      background: var(--bg-teal-tint);
+      border-radius: 0 12px 12px 0;
+      font-size: 13px;
+    }
+
+    /* Toast Flutuante */
+    #toast {
+      position: fixed;
+      left: 50%;
+      bottom: 28px;
+      transform: translate(-50%, 20px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
+      padding: 14px 22px;
+      border-radius: 18px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      z-index: 60;
+      max-width: 90vw;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    #toast.on {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    /* Concierge Drawer Lateral */
+    #drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100%;
+      width: min(440px, 100vw);
+      z-index: 55;
+      transform: translateX(105%);
+      transition: transform 0.35s var(--ease);
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      gap: 14px;
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: -15px 0 45px rgba(20, 20, 19, 0.15);
+    }
+
+    #drawer.on {
+      transform: none;
+    }
+
+    #msgs {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Entrada Escalonada (Stagger Animations) */
+    @keyframes staggerUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    main.enter .stack > *, main.enter .grid > * {
+      animation: staggerUp 0.5s var(--ease) both;
+      animation-delay: calc(var(--i, 0) * 45ms);
+    }
+
+    @keyframes heartPop {
+      0% { transform: scale(0.7); }
+      60% { transform: scale(1.35); }
+      100% { transform: scale(1); }
+    }
+
+    .liked svg {
+      animation: heartPop 0.45s var(--spring);
+      color: var(--accent-promo);
+      fill: var(--accent-promo);
+    }
+
+    /* Responsividade para Telas Menores */
+    @media (max-width: 1100px) {
+      .shell {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      aside {
+        display: none;
+      }
+      nav {
+        position: fixed;
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: auto;
+        z-index: 40;
+        flex-direction: row;
+        padding: 8px;
+        border-width: 1px 0 0;
+        justify-content: space-around;
+      }
+      nav .brand, nav .wal {
+        display: none;
+      }
+      nav button {
+        flex-direction: column;
+        gap: 3px;
+        font-size: 10px;
+        width: auto;
+        min-width: 54px;
+        align-items: center;
+        padding: 6px 4px;
+      }
+      main {
+        padding: 72px 16px 110px;
+      }
+      #isl {
+        top: 8px;
+      }
+      .hero h1 {
+        font-size: 32px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================================================
+       DYNAMIC ISLAND VIVA (ESTADOS: COMPACT, HOVER-PEEK, EXPANDED)
+       ========================================================================== -->
+  <div id="isl" aria-label="Dynamic Island do Jacquin">
+    <div id="isli"></div>
+  </div>
+
+  <!-- ==========================================================================
+       SHELL PRINCIPAL (SIDEBAR ÂNCORA + CONTEÚDO EDITORIAL + PAINEL DIREITO)
+       ========================================================================== -->
+  <div class="shell">
+    <nav id="nav"></nav>
+    <main id="main"></main>
+    <aside id="side"></aside>
+  </div>
+
+  <!-- TOAST DE FEEDBACK -->
+  <div id="toast" class="glass"></div>
+
+  <!-- DRAWER CONCIERGE DO CHEF JACQUIN PRAIANO -->
+  <div id="drawer" class="glass">
+    <div class="row sp">
+      <div class="row">
+        <span id="dav"></span>
+        <div>
+          <b style="font-size: 16px;">Chef Jacquin Praiano</b>
+          <div class="mono" style="font-size: 12px; color: var(--accent-brand);" id="dllm">LLM Manager Central</div>
+        </div>
+      </div>
+      <button class="btn" data-a="dr" aria-label="Fechar Gaveta"></button>
+    </div>
+
+    <!-- Pílulas dos 5 Estágios do RAG -->
+    <div class="row" id="stg" style="gap: 5px;"></div>
+
+    <!-- Histórico de Mensagens -->
+    <div id="msgs"></div>
+
+    <!-- Chips de Perguntas Rápidas -->
+    <div class="row" id="chips" style="gap: 6px;"></div>
+
+    <!-- Entrada de Pergunta Customizada -->
+    <div class="row" style="margin-top: auto;">
+      <input id="cq" placeholder="Pergunte ao Chef Jacquin..." style="flex: 1;">
+      <button class="btn p" data-a="ask">Enviar</button>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MOTOR JAVASCRIPT: DADOS, RAG, MOTION & ESTADO
+       ========================================================================== -->
+  <script>
+    /* --------------------------------------------------------------------------
+       1. BIBLIOTECA DE ÍCONES SVG PURA (ZERO DEPENDÊNCIA EXTERNA QUEBRADA)
+       -------------------------------------------------------------------------- */
+    const IC = {
+      grid: "M3 3h7v7H3z M14 3h7v7h-7z M14 14h7v7h-7z M3 14h7v7H3z",
+      search: "m21 21-4.3-4.3 M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16",
+      tag: "M12.6 2.6A2 2 0 0 0 11.2 2H4a2 2 0 0 0-2 2v7.2a2 2 0 0 0 .6 1.4l8.7 8.7a2.4 2.4 0 0 0 3.4 0l6.6-6.6a2.4 2.4 0 0 0 0-3.4z M7 7h.01",
+      trend: "M22 7 13.5 15.5 8.5 10.5 2 17 M16 7h6v6",
+      pen: "M12 20h9 M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z",
+      award: "M12 15a6 6 0 1 0 0-12 6 6 0 0 0 0 12 M8.2 13.9 7 23l5-3 5 3-1.2-9.1",
+      cpu: "M5 5h14v14H5z M9 9h6v6H9z M9 2v3 M15 2v3 M9 19v3 M15 19v3 M2 9h3 M2 15h3 M19 9h3 M19 15h3",
+      star: "M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z",
+      heart: "M12 21l-7-7c-3-3-1-9 4-9 2 0 3 1 3 2 0-1 1-2 3-2 5 0 7 6 4 9z",
+      pin: "M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z M12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6",
+      leaf: "M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.5 19 2c1 2 2 4.2 2 8 0 5.5-4.8 10-10 10z M2 21c0-3 1.9-5.5 6-7",
+      check: "M20 6 9 17l-5-5",
+      shield: "M20 13c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V5l8-3 8 3z M9 12l2 2 4-4",
+      zap: "M13 2 3 14h9l-1 8 10-12h-9l1-8z",
+      chat: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z",
+      x: "M18 6 6 18 M6 6l12 12"
+    };
+
+    const ic = (n, c = '') => `<svg class="ic ${c}" viewBox="0 0 24 24">${IC[n].split(' M').map((d, i) => `<path d="${i ? 'M' : ''}${d}"/>`).join('')}</svg>`;
+    document.querySelector('[data-a=dr]').innerHTML = ic('x');
+
+    /* --------------------------------------------------------------------------
+       2. MASCOTE VETORIAL FIEL À ARTE ORIGINAL DO IPAD + FÍSICA COUCOU
+       -------------------------------------------------------------------------- */
+    const drawFlower = (x, y, r) => [0, 72, 144, 216, 288].map(a => `<ellipse cx="${x}" cy="${y - r * 0.7}" rx="${r * 0.46}" ry="${r * 0.78}" transform="rotate(${a} ${x} ${y})"/>`).join('') + `<circle cx="${x}" cy="${y}" r="${r * 0.24}" fill="#1F8A7D"/>`;
+    const drawLeaf = (x, y, rot, l) => `<g transform="translate(${x} ${y}) rotate(${rot})" stroke="#FFFFFF" fill="none" stroke-linecap="round"><path d="M0 0V${-l}" stroke-width="2"/>${[0.25, 0.45, 0.65, 0.85].map(t => `<path d="M0 ${-l * t}q11 -3 17 ${-l * 0.1}M0 ${-l * t}q-11 -3 -17 ${-l * 0.1}" stroke-width="4"/>`).join('')}</g>`;
+
+    const jac = (s = 64) => `
+      <svg class="jac" width="${s}" height="${Math.round(s * 1.136)}" viewBox="0 0 220 250" role="img" aria-label="Chef Jacquin Praiano">
+        <defs>
+          <clipPath id="oc${s}">
+            <ellipse cx="110" cy="125" rx="88" ry="104"/>
+          </clipPath>
+        </defs>
+
+        <!-- Moldura Adesivo Oval: Contorno Preto, Borda Branca, Fundo Verde-Água #38A398 -->
+        <ellipse cx="110" cy="125" rx="98" ry="114" fill="#18181B"/>
+        <ellipse cx="110" cy="125" rx="94" ry="110" fill="#FFFFFF"/>
+        <ellipse cx="110" cy="125" rx="88" ry="104" fill="#38A398" stroke="#18181B" stroke-width="3"/>
+
+        <!-- Camisa Havaiana e Corpo dentro do ClipPath -->
+        <g clip-path="url(#oc${s})">
+          <path d="M18 252C22 192 58 160 110 156C162 160 198 192 202 252Z" fill="#1F8A7D" stroke="#18181B" stroke-width="3"/>
+          <g fill="#FFFFFF">
+            ${drawFlower(52, 182, 14)}
+            ${drawFlower(165, 205, 16)}
+            ${drawFlower(135, 240, 13)}
+            ${drawFlower(178, 168, 11)}
+            ${drawFlower(34, 222, 12)}
+            ${drawLeaf(150, 180, 38, 42)}
+            ${drawLeaf(78, 238, -28, 34)}
+            ${drawLeaf(184, 236, 24, 30)}
+          </g>
+          <!-- Gola V e Botões -->
+          <path d="M98 152L84 170L110 238L136 170L122 152L110 196Z" fill="#197267" stroke="#18181B" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M98 152L110 196L122 152Z" fill="#DFC19B" stroke="#18181B" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M110 196V252" stroke="#18181B" stroke-width="2.5"/>
+          <g fill="#18181B">
+            <circle cx="110" cy="206" r="3.5"/>
+            <circle cx="110" cy="222" r="3.5"/>
+            <circle cx="110" cy="238" r="3.5"/>
+          </g>
+
+          <!-- Mão Fazendo Sinal Anatômico de Joinha (Thumbs-Up) -->
+          <g class="jhand" fill="#EAD2AC" stroke="#18181B" stroke-width="2.5" stroke-linejoin="round">
+            <rect x="62" y="198" width="36" height="9" rx="4.5"/>
+            <rect x="62" y="189" width="36" height="9" rx="4.5"/>
+            <rect x="62" y="180" width="36" height="9" rx="4.5"/>
+            <rect x="62" y="171" width="24" height="9" rx="4.5"/>
+            <rect x="63" y="148" width="12" height="28" rx="6"/>
+          </g>
+        </g>
+
+        <!-- Rosto com Física de Parallax -->
+        <g class="jface">
+          <rect x="100" y="138" width="20" height="20" fill="#DFC19B" stroke="#18181B" stroke-width="2.5"/>
+          <ellipse cx="70" cy="112" rx="7" ry="11" fill="#EAD2AC" stroke="#18181B" stroke-width="2.5"/>
+          <ellipse cx="150" cy="112" rx="7" ry="11" fill="#EAD2AC" stroke="#18181B" stroke-width="2.5"/>
+          <ellipse cx="110" cy="112" rx="40" ry="34" fill="#EAD2AC" stroke="#18181B" stroke-width="3"/>
+        </g>
+
+        <!-- Chapéu de Chef Francês Alto e Volumoso -->
+        <g class="jhat" fill="#FFFFFF" stroke="#18181B" stroke-width="3" stroke-linejoin="round">
+          <path d="M74 70C54 66 54 38 78 38C80 22 108 20 112 32C124 20 152 26 146 40C168 40 168 66 146 70Z"/>
+          <rect x="72" y="68" width="76" height="22" rx="3"/>
+          <path d="M80 68C78 60 84 60 83 68M137 68C136 60 142 60 140 68" fill="none" stroke-width="2.5"/>
+        </g>
+
+        <!-- Óculos de Sol Quadrados com Dois Traços Brancos Diagonais de Reflexo -->
+        <g class="jgl">
+          <rect x="78" y="93" width="28" height="22" rx="3" fill="#27272A" stroke="#18181B" stroke-width="4.5" transform="rotate(-3 92 104)"/>
+          <rect x="114" y="93" width="28" height="22" rx="3" fill="#27272A" stroke="#18181B" stroke-width="4.5" transform="rotate(3 128 104)"/>
+          <rect x="103" y="96" width="14" height="5" fill="#18181B"/>
+          <!-- Traços de reflexo solar -->
+          <path d="M84 100l7-3M88 105l7-3M120 97l7 3M124 102l7 3" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+        </g>
+
+        <!-- Bigode Castanho Volumoso Curvado nas Pontas -->
+        <g class="jface">
+          <path d="M110 118C102 112 82 114 66 126C74 138 98 136 110 124C122 136 146 138 154 126C138 114 118 112 110 118Z" fill="#4A3728" stroke="#18181B" stroke-width="3" stroke-linejoin="round"/>
+        </g>
+      </svg>
+    `;
+
+    /* --------------------------------------------------------------------------
+       3. DATASET CANÔNICO DOS 8 RESTAURANTES & 11 PRATOS DE CARAGUATATUBA
+       -------------------------------------------------------------------------- */
+    const BR = {
+      all: ['Todos os Bairros', 'LLM Manager Central', 'Orquestrador Mestre'],
+      martim: ['Martim de Sá', 'LLM Regional Martim de Sá', 'Orla & Quiosques'],
+      centro: ['Centro', 'LLM Regional Centro Histórico', 'Patrimonial & Bares'],
+      indaia: ['Indaiá', 'LLM Regional Indaiá', 'Contemporâneo & Vegano'],
+      massaguacu: ['Massaguaçu & Cocanha', 'LLM Regional Massaguaçu', 'Pesca & Maricultura'],
+      'porto-novo': ['Porto Novo & Sul', 'LLM Regional Porto Novo', 'Ostras & Pequenos Restaurantes']
+    };
+
+    // 8 Estabelecimentos Reais de Caraguatatuba com Malha H3 e Métricas
+    const R = [
+      { id: 'mar-terra', n: 'Mar & Terra Gourmet', b: 'indaia', h3: '88a8100c07fffff', km: 0.8, porte: 'Restaurante Contemporâneo', sm: false, s: 4.92, raw: 4.61, bots: 6, hs: [4.58, 4.64, 4.71, 4.80, 4.87, 4.92], hr: [4.55, 4.56, 4.58, 4.59, 4.60, 4.61], promo: 'Festival do Camarão Rosa: risoto de R$ 98 por R$ 79 no jantar' },
+      { id: 'canto-bravo', n: 'Quiosque Canto Bravo', b: 'martim', h3: '88a8100c29fffff', km: 1.2, porte: 'Quiosque Pé na Areia', sm: true, s: 4.88, raw: 4.65, bots: 9, hs: [4.50, 4.55, 4.62, 4.74, 4.82, 4.88], hr: [4.60, 4.61, 4.62, 4.63, 4.64, 4.65], promo: 'Isca de badejo + 2 chopes de R$ 84 por R$ 68 até 18h' },
+      { id: 'dona-neide', n: 'Cantina da Dona Neide', b: 'porto-novo', h3: '88a8100d5bfffff', km: 1.4, porte: 'Pequeno Restaurante Familiar', sm: true, s: 4.95, raw: 4.78, bots: 0, hs: [4.72, 4.76, 4.81, 4.88, 4.92, 4.95], hr: [4.75, 4.76, 4.76, 4.77, 4.78, 4.78], promo: 'Almoço executivo caiçara de R$ 39 por R$ 29,90' },
+      { id: 'cantina-tradicao', n: 'Cantina Caiçara Tradição', b: 'centro', h3: '88a8100c61fffff', km: 2.1, porte: 'Restaurante Patrimonial', sm: false, s: 4.94, raw: 4.70, bots: 4, hs: [4.65, 4.70, 4.75, 4.83, 4.90, 4.94], hr: [4.68, 4.68, 4.69, 4.69, 4.70, 4.70], promo: 'Moqueca vegana de palmito pupunha de R$ 68 por R$ 54' },
+      { id: 'verde-mar', n: 'Empório & Bistrô Verde Mar', b: 'indaia', h3: '88a8100c03fffff', km: 1.5, porte: 'Pequeno Bistrô Saudável', sm: true, s: 4.96, raw: 4.89, bots: 1, hs: [4.85, 4.88, 4.90, 4.92, 4.94, 4.96], hr: [4.86, 4.87, 4.88, 4.88, 4.89, 4.89], promo: 'Bowl caiçara + suco prensado de R$ 58 por R$ 46' },
+      { id: 'cocanha', n: 'Rancho do Mexilhão & Peixaria Cocanha', b: 'massaguacu', h3: '88a8100893fffff', km: 6.8, porte: 'Pequeno Produtor Maricultor', sm: true, s: 4.90, raw: 4.63, bots: 3, hs: [4.58, 4.62, 4.70, 4.78, 4.85, 4.90], hr: [4.60, 4.61, 4.61, 4.62, 4.62, 4.63], promo: 'Cocotte de mexilhões frescos de R$ 64 por R$ 49' },
+      { id: 'rancho-ostras', n: 'Rancho das Ostras Juqueriquerê', b: 'porto-novo', h3: '88a8100d53fffff', km: 4.2, porte: 'Cooperativa & Pequeno Restaurante', sm: true, s: 4.91, raw: 4.74, bots: 2, hs: [4.70, 4.73, 4.78, 4.83, 4.88, 4.91], hr: [4.71, 4.72, 4.73, 4.73, 4.74, 4.74], promo: 'Dúzia de ostras depuradas de R$ 60 por R$ 45' },
+      { id: 'boteco', n: 'Boteco & Petiscaria Santo Antônio', b: 'centro', h3: '88a8100c67fffff', km: 1.8, porte: 'Bar & Petiscaria Local', sm: true, s: 4.84, raw: 4.55, bots: 7, hs: [4.48, 4.55, 4.63, 4.71, 4.79, 4.84], hr: [4.51, 4.52, 4.53, 4.54, 4.55, 4.55], promo: 'Bolinho de camarão (8 un.) de R$ 52 por R$ 39,90' }
+    ].map(item => ({
+      ...item,
+      W: 3,
+      rv: [],
+      ini: item.n.split(/[ &]+/).filter(w => w.length > 2).slice(0, 2).map(w => w[0]).join('')
+    }));
+
+    // 11 Pratos Reais com URLs Completas e Verificadas (SEM photo- duplicado)
+    const D = [
+      { i: 0, r: 'mar-terra', n: 'Risoto de Camarão Rosa com Limão Siciliano', p: 79.0, o: 98.0, v: false, g: true, f: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=900&q=80', t: 'camarão' },
+      { i: 1, r: 'mar-terra', n: 'Camarão na Moranga Gratinado com Catupiry (p/ 2)', p: 138.0, o: 0, v: false, g: true, f: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=900&q=80', t: 'camarão' },
+      { i: 2, r: 'canto-bravo', n: 'Isca de Badejo na Panko com Tártaro de Limão-Cravo', p: 68.0, o: 84.0, v: false, g: false, f: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=900&q=80', t: 'peixe' },
+      { i: 3, r: 'canto-bravo', n: 'Porção de Camarão Sete-Barbas Crocante', p: 62.0, o: 0, v: false, g: true, f: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?auto=format&fit=crop&w=900&q=80', t: 'camarão' },
+      { i: 4, r: 'dona-neide', n: 'Executivo de Pescada Grelhada com Farofa de Banana', p: 29.9, o: 39.0, v: false, g: true, f: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=900&q=80', t: 'peixe' },
+      { i: 5, r: 'cantina-tradicao', n: 'Azul-Marinho Tradicional no Tacho de Barro (contém peixe)', p: 75.0, o: 0, v: false, g: true, f: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80', t: 'peixe' },
+      { i: 6, r: 'cantina-tradicao', n: 'Moqueca 100% Vegana de Palmito Pupunha', p: 54.0, o: 68.0, v: true, g: true, f: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=900&q=80', t: 'vegano' },
+      { i: 7, r: 'verde-mar', n: 'Bowl Caiçara de Quinoa, Shimeji e Castanhas', p: 46.0, o: 58.0, v: true, g: true, f: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=900&q=80', t: 'vegano' },
+      { i: 8, r: 'cocanha', n: 'Mexilhões da Cocanha ao Vinagrete de Limão', p: 49.0, o: 64.0, v: false, g: true, f: 'https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=900&q=80', t: 'marisco' },
+      { i: 9, r: 'rancho-ostras', n: 'Dúzia de Ostras Vivas Depuradas', p: 45.0, o: 60.0, v: false, g: true, f: 'https://images.unsplash.com/photo-1615141982883-c7ad0e69fd62?auto=format&fit=crop&w=900&q=80', t: 'marisco' },
+      { i: 10, r: 'boteco', n: 'Bolinho de Camarão Sete-Barbas com Catupiry', p: 39.9, o: 52.0, v: false, g: false, f: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=900&q=80', t: 'camarão' }
+    ];
+
+    // Constantes e Pesos Matemáticos (Decaimento Temporal λ = ln(2)/30)
+    const W = { app: 0.60, ifood: 0.25, '99': 0.25, maps: 0.15 };
+    const SRC = {
+      app: ['App Caraguá FoodTech', '60%'],
+      ifood: ['iFood Verificado', '25%'],
+      '99': ['99 Food', '25%'],
+      maps: ['Google Maps', '15%']
+    };
+    const LAM = Math.LN2 / 30; // ~0.0231
+
+    const TX = [
+      'Camarão no ponto exato, muito fresco e sem ficar borrachudo. A equipe foi impecável no atendimento.',
+      'Porção farta e sabor autêntico caiçara. O tempero da casa faz toda a diferença.',
+      'Chegou bem quente e com embalagem impecável. Um dos melhores custos-benefícios da região.',
+      'Atendimento caloroso e ingredientes da maricultura local fresquinhos. Recomendo de olhos fechados.'
+    ];
+
+    // Inicialização das avaliações simuladas com fontes e datas variadas
+    R.forEach((r, k) => {
+      r.rv = [
+        ['app', 2, 1, TX[k % 4]],
+        ['ifood', 9, 0, TX[(k + 1) % 4]],
+        ['99', 18, 0, TX[(k + 2) % 4]],
+        ['maps', 45, 0, TX[(k + 3) % 4]]
+      ].map(([o, d, m, t], j) => ({
+        a: 'u_' + (3000 + k * 7 + j * 13).toString(16),
+        o,
+        d,
+        m,
+        n: [Math.min(5, r.s + (j % 2 ? -0.1 : 0.05)), Math.min(5, r.s - 0.1 + j * 0.02), Math.min(5, r.s - 0.2)].map(x => +x.toFixed(1)),
+        t
+      }));
+    });
+
+    // Helpers Utilitários
+    const rn = id => R.find(r => r.id === id);
+    const nm = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const brl = n => 'R$ ' + n.toFixed(2).replace('.', ',');
+
+    // Cálculo da Entropia de Shannon (Antifraude Mackenzie/SMOTE)
+    const ent = t => {
+      const words = nm(t).split(/\s+/).filter(Boolean);
+      if (!words.length) return 0;
+      const freq = {};
+      words.forEach(w => freq[w] = (freq[w] || 0) + 1);
+      return -Object.values(freq).reduce((sum, count) => {
+        const p = count / words.length;
+        return sum + p * Math.log2(p);
+      }, 0);
+    };
+
+    /* --------------------------------------------------------------------------
+       4. ESTADO GLOBAL DA APLICAÇÃO (STORE REATIVO)
+       -------------------------------------------------------------------------- */
+    const st = {
+      v: 'feed',            // Vista ativa
+      b: 'all',             // Bairro ativo
+      liked: {},            // Pratos curtidos
+      taste: {},            // Perfil de preferência
+      cred: 250,            // Carteira de créditos
+      pin: null,            // Prato destacado
+      open: {},             // Gaveta de reviews expandida
+      ff: 'all',            // Filtro da timeline
+      q: '',                // Query de busca
+      pill: 'all',          // Pílula ativa da busca
+      porte: 'all',         // Filtro de porte nas promoções
+      raio: 10,             // Raio geodésico
+      vouch: {},            // Vouchers ativados
+      rr: 'mar-terra',      // Restaurante selecionado para review
+      dish: '',             // Prato selecionado
+      tags: {},             // Tags selecionadas no review
+      nit: false,           // Selo Nitro no review
+      nitroMor: false,      // Morador Caiçara Verificado
+      sel: 'mar-terra',     // Restaurante selecionado no gráfico
+      news: [],             // Notícias dinâmicas do radar
+      extraPromos: [],      // Promoções criadas via B2B
+      drawer: false,        // Drawer do concierge
+      chat: [],             // Mensagens do chat
+      step: 0,              // Estágio ativo do RAG
+      tab: 'u'              // Aba na tela de créditos ('u' ou 'b')
+    };
+
+    const set = p => { Object.assign(st, p); render(); };
+    const vis = r => st.b === 'all' || r.b === st.b;
+    const delta = r => r.s - r.raw;
+
+    function toast(m, i = 'check') {
+      jump();
+      const t = document.getElementById('toast');
+      t.innerHTML = ic(i) + '<span>' + m + '</span>';
+      t.className = 'glass on';
+      clearTimeout(toast.timer);
+      toast.timer = setTimeout(() => { t.className = 'glass'; }, 3200);
+    }
+
+    const sc = r => `
+      <div class="mono" style="text-align: right;">
+        <span style="color: var(--accent-credit);">${ic('star')}</span>
+        <b>${r.s.toFixed(2)}</b>
+        <span class="chip safe">${delta(r) >= 0 ? '+' : ''}${delta(r).toFixed(2)}</span>
+        <div class="mut" style="font-size: 11px;">Super Nota 30d (bruta ${r.raw.toFixed(2)})</div>
+      </div>
+    `;
+
+    function applyReview(r, nota, m, t, nit) {
+      const w = W.app * (m ? 1.5 : 1);
+      r.s = (r.s * r.W + nota * w) / (r.W + w);
+      r.W += w;
+      r.rv.unshift({
+        a: 'voce_' + Date.now().toString(16).slice(-4),
+        o: 'app',
+        d: 0,
+        m: m ? 1 : 0,
+        n: [nota, nota, nota],
+        t,
+        nitro: nit
+      });
+    }
+
+    /* --------------------------------------------------------------------------
+       5. PIPELINE RAG DE 5 ESTÁGIOS COM TRAVA DE FOOD SAFETY
+       -------------------------------------------------------------------------- */
+    function rag(query, filters = {}) {
+      const qNorm = nm(query);
+      const intent = {
+        dish_focus: (qNorm.match(/camar|badejo|azul|moqueca|ostra|mexilh|bolinho|bowl/) || [''])[0],
+        max_price: /barat/.test(qNorm) ? 40 : 999,
+        neighborhood: st.b,
+        dietary_locks: {
+          vegan: !!filters.vegan || /vegan/.test(qNorm),
+          gluten_free: !!filters.gf || /gluten|celiac/.test(qNorm)
+        },
+        only_promos: !!filters.promo || /promo/.test(qNorm),
+        small_only: !!filters.small || /pequeno/.test(qNorm)
+      };
+
+      const approved = [];
+      const eliminated = [];
+
+      D.forEach(dish => {
+        const r = rn(dish.r);
+        const pass = (!intent.dietary_locks.vegan || dish.v) &&
+                     (!intent.dietary_locks.gluten_free || dish.g) &&
+                     dish.p <= intent.max_price &&
+                     (!intent.only_promos || dish.o) &&
+                     (!intent.small_only || r.sm) &&
+                     vis(r);
+
+        if (pass) approved.push(dish);
+        else eliminated.push(dish);
+      });
+
+      let results = approved.map(dish => ({
+        d: dish,
+        r: rn(dish.r),
+        score: (intent.dish_focus && nm(dish.n + dish.t).includes(intent.dish_focus) ? 2.5 : 0) +
+               (st.taste[dish.t] || 0) * 0.3 +
+               rn(dish.r).s / 5
+      }));
+
+      if (intent.dish_focus) {
+        results = results.filter(x => x.score >= 2.0);
+      }
+
+      results.sort((a, b) => b.score - a.score);
+
+      return {
+        i: intent,
+        res: results,
+        cut: eliminated.filter(d => intent.dietary_locks.vegan && !d.v)
+      };
+    }
+
+    /* --------------------------------------------------------------------------
+       6. RENDERIZADORES DAS 7 VISTAS COMPLETAS
+       -------------------------------------------------------------------------- */
+    const renderReviewsBlock = r => `
+      <div style="margin-top: 14px; border-top: 1px solid var(--border-hairline); padding-top: 12px;">
+        <div class="row sp" style="margin-bottom: 8px;">
+          <b>Avaliações Reais Auditadas (${r.rv.length})</b>
+          <span class="chip teal mono">Ponderação com Decaimento Temporal</span>
+        </div>
+        ${r.rv.map(v => {
+          const dec = Math.exp(-LAM * v.d);
+          return `
+            <div class="rev ${v.nitro ? 'nitro-card' : ''}">
+              <div class="row sp">
+                <span class="row">
+                  <b class="mono">${v.a}</b>
+                  <span class="chip teal">${SRC[v.o][0]} · peso ${SRC[v.o][1]}</span>
+                  ${v.m ? '<span class="chip safe">Morador Caiçara 1.5x</span>' : ''}
+                  ${v.nitro ? '<span class="chip credit">Selo Nitro</span>' : ''}
+                </span>
+                <span class="mono mut" style="font-size: 12px;">Δt ${v.d}d · e<sup>-λΔt</sup> = ${dec.toFixed(3)}</span>
+              </div>
+              <div class="mono mut" style="font-size: 12px; margin: 4px 0;">
+                Comida: ${v.n[0]} ★ · Atendimento: ${v.n[1]} ★ · Preço/Porção: ${v.n[2]} ★
+              </div>
+              <div style="color: var(--text-primary);">${v.t}</div>
+              ${v.reply ? `
+                <div class="reply-box">
+                  <b>Resposta oficial do proprietário:</b><br>${v.reply}
+                </div>
+              ` : ''}
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+
+    const renderPostCard = d => {
+      const r = rn(d.r);
+      const isLiked = st.liked[d.i];
+      const isOpen = st.open[d.r];
+      const isPinned = st.pin === d.i;
+
+      return `
+        <article class="card ${isPinned ? 'nitro-card' : ''}">
+          <!-- Cabeçalho do Restaurante -->
+          <div class="row sp">
+            <div class="row">
+              <div class="mono" style="width: 44px; height: 44px; border-radius: 14px; background: var(--bg-ocean-anchor); color: #FFF; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px;">
+                ${r.ini}
+              </div>
+              <div>
+                <b style="font-size: 16px;">${r.n}</b>
+                <div class="mut" style="font-size: 13px;">${r.porte} · ${BR[r.b][0]} · <span class="mono">${r.km.toFixed(1)} km</span></div>
+              </div>
+            </div>
+            ${sc(r)}
+          </div>
+
+          <!-- Foto com Badges Liquid Glass -->
+          <div class="photo" style="background-image: url('${d.f}');">
+            <div class="badges">
+              ${d.o ? `<span class="chip promo">${ic('tag')}Promoção Verificada: <s class="mono">${brl(d.o)}</s> <b class="mono" style="margin-left: 2px;">${brl(d.p)}</b></span>` : ''}
+              ${d.v ? `<span class="chip safe">${ic('leaf')}100% Vegano</span>` : ''}
+              ${d.g ? `<span class="chip safe">Sem Glúten</span>` : ''}
+            </div>
+          </div>
+
+          <!-- Título e Preço -->
+          <div class="row sp" style="align-items: baseline;">
+            <b style="font-size: 17px;">${d.n}</b>
+            <span class="mono" style="font-size: 17px; font-weight: 700; color: var(--accent-brand);">${brl(d.p)}</span>
+          </div>
+
+          <!-- Síntese da LLM Regional -->
+          <div class="ai-box" style="margin: 10px 0;">
+            <b>${BR[r.b][1]}:</b> Prato destaque no polo ${BR[r.b][0]}. Nas últimas 48h, a equipe da cozinha obteve 96% de avaliações 5 estrelas em crocância e ponto de cozimento.
+          </div>
+
+          <!-- Ações Interativas -->
+          <div class="row" style="margin-top: 12px;">
+            <button class="btn" data-a="rvw" data-r="${d.r}">
+              Avaliações Detalhadas (${r.rv.length})
+            </button>
+            <button class="btn ${isLiked ? 'liked' : ''}" data-a="like" data-i="${d.i}" style="${isLiked ? 'background: var(--bg-rose-tint); color: var(--accent-promo); border-color: #FECDD3;' : ''}">
+              ${ic('heart')}${isLiked ? 'Curtido' : 'Curtir prato'}
+            </button>
+            <button class="btn" data-a="pin" data-i="${d.i}">
+              ${ic('zap')}Destacar (-100 CR)
+            </button>
+            <button class="btn t" data-a="goR" data-r="${d.r}">
+              ${ic('pen')}Avaliar (+50 CR)
+            </button>
+          </div>
+
+          ${isOpen ? renderReviewsBlock(r) : ''}
+        </article>
+      `;
+    };
+
+    const V = {
+      // VISTA 1: TIMELINE & DESCOBERTA
+      feed() {
+        let list = D.filter(d => vis(rn(d.r)));
+        const filters = {
+          all: () => true,
+          promo: d => d.o,
+          small: d => rn(d.r).sm,
+          camarao: d => d.t === 'camarão'
+        };
+        list = list.filter(filters[st.ff] || filters.all).sort((a, b) => (st.pin === b.i) - (st.pin === a.i));
+
+        return `
+          <h2>Timeline &amp; Descoberta</h2>
+          <p class="sub">Fotografia gastronômica em alta resolução dos restaurantes de Caraguatatuba com auditoria RAG e decaimento temporal.</p>
+          <div class="row" style="margin-bottom: 18px;">
+            ${[
+              ['all', 'Todos os posts'],
+              ['promo', 'Promoções Verificadas'],
+              ['small', 'Pequenos Restaurantes Locais'],
+              ['camarao', 'Destaques de Camarão']
+            ].map(([k, label]) => `<button class="btn ${st.ff === k ? 'on' : ''}" data-ff="${k}">${label}</button>`).join('')}
+          </div>
+          <div class="stack">
+            ${list.map(renderPostCard).join('') || '<div class="card" style="color: var(--text-secondary);">Nenhum prato disponível neste bairro com os filtros selecionados.</div>'}
+          </div>
+        `;
+      },
+
+      // VISTA 2: PESQUISAR POR COMIDA & QUALIDADE COMPARATIVA
+      search() {
+        const filters = {
+          vegan: st.pill === 'vegan',
+          gf: st.pill === 'gf',
+          promo: st.pill === 'promo',
+          small: st.pill === 'small'
+        };
+        const searchResult = rag(st.q + (st.pill === 'camarao' ? ' camarão' : ''), filters);
+        const isCamarao = searchResult.i.dish_focus === 'camar';
+
+        return `
+          <h2>Pesquisar Comida &amp; Qualidade</h2>
+          <p class="sub">Pesquise por prato, ingrediente ou restaurante. As travas determinísticas de segurança alimentar bloqueiam alérgenos antes da síntese.</p>
+
+          <!-- Barra Spotlight -->
+          <div class="row" style="margin-bottom: 12px;">
+            <input id="q" value="${st.q}" placeholder="Ex.: camarão rosa, moqueca, azul-marinho..." style="flex: 1; min-width: 240px; font-size: 15px;">
+            <span class="chip mono">⌘K</span>
+            <button class="btn p" data-a="go">${ic('search')}Buscar com IA</button>
+          </div>
+
+          <!-- Chips Rápidos -->
+          <div class="row" style="margin-bottom: 14px;">
+            ${['Camarão', 'Azul-Marinho', 'Badejo', 'Moqueca Vegana', 'Ostras & Mexilhão', 'Prato Feito Barato'].map(text => `<button class="btn" data-qs="${text}">${text}</button>`).join('')}
+          </div>
+
+          <!-- Pílulas de Filtro -->
+          <div class="row" style="margin-bottom: 18px;">
+            ${[
+              ['all', 'Todos'],
+              ['camarao', 'Ranking de Qualidade: Camarão'],
+              ['promo', 'Em Promoção Agora'],
+              ['vegan', '100% Vegano (Food Safety)'],
+              ['gf', 'Sem Glúten'],
+              ['small', 'Pequenos Restaurantes']
+            ].map(([k, label]) => `<button class="btn ${st.pill === k ? 'on' : ''}" data-pill="${k}">${label}</button>`).join('')}
+          </div>
+
+          <!-- Trava Determinística Food Safety -->
+          ${filters.vegan || searchResult.i.dietary_locks.vegan ? `
+            <div class="safe-banner" style="margin-bottom: 18px;">
+              ${ic('shield')}
+              <div>
+                <b>Trava Determinística de Segurança Alimentar Ativa:</b><br>
+                Foram bloqueados ${searchResult.cut.length} prato(s) contendo proteína marinha${searchResult.cut.some(d => /Azul/.test(d.n)) ? ', incluindo o <em>Azul-Marinho Tradicional</em> (que contém peixe fresco)' : ''}. Apenas opções 100% vegetais certificadas estão disponíveis.
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- Card Comparativo da LLM Manager para Camarão -->
+          ${isCamarao ? `
+            <div class="ai-box" style="margin-bottom: 18px;">
+              <b style="font-size: 15px;">Veredito Comparativo da LLM Manager Central:</b><br>
+              <strong>1º em Qualidade do Insumo:</strong> <em>Mar &amp; Terra Gourmet</em> com o Risoto de Camarão Rosa (98% de aprovação de ponto e limpeza, 218 avaliações auditadas).<br>
+              <strong>1º em Crocância Pé na Areia:</strong> <em>Quiosque Canto Bravo</em> com Camarão Sete-Barbas crocante da orla do Martim.<br>
+              <strong>1º em Petisco Tradicional:</strong> <em>Boteco Santo Antônio</em> no Centro com bolinho recheado e catupiry.
+            </div>
+          ` : ''}
+
+          <!-- Grid de Resultados -->
+          <div class="grid">
+            ${searchResult.res.map(x => `
+              <div class="card">
+                <div class="photo" style="background-image: url('${x.d.f}');"></div>
+                <b style="font-size: 16px;">${x.d.n}</b>
+                <div class="mut" style="font-size: 13px;">${x.r.n} · ${BR[x.r.b][0]}</div>
+                <div class="row sp" style="margin-top: 8px;">
+                  <span class="mono" style="font-size: 16px; font-weight: 700; color: var(--accent-brand);">${brl(x.d.p)}</span>
+                  <span class="mono" style="font-size: 13px;">★ ${x.r.s.toFixed(2)} Super Nota</span>
+                </div>
+                <div class="row" style="margin-top: 10px;">
+                  <span class="chip">${x.d.t}</span>
+                  ${x.d.v ? '<span class="chip safe">100% Vegano</span>' : ''}
+                  ${x.d.g ? '<span class="chip safe">Sem glúten</span>' : ''}
+                  ${x.d.o ? '<span class="chip promo">Promoção</span>' : ''}
+                </div>
+              </div>
+            `).join('') || '<div class="card" style="color: var(--text-secondary);">Nenhum prato compatível com as travas ativas foi encontrado.</div>'}
+          </div>
+        `;
+      },
+
+      // VISTA 3: PROMOÇÕES POR PERTO (INCLUSÃO DE PEQUENOS NEGÓCIOS)
+      promos() {
+        const promosList = [
+          ...D.filter(d => d.o).map(d => ({ r: rn(d.r), n: d.n, p: d.p, o: d.o, v: '18h' })),
+          ...st.extraPromos
+        ].filter(x => vis(x.r) && x.r.km <= st.raio && (
+          st.porte === 'all' ||
+          (st.porte === 'small' && x.r.sm && /Familiar|Bistr/.test(x.r.porte)) ||
+          (st.porte === 'kiosk' && /Quiosque|Produtor|Cooperativa/.test(x.r.porte)) ||
+          (st.porte === 'rest' && /Restaurante|Bar/.test(x.r.porte) && !x.r.sm)
+        )).sort((a, b) => a.r.km - b.r.km);
+
+        return `
+          <h2>Promoções por Perto</h2>
+          <p class="sub">Visibilidade equitativa para quiosques pé na areia e pequenos restaurantes familiares de Caraguatatuba.</p>
+
+          <div class="row" style="margin-bottom: 10px;">
+            ${[
+              ['all', 'Todos os portes'],
+              ['small', 'Pequenos e Familiares'],
+              ['kiosk', 'Quiosques e Produtores'],
+              ['rest', 'Restaurantes e Bares']
+            ].map(([k, label]) => `<button class="btn ${st.porte === k ? 'on' : ''}" data-porte="${k}">${label}</button>`).join('')}
+          </div>
+
+          <div class="row" style="margin-bottom: 18px;">
+            ${[
+              [1.5, 'Até 1,5 km'],
+              [3, 'Até 3,0 km'],
+              [10, 'Toda Caraguatatuba (10 km)']
+            ].map(([k, label]) => `<button class="btn ${st.raio === k ? 'on' : ''}" data-raio="${k}">${label}</button>`).join('')}
+          </div>
+
+          <div class="stack">
+            ${promosList.map((x, i) => {
+              const key = x.r.id + i;
+              const hasVoucher = st.vouch[key];
+              return `
+                <div class="card row sp">
+                  <div>
+                    <b style="font-size: 17px;">${x.n}</b>
+                    <div class="mut" style="font-size: 13px;">${x.r.n} · ${x.r.porte} · ${BR[x.r.b][0]}</div>
+                    <div class="row" style="margin-top: 8px;">
+                      <span class="chip promo">-${Math.round((1 - x.p / x.o) * 100)}% OFF</span>
+                      <span class="chip safe">${ic('shield')}Verificado pela Moderação às 06:00 AM</span>
+                      <span class="chip">Válido até ${x.v}</span>
+                    </div>
+                  </div>
+                  <div style="text-align: right;">
+                    <s class="mono mut" style="font-size: 13px;">${brl(x.o)}</s>
+                    <b class="mono" style="font-size: 22px; color: var(--text-primary); margin-left: 4px;">${brl(x.p)}</b>
+                    <div class="mono mut" style="font-size: 12px; margin-bottom: 6px;">${x.r.km.toFixed(1)} km daqui</div>
+                    ${hasVoucher ? `
+                      <button class="btn mono" data-a="copy" data-c="${hasVoucher}">
+                        ${hasVoucher} · Copiar Código
+                      </button>
+                    ` : `
+                      <button class="btn t" data-a="vou" data-k="${key}">
+                        Ativar Voucher no Local
+                      </button>
+                    `}
+                  </div>
+                </div>
+              `;
+            }).join('') || '<div class="card" style="color: var(--text-secondary);">Nenhuma promoção ativa com estes filtros geodésicos.</div>'}
+          </div>
+        `;
+      },
+
+      // VISTA 4: RADAR DE NOVIDADES, DICAS ADAPTATIVAS & RANKINGS (30D)
+      radar() {
+        const sortedRestaurants = R.filter(vis).sort((a, b) => b.s - a.s);
+        const selected = R.find(r => r.id === st.sel) || sortedRestaurants[0];
+        const topTaste = Object.entries(st.taste).filter(e => e[1] > 0).sort((a, b) => b[1] - a[1])[0];
+        const adaptiveTips = (topTaste ? D.filter(d => d.t === topTaste[0]) : D.filter(d => d.o)).slice(0, 3);
+
+        const getX = i => 40 + i * (500 / 5);
+        const getY = v => 160 - (v - 4.4) / (5 - 4.4) * 130;
+        const toPolyline = arr => arr.map((v, i) => getX(i) + ',' + getY(v)).join(' ');
+
+        return `
+          <h2>Radar, Dicas Adaptativas &amp; Rankings</h2>
+          <p class="sub">Equação de Decaimento Temporal com meia-vida de 30 dias (λ = ln(2)/30 ≈ 0.0231) comparada com a Média Bruta histórica.</p>
+
+          <div class="grid" style="margin-bottom: 20px;">
+            <!-- Vitrine Dicas Adaptativas -->
+            <div class="card">
+              <b style="font-size: 16px;">Dicas que se Adequam a Você</b>
+              <div class="stack" style="margin-top: 10px;">
+                ${adaptiveTips.map((d, i) => `
+                  <div>
+                    <span class="chip teal mono">${topTaste ? 98 - i * 3 : 90 - i * 4}% match</span>
+                    <strong>${d.n}</strong>
+                    <div class="mut" style="font-size: 12px;">
+                      ${rn(d.r).n} ${topTaste ? `· baseado no seu gosto por ${topTaste[0]}` : '· curta pratos na timeline para afinar'}
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- Radar de Novidades da Madrugada -->
+            <div class="card">
+              <b style="font-size: 16px;">Radar da Madrugada (Últimos Spikes)</b>
+              <div class="stack" style="margin-top: 10px; font-size: 13.5px; color: var(--text-secondary);">
+                <div>Novo lote de ostras depuradas chegou às 07:00 no Rio Juqueriquerê.</div>
+                <div>Cantina da Dona Neide subiu no ranking após 40 avaliações 5.0 no almoço executivo.</div>
+                <div>Substituição de azeite e farinha panko no Quiosque Canto Bravo elevou a Super Nota em +0.23.</div>
+                ${st.news.map(item => `<div>${item}</div>`).join('')}
+              </div>
+            </div>
+          </div>
+
+          <!-- Gráfico SVG Editorial Animado -->
+          <div class="card" style="margin-bottom: 20px;">
+            <div class="row sp" style="margin-bottom: 12px;">
+              <div>
+                <b style="font-size: 17px;">${selected.n}</b>
+                <div class="mut" style="font-size: 13px;">Evolução de 6 Meses: Super Nota 30d (sólida) vs Média Bruta tradicional (tracejada)</div>
+              </div>
+              <div class="row">
+                <span class="chip teal mono">Super Nota: ${selected.s.toFixed(2)} ★</span>
+                <span class="chip mono">Bruta: ${selected.raw.toFixed(2)} ★</span>
+              </div>
+            </div>
+
+            <svg viewBox="0 0 580 190" width="100%" role="img">
+              <g stroke="#E4E4E7">
+                ${[4.4, 4.6, 4.8, 5.0].map(v => `<line x1="40" x2="540" y1="${getY(v)}" y2="${getY(v)}" stroke-dasharray="3 3"/>`).join('')}
+              </g>
+              <polyline fill="none" stroke="#A1A1AA" stroke-width="2.5" stroke-dasharray="6 5" points="${toPolyline(selected.hr)}"/>
+              <polyline fill="none" stroke="#0D9488" stroke-width="3.5" points="${toPolyline(selected.hs)}"/>
+              <g class="mono" font-size="11" fill="#71717A">
+                ${['M-5', 'M-4', 'M-3', 'M-2', 'M-1', 'Hoje'].map((t, i) => `<text x="${getX(i)}" y="182" text-anchor="middle">${t}</text>`).join('')}
+                ${[4.6, 4.8, 5.0].map(v => `<text x="10" y="${getY(v) + 4}">${v}</text>`).join('')}
+              </g>
+            </svg>
+          </div>
+
+          <!-- Tabela de Rankings Interativa -->
+          <div class="card" style="overflow-x: auto;">
+            <b style="font-size: 16px; margin-bottom: 8px; display: block;">Tabela Oficial de Classificação (Clique numa linha para ver o gráfico)</b>
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Estabelecimento</th>
+                  <th>Bairro</th>
+                  <th>Média Bruta</th>
+                  <th>Super Nota 30d</th>
+                  <th>Δ Variação</th>
+                  <th>Reviews</th>
+                  <th>Bots Expurgados</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${sortedRestaurants.map((r, i) => `
+                  <tr data-sel="${r.id}" style="${r.id === selected.id ? 'background: var(--bg-teal-tint);' : ''}">
+                    <td class="mono">#${i + 1}</td>
+                    <td>
+                      <strong>${r.n}</strong>
+                      <div class="mut" style="font-size: 12px;">${r.porte}</div>
+                    </td>
+                    <td>${BR[r.b][0]}</td>
+                    <td class="mono">${r.raw.toFixed(2)}</td>
+                    <td class="mono" style="font-weight: 700; color: var(--accent-brand);">${r.s.toFixed(2)}</td>
+                    <td class="mono" style="color: var(--accent-safety);">${delta(r) >= 0 ? '+' : ''}${delta(r).toFixed(2)} ▲</td>
+                    <td class="mono">${r.rv.length}</td>
+                    <td class="mono" style="color: var(--accent-promo);">${r.bots}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      },
+
+      // VISTA 5: AÇÕES DECISIVAS (AVALIAR DENTRO DO SITE)
+      review() {
+        const targetRest = rn(st.rr);
+        const dishesOfRest = D.filter(d => d.r === targetRest.id);
+
+        const k1 = +(document.getElementById('k1')?.value || 5);
+        const k2 = +(document.getElementById('k2')?.value || 5);
+        const k3 = +(document.getElementById('k3')?.value || 4);
+        const avgScore = (k1 + k2 + k3) / 3;
+
+        const weight = 0.60 * (st.nitroMor ? 1.5 : 1);
+        const projectedScore = (targetRest.s * targetRest.W + avgScore * weight) / (targetRest.W + weight);
+
+        const currentText = document.getElementById('ac')?.value || '';
+        const currentEntropy = ent(currentText);
+
+        return `
+          <h2>Avaliar Dentro do Site</h2>
+          <p class="sub">A avaliação direta pelo aplicativo tem peso preferencial (60%) e recalcula a Super Nota no mesmo instante.</p>
+
+          <div class="card stack" style="max-width: 640px;">
+            <div>
+              <label class="tg" style="font-weight: 600; margin-bottom: 6px;">Restaurante:</label>
+              <select id="ar" data-rr>
+                ${R.map(x => `<option value="${x.id}" ${x.id === targetRest.id ? 'selected' : ''}>${x.n} (${BR[x.b][0]})</option>`).join('')}
+              </select>
+            </div>
+
+            <div>
+              <label class="tg" style="font-weight: 600; margin-bottom: 6px;">Prato Degustado:</label>
+              <select id="ad" data-dish>
+                ${dishesOfRest.map(d => `<option ${st.dish === d.n ? 'selected' : ''}>${d.n}</option>`).join('') || '<option>Prato da Casa</option>'}
+              </select>
+            </div>
+
+            <!-- 3 Sliders Independentes -->
+            ${[
+              ['Qualidade e Frescor do Alimento', 'k1', k1],
+              ['Atendimento e Tempo de Espera', 'k2', k2],
+              ['Justiça do Preço e Tamanho da Porção', 'k3', k3]
+            ].map(([label, id, val]) => `
+              <label class="row sp" style="font-size: 14px;">
+                <span>${label}</span>
+                <span class="row">
+                  <input type="range" id="${id}" min="1" max="5" step="0.5" value="${val}" data-live style="width: 160px;">
+                  <b class="mono" style="width: 42px; text-align: right;">${val.toFixed(1)} ★</b>
+                </span>
+              </label>
+            `).join('')}
+
+            <!-- Prévia Matemática da Nova Super Nota -->
+            <div class="ai-box mono" style="font-size: 13px;">
+              Sua nota média calculada: <b>${avgScore.toFixed(2)} ★</b>.<br>
+              Como avaliações nativas pesam 60% e Δt = 0 dias (fator e⁰ = 1.0), publicar agora altera a Super Nota de <b>${targetRest.s.toFixed(2)}</b> para <b>${projectedScore.toFixed(2)}</b>.
+            </div>
+
+            <!-- Checkboxes de Tags -->
+            <div class="row" style="gap: 8px;">
+              ${[
+                'Camarão no Ponto',
+                'Porção Farta',
+                'Óleo Limpo & Claro',
+                'Pequeno Comércio Familiar',
+                'Seguro para Restrição Alimentar'
+              ].map(tag => `
+                <label class="tg">
+                  <input type="checkbox" data-tag="${tag}" ${st.tags[tag] ? 'checked' : ''}>
+                  ${tag}
+                </label>
+              `).join('')}
+            </div>
+
+            <!-- Crítica Detalhada -->
+            <div>
+              <label class="tg" style="font-weight: 600; margin-bottom: 6px;">Relato Detalhado da Experiência:</label>
+              <textarea id="ac" rows="3" data-live placeholder="Descreva o sabor, o ponto do peixe, o atendimento no local...">${currentText}</textarea>
+            </div>
+
+            <!-- Medidor de Entropia de Shannon -->
+            <div class="mono mut" style="font-size: 12px;">
+              Entropia de Shannon: <b>${currentEntropy.toFixed(2)} bits</b> ·
+              ${currentText.split(/\s+/).filter(Boolean).length < 6 ? 'escreva ao menos 6 palavras para auditar' : currentEntropy < 1.85 ? '<span style="color: var(--accent-promo);">Reprovado no filtro antifraude (muito repetitivo)</span>' : '<span style="color: var(--accent-safety);">Aprovado no filtro antifraude</span>'}
+            </div>
+
+            <!-- Opção de Nitro -->
+            <label class="tg">
+              <input type="checkbox" id="nit" data-nit ${st.nit ? 'checked' : ''}>
+              Destacar minha avaliação no topo do Feed com selo Nitro (-100 CR)
+            </label>
+
+            <button class="btn t" data-a="rate" style="padding: 12px; font-size: 15px;">
+              ${ic('star')}Publicar Avaliação Auditada (+50 CR)
+            </button>
+          </div>
+        `;
+      },
+
+      // VISTA 6: SISTEMA DE CRÉDITOS (DISCORD NITRO) & ANUNCIANTES B2B
+      credits() {
+        const isB2B = st.tab === 'b';
+        const tabSwitcher = `
+          <div class="row" style="margin-bottom: 18px;">
+            <button class="btn ${!isB2B ? 'on' : ''}" data-tab="u">Para Você (Usuário)</button>
+            <button class="btn ${isB2B ? 'on' : ''}" data-tab="b">Anunciantes &amp; Donos de Restaurantes (B2B)</button>
+          </div>
+        `;
+
+        if (!isB2B) {
+          return `
+            <h2>Créditos Nitro &amp; Benefícios</h2>
+            <p class="sub">Ganhe créditos avaliando pratos e desbloqueie vantagens exclusivas na comunidade gastronômica de Caraguá.</p>
+            ${tabSwitcher}
+
+            <!-- Carteira Nitro -->
+            <div class="card" style="background: var(--bg-amber-tint); border-color: #FDE68A; margin-bottom: 18px;">
+              <div class="mut">Saldo Disponível na Carteira</div>
+              <div class="mono" style="font-size: 38px; font-weight: 800; color: var(--accent-credit);">${st.cred} CR</div>
+              <div class="row" style="margin-top: 10px;">
+                <button class="btn" data-a="rec" data-n="200">+200 CR (Recarga Demo)</button>
+                <button class="btn" data-a="rec" data-n="500">+500 CR (Recarga Demo)</button>
+              </div>
+            </div>
+
+            <!-- Vantagens Nitro -->
+            <div class="grid">
+              ${[
+                ['Destacar Avaliação no Topo', 100, 'Borda dupla prismática verde-água fixando sua crítica no topo do Feed por 7 dias.', 'hi'],
+                ['Selo Morador Caiçara Verificado', 150, 'Suas notas passam a ter peso 1.5x permanente na equação de decaimento temporal.', 'mor'],
+                ['Alerta VIP de Maricultura e Lotes Frescos', 80, 'Notificação em primeira mão de lotes frescos de camarão rosa e ostras vivas.', 'vip']
+              ].map(([title, cost, desc, key]) => `
+                <div class="card ${key === 'mor' && st.nitroMor ? 'nitro-card' : ''}">
+                  <b style="font-size: 16px;">${title}</b>
+                  <p style="font-size: 13.5px; color: var(--text-secondary); margin: 8px 0 14px;">${desc}</p>
+                  <button class="btn t" data-a="ben" data-k="${key}" data-c="${cost}">
+                    ${key === 'mor' && st.nitroMor ? 'Ativo com Peso 1.5x' : `Ativar Benefício · ${cost} CR`}
+                  </button>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        }
+
+        return `
+          <h2>Painel de Anunciantes Locais (B2B)</h2>
+          <p class="sub">Ferramentas transparentes para pequenos e grandes negócios de Caraguá. Créditos NÃO compram nota nem apagam avaliações legítimas.</p>
+          ${tabSwitcher}
+
+          <div class="ai-box" style="margin-bottom: 18px;">
+            <strong>Diretriz Ética de Moderação:</strong> A plataforma Caraguá FoodTech garante 100% de integridade editorial. Anunciantes utilizam créditos exclusivamente para responder críticas com crachá verificado ou lançar promoções relâmpago auditadas (exige Super Nota mínima de 4.40).
+          </div>
+
+          <div class="grid">
+            <!-- Formulário de Resposta Oficial -->
+            <div class="card stack">
+              <b style="font-size: 16px;">Responder Avaliação Oficialmente (-50 CR)</b>
+              <select id="br" data-bq>
+                ${R.map(x => `<option value="${x.id}" ${x.id === st.rr ? 'selected' : ''}>${x.n}</option>`).join('')}
+              </select>
+              <select id="bi">
+                ${rn(st.rr).rv.map((v, i) => `<option value="${i}">Avaliação de ${v.a} (${SRC[v.o][0]})</option>`).join('')}
+              </select>
+              <textarea id="bt" rows="2" placeholder="Digite a resposta do proprietário..."></textarea>
+              <button class="btn t" data-a="reply">Publicar Resposta Verificada</button>
+            </div>
+
+            <!-- Promoção Relâmpago no Radar -->
+            <div class="card stack">
+              <b style="font-size: 16px;">Lançar Promoção Relâmpago no Radar (-150 CR)</b>
+              <select id="pr">
+                ${R.map(x => `<option value="${x.id}">${x.n}</option>`).join('')}
+              </select>
+              <input id="pn" placeholder="Nome do prato ou combo">
+              <div class="row">
+                <input id="po" type="number" placeholder="Preço Normal (ex: 80)" style="flex: 1;">
+                <input id="pp" type="number" placeholder="Preço Promoção (ex: 60)" style="flex: 1;">
+              </div>
+              <input id="pv" placeholder="Validade (ex.: até 20h de hoje)">
+              <button class="btn t" data-a="promo">Lançar no Radar de Caraguá</button>
+            </div>
+          </div>
+        `;
+      },
+
+      // VISTA 7: INSPETOR ACADÊMICO DA ARQUITETURA RAG & TCC (PROF. CRISTIANO)
+      architecture() {
+        const ragResult = st.last || rag('opção vegana barata perto de mim', { vegan: true });
+        const intent = ragResult.i;
+        const polosList = Object.entries(BR).slice(1);
+
+        return `
+          <h2>Arquitetura RAG &amp; Dossiê Acadêmico</h2>
+          <p class="sub">Painel técnico do TCC em Análise e Desenvolvimento de Sistemas (Centro Universitário Módulo / Prof. Cristiano).</p>
+
+          <div class="stack">
+            <!-- Pipeline Híbrido de 5 Estágios -->
+            <div class="card">
+              <b style="font-size: 17px;">Pipeline Híbrido RAG de 5 Estágios com Payloads Reais</b>
+              <div class="stack" style="margin-top: 14px;">
+                ${[
+                  ['Estágio 1 · Classificação de Intenção e Trava de Food Safety (JSON Schema)', intent],
+                  ['Estágio 2 · Malha Espacial Hexagonal Uber H3 & Afinidade do Usuário', { user_h3: '88a8100c29fffff', tasteProfile: st.taste, activeNeighborhood: st.b }],
+                  ['Estágio 3 · Filtro Híbrido (pgvector HNSW 1536d + Trava SQL Determinística)', { engine: 'PostgreSQL + pgvector', eliminados_food_safety: ragResult.cut.map(d => d.n) }],
+                  ['Estágio 4 · Âncora Factual das Avaliações Auditadas', ragResult.res.slice(0, 3).map(x => ({ prato: x.d.n, restaurante: x.r.n, preco: x.d.p, super_nota_30d: +x.r.s.toFixed(2) }))]
+                ].map(([title, payload]) => `
+                  <div>
+                    <div class="mut" style="font-size: 12px; margin-bottom: 4px;">${title}</div>
+                    <pre class="mono">${JSON.stringify(payload, null, 2)}</pre>
+                  </div>
+                `).join('')}
+
+                <div class="ai-box">
+                  <b>Estágio 5 · Síntese Final Concierge Chef Jacquin:</b><br>
+                  ${ragResult.res[0] ? `O restaurante <em>${ragResult.res[0].r.n}</em> lidera as recomendações com o prato <strong>${ragResult.res[0].d.n}</strong> (${brl(ragResult.res[0].d.p)}). Todas as restrições alimentares foram checadas.` : 'Nenhum prato compatível encontrado no momento.'}
+                </div>
+              </div>
+            </div>
+
+            <!-- Equação da Super Nota -->
+            <div class="card">
+              <b style="font-size: 16px;">Formalismo Matemático da Super Nota com Decaimento Temporal</b>
+              <pre class="mono" style="margin-top: 8px;">SuperNota = Σ( Nota_i · S_fonte · M_morador · e^(-λ · Δt_i) ) / Σ( S_fonte · M_morador · e^(-λ · Δt_i) )
+
+Onde:
+  λ = ln(2) / 30 ≈ 0.0231  (Meia-vida exponencial de 30 dias)
+  S_fonte: App Nativo = 0.60 | iFood/99 Food = 0.25 | Google Maps = 0.15
+  M_morador: 1.50 para usuário verificado | 1.00 para visitante
+  Δt_i: Dias decorridos desde a data da postagem</pre>
+            </div>
+
+            <!-- Malha Hexagonal Uber H3 dos 5 Polos -->
+            <div class="card" style="overflow-x: auto;">
+              <b style="font-size: 16px; margin-bottom: 8px; display: block;">Malha Espacial Hexagonal Uber H3 (Resolução 8) dos 5 Polos de Caraguatatuba</b>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Polo Gastronômico</th>
+                    <th>LLM Regional Especialista</th>
+                    <th>Índice Hexagonal H3 (Exemplo)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${polosList.map(([key, info]) => `
+                    <tr>
+                      <td><strong>${info[0]}</strong></td>
+                      <td>${info[1]}</td>
+                      <td class="mono">${R.find(r => r.b === key).h3}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      }
+    };
+
+    /* --------------------------------------------------------------------------
+       7. NAVEGAÇÃO, DYNAMIC ISLAND & RENDERIZADOR MESTRE
+       -------------------------------------------------------------------------- */
+    const NAV = [
+      ['feed', 'Timeline & Descoberta', 'grid'],
+      ['search', 'Pesquisar Comida', 'search'],
+      ['promos', 'Promoções por Perto', 'tag'],
+      ['radar', 'Radar & Rankings (30d)', 'trend'],
+      ['review', 'Avaliar no Site', 'pen'],
+      ['credits', 'Créditos & B2B', 'award'],
+      ['architecture', 'Arquitetura RAG & TCC', 'cpu']
+    ];
+
+    const getStats = () => ({
+      cross: R.filter(vis).reduce((acc, r) => acc + r.rv.length * 12, 0),
+      bots: R.filter(vis).reduce((acc, r) => acc + r.bots, 0)
+    });
+
+    function updateIsland() {
+      const { cross, bots } = getStats();
+      document.getElementById('isli').innerHTML = `
+        <div class="ir">
+          ${jac(26)}
+          <span>${BR[st.b][1].replace('LLM ', '')}</span>
+          <span class="pulse"></span>
+        </div>
+        <div class="ix">
+          <div class="row" style="gap: 5px;">
+            ${['1 Intenção', '2 Malha H3', '3 Filtro SQL', '4 Âncora', '5 Síntese'].map((t, i) => `
+              <span class="chip mono" style="font-size: 10.5px; padding: 2px 7px; ${st.step === i + 1 ? 'background: var(--accent-brand); color: #FFF; border-color: var(--accent-brand);' : 'color: #A8A29E; border-color: #44403C;'}">${t}</span>
+            `).join('')}
+          </div>
+          <div class="row sp mono" style="font-size: 11.5px; color: #D6D3D1;">
+            <span>${cross} avaliações cruzadas</span>
+            <span>${bots} bots expurgados</span>
+          </div>
+          <button class="btn" data-a="dr" style="background: var(--accent-brand); border-color: var(--accent-brand); color: #FFF; align-self: flex-start; padding: 5px 11px; font-size: 12px;">
+            ${ic('chat')}Abrir Concierge Completo
+          </button>
+        </div>
+      `;
+    }
+
+    function render() {
+      const { cross, bots } = getStats();
+
+      // Hero Banner do Bairro Ativo
+      const heroBanner = `
+        <section class="hero">
+          <div>
+            <div class="eyebrow">Caraguatatuba · ${BR[st.b][2]}</div>
+            <h1>${BR[st.b][0]}</h1>
+            <p>${BR[st.b][1]} ativa · <span class="mono">${cross}</span> avaliações cruzadas · <span class="mono">${bots}</span> bots expurgados</p>
+          </div>
+          <div class="row">
+            ${Object.entries(BR).map(([k, info]) => `
+              <button class="btn ${st.b === k ? 'on' : ''}" data-b="${k}">${info[0]}</button>
+            `).join('')}
+            <button class="btn t" data-a="dr">
+              ${ic('chat')}Concierge Jacquin
+            </button>
+          </div>
+        </section>
+      `;
+
+      // Sidebar Esquerda
+      document.getElementById('nav').innerHTML = `
+        <div class="brand">
+          ${jac(36)}
+          <div>
+            <b>Caraguá FoodTech</b>
+            <small>Gestor Hiperlocal · TCC Módulo</small>
+          </div>
+        </div>
+        ${NAV.map(([k, label, iconName]) => `
+          <button data-v="${k}" class="${st.v === k ? 'on' : ''}">
+            ${ic(iconName)}${label}
+          </button>
+        `).join('')}
+        <div class="wal">
+          <div style="font-size: 11px; color: #9DB8B1; text-transform: uppercase; font-family: var(--font-mono);">Carteira Nitro</div>
+          <div class="mono" style="font-size: 26px; font-weight: 700;">${st.cred} CR</div>
+          <div style="font-size: 12px; color: #7FD1C6; margin-top: 2px;">Morador Caiçara Verificado (1.5x)</div>
+        </div>
+      `;
+
+      // Conteúdo da Vista Ativa
+      const activeElementId = document.activeElement?.id;
+      const selectionStart = document.activeElement?.selectionStart;
+
+      const mainEl = document.getElementById('main');
+      mainEl.innerHTML = heroBanner + (V[st.v] ? V[st.v]() : V.feed());
+      mainEl.classList.toggle('enter', st.v !== render.lastView || st.b !== render.lastBairro);
+      render.lastView = st.v;
+      render.lastBairro = st.b;
+
+      // Atribuição de índices para animação staggerUp
+      mainEl.querySelectorAll('.stack > *, .grid > *').forEach((el, index) => {
+        el.style.setProperty('--i', index);
+      });
+
+      // Preservação de foco do teclado
+      if (activeElementId) {
+        const el = document.getElementById(activeElementId);
+        if (el) {
+          el.focus();
+          try { el.setSelectionRange(selectionStart, selectionStart); } catch(err) {}
+        }
+      }
+
+      // Painel Contextual Direito (Desktop)
+      const topTaste = Object.entries(st.taste).filter(e => e[1] > 0).sort((a, b) => b[1] - a[1])[0];
+      const rightTips = (topTaste ? D.filter(d => d.t === topTaste[0]) : D.filter(d => d.o)).slice(0, 2);
+
+      document.getElementById('side').innerHTML = `
+        <div class="card" style="text-align: center; padding: 24px 16px;">
+          ${jac(110)}
+          <b style="display: block; font-size: 17px; margin-top: 10px;">Chef Jacquin Praiano</b>
+          <div class="mut" style="font-size: 13px;">LLM Manager Central Online</div>
+          <button class="btn t" style="margin-top: 12px; width: 100%; justify-content: center;" data-a="dr">
+            ${ic('chat')}Falar com o Concierge
+          </button>
+        </div>
+
+        <div class="card">
+          <b style="font-size: 15px;">Dicas para Você</b>
+          <div class="stack" style="margin-top: 10px; font-size: 13px;">
+            ${rightTips.map(d => `
+              <div>
+                <strong>${d.n}</strong>
+                <div class="mut">${rn(d.r).n} ${topTaste ? `· afinidade com ${topTaste[0]}` : ''}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="card">
+          <b style="font-size: 15px;">Radar de Qualidade Agora</b>
+          <div class="stack mut" style="margin-top: 10px; font-size: 12.5px;">
+            <div>Cantina Dona Neide +0.17 em 30d</div>
+            <div>Quiosque Canto Bravo +0.23 em 30d</div>
+            <div>Boteco Santo Antônio +0.29 em 30d</div>
+          </div>
+        </div>
+      `;
+
+      // Atualização do Drawer do Concierge
+      document.getElementById('dav').innerHTML = jac(42);
+      document.getElementById('dllm').textContent = (st.b === 'all' ? 'LLM Manager Central' : 'Manager ➔ ' + BR[st.b][1]);
+      document.getElementById('stg').innerHTML = ['1 Intenção', '2 Malha H3', '3 Filtro SQL', '4 Âncora', '5 Síntese'].map((t, i) => `
+        <span class="chip mono" style="font-size: 11px; ${st.step === i + 1 ? 'background: var(--accent-brand); color: #FFF; border-color: var(--accent-brand);' : ''}">${t}</span>
+      `).join('');
+
+      document.getElementById('drawer').className = 'glass' + (st.drawer ? ' on' : '');
+
+      document.getElementById('chips').innerHTML = [
+        'Camarão: qual restaurante tem as melhores qualidades?',
+        'Quais pequenos restaurantes por perto estão em promoção?',
+        'Quero jantar 100% vegano com segurança alimentar',
+        'Onde comer o autêntico Azul-Marinho caiçara?'
+      ].map(t => `<button class="btn" style="font-size: 12px; text-align: left;" data-cq="${t}">${t}</button>`).join('');
+
+      document.getElementById('msgs').innerHTML = st.chat.map(m => `
+        <div class="${m.u ? '' : 'ai-box'}" style="${m.u ? 'align-self: flex-end; background: var(--bg-subtle); border-radius: 14px; padding: 10px 14px; font-size: 14px; max-width: 85%;' : 'max-width: 90%;'}">
+          ${m.t}
+          ${(m.c || []).map(r => `
+            <div class="card" style="margin-top: 8px; padding: 10px 14px;">
+              <b>${r.n}</b> <span class="mono" style="color: var(--accent-brand);">★ ${r.s.toFixed(2)}</span>
+              <div class="mut" style="font-size: 12px;">${BR[r.b][0]} · ${r.km.toFixed(1)} km</div>
+            </div>
+          `).join('')}
+        </div>
+      `).join('') || '<div class="ai-box">Bonjour! Sou o Chef Jacquin Praiano. Pergunte sobre pratos, frutos do mar, promoções ou restrições alimentares em Caraguatatuba.</div>';
+
+      updateIsland();
+    }
+
+    /* --------------------------------------------------------------------------
+       8. MOTOR DE CHAT RAG DO CONCIERGE COM SIMULAÇÃO DOS 5 ESTÁGIOS
+       -------------------------------------------------------------------------- */
+    function ask(query) {
+      if (!query.trim()) return;
+      const qNorm = nm(query);
+      const filters = {
+        vegan: /vegan/.test(qNorm),
+        small: /pequeno/.test(qNorm),
+        promo: /promo/.test(qNorm)
+      };
+
+      const searchResult = rag(query, filters);
+      st.last = searchResult;
+      st.chat.push({ u: 1, t: query });
+      st.step = 1;
+      render();
+
+      let currentStep = 1;
+      const intervalId = setInterval(() => {
+        st.step = ++currentStep;
+        if (currentStep > 5) {
+          clearInterval(intervalId);
+          st.step = 0;
+          const winner = searchResult.res[0];
+          const cards = searchResult.res.slice(0, 3).map(x => x.r).filter((r, k, arr) => arr.indexOf(r) === k);
+
+          st.chat.push({
+            t: winner ? `Voilà! ${filters.vegan ? 'Pela trava de Food Safety, foram bloqueados pescados e derivados. ' : ''}O <strong>${winner.r.n}</strong> lidera as recomendações com <b>${winner.d.n}</b> (${brl(winner.d.p)}), Super Nota de 30 dias de ${winner.r.s.toFixed(2)}${winner.d.o ? '. Promoção verificada ativa no local.' : '.'}` : 'Hmm, nada aprovado pelas travas ativas no momento. Deseja relaxar algum filtro?',
+            c: cards
+          });
+
+          render();
+          const msgsEl = document.getElementById('msgs');
+          if (msgsEl) msgsEl.scrollTop = msgsEl.scrollHeight;
+          jump();
+        } else {
+          render();
+        }
+      }, 280);
+    }
+
+    /* --------------------------------------------------------------------------
+       9. GESTOR DE EVENTOS (DELEGAÇÃO EFICIENTE)
+       -------------------------------------------------------------------------- */
+    document.addEventListener('click', e => {
+      const target = e.target.closest('button, tr[data-sel]');
+      if (!target) return;
+      const ds = target.dataset;
+
+      if (ds.v) return set({ v: ds.v });
+      if (ds.b) return set({ b: ds.b });
+      if (ds.ff) return set({ ff: ds.ff });
+      if (ds.pill) return set({ pill: ds.pill, q: ds.pill === 'camarao' ? 'camarão' : st.q });
+      if (ds.porte) return set({ porte: ds.porte });
+      if (ds.raio) return set({ raio: +ds.raio });
+      if (ds.tab) return set({ tab: ds.tab });
+      if (ds.sel) return set({ sel: ds.sel });
+      if (ds.qs) return set({ q: ds.qs.replace(/ &.*/, '').replace('Moqueca Vegana', 'moqueca vegana').replace('Prato Feito Barato', 'barato'), pill: 'all' });
+      if (ds.cq) return ask(ds.cq);
+
+      const action = ds.a;
+      if (action === 'dr') set({ drawer: !st.drawer });
+      if (action === 'copy') {
+        navigator.clipboard?.writeText(ds.c);
+        toast('Código do voucher copiado para a área de transferência.');
+      }
+      if (action === 'ask') {
+        const inp = document.getElementById('cq');
+        ask(inp.value);
+        inp.value = '';
+      }
+      if (action === 'go') {
+        set({ q: document.getElementById('q').value, pill: 'all' });
+      }
+      if (action === 'rvw') {
+        st.open[ds.r] = !st.open[ds.r];
+        render();
+      }
+      if (action === 'like') {
+        const dish = D[+ds.i];
+        const isNowLiked = !st.liked[dish.i];
+        st.liked[dish.i] = isNowLiked;
+        st.taste[dish.t] = (st.taste[dish.t] || 0) + (isNowLiked ? 1 : -1);
+        render();
+        if (isNowLiked) toast('Prato curtido! Suas dicas foram refinadas.', 'heart');
+      }
+      if (action === 'pin') {
+        if (st.cred < 100) return toast('Créditos insuficientes.', 'zap');
+        st.cred -= 100;
+        set({ pin: +ds.i });
+        toast('Post destacado no topo do Feed por 7 dias.', 'zap');
+      }
+      if (action === 'goR') {
+        set({ v: 'review', rr: ds.r });
+      }
+      if (action === 'vou') {
+        set({ vouch: { ...st.vouch, [ds.k]: 'CF-' + Math.random().toString(36).slice(2, 8).toUpperCase() } });
+      }
+      if (action === 'rec') {
+        st.cred += +ds.n;
+        render();
+        toast('+' + ds.n + ' CR creditados na carteira.', 'award');
+      }
+      if (action === 'ben') {
+        if (ds.k === 'mor' && st.nitroMor) return;
+        if (st.cred < +ds.c) return toast('Créditos insuficientes.', 'zap');
+        st.cred -= +ds.c;
+        if (ds.k === 'mor') st.nitroMor = true;
+        render();
+        toast('Benefício Nitro ativado com sucesso!', 'award');
+      }
+      if (action === 'rate') {
+        const rest = rn(st.rr);
+        const k1 = +document.getElementById('k1').value;
+        const k2 = +document.getElementById('k2').value;
+        const k3 = +document.getElementById('k3').value;
+        const avg = (k1 + k2 + k3) / 3;
+        const text = document.getElementById('ac').value.trim();
+        const isNitro = document.getElementById('nit').checked;
+        const wordCount = text.split(/\s+/).filter(Boolean).length;
+
+        if (wordCount < 6) return toast('Escreva ao menos 6 palavras no relato.', 'pen');
+        if (ent(text) < 1.85) {
+          rest.bots++;
+          render();
+          return toast('Texto repetitivo detectado: peso zerado e contabilizado em bots expurgados.', 'shield');
+        }
+        if (isNitro && st.cred < 100) return toast('Créditos insuficientes para o Nitro.', 'zap');
+
+        const oldScore = rest.s;
+        applyReview(rest, avg, st.nitroMor, text, isNitro);
+        st.cred += isNitro ? -100 : 50;
+        st.open[rest.id] = true;
+        render();
+        toast(`Avaliação auditada! Super Nota de ${rest.n}: ${oldScore.toFixed(2)} para ${rest.s.toFixed(2)}. ${isNitro ? '-100 CR' : '+50 CR'}.`);
+      }
+      if (action === 'reply') {
+        const rest = rn(document.getElementById('br').value);
+        const replyText = document.getElementById('bt').value.trim();
+        if (!replyText) return toast('Preencha o texto da resposta.', 'pen');
+        if (st.cred < 50) return toast('Créditos insuficientes.', 'zap');
+        rest.rv[+document.getElementById('bi').value].reply = replyText;
+        st.cred -= 50;
+        st.open[rest.id] = true;
+        render();
+        toast('Resposta oficial publicada no Feed.');
+      }
+      if (action === 'promo') {
+        const rest = rn(document.getElementById('pr').value);
+        const dishName = document.getElementById('pn').value.trim();
+        const priceOrig = +document.getElementById('po').value;
+        const pricePromo = +document.getElementById('pp').value;
+        const validity = document.getElementById('pv').value || 'hoje';
+
+        if (!dishName || !priceOrig || !pricePromo || pricePromo >= priceOrig) {
+          return toast('Preencha prato e preços válidos (preço promo deve ser menor que o original).', 'tag');
+        }
+        if (rest.s < 4.40) return toast('Super Nota mínima 4.40 não atingida.', 'shield');
+        if (st.cred < 150) return toast('Créditos insuficientes.', 'zap');
+
+        st.cred -= 150;
+        st.extraPromos.push({ r: rest, n: dishName, p: pricePromo, o: priceOrig, v: validity });
+        st.news.push('Promoção Relâmpago: ' + dishName + ' em ' + rest.n + '.');
+        render();
+        toast('Promoção relâmpago publicada no Feed, no Radar e nas Promoções!', 'tag');
+      }
+    });
+
+    // Mudanças de Seleção e Inputs
+    document.addEventListener('change', e => {
+      const target = e.target;
+      if ('dish' in target.dataset) st.dish = target.value;
+      if ('tag' in target.dataset) st.tags[target.dataset.tag] = target.checked;
+      if ('nit' in target.dataset) st.nit = target.checked;
+      if ('rr' in target.dataset) set({ rr: target.value, dish: '' });
+      if ('bq' in target.dataset) set({ rr: target.value });
+    });
+
+    document.addEventListener('input', e => {
+      if ('live' in e.target.dataset) render();
+    });
+
+    // Teclas de Atalho (Spotlight ⌘K / Ctrl+K)
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && e.target.id === 'q') {
+        set({ q: e.target.value, pill: 'all' });
+      }
+      if (e.key === 'Enter' && e.target.id === 'cq') {
+        ask(e.target.value);
+        e.target.value = '';
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        set({ v: 'search' });
+        setTimeout(() => document.getElementById('q')?.focus(), 50);
+      }
+    });
+
+    /* --------------------------------------------------------------------------
+       10. FÍSICA A 60FPS: SEGUIR CURSOR DO MOUSE & PULO COMEMORATIVO
+       -------------------------------------------------------------------------- */
+    const isReducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const mouse = { x: 0, y: 0 };
+    const cur = { x: 0, y: 0 };
+
+    window.addEventListener('mousemove', e => {
+      mouse.x = (e.clientX / window.innerWidth - 0.5) * 2;
+      mouse.y = (e.clientY / window.innerHeight - 0.5) * 2;
+    });
+
+    (function loopParallax() {
+      cur.x += (mouse.x - cur.x) * 0.12;
+      cur.y += (mouse.y - cur.y) * 0.12;
+
+      if (!isReducedMotion) {
+        document.querySelectorAll('.jac').forEach(el => {
+          el.style.setProperty('--dx', (cur.x * 5).toFixed(2));
+          el.style.setProperty('--dy', (cur.y * 3.5).toFixed(2));
+        });
+      }
+      requestAnimationFrame(loopParallax);
+    })();
+
+    function jump() {
+      document.querySelectorAll('.jac').forEach(el => {
+        el.classList.remove('jump');
+        void el.getBoundingClientRect(); // Força reflow
+        el.classList.add('jump');
+      });
+    }
+
+    // Toggle da Dynamic Island ao Clicar
+    document.getElementById('isl').addEventListener('click', e => {
+      if (!e.target.closest('button')) {
+        e.currentTarget.classList.toggle('exp');
+      }
+    });
+
+    // Render Inicial
+    render();
+  </script>
+</body>
+</html>
+'''
+
+target_file = ROOT / "index.html"
+with open(target_file, "w", encoding="utf-8") as f:
+    f.write(html_code.strip() + "\n")
+
+print(f"[OK] index.html gerado com sucesso em: {target_file}")

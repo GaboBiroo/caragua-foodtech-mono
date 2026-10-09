@@ -2,8 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, MessageSquare, X, Send, ChevronDown, Utensils, Heart, MapPin, Star } from 'lucide-react';
-import { INITIAL_RESTAURANTS, Dish } from '../data/caraguaData';
+import { Sparkles, MessageSquare, X, Send, Utensils, Star, Flame } from 'lucide-react';
 
 interface DynamicIslandProps {
   onSelectCategory?: (category: string) => void;
@@ -67,42 +66,42 @@ export const DynamicIsland: React.FC<DynamicIslandProps> = ({
         layout
         transition={{ type: 'spring', stiffness: 450, damping: 32 }}
         onClick={() => !isExpanded && setIsExpanded(true)}
-        className={`bg-[#121316] text-[#FBF9F5] border border-white/15 shadow-[0_16px_36px_-6px_rgba(0,0,0,0.6),0_2px_8px_rgba(0,0,0,0.3)] cursor-pointer overflow-hidden transition-all duration-300 ${
+        className={`bg-[#1F1914] text-[#FAF7F2] border-2 border-[#2A9D8F]/50 shadow-[0_16px_36px_-6px_rgba(0,0,0,0.5),0_2px_8px_rgba(0,0,0,0.25)] cursor-pointer overflow-hidden transition-all duration-300 ${
           isExpanded
-            ? 'w-[min(520px,94vw)] p-5 rounded-[32px]'
-            : 'w-[310px] sm:w-[350px] hover:w-[370px] px-3.5 py-2 rounded-full'
+            ? 'w-[min(540px,94vw)] p-5 rounded-[32px]'
+            : 'w-[310px] sm:w-[360px] hover:w-[380px] px-3.5 py-2 rounded-full'
         }`}
       >
         {!isExpanded ? (
-          /* ESTADO COMPACTO: JACQUIN VIVO DENTRO DA ILHA */
+          /* ESTADO COMPACTO: JACQUIN RECORTADO VIVO DENTRO DA ILHA */
           <div className="flex items-center justify-between gap-2.5">
             <div className="flex items-center gap-2.5 min-w-0">
-              {/* O Jacquin Original em Miniatura com Borda Dourada */}
-              <div className="w-8 h-8 rounded-full overflow-hidden bg-[#38A398] border-2 border-[#D49B35] shrink-0 shadow-sm">
+              {/* O Jacquin Recortado em Miniatura com Borda Dourada */}
+              <div className="w-8 h-9 shrink-0 drop-shadow-sm">
                 <img
                   src="/jacquin-praiano.png"
                   alt="Chef Jacquin Praiano"
-                  className="w-full h-full object-cover scale-110"
+                  className="w-full h-full object-contain"
                 />
               </div>
 
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5">
                   <span className="font-bold text-xs text-white">Chef Jacquin</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 </div>
-                <p className="text-[11px] text-[#C9DDD8] truncate">
+                <p className="text-[11px] text-[#E9C46A] truncate">
                   &quot;Badejo no Canto Bravo tá incrível hoje!&quot;
                 </p>
               </div>
             </div>
 
-            <div className="px-2 py-0.5 rounded-full bg-white/10 hover:bg-white/20 text-[10px] font-bold text-amber-300 shrink-0 border border-white/10 transition-colors">
+            <div className="px-2.5 py-1 rounded-full bg-[#E63946] hover:bg-[#D90429] text-[10px] font-bold text-white shrink-0 shadow-sm transition-colors">
               Falar
             </div>
           </div>
         ) : (
-          /* ESTADO EXPANDIDO: CONVERSA GASTRONÔMICA COM O CHEF JACQUIN */
+          /* ESTADO EXPANDIDO: CONVERSA GASTRONÔMICA COM O BONEQUINHO */
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -112,22 +111,22 @@ export const DynamicIsland: React.FC<DynamicIslandProps> = ({
             {/* Header da Ilha Expandida */}
             <div className="flex items-center justify-between border-b border-white/10 pb-3">
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-2xl overflow-hidden bg-[#38A398] border-2 border-[#D49B35] shrink-0 shadow-md">
+                <div className="w-12 h-14 shrink-0 drop-shadow-md">
                   <img
                     src="/jacquin-praiano.png"
                     alt="Chef Jacquin Praiano"
-                    className="w-full h-full object-cover scale-110"
+                    className="w-full h-full object-contain"
                   />
                 </div>
                 <div>
                   <h4 className="font-bold text-sm text-white flex items-center gap-1.5">
                     Chef Jacquin Praiano
-                    <span className="text-[10px] font-normal text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded-full">
+                    <span className="text-[10px] font-normal text-[#1F1914] bg-[#E9C46A] px-2 py-0.5 rounded-full font-bold">
                       Seu Guia em Caraguá
                     </span>
                   </h4>
-                  <p className="text-[11px] text-[#9DB8B1]">
-                    Curadoria dos melhores quiosques e restaurantes da enseada
+                  <p className="text-[11px] text-[#C9DDD8]">
+                    Dicas dos melhores quiosques e peixes frescos da enseada
                   </p>
                 </div>
               </div>
@@ -137,30 +136,39 @@ export const DynamicIsland: React.FC<DynamicIslandProps> = ({
                   e.stopPropagation();
                   setIsExpanded(false);
                 }}
-                className="p-1.5 rounded-full text-[#9DB8B1] hover:text-white hover:bg-white/10 transition-colors"
+                className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-white/10 transition-colors"
                 aria-label="Recolher ilha"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Histórico de Dicas do Jacquin */}
+            {/* Histórico de Dicas do Jacquin com Balões de Fala */}
             <div className="max-h-56 overflow-y-auto space-y-2.5 pr-1 no-scrollbar text-xs">
               {chatMessages.map((msg, i) => (
                 <div
                   key={i}
-                  className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
+                  className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start items-start gap-2'}`}
                 >
+                  {msg.sender === 'jacquin' && (
+                    <div className="w-6 h-8 shrink-0 mt-0.5">
+                      <img
+                        src="/jacquin-praiano.png"
+                        alt="Jacquin"
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                  )}
                   <div
-                    className={`p-3 rounded-2xl max-w-[90%] leading-relaxed ${
+                    className={`p-3.5 rounded-2xl max-w-[85%] leading-relaxed ${
                       msg.sender === 'user'
-                        ? 'bg-[#E0533C] text-white rounded-br-none'
-                        : 'bg-white/10 text-[#FBF9F5] border border-white/10 rounded-bl-none'
+                        ? 'bg-[#E63946] text-white rounded-br-none font-medium'
+                        : 'bg-white/12 text-[#FAF7F2] border border-white/10 rounded-tl-none font-medium'
                     }`}
                   >
                     <p>{msg.text}</p>
                     {msg.recDish && (
-                      <span className="inline-block mt-1 text-[10px] font-bold text-amber-300 bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-300/30">
+                      <span className="inline-block mt-1.5 text-[10px] font-bold text-[#E9C46A] bg-amber-400/20 px-2 py-0.5 rounded-full border border-[#E9C46A]/30">
                         ⭐ Prato sugerido: {msg.recDish}
                       </span>
                     )}
@@ -178,7 +186,7 @@ export const DynamicIsland: React.FC<DynamicIslandProps> = ({
                     e.stopPropagation();
                     handleSend(chip.query);
                   }}
-                  className="px-2.5 py-1 rounded-xl bg-white/10 hover:bg-white/20 text-[11px] font-semibold text-white whitespace-nowrap transition-colors border border-white/10"
+                  className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-[11px] font-semibold text-white whitespace-nowrap transition-colors border border-white/10"
                 >
                   {chip.label}
                 </button>
@@ -198,15 +206,15 @@ export const DynamicIsland: React.FC<DynamicIslandProps> = ({
                 type="text"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                placeholder="Pergunte ao Chef: ex: onde tem peixe na telha?"
-                className="flex-1 px-3.5 py-2.5 rounded-2xl bg-white/10 border border-white/15 text-xs text-white placeholder-zinc-400 focus:outline-none focus:bg-white/15 focus:border-amber-400"
+                placeholder="Pergunte ao Chef: onde tem peixe na telha?"
+                className="flex-1 px-4 py-2.5 rounded-2xl bg-white/10 border border-white/15 text-xs text-white placeholder-zinc-400 focus:outline-none focus:bg-white/15 focus:border-[#E9C46A]"
               />
               <button
                 type="submit"
                 disabled={!inputText.trim()}
-                className="p-2.5 rounded-2xl bg-[#E0533C] hover:bg-[#FF6B4A] text-white disabled:opacity-40 transition-colors shadow-sm"
+                className="p-2.5 rounded-2xl bg-[#E63946] hover:bg-[#D90429] text-white disabled:opacity-40 transition-colors shadow-sm"
               >
-                <Send className="w-3.5 h-3.5" />
+                <Send className="w-4 h-4" />
               </button>
             </form>
           </motion.div>

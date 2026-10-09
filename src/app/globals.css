@@ -3,22 +3,19 @@
 @tailwind utilities;
 
 :root {
-  --bg-canvas: #F6F2EB;
-  --bg-subtle: #EDE6DC;
+  /* Paleta Gastronômica Quente & Aconchegante (Cores de Comida que Dão Fome) */
+  --color-coral: #E63946;          /* Vermelho-Coral Gastronômico (Abre o apetite) */
+  --color-coral-dark: #D90429;
+  --color-gold: #F4A261;           /* Dourado Solar / Crocância de Praia */
+  --color-amber: #E9C46A;
+  --color-turquesa: #2A9D8F;       /* Azul-Turquesa da Camisa & Sticker do Jacquin */
+  --color-turquesa-dark: #1E6B62;
+  
+  --bg-cream: #FAF7F2;             /* Fundo Creme/Areia Confortável (Não hospitalar) */
   --bg-card: #FFFFFF;
-  --bg-ocean-anchor: #0B2B26;
-  --bg-island: #141413;
-  --border-hairline: #E2D9CC;
-  --border-strong: #D4D4D8;
-  --border-teal: #99F6E4;
-  --text-primary: #18181B;
-  --text-secondary: #52525B;
-  --text-muted: #71717A;
-  --text-on-ocean: #F6F2EB;
-  --accent-brand: #0D9488;
-  --accent-promo: #E11D48;
-  --accent-safety: #059669;
-  --accent-credit: #D97706;
+  --text-main: #1F1914;            /* Cacau Profundo Acolhedor (Não preto artificial de TI) */
+  --text-muted: #6B5E52;
+  --border-soft: #E8E2D8;
 }
 
 @layer utilities {
@@ -29,53 +26,68 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  .font-serif {
-    font-family: 'Instrument Serif', Georgia, serif;
+  .font-heading {
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
   }
-  .font-sans {
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-  }
-  .font-mono {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
+  .font-body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   }
 }
 
 body {
-  background-color: var(--bg-canvas);
-  color: var(--text-primary);
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-cream);
+  color: var(--text-main);
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
 
-/* Coucou Tactile Editorial Cards */
-.coucou-card {
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* Cards Gastronômicos Arredondados e Apetitosos (Sem quadrados duros blocados) */
+.food-card {
   background-color: #FFFFFF;
-  border: 1px solid #E2D9CC;
-  border-radius: 1.5rem;
-  box-shadow: 0 2px 6px rgba(20, 20, 19, 0.03), 0 14px 34px -10px rgba(20, 20, 19, 0.07);
-  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  border: 1px solid var(--border-soft);
+  border-radius: 2rem;
+  box-shadow: 0 4px 20px -4px rgba(31, 25, 20, 0.05), 0 1px 3px rgba(31, 25, 20, 0.02);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.coucou-card:hover {
-  border-color: #D4D4D8;
-  box-shadow: 0 4px 12px rgba(20, 20, 19, 0.05), 0 20px 40px -12px rgba(20, 20, 19, 0.10);
+.food-card:hover {
+  transform: translateY(-3px);
+  border-color: #D9D0C3;
+  box-shadow: 0 12px 30px -6px rgba(31, 25, 20, 0.08), 0 2px 6px rgba(31, 25, 20, 0.03);
 }
 
-.coucou-glass {
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.9);
-  box-shadow: 0 4px 20px -2px rgba(24, 24, 27, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+/* Balão de Fala do Jacquin */
+.speech-bubble {
+  position: relative;
+  background: #FFFFFF;
+  border-radius: 1.25rem;
+  box-shadow: 0 10px 25px -5px rgba(31, 25, 20, 0.1);
 }
 
-@keyframes pulseGreen {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.35; transform: scale(1.2); }
+.speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  right: 28px;
+  border-width: 8px 8px 0;
+  border-style: solid;
+  border-color: #FFFFFF transparent;
+  display: block;
+  width: 0;
 }
 
-.animate-pulse-green {
-  animation: pulseGreen 1.8s infinite cubic-bezier(0.4, 0, 0.6, 1);
+@keyframes bounceSlow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.animate-bounce-slow {
+  animation: bounceSlow 3s infinite ease-in-out;
 }

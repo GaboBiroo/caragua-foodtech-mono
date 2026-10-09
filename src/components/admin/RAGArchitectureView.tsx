@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { Brain, Cpu, Database, Network, ShieldCheck, ArrowRight, Sparkles } from 'lucide-react';
 import { NEIGHBORHOODS } from '../../data/caraguaData';
@@ -42,14 +44,14 @@ export const RAGArchitectureView: React.FC = () => {
 
   return (
     <div className="space-y-8">
-      <div className="border-b border-white/[0.08] pb-5">
-        <span className="text-teal-400 text-xs font-mono uppercase tracking-wider block mb-1">
+      <div className="border-b border-[#E2D9CC] pb-5">
+        <span className="text-[#0D9488] text-xs font-mono uppercase tracking-wider block mb-1">
           Arquitetura de Inteligência Artificial & RAG
         </span>
-        <h2 className="text-xl font-semibold text-white tracking-tight">
+        <h2 className="text-xl font-bold text-[#18181B] tracking-tight">
           Pipeline RAG de 5 Estágios & Orquestração de LLMs Regionais
         </h2>
-        <p className="text-xs text-zinc-400 mt-1 leading-relaxed">
+        <p className="text-xs text-[#52525B] mt-1 leading-relaxed">
           TCC em ADS • Centro Universitário Módulo (Caraguatatuba/SP). Implementação de Retrieval-Augmented Generation hiperlocal com decaimento temporal.
         </p>
       </div>
@@ -59,50 +61,50 @@ export const RAGArchitectureView: React.FC = () => {
         {stages.map((st) => (
           <div
             key={st.num}
-            className="p-4 rounded-2xl bg-white/[0.04] backdrop-blur-2xl border border-white/[0.08] flex flex-col justify-between"
+            className="coucou-card p-4 space-y-2 flex flex-col justify-between"
           >
             <div>
-              <span className="font-mono text-xs font-bold text-teal-400 block mb-2">
-                ESTÁGIO {st.num}
+              <span className="font-mono text-xs font-bold text-[#0D9488] bg-[#F0FDFA] px-2 py-0.5 rounded-full border border-[#99F6E4]">
+                Estágio {st.num}
               </span>
-              <h4 className="font-semibold text-white text-xs mb-1.5 leading-snug">
+              <h3 className="font-bold text-xs text-[#18181B] mt-2">
                 {st.title}
-              </h4>
-              <p className="text-[11px] text-zinc-400 leading-relaxed mb-3">
+              </h3>
+              <p className="text-[11px] text-[#52525B] mt-1 leading-relaxed">
                 {st.desc}
               </p>
             </div>
-            <span className="text-[10px] font-mono text-zinc-500 bg-white/[0.03] p-1.5 rounded-lg border border-white/[0.05] block">
-              {st.tech}
-            </span>
+            <div className="pt-2 border-t border-[#E2D9CC]/70">
+              <span className="font-mono text-[10px] text-[#71717A] block">
+                {st.tech}
+              </span>
+            </div>
           </div>
         ))}
       </div>
 
-      {/* Simulador do Orquestrador de LLMs Regionais */}
-      <div className="p-6 md:p-8 rounded-3xl bg-white/[0.04] backdrop-blur-2xl border border-white/[0.09] space-y-5">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-base font-semibold text-white tracking-tight flex items-center gap-2">
-              <Cpu className="w-4 h-4 text-teal-400" />
-              Simulador de Despacho: LLM Manager ➔ LLM Regional
-            </h3>
-            <p className="text-xs text-zinc-400 mt-0.5">
-              Selecione o polo geográfico para visualizar o contexto ativado no RAG.
-            </p>
-          </div>
+      {/* Orquestração Multi-Agente dos Polos Gastronômicos */}
+      <div className="coucou-card p-6 md:p-8 space-y-6">
+        <div>
+          <h3 className="font-bold text-[#18181B] text-base flex items-center gap-2">
+            <Cpu className="w-5 h-5 text-[#0D9488]" />
+            <span>Matriz de Especialistas Regionais (Adapters LoRA por Bairro)</span>
+          </h3>
+          <p className="text-xs text-[#52525B] mt-1">
+            Cada polo gastronômico possui um adapter de linguagem calibrado para sua vocação culinária.
+          </p>
         </div>
 
-        {/* Bairros */}
+        {/* Pílulas de Bairros */}
         <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
-          {NEIGHBORHOODS.slice(1).map((n) => (
+          {NEIGHBORHOODS.filter(n => n.id !== 'todos').map((n) => (
             <button
               key={n.id}
               onClick={() => setSelectedPolo(n.id)}
-              className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition ${
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
                 selectedPolo === n.id
-                  ? 'bg-teal-500/20 border border-teal-400/40 text-teal-200'
-                  : 'bg-white/[0.04] border border-white/[0.08] text-zinc-400 hover:text-white'
+                  ? 'bg-[#0B2B26] text-[#F6F2EB]'
+                  : 'bg-white text-[#52525B] border border-[#E2D9CC] hover:text-[#18181B]'
               }`}
             >
               {n.name}
@@ -110,19 +112,21 @@ export const RAGArchitectureView: React.FC = () => {
           ))}
         </div>
 
-        {/* Painel do Modelo Ativo */}
-        <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/[0.08] space-y-3 font-mono text-xs">
-          <div className="flex items-center justify-between border-b border-white/[0.06] pb-2">
-            <span className="text-zinc-400">Modelo Especialista Ativado:</span>
-            <span className="text-teal-300 font-bold">{currentPoloObj.llmName}</span>
-          </div>
-          <div className="flex items-center justify-between border-b border-white/[0.06] pb-2">
-            <span className="text-zinc-400">Especialidade Gastronômica:</span>
-            <span className="text-zinc-200">{currentPoloObj.llmSpecialty}</span>
-          </div>
+        {/* Detalhes do Especialista Selecionado */}
+        <div className="p-5 rounded-2xl bg-[#EDE6DC]/60 border border-[#E2D9CC] space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-zinc-400">Temperatura de Amostragem:</span>
-            <span className="text-amber-300">0.2 (Rigor Factual & Food Safety)</span>
+            <span className="font-mono text-xs font-bold text-[#0D9488]">
+              {currentPoloObj.llmName}
+            </span>
+            <span className="text-[11px] font-mono text-[#71717A]">
+              Especialidade: {currentPoloObj.llmSpecialty}
+            </span>
+          </div>
+          <p className="text-xs text-[#18181B]">
+            {currentPoloObj.tagline}
+          </p>
+          <div className="p-3 rounded-xl bg-white font-mono text-[11px] text-[#52525B] border border-[#E2D9CC]">
+            System Prompt Context: &quot;Você é o concierge hiperlocal do polo {currentPoloObj.name}. Priorize ingredientes da estação, barcos de pesca locais de Caraguá e respeite 100% dos filtros de Food Safety.&quot;
           </div>
         </div>
       </div>

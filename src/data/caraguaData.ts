@@ -174,7 +174,7 @@ export const INITIAL_RESTAURANTS: RestaurantItem[] = [
         isVegan: false,
         isPromotion: true,
         promoDiscount: "-15%",
-        imageUrl: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=800&q=80",
+        imageUrl: "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?auto=format&fit=crop&w=800&q=80",
         tags: ["Badejo", "Crocante", "Petisco", "Praia"]
       },
       {
@@ -545,7 +545,7 @@ export const INITIAL_FEED_POSTS: FeedPost[] = [
     restaurantName: "Quiosque Canto Bravo",
     neighborhood: "Martim de Sá",
     distanceKm: 1.2,
-    postImage: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=1000&q=85",
+    postImage: "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?auto=format&fit=crop&w=1000&q=85",
     caption: "Badejo fresquinho que acabou de chegar dos barcos da enseada de Caraguá! Empanado na farinha panko com raspas de limão-cravo.",
     dishName: "Isca de Badejo com Molho Tártaro Caiçara",
     dishPrice: 68.0,

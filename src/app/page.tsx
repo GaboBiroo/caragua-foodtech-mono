@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Sparkles, Search, TrendingUp, PenSquare, Coins, 
   ShieldCheck, Cpu, Compass, MapPin, Heart, Bookmark, 
-  ArrowUpRight, Award, Zap, ChevronRight 
+  ArrowUpRight, Award, Zap, ChevronRight, MessageSquare 
 } from 'lucide-react';
 
 import { NEIGHBORHOODS, INITIAL_RESTAURANTS, RestaurantItem } from '../data/caraguaData';
@@ -18,6 +18,7 @@ import { AdminView } from '../components/admin/AdminView';
 import { RAGArchitectureView } from '../components/admin/RAGArchitectureView';
 import { JacquinPraianoAvatar } from '../components/JacquinPraianoAvatar';
 import { JacquinChatDrawer } from '../components/JacquinChatDrawer';
+import { DynamicIsland } from '../components/DynamicIsland';
 
 type MainTab = 'feed' | 'search' | 'radar' | 'review' | 'credits' | 'admin' | 'rag';
 
@@ -101,7 +102,7 @@ export default function MasterPage() {
 
   const activeNeighborhoodObj = NEIGHBORHOODS.find(n => n.id === selectedNeighborhood) || NEIGHBORHOODS[0];
 
-  // Recomendações Dinâmicas em Tempo Real baseadas no que o usuário curtiu
+  // Recomendações Dinâmicas baseadas no que o usuário curtiu
   const personalizedTips = useMemo(() => {
     const isVeganFan = likedCategories.some(c => c.toLowerCase().includes('vegano'));
     if (isVeganFan) {
@@ -125,7 +126,7 @@ export default function MasterPage() {
         name: 'Risoto de Camarão Rosa',
         rest: 'Mar & Terra Gourmet (Indaiá)',
         reason: 'Baseado no seu gosto por frutos do mar e porções de praia.',
-        tag: 'Super Nota 4.79'
+        tag: 'Super Nota 4.92'
       },
       {
         name: 'Isca de Badejo com Panko',
@@ -137,35 +138,36 @@ export default function MasterPage() {
   }, [likedCategories]);
 
   return (
-    <div className="relative min-h-screen bg-[#07090E] text-zinc-100 overflow-x-hidden selection:bg-teal-500/30 selection:text-teal-200">
+    <div className="relative min-h-screen bg-[#F6F2EB] text-[#18181B] selection:bg-[#0D9488]/20 selection:text-[#0B2B26]">
       
-      {/* CANVASES DE FUNDO: AMBIENT MESH LIGHTS FIXAS */}
-      <div className="fixed -top-40 -left-20 w-[550px] h-[550px] bg-teal-600/15 rounded-full blur-[140px] pointer-events-none z-0" />
-      <div className="fixed -top-40 right-0 w-[650px] h-[650px] bg-indigo-700/15 rounded-full blur-[160px] pointer-events-none z-0" />
-      <div className="fixed bottom-0 left-1/3 w-[500px] h-[500px] bg-rose-600/10 rounded-full blur-[150px] pointer-events-none z-0" />
+      {/* 1. DYNAMIC ISLAND FLUTUANTE NO TOPO (Padrão Louis-CFM/Coucou) */}
+      <DynamicIsland
+        activePoloName={activeNeighborhoodObj.name}
+        onOpenConcierge={() => setIsJacquinOpen(true)}
+      />
 
-      {/* ============================================================== */}
-      {/* 1. LAYOUT DESKTOP WIDESCREEN REAL (md:flex) - SEM CAPINHA FALSA */}
-      {/* ============================================================== */}
-      <div className="hidden md:flex min-h-screen relative z-10 max-w-7xl mx-auto px-6 py-6 gap-8">
+      {/* 2. SHELL PRINCIPAL 3 COLUNAS (DESKTOP) */}
+      <div className="min-h-screen flex flex-col lg:flex-row max-w-[1540px] mx-auto">
         
-        {/* SIDEBAR ESQUERDA FLUTUANTE EM LIQUID GLASS */}
-        <aside className="w-64 lg:w-72 sticky top-6 h-[calc(100vh-3rem)] flex flex-col justify-between p-5 rounded-3xl bg-white/[0.04] backdrop-blur-2xl border border-white/[0.09] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.16),0_20px_40px_-15px_rgba(0,0,0,0.6)]">
+        {/* ============================================================== */}
+        {/* COLUNA ESQUERDA: SIDEBAR ÂNCORA VERDE-OCEANO (#0B2B26)         */}
+        {/* ============================================================== */}
+        <aside className="hidden lg:flex w-72 sticky top-0 h-screen flex-col justify-between p-6 bg-[#0B2B26] text-[#F6F2EB] border-r border-white/10 z-30">
           <div>
             {/* Header / Brand */}
-            <div className="flex items-center gap-3 pb-6 border-b border-white/[0.08]">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-teal-500 to-indigo-500 flex items-center justify-center font-black text-slate-950 text-base shadow-lg shadow-teal-500/25">
+            <div className="flex items-center gap-3.5 pb-6 border-b border-white/12">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#0D9488] to-[#34D399] flex items-center justify-center font-black text-slate-950 text-base shadow-md">
                 CF
               </div>
               <div>
-                <h1 className="font-semibold text-white text-sm tracking-tight leading-tight">
+                <h1 className="font-bold text-white text-base tracking-tight leading-tight">
                   Caraguá FoodTech
                 </h1>
-                <p className="text-[11px] text-zinc-400">TCC ADS • Módulo</p>
+                <p className="text-[11px] text-[#9DB8B1] font-mono">TCC ADS • Módulo</p>
               </div>
             </div>
 
-            {/* Menu de Navegação Vertical com Lucide Icons */}
+            {/* Menu de Navegação Vertical */}
             <nav className="mt-6 space-y-1.5">
               {[
                 { id: 'feed', label: 'Feed & Timeline', icon: Sparkles },
@@ -182,25 +184,22 @@ export default function MasterPage() {
                   <button
                     key={item.id}
                     onClick={() => setActiveTab(item.id as MainTab)}
-                    className={`relative w-full px-4 py-3 rounded-2xl text-xs font-semibold flex items-center justify-between transition-all duration-300 ${
+                    className={`relative w-full px-4 py-3 rounded-2xl text-xs font-semibold flex items-center justify-between transition-all duration-200 ${
                       isActive
-                        ? 'text-white'
-                        : 'text-zinc-400 hover:text-white hover:bg-white/[0.04]'
+                        ? 'bg-[#F6F2EB] text-[#0B2B26] font-bold shadow-md'
+                        : 'text-[#C9DDD8] hover:text-white hover:bg-white/8'
                     }`}
                   >
-                    {isActive && (
-                      <motion.div
-                        layoutId="desktopNavPill"
-                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                        className="absolute inset-0 bg-white/[0.12] border border-white/[0.20] shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.3)] rounded-2xl backdrop-blur-xl"
-                      />
-                    )}
-                    <span className="relative z-10 flex items-center gap-3">
-                      <Icon className="w-4 h-4 text-teal-400" />
-                      {item.label}
+                    <span className="flex items-center gap-3">
+                      <Icon className={`w-4 h-4 ${isActive ? 'text-[#0B2B26]' : 'text-[#7FD1C6]'}`} />
+                      <span>{item.label}</span>
                     </span>
                     {item.badge && (
-                      <span className="relative z-10 px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono ${
+                        isActive 
+                          ? 'bg-[#0B2B26] text-[#F6F2EB]' 
+                          : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                      }`}>
                         {item.badge}
                       </span>
                     )}
@@ -210,343 +209,230 @@ export default function MasterPage() {
             </nav>
           </div>
 
-          {/* Cartão de Créditos do Usuário na Base da Sidebar */}
-          <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.07] space-y-2">
+          {/* Cartão da Carteira na Base da Sidebar */}
+          <div className="p-4 rounded-2xl bg-white/8 border border-white/12 space-y-2">
             <div className="flex items-center justify-between text-xs">
-              <span className="text-zinc-400">Minha Carteira:</span>
+              <span className="text-[#9DB8B1]">Minha Carteira:</span>
               <span className="font-mono font-bold text-amber-300 flex items-center gap-1">
                 <Coins className="w-3.5 h-3.5" /> {userCredits} CR
               </span>
             </div>
-            <div className="w-full bg-white/[0.06] h-1.5 rounded-full overflow-hidden">
-              <div className="bg-amber-400 h-full rounded-full" style={{ width: `${Math.min(100, (userCredits / 500) * 100)}%` }} />
+            <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
+              <div 
+                className="bg-amber-400 h-full rounded-full transition-all duration-300" 
+                style={{ width: `${Math.min(100, (userCredits / 500) * 100)}%` }} 
+              />
             </div>
-            <p className="text-[10px] text-zinc-500 font-mono">Nível: Caiçara Gourmet</p>
+            <p className="text-[10px] text-[#9DB8B1] font-mono">Nível: Caiçara Gourmet</p>
           </div>
         </aside>
 
-        {/* ÁREA CENTRAL PRINCIPAL: BENTO GRID / FEED EDITORIAL */}
-        <main className="flex-1 min-w-0 max-w-3xl space-y-6">
+        {/* ============================================================== */}
+        {/* COLUNA CENTRAL: CONTEÚDO EDITORIAL WARM COASTAL                */}
+        {/* ============================================================== */}
+        <main className="flex-1 min-w-0 px-4 md:px-8 py-20 lg:py-16 space-y-8">
           
-          {/* HEADER SPOTLIGHT & ORQUESTRADOR DE BAIRROS */}
-          <div className="p-5 rounded-3xl bg-white/[0.04] backdrop-blur-2xl border border-white/[0.09] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.16)] space-y-4">
-            
-            {/* Seletor de Bairros em Pílulas de Vidro com layoutId */}
-            <div>
-              <div className="flex items-center justify-between mb-2 text-xs">
-                <span className="font-mono text-zinc-400 uppercase tracking-wider">
-                  Polos Gastronômicos de Caraguá:
-                </span>
-                <span className="text-[11px] font-mono text-teal-400 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
-                  {activeNeighborhoodObj.llmName}
-                </span>
-              </div>
-
-              <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
-                {NEIGHBORHOODS.map((n) => {
-                  const isSelected = selectedNeighborhood === n.id;
-                  return (
-                    <button
-                      key={n.id}
-                      onClick={() => setSelectedNeighborhood(n.id)}
-                      className={`relative px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-300 ${
-                        isSelected
-                          ? 'text-white'
-                          : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.04]'
-                      }`}
-                    >
-                      {isSelected && (
-                        <motion.div
-                          layoutId="desktopNeighborhoodPill"
-                          transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                          className="absolute inset-0 bg-white/[0.14] border border-white/[0.22] shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.25)] rounded-xl"
-                        />
-                      )}
-                      <span className="relative z-10">{n.name}</span>
-                    </button>
-                  );
-                })}
-              </div>
+          {/* HERO BANNER EDITORIAL DO POLO ATIVO */}
+          <div className="p-6 md:p-8 rounded-3xl bg-[#0B2B26] text-[#F6F2EB] shadow-xl flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="space-y-2 max-w-xl">
+              <span className="text-xs font-mono font-bold text-[#7FD1C6] uppercase tracking-wider block">
+                Polo Gastronômico • {activeNeighborhoodObj.name}
+              </span>
+              <h2 className="font-serif italic text-3xl md:text-5xl font-normal tracking-tight text-white leading-tight">
+                {activeNeighborhoodObj.id === 'todos' 
+                  ? 'Sabores da Costa de Caraguatatuba' 
+                  : activeNeighborhoodObj.id === 'martim' 
+                  ? 'Pé na Areia & Frutos do Mar Frescos' 
+                  : activeNeighborhoodObj.id === 'indaia' 
+                  ? 'Alta Gastronomia & Cozinha Contemporânea' 
+                  : activeNeighborhoodObj.id === 'centro'
+                  ? 'Tradição Caiçara & Culinária Patrimonial'
+                  : 'Pesca Artesanal & Maricultura Sustentável'}
+              </h2>
+              <p className="text-xs md:text-sm text-[#B7CFC9] leading-relaxed">
+                {activeNeighborhoodObj.tagline}. Síntese gerada em tempo real pela {activeNeighborhoodObj.llmName}.
+              </p>
             </div>
 
-            {/* Banner da LLM Regional Ativa */}
-            <div className="px-4 py-2.5 rounded-2xl bg-white/[0.02] border border-white/[0.06] flex items-center justify-between text-xs text-zinc-300">
-              <span className="text-zinc-400 truncate max-w-md">
-                {activeNeighborhoodObj.tagline}
-              </span>
-              <button
-                onClick={() => setIsJacquinOpen(true)}
-                className="text-teal-400 hover:text-teal-300 font-semibold flex items-center gap-1 shrink-0 ml-2"
-              >
-                <span>Consultar Concierge</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
+            {/* Ação Rápida: Consultar Concierge */}
+            <button
+              onClick={() => setIsJacquinOpen(true)}
+              className="px-4 py-2.5 rounded-2xl bg-[#0D9488] hover:bg-[#0F766E] text-white font-bold text-xs flex items-center gap-2 whitespace-nowrap self-start md:self-auto transition-colors shadow-md"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>Perguntar ao Chef Jacquin</span>
+            </button>
+          </div>
+
+          {/* SELETOR DE POLOS / BAIRROS EM PÍLULAS TÁTEIS */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-xs font-mono text-[#52525B]">
+              <span className="uppercase font-bold tracking-wider">Polos Gastronômicos de Caraguá:</span>
+              <span className="text-[#0D9488] font-bold">{activeNeighborhoodObj.llmName}</span>
+            </div>
+
+            <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+              {NEIGHBORHOODS.map((n) => {
+                const isSelected = selectedNeighborhood === n.id;
+                return (
+                  <button
+                    key={n.id}
+                    onClick={() => setSelectedNeighborhood(n.id)}
+                    className={`px-4 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition-all ${
+                      isSelected
+                        ? 'bg-[#0B2B26] text-white shadow-sm'
+                        : 'bg-white text-[#52525B] border border-[#E2D9CC] hover:text-[#18181B] hover:border-[#D4D4D8]'
+                    }`}
+                  >
+                    {n.name}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          {/* CONTEÚDO DA ABA ATIVA (COM ANIMATEPRESENCE) */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.25 }}
-            >
-              {activeTab === 'feed' && (
-                <FeedTab
-                  selectedNeighborhood={selectedNeighborhood}
-                  likedDishIds={likedDishIds}
-                  onToggleLike={handleToggleLike}
-                  savedPostIds={savedPostIds}
-                  onToggleSave={handleToggleSave}
-                  onSelectRestaurantForReview={handleSelectRestaurantForReview}
-                />
-              )}
+          {/* RENDERIZADOR DINÂMICO DE TABS */}
+          <div>
+            {activeTab === 'feed' && (
+              <FeedTab
+                selectedNeighborhood={selectedNeighborhood}
+                likedDishIds={likedDishIds}
+                onToggleLike={handleToggleLike}
+                savedPostIds={savedPostIds}
+                onToggleSave={handleToggleSave}
+                onSelectRestaurantForReview={handleSelectRestaurantForReview}
+              />
+            )}
 
-              {activeTab === 'search' && (
-                <SearchTab
-                  selectedNeighborhood={selectedNeighborhood}
-                  onSelectRestaurantForReview={handleSelectRestaurantForReview}
-                />
-              )}
+            {activeTab === 'search' && (
+              <SearchTab
+                selectedNeighborhood={selectedNeighborhood}
+                onSelectRestaurantForReview={handleSelectRestaurantForReview}
+              />
+            )}
 
-              {activeTab === 'radar' && (
-                <RadarTab
-                  onSelectRestaurantForReview={handleSelectRestaurantForReview}
-                />
-              )}
+            {activeTab === 'radar' && (
+              <RadarTab
+                onSelectRestaurantForReview={handleSelectRestaurantForReview}
+              />
+            )}
 
-              {activeTab === 'review' && (
-                <ReviewTab
-                  selectedRestaurant={selectedRestaurantForReview}
-                  onClearSelectedRestaurant={() => setSelectedRestaurantForReview(null)}
-                  onSubmitReview={handleSubmitReview}
-                />
-              )}
+            {activeTab === 'review' && (
+              <ReviewTab
+                selectedRestaurant={selectedRestaurantForReview}
+                onClearSelectedRestaurant={() => setSelectedRestaurantForReview(null)}
+                onSubmitReview={handleSubmitReview}
+              />
+            )}
 
-              {activeTab === 'credits' && (
-                <CreditsTab
-                  userCredits={userCredits}
-                  onSpendCredits={handleSpendCredits}
-                />
-              )}
+            {activeTab === 'credits' && (
+              <CreditsTab
+                userCredits={userCredits}
+                onSpendCredits={handleSpendCredits}
+              />
+            )}
 
-              {activeTab === 'admin' && <AdminView />}
-              {activeTab === 'rag' && <RAGArchitectureView />}
-            </motion.div>
-          </AnimatePresence>
+            {activeTab === 'admin' && <AdminView />}
+
+            {activeTab === 'rag' && <RAGArchitectureView />}
+          </div>
         </main>
 
-        {/* PAINEL DIREITO CONTEXTUAL EM LIQUID GLASS (hidden xl:block) */}
-        <aside className="hidden xl:block w-80 sticky top-6 h-[calc(100vh-3rem)] overflow-y-auto space-y-6 no-scrollbar">
+        {/* ============================================================== */}
+        {/* COLUNA DIREITA: PAINEL CONTEXTUAL (DESKTOP)                     */}
+        {/* ============================================================== */}
+        <aside className="hidden xl:flex w-80 sticky top-0 h-screen flex-col gap-6 p-6 border-l border-[#E2D9CC] overflow-y-auto">
           
-          {/* Card Mascote Jacquin Praiano */}
-          <div className="p-5 rounded-3xl bg-white/[0.04] backdrop-blur-2xl border border-white/[0.09] shadow-xl text-center">
-            <div className="flex justify-center mb-3">
-              <JacquinPraianoAvatar size={74} />
+          {/* Card Mascote Chef Jacquin Praiano */}
+          <div className="coucou-card p-6 text-center space-y-4">
+            <JacquinPraianoAvatar size={80} interactive={true} className="mx-auto" />
+            <div>
+              <h3 className="font-bold text-[#18181B] text-base">Chef Jacquin Praiano</h3>
+              <p className="text-xs text-[#52525B] mt-1 leading-relaxed">
+                Concierge RAG 5 Estágios treinado na culinária caiçara de Caraguá.
+              </p>
             </div>
-            <h3 className="font-semibold text-white text-sm">Chef Jacquin Praiano</h3>
-            <p className="text-xs text-zinc-400 mt-0.5 mb-3 leading-relaxed">
-              Concierge RAG 5 Estágios treinado na culinária caiçara de Caraguá.
-            </p>
             <button
               onClick={() => setIsJacquinOpen(true)}
-              className="w-full py-2.5 rounded-2xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-semibold text-xs flex items-center justify-center gap-2 shadow-lg shadow-teal-500/20 transition"
+              className="w-full py-2.5 rounded-xl bg-[#0D9488] hover:bg-[#0F766E] text-white font-bold text-xs flex items-center justify-center gap-2 transition-colors shadow-sm"
             >
-              <Sparkles className="w-3.5 h-3.5" />
+              <MessageSquare className="w-4 h-4" />
               <span>Perguntar ao Chef</span>
             </button>
           </div>
 
-          {/* Dicas Sob Medida da IA (Reagem às Curtidas em Tempo Real) */}
-          <div className="p-5 rounded-3xl bg-white/[0.04] backdrop-blur-2xl border border-white/[0.09] shadow-xl space-y-3">
-            <div className="flex items-center justify-between">
-              <h4 className="text-xs font-semibold text-white uppercase tracking-wider flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-teal-400" />
-                Dicas para Você (IA)
-              </h4>
-              <span className="text-[10px] font-mono text-zinc-500">Live</span>
+          {/* Dicas da IA em Tempo Real (Personalizadas) */}
+          <div className="coucou-card p-5 space-y-3">
+            <div className="flex items-center gap-2 text-xs font-bold text-[#18181B]">
+              <Sparkles className="w-4 h-4 text-[#0D9488]" />
+              <span>Dicas Para Você (IA)</span>
             </div>
-
             <div className="space-y-2.5">
               {personalizedTips.map((tip, idx) => (
-                <div
-                  key={idx}
-                  className="p-3 rounded-2xl bg-white/[0.03] border border-white/[0.07] space-y-1"
-                >
-                  <div className="flex items-center justify-between text-xs">
-                    <strong className="text-zinc-200 truncate">{tip.name}</strong>
-                    <span className="text-[10px] font-mono text-teal-400">{tip.tag}</span>
+                <div key={idx} className="p-3 rounded-xl bg-[#F0FDFA] border border-[#99F6E4] space-y-1">
+                  <div className="flex items-center justify-between text-xs font-bold text-[#18181B]">
+                    <span>{tip.name}</span>
+                    <span className="text-[10px] font-mono text-[#0D9488]">{tip.tag}</span>
                   </div>
-                  <p className="text-[11px] text-zinc-400">{tip.rest}</p>
-                  <p className="text-[10px] text-zinc-500 leading-snug">{tip.reason}</p>
+                  <p className="text-[11px] text-[#52525B]">{tip.rest}</p>
+                  <p className="text-[10px] text-[#0D9488] leading-tight">{tip.reason}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Radar da Madrugada (Últimos Spikes) */}
-          <div className="p-5 rounded-3xl bg-white/[0.04] backdrop-blur-2xl border border-white/[0.09] shadow-xl space-y-3">
-            <h4 className="text-xs font-semibold text-white uppercase tracking-wider flex items-center gap-1.5">
-              <TrendingUp className="w-3.5 h-3.5 text-amber-400" />
-              Spikes em Tempo Real
-            </h4>
-            <div className="p-3 rounded-2xl bg-white/[0.02] border border-white/[0.06] text-xs text-zinc-400 space-y-1">
-              <span className="text-teal-300 font-mono text-[11px] block">Martim de Sá • Há 18 min</span>
-              <p className="text-zinc-300 leading-snug">
-                Isca de badejo subiu para 4.95 na Super Nota com novo lote fresco.
+          {/* Spikes em Tempo Real */}
+          <div className="coucou-card p-5 space-y-3">
+            <div className="flex items-center gap-2 text-xs font-bold text-[#18181B]">
+              <TrendingUp className="w-4 h-4 text-[#D97706]" />
+              <span>Spikes em Tempo Real</span>
+            </div>
+            <div className="p-3 rounded-xl bg-[#FFFBEB] border border-[#FDE68A] space-y-1 text-xs">
+              <span className="font-mono text-[10px] text-[#D97706] font-bold block">
+                Martim de Sá • Há 18 min
+              </span>
+              <p className="text-[#92400E] text-[11px] leading-relaxed">
+                Isca de badejo subiu para 4.95 na Super Nota com novo lote de peixe fresco da enseada.
               </p>
             </div>
           </div>
         </aside>
       </div>
 
-      {/* ============================================================== */}
-      {/* 2. LAYOUT MOBILE NATIVO (md:hidden) - TELA CHEIA & BOTTOM DOCK */}
-      {/* ============================================================== */}
-      <div className="md:hidden min-h-screen pb-28 relative z-10">
-        
-        {/* Top Bar Móvel Translúcida */}
-        <header className="sticky top-0 z-40 px-4 py-3 bg-[#07090E]/80 backdrop-blur-2xl border-b border-white/[0.08]">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-teal-500 to-indigo-500 flex items-center justify-center font-black text-slate-950 text-xs shadow-md">
-                CF
-              </div>
-              <div>
-                <h1 className="font-semibold text-white text-xs leading-none">Caraguá FoodTech</h1>
-                <span className="text-[10px] text-zinc-400 font-mono">IA Caiçara & RAG</span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 font-mono text-xs text-amber-300 bg-white/[0.05] px-2.5 py-1 rounded-xl border border-white/[0.10]">
-              <Coins className="w-3.5 h-3.5" />
-              <span>{userCredits} CR</span>
-            </div>
-          </div>
-
-          {/* Seletor Horizontal de Bairros */}
-          <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
-            {NEIGHBORHOODS.map((n) => {
-              const isSelected = selectedNeighborhood === n.id;
-              return (
-                <button
-                  key={n.id}
-                  onClick={() => setSelectedNeighborhood(n.id)}
-                  className={`px-3 py-1 rounded-xl text-[11px] font-semibold whitespace-nowrap transition ${
-                    isSelected
-                      ? 'bg-teal-500/20 border border-teal-400/40 text-teal-200'
-                      : 'bg-white/[0.04] text-zinc-400'
-                  }`}
-                >
-                  {n.name}
-                </button>
-              );
-            })}
-          </div>
-        </header>
-
-        {/* Conteúdo Mobile da Aba Ativa */}
-        <div className="p-4">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
+      {/* 3. BARRA DE NAVEGAÇÃO MOBILE (BOTTOM DOCK) */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 p-3 bg-[#0B2B26] border-t border-white/10 z-40 flex items-center justify-around">
+        {[
+          { id: 'feed', label: 'Feed', icon: Sparkles },
+          { id: 'search', label: 'Busca', icon: Search },
+          { id: 'radar', label: 'Radar', icon: TrendingUp },
+          { id: 'review', label: 'Avaliar', icon: PenSquare },
+          { id: 'credits', label: 'Nitro', icon: Coins },
+        ].map((item) => {
+          const Icon = item.icon;
+          const isActive = activeTab === item.id;
+          return (
+            <button
+              key={item.id}
+              onClick={() => setActiveTab(item.id as MainTab)}
+              className={`flex flex-col items-center gap-1 text-[10px] font-bold py-1 px-3 rounded-xl transition-colors ${
+                isActive ? 'text-[#34D399] bg-white/10' : 'text-[#C9DDD8]'
+              }`}
             >
-              {activeTab === 'feed' && (
-                <FeedTab
-                  selectedNeighborhood={selectedNeighborhood}
-                  likedDishIds={likedDishIds}
-                  onToggleLike={handleToggleLike}
-                  savedPostIds={savedPostIds}
-                  onToggleSave={handleToggleSave}
-                  onSelectRestaurantForReview={handleSelectRestaurantForReview}
-                />
-              )}
-
-              {activeTab === 'search' && (
-                <SearchTab
-                  selectedNeighborhood={selectedNeighborhood}
-                  onSelectRestaurantForReview={handleSelectRestaurantForReview}
-                />
-              )}
-
-              {activeTab === 'radar' && (
-                <RadarTab
-                  onSelectRestaurantForReview={handleSelectRestaurantForReview}
-                />
-              )}
-
-              {activeTab === 'review' && (
-                <ReviewTab
-                  selectedRestaurant={selectedRestaurantForReview}
-                  onClearSelectedRestaurant={() => setSelectedRestaurantForReview(null)}
-                  onSubmitReview={handleSubmitReview}
-                />
-              )}
-
-              {activeTab === 'credits' && (
-                <CreditsTab
-                  userCredits={userCredits}
-                  onSpendCredits={handleSpendCredits}
-                />
-              )}
-
-              {activeTab === 'admin' && <AdminView />}
-              {activeTab === 'rag' && <RAGArchitectureView />}
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        {/* FLOATING ACTION BUTTON (FAB) DO JACQUIN NO MOBILE */}
+              <Icon className="w-4 h-4" />
+              <span>{item.label}</span>
+            </button>
+          );
+        })}
         <button
           onClick={() => setIsJacquinOpen(true)}
-          className="fixed bottom-24 right-4 z-40 p-2.5 rounded-full bg-white/[0.08] hover:bg-white/[0.14] border border-white/[0.20] backdrop-blur-2xl shadow-2xl transition active:scale-95"
-          title="Perguntar ao Chef Jacquin"
+          className="flex flex-col items-center gap-1 text-[10px] font-bold py-1 px-3 text-[#34D399]"
         >
-          <JacquinPraianoAvatar size={48} />
+          <MessageSquare className="w-4 h-4" />
+          <span>Chat</span>
         </button>
-
-        {/* BOTTOM DOCK FLUTUANTE ESTILO IOS 18 EM LIQUID GLASS */}
-        <div className="fixed bottom-4 left-4 right-4 z-40 bg-white/[0.08] backdrop-blur-3xl border border-white/[0.15] rounded-full p-1.5 shadow-[0_20px_40px_rgba(0,0,0,0.8)] flex items-center justify-around">
-          {[
-            { id: 'feed', icon: Sparkles, label: 'Feed' },
-            { id: 'search', icon: Search, label: 'Busca' },
-            { id: 'radar', icon: TrendingUp, label: 'Radar' },
-            { id: 'review', icon: PenSquare, label: 'Avaliar' },
-            { id: 'credits', icon: Coins, label: 'Nitro' },
-          ].map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as MainTab)}
-                className={`relative px-3 py-2 rounded-full flex flex-col items-center gap-1 transition ${
-                  isActive ? 'text-teal-300' : 'text-zinc-400'
-                }`}
-              >
-                {isActive && (
-                  <motion.div
-                    layoutId="mobileDockPill"
-                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                    className="absolute inset-0 bg-white/[0.15] rounded-full -z-10"
-                  />
-                )}
-                <Icon className="w-4 h-4" />
-                <span className="text-[10px] font-medium leading-none">{tab.label}</span>
-              </button>
-            );
-          })}
-        </div>
       </div>
 
-      {/* DRAWER DO CHEF JACQUIN (CONCIERGE RAG) */}
+      {/* 4. DRAWER DO CHEF JACQUIN PRAIANO */}
       <JacquinChatDrawer
         isOpen={isJacquinOpen}
         onClose={() => setIsJacquinOpen(false)}

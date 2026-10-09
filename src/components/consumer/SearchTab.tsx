@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -20,7 +22,7 @@ export const SearchTab: React.FC<SearchTabProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<FilterCategory>('todos');
 
-  // Filtros rápidos em pílula de vidro
+  // Filtros rápidos em pílula tátil
   const filterPills: { id: FilterCategory; label: string }[] = [
     { id: 'todos', label: 'Todos os Pratos' },
     { id: 'promo', label: 'Em Promoção Agora' },
@@ -50,7 +52,7 @@ export const SearchTab: React.FC<SearchTabProps> = ({
         // 1. REGRA CRÍTICA DE FOOD SAFETY: NUNCA MOSTRAR PEIXE OU CARNE EM MODO VEGANO
         if (isStrictVeganMode) {
           if (!dish.isVegan) {
-            return; // Bloqueia imediatamente Azul-Marinho, Badejo, Robalo, Carnes, etc.
+            return; // Bloqueia imediatamente pescados ou carnes
           }
         }
 
@@ -60,32 +62,25 @@ export const SearchTab: React.FC<SearchTabProps> = ({
         }
 
         // 3. Filtro de Promoção
-        if (activeFilter === 'promo' && !dish.isPromotion && !restaurant.activePromotion) {
+        if (activeFilter === 'promo' && !dish.isPromotion) {
           return;
         }
 
         // 4. Filtro de Frutos do Mar
         if (activeFilter === 'frutos_mar') {
-          const isSeafood = dish.tags.some(t => 
-            t.toLowerCase().includes('camar') || 
-            t.toLowerCase().includes('peixe') || 
-            t.toLowerCase().includes('badejo') || 
-            t.toLowerCase().includes('robalo') ||
-            t.toLowerCase().includes('siri') ||
-            t.toLowerCase().includes('ostra') ||
-            t.toLowerCase().includes('tainha')
-          );
+          const isSeafood = dish.category.toLowerCase().includes('mar') || 
+                            dish.tags.some(t => t.toLowerCase().includes('camarão') || t.toLowerCase().includes('peixe') || t.toLowerCase().includes('marisco'));
           if (!isSeafood) return;
         }
 
-        // 5. Comparação de Texto
+        // 5. Match de Texto (Nome, Descrição, Tags, Restaurante)
         if (query) {
-          const matchDishName = dish.name.toLowerCase().includes(query);
-          const matchDishDesc = dish.description.toLowerCase().includes(query);
-          const matchRestName = restaurant.name.toLowerCase().includes(query);
+          const matchName = dish.name.toLowerCase().includes(query);
+          const matchDesc = dish.description.toLowerCase().includes(query);
           const matchTags = dish.tags.some(t => t.toLowerCase().includes(query));
+          const matchRest = restaurant.name.toLowerCase().includes(query);
 
-          if (!matchDishName && !matchDishDesc && !matchRestName && !matchTags) {
+          if (!matchName && !matchDesc && !matchTags && !matchRest) {
             return;
           }
         }
@@ -97,182 +92,139 @@ export const SearchTab: React.FC<SearchTabProps> = ({
     return results;
   }, [searchQuery, activeFilter, selectedNeighborhood]);
 
-  const isVeganModeActive = activeFilter === 'vegano' || searchQuery.toLowerCase().includes('vegan');
-
   return (
     <div className="space-y-6">
-      {/* Spotlight Search Bar */}
-      <div className="relative">
-        <div className="relative flex items-center bg-white/[0.06] hover:bg-white/[0.08] focus-within:bg-white/[0.10] border border-white/[0.14] focus-within:border-teal-400/60 rounded-3xl p-2.5 transition-all duration-300 shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.2),0_20px_40px_-15px_rgba(0,0,0,0.7)] backdrop-blur-3xl">
-          <div className="pl-3.5 pr-2 text-zinc-400">
-            <Search className="w-5 h-5 text-teal-400" />
-          </div>
+      {/* Header e Barra de Busca Spotlight */}
+      <div className="coucou-card p-6 space-y-4">
+        <div>
+          <h2 className="text-xl font-bold text-[#18181B] tracking-tight flex items-center gap-2">
+            <Search className="w-5 h-5 text-[#0D9488]" />
+            <span>Busca Spotlight & IA Semântica</span>
+          </h2>
+          <p className="text-sm text-[#52525B] mt-1">
+            Pesquise por ingredientes, pratos típicos ou restrições alimentares com validação RAG em tempo real.
+          </p>
+        </div>
 
+        {/* Input de Busca */}
+        <div className="relative">
+          <Search className="w-5 h-5 text-[#71717A] absolute left-4 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Pesquise por prato, ingrediente (ex: 'camarão', 'palmito') ou restaurante..."
-            className="w-full bg-transparent border-none text-white text-sm md:text-base placeholder-zinc-500 focus:outline-none"
+            placeholder="Ex: moqueca vegana, camarão na moranga, peixe grelhado..."
+            className="w-full pl-12 pr-10 py-3.5 rounded-2xl bg-[#EDE6DC]/70 border border-[#E2D9CC] text-[#18181B] placeholder-[#71717A] text-sm font-medium focus:outline-none focus:border-[#0D9488] focus:bg-white focus:ring-4 focus:ring-[#0D9488]/10 transition-all"
           />
-
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="p-1.5 rounded-full hover:bg-white/[0.10] text-zinc-400 hover:text-white transition"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 rounded-full text-[#71717A] hover:text-[#18181B]"
             >
               <X className="w-4 h-4" />
             </button>
           )}
-
-          <div className="hidden md:flex items-center gap-1 px-2.5 py-1 rounded-xl bg-white/[0.06] border border-white/[0.10] text-[11px] font-mono text-zinc-400">
-            <span>Spotlight</span>
-            <kbd className="px-1 py-0.5 rounded bg-black/40 text-[10px]">⌘K</kbd>
-          </div>
         </div>
-      </div>
 
-      {/* Pílulas de Filtro Rápido com Framer Motion Spring */}
-      <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
-        {filterPills.map((pill) => {
-          const isActive = activeFilter === pill.id;
-          return (
-            <button
-              key={pill.id}
-              onClick={() => setActiveFilter(pill.id)}
-              className={`relative px-4 py-2 rounded-2xl text-xs font-semibold whitespace-nowrap transition-all duration-300 ${
-                isActive
-                  ? 'text-white'
-                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.04]'
-              }`}
-            >
-              {isActive && (
-                <motion.div
-                  layoutId="searchFilterPill"
-                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                  className="absolute inset-0 bg-white/[0.14] border border-white/[0.25] shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.3)] rounded-2xl backdrop-blur-xl"
-                />
-              )}
-              <span className="relative z-10 flex items-center gap-1.5">
-                {pill.id === 'vegano' && <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />}
-                {pill.id === 'promo' && <Zap className="w-3.5 h-3.5 text-rose-400" />}
-                {pill.label}
-              </span>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Banner de Segurança Alimentar Ativa (Food Safety Shield) */}
-      <AnimatePresence>
-        {isVeganModeActive && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="p-4 rounded-2xl bg-emerald-950/40 border border-emerald-500/30 backdrop-blur-2xl flex items-start gap-3 shadow-lg"
-          >
-            <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
-            <div className="text-xs leading-relaxed">
-              <strong className="text-emerald-300 font-semibold block mb-0.5">
-                Modo Food Safety Ativo (Zero Contaminação Marinha):
-              </strong>
-              <p className="text-emerald-200/90">
-                Pescados, frutos do mar e carnes foram rigorosamente bloqueados da listagem. O prato patrimonial <em>Azul-Marinho</em> leva peixe e não é exibido aqui. Apenas preparações 100% vegetais auditadas estão visíveis.
-              </p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Contador de Resultados */}
-      <div className="flex items-center justify-between text-xs text-zinc-400 px-1">
-        <span>
-          Exibindo <strong className="text-zinc-200 font-mono">{searchResults.length}</strong> pratos auditados
-        </span>
-        <span className="text-[11px] font-mono text-teal-400">
-          Rankeado por Super Nota (30d)
-        </span>
-      </div>
-
-      {/* Grid de Pratos Encontrados */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {searchResults.map(({ dish, restaurant }, index) => (
-          <motion.div
-            key={`${restaurant.id}-${dish.id}`}
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.05, duration: 0.3 }}
-            className="p-4 rounded-3xl bg-white/[0.04] hover:bg-white/[0.08] backdrop-blur-2xl border border-white/[0.09] hover:border-white/[0.18] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12),0_15px_30px_-10px_rgba(0,0,0,0.5)] transition-all duration-300 flex flex-col justify-between"
-          >
-            <div>
-              {/* Foto do Prato */}
-              <div className="relative aspect-[16/10] rounded-2xl overflow-hidden mb-3 bg-black/40">
-                <img
-                  src={dish.imageUrl}
-                  alt={dish.name}
-                  className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                  loading="lazy"
-                />
-                {dish.isPromotion && (
-                  <span className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-xl bg-rose-950/80 backdrop-blur-md border border-rose-500/30 text-rose-300 text-[10px] font-bold">
-                    PROMO {dish.promoDiscount || 'ATIVA'}
-                  </span>
-                )}
-                {dish.isVegan && (
-                  <span className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-xl bg-emerald-950/80 backdrop-blur-md border border-emerald-500/30 text-emerald-300 text-[10px] font-bold flex items-center gap-1">
-                    <ShieldCheck className="w-3 h-3 text-emerald-400" /> Vegano
-                  </span>
-                )}
-              </div>
-
-              {/* Informações do Restaurante e Bairro */}
-              <div className="flex items-center justify-between text-xs text-zinc-400 mb-1">
-                <span className="truncate max-w-[180px] font-medium text-zinc-300">{restaurant.name}</span>
-                <span className="font-mono text-[11px] text-teal-400">{restaurant.neighborhood}</span>
-              </div>
-
-              <h4 className="font-semibold text-white tracking-tight text-sm mb-1.5 line-clamp-1">
-                {dish.name}
-              </h4>
-
-              <p className="text-xs text-zinc-400 leading-relaxed line-clamp-2 mb-3">
-                {dish.description}
-              </p>
-            </div>
-
-            {/* Rodapé com Preço e Super Nota */}
-            <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between">
-              <div>
-                <span className="text-sm font-mono font-bold text-teal-300 block">
-                  R$ {dish.price.toFixed(2)}
-                </span>
-                <span className="text-[10px] text-zinc-400 font-mono">
-                  ★ {restaurant.decayedRatingAverage.toFixed(2)} Super Nota
-                </span>
-              </div>
-
+        {/* Pílulas de Filtro Rápido */}
+        <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+          {filterPills.map((pill) => {
+            const isActive = activeFilter === pill.id;
+            return (
               <button
-                onClick={() => onSelectRestaurantForReview(restaurant)}
-                className="px-3 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.10] text-zinc-300 hover:text-white text-xs font-semibold flex items-center gap-1 transition"
+                key={pill.id}
+                onClick={() => setActiveFilter(pill.id)}
+                className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+                  isActive
+                    ? 'bg-[#0B2B26] text-[#F6F2EB] shadow-sm'
+                    : 'bg-white text-[#52525B] border border-[#E2D9CC] hover:border-[#D4D4D8] hover:text-[#18181B]'
+                }`}
               >
-                <span>Avaliar</span>
-                <ArrowUpRight className="w-3 h-3" />
+                {pill.label}
               </button>
-            </div>
-          </motion.div>
-        ))}
+            );
+          })}
+        </div>
       </div>
 
-      {searchResults.length === 0 && (
-        <div className="text-center py-16 px-4 bg-white/[0.02] border border-white/[0.06] rounded-3xl">
-          <Utensils className="w-10 h-10 text-zinc-600 mx-auto mb-3" />
-          <h4 className="text-base font-semibold text-white mb-1">Nenhum prato encontrado</h4>
-          <p className="text-xs text-zinc-400 max-w-sm mx-auto">
-            Tente buscar por outro ingrediente ou alterar o filtro de categoria selecionado.
-          </p>
-        </div>
+      {/* Alerta de Food Safety quando em Modo Vegano */}
+      {(activeFilter === 'vegano' || searchQuery.toLowerCase().includes('vegan')) && (
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="p-4 rounded-2xl bg-[#ECFDF5] border border-[#A7F3D0] flex items-center gap-3 text-xs text-[#065F46]"
+        >
+          <ShieldCheck className="w-5 h-5 text-[#059669] shrink-0" />
+          <div>
+            <span className="font-bold">Filtro de Segurança Alimentar Ativo:</span> Todos os pratos com pescados, frutos do mar ou derivados animais foram rigorosamente bloqueados da busca.
+          </div>
+        </motion.div>
       )}
+
+      {/* Resultados da Busca */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between text-xs text-[#71717A] font-mono px-1">
+          <span>{searchResults.length} {searchResults.length === 1 ? 'prato encontrado' : 'pratos encontrados'}</span>
+          <span>Bairro: {selectedNeighborhood === 'todos' ? 'Todos de Caraguá' : selectedNeighborhood}</span>
+        </div>
+
+        {searchResults.length === 0 ? (
+          <div className="coucou-card p-12 text-center space-y-3">
+            <Utensils className="w-10 h-10 text-[#71717A] mx-auto opacity-40" />
+            <h3 className="font-bold text-[#18181B]">Nenhum prato correspondeu aos critérios</h3>
+            <p className="text-xs text-[#52525B] max-w-sm mx-auto">
+              Tente buscar por termos mais amplos ou redefinir os filtros de bairro e categoria.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {searchResults.map(({ dish, restaurant }) => (
+              <div
+                key={dish.id}
+                className="coucou-card p-4 flex gap-4 items-center group cursor-pointer hover:border-[#0D9488]/50"
+                onClick={() => onSelectRestaurantForReview(restaurant)}
+              >
+                <div className="w-24 h-24 rounded-2xl overflow-hidden bg-[#EDE6DC] shrink-0">
+                  <img
+                    src={dish.imageUrl}
+                    alt={dish.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                </div>
+                <div className="flex-1 min-w-0 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-mono text-[#0D9488] font-bold truncate">
+                      {restaurant.name}
+                    </span>
+                    <span className="font-mono font-bold text-xs text-[#18181B]">
+                      R$ {dish.price.toFixed(2)}
+                    </span>
+                  </div>
+                  <h4 className="font-bold text-sm text-[#18181B] truncate">
+                    {dish.name}
+                  </h4>
+                  <p className="text-xs text-[#52525B] line-clamp-2">
+                    {dish.description}
+                  </p>
+                  <div className="flex items-center gap-1.5 pt-1">
+                    {dish.isVegan && (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#ECFDF5] text-[#059669]">
+                        Vegano
+                      </span>
+                    )}
+                    {dish.isPromotion && (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FFF1F2] text-[#E11D48]">
+                        Promoção
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

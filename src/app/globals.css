@@ -2,6 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --bg-canvas: #F6F2EB;
+  --bg-subtle: #EDE6DC;
+  --bg-card: #FFFFFF;
+  --bg-ocean-anchor: #0B2B26;
+  --bg-island: #141413;
+  --border-hairline: #E2D9CC;
+  --border-strong: #D4D4D8;
+  --border-teal: #99F6E4;
+  --text-primary: #18181B;
+  --text-secondary: #52525B;
+  --text-muted: #71717A;
+  --text-on-ocean: #F6F2EB;
+  --accent-brand: #0D9488;
+  --accent-promo: #E11D48;
+  --accent-safety: #059669;
+  --accent-credit: #D97706;
+}
+
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar {
     display: none;
@@ -10,11 +29,53 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+  .font-serif {
+    font-family: 'Instrument Serif', Georgia, serif;
+  }
+  .font-sans {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+  .font-mono {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+  }
 }
 
 body {
-  background-color: #07090E;
-  color: #F4F4F5;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+}
+
+/* Coucou Tactile Editorial Cards */
+.coucou-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E2D9CC;
+  border-radius: 1.5rem;
+  box-shadow: 0 2px 6px rgba(20, 20, 19, 0.03), 0 14px 34px -10px rgba(20, 20, 19, 0.07);
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.coucou-card:hover {
+  border-color: #D4D4D8;
+  box-shadow: 0 4px 12px rgba(20, 20, 19, 0.05), 0 20px 40px -12px rgba(20, 20, 19, 0.10);
+}
+
+.coucou-glass {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 20px -2px rgba(24, 24, 27, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+@keyframes pulseGreen {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(1.2); }
+}
+
+.animate-pulse-green {
+  animation: pulseGreen 1.8s infinite cubic-bezier(0.4, 0, 0.6, 1);
 }

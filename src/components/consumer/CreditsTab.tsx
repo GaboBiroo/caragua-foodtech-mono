@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -26,14 +28,14 @@ export const CreditsTab: React.FC<CreditsTabProps> = ({
       id: 'highlight',
       cost: 100,
       title: 'Destacar Minha Avaliação no Topo',
-      desc: 'Sua crítica ganha borda prismática Liquid Glass iridescente e fica fixada no topo do Feed de Caraguá por 7 dias.',
+      desc: 'Sua crítica ganha selo dourado especial e fica em destaque no Feed por 7 dias.',
       badge: 'Popular na Comunidade'
     },
     {
       id: 'local_badge',
       cost: 150,
       title: 'Selo Morador Local Verificado',
-      desc: 'Concede peso 1.5x na equação de decaimento temporal para suas próximas avaliações com selo azul oficial.',
+      desc: 'Concede peso 1.5x na equação de decaimento temporal para suas próximas avaliações com selo oficial.',
       badge: 'Multiplicador 1.5x'
     },
     {
@@ -60,201 +62,151 @@ export const CreditsTab: React.FC<CreditsTabProps> = ({
 
   return (
     <div className="space-y-8">
-      {/* Switcher Carteira vs Anunciantes B2B */}
-      <div className="flex p-1.5 bg-white/[0.04] border border-white/[0.08] rounded-2xl w-fit">
+      {/* Card da Carteira de Créditos em Verde-Oceano Âncora */}
+      <div className="p-6 md:p-8 rounded-3xl bg-[#0B2B26] text-[#F6F2EB] shadow-xl space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-amber-300">
+              <Coins className="w-6 h-6" />
+            </div>
+            <div>
+              <p className="text-xs text-[#9DB8B1] font-mono uppercase tracking-wider">Carteira de Recompensas</p>
+              <h2 className="text-2xl md:text-3xl font-bold font-mono tracking-tight text-white">
+                {userCredits} <span className="text-amber-300 text-lg">CR</span>
+              </h2>
+            </div>
+          </div>
+          <span className="px-3 py-1 rounded-full text-xs font-mono bg-white/10 text-[#7FD1C6] border border-white/15">
+            Nível: Caiçara Gourmet
+          </span>
+        </div>
+
+        <p className="text-xs text-[#B7CFC9] leading-relaxed max-w-xl">
+          Você acumula créditos avaliando estabelecimentos (+50 CR), detectando inconsistências no RAG e participando ativamente da comunidade gastronômica de Caraguatatuba.
+        </p>
+
+        {/* Barra de Progresso do Nível */}
+        <div className="space-y-1.5 pt-2">
+          <div className="flex justify-between text-[11px] font-mono text-[#9DB8B1]">
+            <span>Progresso até Nível Crítico Caiçara:</span>
+            <span>{userCredits} / 500 CR</span>
+          </div>
+          <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
+            <div 
+              className="h-full bg-amber-400 rounded-full transition-all duration-500"
+              style={{ width: `${Math.min(100, (userCredits / 500) * 100)}%` }}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Seletor de Modo: Carteira Pessoal vs Gestão B2B */}
+      <div className="flex gap-2 border-b border-[#E2D9CC] pb-3">
         <button
           onClick={() => setActiveTab('carteira')}
-          className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
             activeTab === 'carteira'
-              ? 'bg-white/[0.12] text-white shadow-md'
-              : 'text-zinc-400 hover:text-white'
+              ? 'bg-[#0B2B26] text-[#F6F2EB]'
+              : 'text-[#52525B] hover:text-[#18181B]'
           }`}
         >
-          <Coins className="w-3.5 h-3.5 text-amber-400" />
-          <span>Minha Carteira Nitro</span>
+          Resgatar Vantagens (Consumidor)
         </button>
-
         <button
           onClick={() => setActiveTab('anunciantes')}
-          className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
             activeTab === 'anunciantes'
-              ? 'bg-white/[0.12] text-white shadow-md'
-              : 'text-zinc-400 hover:text-white'
+              ? 'bg-[#0B2B26] text-[#F6F2EB]'
+              : 'text-[#52525B] hover:text-[#18181B]'
           }`}
         >
-          <Megaphone className="w-3.5 h-3.5 text-teal-400" />
-          <span>Aba de Anunciantes Locais (B2B)</span>
+          Painel B2B / Quiosques (Anunciantes)
         </button>
       </div>
 
       {activeTab === 'carteira' ? (
-        <div className="space-y-6">
-          {/* Card Principal do Saldo Nitro */}
-          <div className="p-6 md:p-8 rounded-3xl bg-gradient-to-br from-amber-500/10 via-teal-500/10 to-indigo-500/10 backdrop-blur-2xl border border-white/[0.12] shadow-2xl relative overflow-hidden">
-            <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div>
-                <span className="text-xs font-mono text-amber-300 uppercase tracking-widest block mb-1">
-                  Saldo de Créditos Ativos
-                </span>
-                <div className="flex items-center gap-3">
-                  <span className="font-mono text-4xl md:text-5xl font-black text-white tracking-tight">
-                    {userCredits}
-                  </span>
-                  <span className="text-sm font-semibold text-zinc-400 font-mono">CRÉDITOS NITRO</span>
-                </div>
-                <p className="text-xs text-zinc-400 mt-2">
-                  Nível de Confiabilidade: <strong className="text-teal-300">Caiçara Connoisseur (Nível 4)</strong>
-                </p>
-              </div>
-
-              <div className="px-4 py-3 rounded-2xl bg-white/[0.06] border border-white/[0.10] text-xs space-y-1">
-                <span className="text-zinc-400 block font-mono">Como ganhar mais créditos:</span>
-                <p className="text-zinc-200">• Avaliar restaurantes no app: <strong className="text-emerald-400">+50 CR</strong></p>
-                <p className="text-zinc-200">• Reportar alteração de cardápio: <strong className="text-emerald-400">+30 CR</strong></p>
-              </div>
-            </div>
-          </div>
-
-          {/* Lista de Perks Estilo Discord Nitro */}
-          <div className="space-y-4">
-            <h3 className="text-base font-semibold text-white tracking-tight flex items-center gap-2">
-              <Zap className="w-4 h-4 text-amber-400" />
-              Vantagens Disponíveis para Resgate
-            </h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {perks.map((perk) => (
-                <div
-                  key={perk.id}
-                  className="p-5 rounded-3xl bg-white/[0.04] hover:bg-white/[0.07] backdrop-blur-2xl border border-white/[0.09] transition flex flex-col justify-between"
-                >
-                  <div>
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono tracking-wide bg-amber-500/10 text-amber-300 border border-amber-500/20 inline-block mb-2">
-                      {perk.badge}
-                    </span>
-                    <h4 className="font-semibold text-white text-sm mb-1.5">{perk.title}</h4>
-                    <p className="text-xs text-zinc-400 leading-relaxed mb-4">{perk.desc}</p>
-                  </div>
-
-                  <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between">
-                    <span className="font-mono text-sm font-bold text-amber-400">
-                      {perk.cost} CR
-                    </span>
-                    <button
-                      onClick={() => onSpendCredits(perk.cost, perk.title)}
-                      disabled={userCredits < perk.cost}
-                      className="px-3.5 py-1.5 rounded-xl bg-white/[0.08] hover:bg-white/[0.15] disabled:opacity-30 disabled:hover:bg-white/[0.08] text-white text-xs font-semibold transition"
-                    >
-                      {userCredits >= perk.cost ? 'Desbloquear' : 'Saldo Insuficiente'}
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      ) : (
-        /* Aba de Anunciantes Locais (B2B) */
-        <div className="space-y-6">
-          <AnimatePresence>
-            {promoSuccess && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className="p-4 rounded-2xl bg-emerald-950/80 border border-emerald-400/40 text-emerald-200 text-xs flex items-center gap-2"
-              >
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                <span>Promoção impulsionada com sucesso no Radar de Caraguatatuba por 48 horas!</span>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          <form
-            onSubmit={handleLaunchPromo}
-            className="p-6 md:p-8 rounded-3xl bg-white/[0.04] backdrop-blur-2xl border border-white/[0.09] space-y-5"
-          >
-            <div>
-              <h3 className="text-lg font-semibold text-white tracking-tight flex items-center gap-2">
-                <Megaphone className="w-4 h-4 text-teal-400" />
-                Impulsionar Promoção Relâmpago no Radar da Cidade
-              </h3>
-              <p className="text-xs text-zinc-400 mt-1 leading-relaxed">
-                Pequenos quiosques e restaurantes de Caraguá podem destacar ofertas especiais diretamente no Feed e no Radar da madrugada gastando créditos acumulados.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-zinc-300">Título da Oferta:</label>
-                <input
-                  type="text"
-                  value={promoTitle}
-                  onChange={(e) => setPromoTitle(e.target.value)}
-                  placeholder="Ex: Rodízio de Camarão com 20% OFF no Almoço"
-                  className="w-full bg-white/[0.05] border border-white/[0.10] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-teal-400/50"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-zinc-300">Desconto / Tag:</label>
-                <input
-                  type="text"
-                  value={promoDiscount}
-                  onChange={(e) => setPromoDiscount(e.target.value)}
-                  placeholder="Ex: 2x1 ou 15% OFF"
-                  className="w-full bg-white/[0.05] border border-white/[0.10] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-teal-400/50"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-zinc-300">Descrição Detalhada e Condições:</label>
-              <textarea
-                rows={3}
-                value={promoDesc}
-                onChange={(e) => setPromoDesc(e.target.value)}
-                placeholder="Ex: Válido de terça a quinta para consumo no local até as 17h. Inclui porção de farofa caiçara."
-                className="w-full bg-white/[0.05] border border-white/[0.10] rounded-xl p-3 text-xs text-white focus:outline-none focus:border-teal-400/50 leading-relaxed"
-              />
-            </div>
-
-            <div className="flex items-center justify-between pt-2">
-              <span className="text-xs font-mono text-zinc-400">
-                Custo de Impulsionamento (48h): <strong className="text-amber-300">150 CR</strong>
-              </span>
-
-              <button
-                type="submit"
-                disabled={!promoTitle.trim() || userCredits < 150}
-                className="px-5 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-400 disabled:opacity-40 text-slate-950 font-semibold text-xs flex items-center gap-1.5 transition"
-              >
-                <span>Lançar no Radar de Caraguá</span>
-                <ArrowUpRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </form>
-
-          {/* Campanhas Ativas de Exemplo */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
-              Promoções Atualmente Impulsionadas na Cidade:
-            </h4>
-            {INITIAL_RESTAURANTS.filter(r => r.activePromotion).map(r => (
-              <div
-                key={r.id}
-                className="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.07] flex items-center justify-between"
-              >
+        <div className="space-y-4">
+          <h3 className="font-bold text-[#18181B] text-base">Benefícios Disponíveis para Resgate</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {perks.map((perk) => (
+              <div key={perk.id} className="coucou-card p-5 space-y-3 flex flex-col justify-between">
                 <div>
-                  <h5 className="text-xs font-semibold text-white">{r.name} ({r.neighborhood})</h5>
-                  <p className="text-xs text-teal-300/90 mt-0.5">{r.activePromotion}</p>
+                  <span className="text-[10px] font-mono font-bold text-[#0D9488] bg-[#F0FDFA] px-2 py-0.5 rounded-full border border-[#99F6E4]">
+                    {perk.badge}
+                  </span>
+                  <h4 className="font-bold text-sm text-[#18181B] mt-2">
+                    {perk.title}
+                  </h4>
+                  <p className="text-xs text-[#52525B] mt-1 leading-relaxed">
+                    {perk.desc}
+                  </p>
                 </div>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-teal-500/10 text-teal-300 border border-teal-500/20">
-                  Radar Ativo
-                </span>
+                <button
+                  disabled={userCredits < perk.cost}
+                  onClick={() => onSpendCredits(perk.cost, perk.title)}
+                  className={`w-full py-2.5 rounded-xl font-bold text-xs font-mono transition-all ${
+                    userCredits >= perk.cost
+                      ? 'bg-[#0B2B26] text-white hover:bg-[#134E4A]'
+                      : 'bg-[#EDE6DC] text-[#71717A] cursor-not-allowed'
+                  }`}
+                >
+                  Resgatar por {perk.cost} CR
+                </button>
               </div>
             ))}
           </div>
+        </div>
+      ) : (
+        <div className="coucou-card p-6 md:p-8 space-y-6">
+          <div>
+            <h3 className="font-bold text-[#18181B] text-base flex items-center gap-2">
+              <Megaphone className="w-5 h-5 text-[#0D9488]" />
+              <span>Simulador de Impulsionamento Ético B2B</span>
+            </h3>
+            <p className="text-xs text-[#52525B] mt-1">
+              Restaurantes e quiosques parceiros podem impulsionar promoções reais sem violar a integridade das notas.
+            </p>
+          </div>
+
+          <form onSubmit={handleLaunchPromo} className="space-y-4 max-w-lg">
+            <div>
+              <label className="block text-xs font-bold text-[#18181B] uppercase mb-1.5">
+                Título do Prato / Destaque:
+              </label>
+              <input
+                type="text"
+                value={promoTitle}
+                onChange={(e) => setPromoTitle(e.target.value)}
+                placeholder="Ex: Festival da Tainha na Brasa"
+                className="w-full p-3 rounded-xl bg-[#EDE6DC]/70 border border-[#E2D9CC] text-sm font-semibold"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-[#18181B] uppercase mb-1.5">
+                Desconto / Condição Especial:
+              </label>
+              <input
+                type="text"
+                value={promoDiscount}
+                onChange={(e) => setPromoDiscount(e.target.value)}
+                className="w-full p-3 rounded-xl bg-[#EDE6DC]/70 border border-[#E2D9CC] text-sm font-semibold"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={userCredits < 150}
+              className={`px-5 py-3 rounded-xl font-bold text-xs ${
+                userCredits >= 150
+                  ? 'bg-[#0B2B26] text-white hover:bg-[#134E4A]'
+                  : 'bg-[#EDE6DC] text-[#71717A] cursor-not-allowed'
+              }`}
+            >
+              Publicar Destaque (Custa 150 CR)
+            </button>
+          </form>
         </div>
       )}
     </div>

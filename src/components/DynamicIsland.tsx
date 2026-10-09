@@ -2,81 +2,216 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Activity, ShieldCheck, MapPin } from 'lucide-react';
+import { Sparkles, MessageSquare, X, Send, ChevronDown, Utensils, Heart, MapPin, Star } from 'lucide-react';
+import { INITIAL_RESTAURANTS, Dish } from '../data/caraguaData';
 
 interface DynamicIslandProps {
-  activePoloName: string;
-  onOpenConcierge: () => void;
+  onSelectCategory?: (category: string) => void;
+  onFilterNeighborhood?: (bairro: string) => void;
 }
 
 export const DynamicIsland: React.FC<DynamicIslandProps> = ({
-  activePoloName,
-  onOpenConcierge,
+  onSelectCategory,
+  onFilterNeighborhood,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [chatMessages, setChatMessages] = useState<Array<{ sender: 'jacquin' | 'user'; text: string; recDish?: string }>>([
+    {
+      sender: 'jacquin',
+      text: 'Mon ami! Bem-vindo a Caraguá! Tá procurando um camarão rosa crocante, uma isca de badejo pé na areia ou uma moqueca vegana hoje?',
+    }
+  ]);
+  const [inputText, setInputText] = useState('');
+
+  const quickChips = [
+    { label: '🦐 Melhor camarão', query: 'camarão' },
+    { label: '🐟 Badejo pé na areia', query: 'badejo' },
+    { label: '🌿 100% Vegano', query: 'vegano' },
+    { label: '🔥 Promoções do dia', query: 'promoção' },
+  ];
+
+  const handleSend = (text: string) => {
+    if (!text.trim()) return;
+
+    setChatMessages(prev => [...prev, { sender: 'user', text }]);
+    setInputText('');
+
+    setTimeout(() => {
+      const q = text.toLowerCase();
+      let reply = '';
+      let dish = '';
+
+      if (q.includes('vegano') || q.includes('vegetar') || q.includes('sem carne')) {
+        reply = 'Para comer sem carne e com muito sabor: a Moqueca Vegana de Palmito Pupunha da Cantina Caiçara Tradição é divina, e o Bowl de Shimeji do Empório Verde Mar é super fresco!';
+        dish = 'Moqueca Vegana de Palmito Pupunha';
+        if (onSelectCategory) onSelectCategory('vegano');
+      } else if (q.includes('camar') || q.includes('risoto')) {
+        reply = 'O prato dos deuses da orla é o Risoto de Camarão Rosa com Limão Siciliano no Mar & Terra Gourmet (Indaiá). Camarões gigantes e arroz al dente!';
+        dish = 'Risoto de Camarão Rosa';
+        if (onSelectCategory) onSelectCategory('camarão');
+      } else if (q.includes('badejo') || q.includes('peixe') || q.includes('isca') || q.includes('areia')) {
+        reply = 'Pé na areia de verdade é no Quiosque Canto Bravo em Martim de Sá! A Isca de Badejo na farinha panko com molho tártaro de limão-cravo acabou de sair da brasa!';
+        dish = 'Isca de Badejo com Molho Tártaro';
+        if (onSelectCategory) onSelectCategory('peixe');
+      } else {
+        reply = 'Na orla de Caraguatatuba os quiosques de Martim de Sá e os restaurantes do Indaiá estão com peixes fresquíssimos que chegaram hoje dos barcos. Dá uma olhada nos pratos em destaque logo abaixo!';
+      }
+
+      setChatMessages(prev => [...prev, { sender: 'jacquin', text: reply, recDish: dish }]);
+    }, 600);
+  };
 
   return (
-    <div className="fixed top-3.5 left-1/2 -translate-x-1/2 z-50 select-none">
+    <aside aria-label="Dynamic Island do Chef Jacquin" className="fixed top-3.5 left-1/2 -translate-x-1/2 z-50 select-none">
       <motion.div
         layout
-        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-        onClick={() => setIsExpanded(!isExpanded)}
-        className={`bg-[#141413] text-[#F6F2EB] border border-white/[0.14] shadow-[0_12px_32px_-6px_rgba(14,14,13,0.55),0_2px_8px_rgba(0,0,0,0.25)] rounded-[26px] cursor-pointer overflow-hidden transition-all duration-300 ${
-          isExpanded ? 'w-[min(540px,94vw)] p-4 rounded-[28px]' : 'w-[260px] hover:w-[320px] px-4 py-2.5'
+        transition={{ type: 'spring', stiffness: 450, damping: 32 }}
+        onClick={() => !isExpanded && setIsExpanded(true)}
+        className={`bg-[#121316] text-[#FBF9F5] border border-white/15 shadow-[0_16px_36px_-6px_rgba(0,0,0,0.6),0_2px_8px_rgba(0,0,0,0.3)] cursor-pointer overflow-hidden transition-all duration-300 ${
+          isExpanded
+            ? 'w-[min(520px,94vw)] p-5 rounded-[32px]'
+            : 'w-[310px] sm:w-[350px] hover:w-[370px] px-3.5 py-2 rounded-full'
         }`}
       >
         {!isExpanded ? (
-          <div className="flex items-center justify-between text-xs font-semibold tracking-tight">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse-green" />
-              <span>RAG 5 Estágios Ativo</span>
+          /* ESTADO COMPACTO: JACQUIN VIVO DENTRO DA ILHA */
+          <div className="flex items-center justify-between gap-2.5">
+            <div className="flex items-center gap-2.5 min-w-0">
+              {/* O Jacquin Original em Miniatura com Borda Dourada */}
+              <div className="w-8 h-8 rounded-full overflow-hidden bg-[#38A398] border-2 border-[#D49B35] shrink-0 shadow-sm">
+                <img
+                  src="/jacquin-praiano.png"
+                  alt="Chef Jacquin Praiano"
+                  className="w-full h-full object-cover scale-110"
+                />
+              </div>
+
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <span className="font-bold text-xs text-white">Chef Jacquin</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                </div>
+                <p className="text-[11px] text-[#C9DDD8] truncate">
+                  &quot;Badejo no Canto Bravo tá incrível hoje!&quot;
+                </p>
+              </div>
             </div>
-            <span className="text-[11px] font-mono text-emerald-300/90">{activePoloName}</span>
+
+            <div className="px-2 py-0.5 rounded-full bg-white/10 hover:bg-white/20 text-[10px] font-bold text-amber-300 shrink-0 border border-white/10 transition-colors">
+              Falar
+            </div>
           </div>
         ) : (
+          /* ESTADO EXPANDIDO: CONVERSA GASTRONÔMICA COM O CHEF JACQUIN */
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="space-y-3"
+            className="space-y-4"
           >
-            <div className="flex items-center justify-between border-b border-white/[0.10] pb-2.5">
-              <div className="flex items-center gap-2 text-xs font-bold text-white">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse-green" />
-                <span>Orquestrador RAG Central • Caraguatatuba</span>
+            {/* Header da Ilha Expandida */}
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-2xl overflow-hidden bg-[#38A398] border-2 border-[#D49B35] shrink-0 shadow-md">
+                  <img
+                    src="/jacquin-praiano.png"
+                    alt="Chef Jacquin Praiano"
+                    className="w-full h-full object-cover scale-110"
+                  />
+                </div>
+                <div>
+                  <h4 className="font-bold text-sm text-white flex items-center gap-1.5">
+                    Chef Jacquin Praiano
+                    <span className="text-[10px] font-normal text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded-full">
+                      Seu Guia em Caraguá
+                    </span>
+                  </h4>
+                  <p className="text-[11px] text-[#9DB8B1]">
+                    Curadoria dos melhores quiosques e restaurantes da enseada
+                  </p>
+                </div>
               </div>
-              <span className="text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full">
-                Latência: 42ms
-              </span>
-            </div>
 
-            <div className="grid grid-cols-2 gap-2 text-[11px] text-zinc-300">
-              <div className="flex items-center gap-1.5 p-2 rounded-xl bg-white/[0.05] border border-white/[0.08]">
-                <MapPin className="w-3.5 h-3.5 text-teal-400 shrink-0" />
-                <span className="truncate">Polo: <b>{activePoloName}</b></span>
-              </div>
-              <div className="flex items-center gap-1.5 p-2 rounded-xl bg-white/[0.05] border border-white/[0.08]">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>Food Safety 100%</span>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between pt-1">
-              <p className="text-[10px] text-zinc-400">Clique para recolher a ilha dinâmica</p>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  onOpenConcierge();
+                  setIsExpanded(false);
                 }}
-                className="px-3 py-1.5 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition-colors shadow-sm"
+                className="p-1.5 rounded-full text-[#9DB8B1] hover:text-white hover:bg-white/10 transition-colors"
+                aria-label="Recolher ilha"
               >
-                <Sparkles className="w-3.5 h-3.5" />
-                Falar com Jacquin
+                <X className="w-4 h-4" />
               </button>
             </div>
+
+            {/* Histórico de Dicas do Jacquin */}
+            <div className="max-h-56 overflow-y-auto space-y-2.5 pr-1 no-scrollbar text-xs">
+              {chatMessages.map((msg, i) => (
+                <div
+                  key={i}
+                  className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
+                >
+                  <div
+                    className={`p-3 rounded-2xl max-w-[90%] leading-relaxed ${
+                      msg.sender === 'user'
+                        ? 'bg-[#E0533C] text-white rounded-br-none'
+                        : 'bg-white/10 text-[#FBF9F5] border border-white/10 rounded-bl-none'
+                    }`}
+                  >
+                    <p>{msg.text}</p>
+                    {msg.recDish && (
+                      <span className="inline-block mt-1 text-[10px] font-bold text-amber-300 bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-300/30">
+                        ⭐ Prato sugerido: {msg.recDish}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Chips de Perguntas Rápidas */}
+            <div className="flex gap-1.5 overflow-x-auto pb-1 no-scrollbar pt-1 border-t border-white/10">
+              {quickChips.map((chip, idx) => (
+                <button
+                  key={idx}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleSend(chip.query);
+                  }}
+                  className="px-2.5 py-1 rounded-xl bg-white/10 hover:bg-white/20 text-[11px] font-semibold text-white whitespace-nowrap transition-colors border border-white/10"
+                >
+                  {chip.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Input para Perguntar */}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSend(inputText);
+              }}
+              className="flex items-center gap-2 pt-1"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <input
+                type="text"
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                placeholder="Pergunte ao Chef: ex: onde tem peixe na telha?"
+                className="flex-1 px-3.5 py-2.5 rounded-2xl bg-white/10 border border-white/15 text-xs text-white placeholder-zinc-400 focus:outline-none focus:bg-white/15 focus:border-amber-400"
+              />
+              <button
+                type="submit"
+                disabled={!inputText.trim()}
+                className="p-2.5 rounded-2xl bg-[#E0533C] hover:bg-[#FF6B4A] text-white disabled:opacity-40 transition-colors shadow-sm"
+              >
+                <Send className="w-3.5 h-3.5" />
+              </button>
+            </form>
           </motion.div>
         )}
       </motion.div>
-    </div>
+    </aside>
   );
 };

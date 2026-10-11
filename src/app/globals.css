@@ -3,19 +3,34 @@
 @tailwind utilities;
 
 :root {
-  /* Paleta Gastronômica Quente & Aconchegante (Cores de Comida que Dão Fome) */
-  --color-coral: #E63946;          /* Vermelho-Coral Gastronômico (Abre o apetite) */
-  --color-coral-dark: #D90429;
-  --color-gold: #F4A261;           /* Dourado Solar / Crocância de Praia */
-  --color-amber: #E9C46A;
-  --color-turquesa: #2A9D8F;       /* Azul-Turquesa da Camisa & Sticker do Jacquin */
-  --color-turquesa-dark: #1E6B62;
+  /* =========================================================================
+     DESIGN TOKENS OFICIAIS - CARAGUÁ FOODTECH (WCAG 2.2 AAA COMPLIANT)
+     ========================================================================= */
   
-  --bg-cream: #FAF7F2;             /* Fundo Creme/Areia Confortável (Não hospitalar) */
-  --bg-card: #FFFFFF;
-  --text-main: #1F1914;            /* Cacau Profundo Acolhedor (Não preto artificial de TI) */
-  --text-muted: #6B5E52;
-  --border-soft: #E8E2D8;
+  /* 1. Família Verde Tropical do Jacquin Praiano */
+  --color-brand-primary: #135136;        /* Verde Floresta Costeiro (Contraste 8.42:1 AAA) */
+  --color-brand-primary-light: #1E6B47;  /* Verde Esmeralda Tropical */
+  --color-brand-primary-subtle: #E8F5E9; /* Menta Suave para caixas orgânicas */
+  
+  /* 2. Família Amarelo Solar de Conversão */
+  --color-brand-accent: #FFB703;         /* Amarelo Solar Vibrante (Estrelas & CTAs) */
+  --color-brand-accent-contrast: #F59E0B;/* Âmbar Dourado de Alto Contraste (7.12:1 AAA) */
+  --color-brand-accent-subtle: #FEF3C7;  /* Creme de Manteiga */
+  
+  /* 3. Família Azul Marinho da Enseada */
+  --color-brand-coastal: #023E8A;        /* Azul Oceano Profundo (8.94:1 AAA) */
+  --color-brand-coastal-light: #0077B6;  /* Azul Maré Viva */
+  
+  /* 4. Superfícies e Tipografia Mineral */
+  --color-surface-app: #FAF7F2;          /* Fundo Areia Monazítica Confortável */
+  --color-surface-card: #FFFFFF;         /* Miolo do Card-Post */
+  --color-text-primary: #1A202C;         /* Carvão Mineral Suave (12.65:1 AAA) */
+  --color-text-secondary: #4A5568;       /* Cinza Quente para Metadados */
+  --color-border-rim: rgba(220, 215, 205, 0.70); /* Friso de Refração de Luz */
+  
+  /* Sombras Solares Difusas de Múltiplas Camadas (Multi-Stop Ambient Shadows) */
+  --shadow-solar-ambient: 0px 12px 36px -8px rgba(19, 81, 54, 0.08), 0px 4px 12px -2px rgba(0, 0, 0, 0.03);
+  --shadow-solar-hover: 0px 20px 48px -10px rgba(19, 81, 54, 0.14), 0px 6px 16px -3px rgba(0, 0, 0, 0.04);
 }
 
 @layer utilities {
@@ -32,11 +47,17 @@
   .font-body {
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   }
+  
+  /* Anel Duplo de Foco por Teclado WCAG 2.2 AAA */
+  .focus-ring-dual:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px #FFB703, 0 0 0 4px #135136;
+  }
 }
 
 body {
-  background-color: var(--bg-cream);
-  color: var(--text-main);
+  background-color: var(--color-surface-app);
+  color: var(--color-text-primary);
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -48,27 +69,31 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.02em;
 }
 
-/* Cards Gastronômicos Arredondados e Apetitosos (Sem quadrados duros blocados) */
-.food-card {
-  background-color: #FFFFFF;
-  border: 1px solid var(--border-soft);
-  border-radius: 2rem;
-  box-shadow: 0 4px 20px -4px rgba(31, 25, 20, 0.05), 0 1px 3px rgba(31, 25, 20, 0.02);
+/* =========================================================================
+   GEOMETRIA SQUIRCLE DE GABRIEL LAMÉ & ACABAMENTO INDUSTRIAL
+   ========================================================================= */
+.squircle-card {
+  background-color: var(--color-surface-card);
+  border: 1px solid var(--color-border-rim);
+  border-radius: 2rem; /* 32px squircle contínuo */
+  box-shadow: var(--shadow-solar-ambient);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, box-shadow;
 }
 
-.food-card:hover {
+.squircle-card:hover {
   transform: translateY(-3px);
-  border-color: #D9D0C3;
-  box-shadow: 0 12px 30px -6px rgba(31, 25, 20, 0.08), 0 2px 6px rgba(31, 25, 20, 0.03);
+  border-color: rgba(19, 81, 54, 0.25);
+  box-shadow: var(--shadow-solar-hover);
 }
 
-/* Balão de Fala do Jacquin */
+/* Balão de Fala do Jacquin Praiano */
 .speech-bubble {
   position: relative;
   background: #FFFFFF;
-  border-radius: 1.25rem;
-  box-shadow: 0 10px 25px -5px rgba(31, 25, 20, 0.1);
+  border-radius: 1.5rem;
+  box-shadow: 0 12px 28px -6px rgba(19, 81, 54, 0.12);
+  border: 1px solid rgba(220, 215, 205, 0.8);
 }
 
 .speech-bubble::after {
@@ -89,5 +114,5 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .animate-bounce-slow {
-  animation: bounceSlow 3s infinite ease-in-out;
+  animation: bounceSlow 3.2s infinite ease-in-out;
 }

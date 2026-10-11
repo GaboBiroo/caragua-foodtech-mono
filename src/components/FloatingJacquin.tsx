@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageSquare, X, Sparkles, Send, Star, Flame, Utensils } from 'lucide-react';
-import { INITIAL_RESTAURANTS, Dish } from '../data/caraguaData';
 
 interface FloatingJacquinProps {
   onSelectCategory?: (category: string) => void;
@@ -18,14 +17,14 @@ export const FloatingJacquin: React.FC<FloatingJacquinProps> = ({
   const [chatMessages, setChatMessages] = useState<Array<{ sender: 'jacquin' | 'user'; text: string; recDish?: string }>>([
     {
       sender: 'jacquin',
-      text: 'Bonjour, mon ami! Bateu aquela fome de praia? Me diz o que você quer comer hoje: peixe frito, camarão rosa ou uma opção 100% vegana?',
+      text: 'Bonjour, mon ami! Bateu aquela fome de praia em Caraguá? Me diz o que você quer comer hoje: peixe frito, frutos do mar da enseada ou uma pizza a lenha?',
     }
   ]);
 
   const speechHints = [
     'Bateu fome? Clica em mim!',
-    'Procurando o melhor peixe da praia?',
-    'Dúvidas de onde comer em Caraguá?',
+    'Procurando o melhor peixe de Caraguá?',
+    'Quer uma dica dos campeões?',
   ];
   const [currentHintIdx, setCurrentHintIdx] = useState(0);
 
@@ -38,9 +37,9 @@ export const FloatingJacquin: React.FC<FloatingJacquinProps> = ({
 
   const quickPrompts = [
     { label: '🦐 Melhor camarão', query: 'camarão' },
-    { label: '🐟 Badejo na praia', query: 'badejo' },
-    { label: '🌿 Prato vegano', query: 'vegano' },
-    { label: '🔥 Promoção hoje', query: 'promoção' },
+    { label: '🐟 Peixe fresco da orla', query: 'peixe' },
+    { label: '🏆 Campeões Caraguá a Gosto', query: 'premiados' },
+    { label: '🍕 Pizza artesanal', query: 'pizza' },
   ];
 
   const handleSend = (text: string) => {
@@ -55,30 +54,34 @@ export const FloatingJacquin: React.FC<FloatingJacquinProps> = ({
       let dish = '';
 
       if (q.includes('vegano') || q.includes('vegetar') || q.includes('sem carne')) {
-        reply = 'Mon ami, aqui em Caraguá tem comida consciente de primeira! A Moqueca Vegana de Palmito Pupunha da Cantina Caiçara Tradição é feita com azeite de dendê e leite de coco fresco. Uma explosão de sabor!';
-        dish = 'Moqueca Vegana de Palmito Pupunha';
+        reply = 'Mon ami, aqui em Caraguá tem comida limpa e consciente! O Bowl Caiçara do Empório Verde Mar no Indaiá é feito com shimeji fresco e banana da serra!';
+        dish = 'Bowl Caiçara de Quinoa e Shimeji';
         if (onSelectCategory) onSelectCategory('vegano');
       } else if (q.includes('camar') || q.includes('risoto')) {
-        reply = 'Ah, camarão é a minha paixão! O Risoto de Camarão Rosa com Limão Siciliano do Mar & Terra Gourmet (Indaiá) é espetacular. Camarões rosa gigantes e ponto perfeito!';
-        dish = 'Risoto de Camarão Rosa';
+        reply = 'Camarão tem que ser graúdo e bem preparado! O Camarão Tropical Espeticho na Tabatinga ou o Risoto no Indaiá são fantásticos!';
+        dish = 'Camarão Tropical Espeticho';
         if (onSelectCategory) onSelectCategory('camarão');
-      } else if (q.includes('badejo') || q.includes('peixe') || q.includes('isca') || q.includes('areia')) {
-        reply = 'Pé na areia sem frescura e com peixe fresquinho é no Quiosque Canto Bravo em Martim de Sá! A Isca de Badejo na farinha panko com molho tártaro de limão-cravo é imbatível!';
-        dish = 'Isca de Badejo com Molho Tártaro';
+      } else if (q.includes('badejo') || q.includes('peixe') || q.includes('sororoca') || q.includes('isca')) {
+        reply = 'A Sororoca a Mediterrâneo do Marujo Gastro Bar no Centro foi bicampeã do festival, e a Isca de Badejo no Canto Bravo em Martim de Sá é crocância pura!';
+        dish = 'Sororoca a Mediterrâneo';
         if (onSelectCategory) onSelectCategory('peixe');
+      } else if (q.includes('pizza') || q.includes('lenha')) {
+        reply = 'No Indaiá a Pizzaria Japa Pizza foi multicampeã com a pizza de Pernil Supremo no forno a lenha! Massa com 48h de fermentação fria!';
+        dish = 'Pizza Pernil Supremo';
+        if (onSelectCategory) onSelectCategory('pizza');
       } else {
-        reply = 'Os pescadores da enseada trouxeram peixes fresquíssimos hoje! Dá uma olhada no cardápio de Martim de Sá e Indaiá logo aqui embaixo na página. Quer que eu filtre alguma categoria para você?';
+        reply = 'Os pescadores do Camaroeiro trouxeram peixes fresquíssimos hoje! Dá uma olhada no feed dos pratos logo abaixo na página. Quer que eu filtre alguma categoria para você?';
       }
 
       setChatMessages((prev) => [...prev, { sender: 'jacquin', text: reply, recDish: dish }]);
-    }, 600);
+    }, 550);
   };
 
   return (
     <>
       {/* 1. MASCÓTE FLUTUANTE NO CANTO INFERIOR DIREITO COM BALÃOZINHO */}
       <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end pointer-events-auto">
-        {/* Balãozinho de Fala Animado Estilo Gibi */}
+        {/* Balãozinho de Fala Animado */}
         <AnimatePresence>
           {!isOpen && showSpeechBubble && (
             <motion.div
@@ -86,22 +89,22 @@ export const FloatingJacquin: React.FC<FloatingJacquinProps> = ({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.9 }}
               onClick={() => setIsOpen(true)}
-              className="mb-2 max-w-[210px] bg-white border-2 border-[#2A9D8F] p-3 rounded-2xl shadow-xl cursor-pointer hover:scale-105 transition-transform relative speech-bubble"
+              className="mb-2 max-w-[210px] bg-white border-2 border-[#135136] p-3 rounded-2xl shadow-xl cursor-pointer hover:scale-105 transition-transform relative speech-bubble"
             >
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   setShowSpeechBubble(false);
                 }}
-                className="absolute -top-2 -left-2 w-5 h-5 bg-[#FAF7F2] border border-[#E8E2D8] rounded-full text-[#6B5E52] hover:text-[#1F1914] flex items-center justify-center text-[10px]"
+                className="absolute -top-2 -left-2 w-5 h-5 bg-[#FAF7F2] border border-stone-200 rounded-full text-stone-500 hover:text-stone-800 flex items-center justify-center text-[10px]"
               >
                 ✕
               </button>
-              <div className="flex items-center gap-1.5 text-[#E63946] font-bold text-[11px] mb-0.5">
-                <Sparkles className="w-3.5 h-3.5 shrink-0" />
+              <div className="flex items-center gap-1.5 text-[#135136] font-black text-[11px] mb-0.5">
+                <Sparkles className="w-3.5 h-3.5 text-[#FFB703] shrink-0" />
                 <span>Chef Jacquin diz:</span>
               </div>
-              <p className="text-xs font-semibold text-[#1F1914] leading-tight">
+              <p className="text-xs font-bold text-stone-900 leading-tight">
                 {speechHints[currentHintIdx]}
               </p>
             </motion.div>
@@ -119,13 +122,13 @@ export const FloatingJacquin: React.FC<FloatingJacquinProps> = ({
           <img
             src="/jacquin-praiano.png"
             alt="Chef Jacquin Praiano"
-            className="w-full h-full object-contain filter drop-shadow-[0_8px_16px_rgba(42,157,143,0.35)]"
+            className="w-full h-full object-contain filter drop-shadow-[0_8px_16px_rgba(19,81,54,0.35)]"
           />
-          <span className="absolute bottom-1 right-2 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full shadow-sm" />
+          <span className="absolute bottom-1 right-2 w-4 h-4 bg-[#FFB703] border-2 border-white rounded-full shadow-sm" />
         </motion.button>
       </div>
 
-      {/* 2. CHAT CONVERSACIONAL COM O CHEF JACQUIN (GRANDE, DENTRO DA CAIXINHA) */}
+      {/* 2. CHAT CONVERSACIONAL COM O CHEF JACQUIN */}
       <AnimatePresence>
         {isOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
@@ -134,7 +137,7 @@ export const FloatingJacquin: React.FC<FloatingJacquinProps> = ({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-[#1F1914]/50 backdrop-blur-sm"
+              className="fixed inset-0 bg-stone-900/60 backdrop-blur-sm"
             />
 
             <motion.div
@@ -142,10 +145,10 @@ export const FloatingJacquin: React.FC<FloatingJacquinProps> = ({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.92, y: 20 }}
               transition={{ type: 'spring', damping: 28, stiffness: 350 }}
-              className="relative w-full max-w-lg bg-[#FAF7F2] rounded-[32px] shadow-2xl border-2 border-[#2A9D8F]/30 overflow-hidden z-10 flex flex-col max-h-[85vh]"
+              className="relative w-full max-w-lg bg-[#FAF7F2] rounded-[32px] shadow-2xl border-2 border-[#135136]/30 overflow-hidden z-10 flex flex-col max-h-[85vh]"
             >
-              {/* Header com o Bonequinho Grandão no Topo */}
-              <div className="bg-gradient-to-r from-[#2A9D8F] to-[#1E6B62] text-white p-5 flex items-center justify-between">
+              {/* Header com o Bonequinho no Topo */}
+              <div className="bg-gradient-to-r from-[#135136] to-[#1E6B47] text-white p-5 flex items-center justify-between border-b-2 border-[#FFB703]">
                 <div className="flex items-center gap-3.5">
                   <div className="w-14 h-16 shrink-0 drop-shadow-md">
                     <img
@@ -155,10 +158,10 @@ export const FloatingJacquin: React.FC<FloatingJacquinProps> = ({
                     />
                   </div>
                   <div>
-                    <h3 className="font-heading font-extrabold text-lg text-white leading-tight">
+                    <h3 className="font-heading font-black text-lg text-white leading-tight">
                       Chef Jacquin Praiano
                     </h3>
-                    <p className="text-xs text-[#E9C46A] font-medium">
+                    <p className="text-xs text-[#FFB703] font-bold">
                       O seu Guia Gourmet em Caraguatatuba
                     </p>
                   </div>
@@ -191,14 +194,14 @@ export const FloatingJacquin: React.FC<FloatingJacquinProps> = ({
                     <div
                       className={`p-4 rounded-3xl max-w-[85%] text-xs leading-relaxed shadow-sm ${
                         msg.sender === 'user'
-                          ? 'bg-[#E63946] text-white rounded-br-none font-medium'
-                          : 'bg-white text-[#1F1914] border border-[#E8E2D8] rounded-tl-none font-medium'
+                          ? 'bg-[#FFB703] text-stone-900 rounded-br-none font-black'
+                          : 'bg-white text-stone-900 border border-stone-200 rounded-tl-none font-medium'
                       }`}
                     >
                       <p>{msg.text}</p>
                       {msg.recDish && (
-                        <div className="mt-2.5 p-2 rounded-xl bg-[#FAF7F2] border border-[#E8E2D8] text-[11px] font-bold text-[#E63946] flex items-center gap-1.5">
-                          <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+                        <div className="mt-2.5 p-2 rounded-xl bg-amber-50 border border-amber-200 text-[11px] font-bold text-stone-900 flex items-center gap-1.5">
+                          <Star className="w-3.5 h-3.5 text-[#FFB703] fill-[#FFB703]" />
                           <span>Sugestão: {msg.recDish}</span>
                         </div>
                       )}
@@ -208,12 +211,12 @@ export const FloatingJacquin: React.FC<FloatingJacquinProps> = ({
               </div>
 
               {/* Chips Rápidos de Comida */}
-              <div className="p-3 bg-white border-t border-[#E8E2D8] flex gap-2 overflow-x-auto no-scrollbar">
+              <div className="p-3 bg-white border-t border-stone-200 flex gap-2 overflow-x-auto no-scrollbar">
                 {quickPrompts.map((qp, idx) => (
                   <button
                     key={idx}
                     onClick={() => handleSend(qp.query)}
-                    className="px-3 py-1.5 rounded-full bg-[#FAF7F2] hover:bg-[#E8E2D8] border border-[#E8E2D8] text-xs font-semibold text-[#1F1914] whitespace-nowrap transition-colors"
+                    className="px-3 py-1.5 rounded-full bg-[#FAF7F2] hover:bg-[#FFB703] hover:text-stone-900 border border-stone-200 text-xs font-bold text-stone-800 whitespace-nowrap transition-colors"
                   >
                     {qp.label}
                   </button>
@@ -226,19 +229,19 @@ export const FloatingJacquin: React.FC<FloatingJacquinProps> = ({
                   e.preventDefault();
                   handleSend(inputText);
                 }}
-                className="p-4 bg-white border-t border-[#E8E2D8] flex items-center gap-2"
+                className="p-4 bg-white border-t border-stone-200 flex items-center gap-2"
               >
                 <input
                   type="text"
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
-                  placeholder="Pergunte ao Chef Jacquin..."
-                  className="flex-1 px-4 py-3 rounded-2xl bg-[#FAF7F2] border border-[#E8E2D8] text-xs text-[#1F1914] placeholder-[#6B5E52] focus:outline-none focus:border-[#2A9D8F] focus:bg-white"
+                  placeholder="Pergunte ao Chef: onde tem a melhor sororoca?"
+                  className="flex-1 px-4 py-3 rounded-2xl bg-[#FAF7F2] border border-stone-200 text-xs text-stone-900 placeholder-stone-500 focus:outline-none focus:border-[#135136] focus:bg-white"
                 />
                 <button
                   type="submit"
                   disabled={!inputText.trim()}
-                  className="p-3 rounded-2xl bg-[#E63946] hover:bg-[#D90429] text-white disabled:opacity-40 transition-colors shadow-md"
+                  className="p-3 rounded-2xl bg-[#FFB703] hover:bg-[#F59E0B] text-stone-900 disabled:opacity-40 transition-colors shadow-md font-bold"
                 >
                   <Send className="w-4 h-4" />
                 </button>

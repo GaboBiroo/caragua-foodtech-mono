@@ -208,41 +208,50 @@ export default function InstagramFoodFeedPage() {
         </div>
       </header>
 
-      {/* 2. BARRA DE STORIES DE BAIRROS (CARROSSEL HORIZONTAL ESTILO INSTAGRAM STORIES) */}
-      <section className="bg-white border-b border-stone-200/80 py-4 px-6 overflow-x-auto no-scrollbar shadow-sm">
-        <div className="max-w-4xl mx-auto flex items-center gap-4">
-          {NEIGHBORHOODS.map((bairro) => {
-            const isSelected = selectedNeighborhood === bairro.id;
-            return (
-              <button
-                key={bairro.id}
-                onClick={() => handleSelectNeighborhood(bairro.id)}
-                className="flex flex-col items-center gap-1.5 shrink-0 group focus:outline-none"
-              >
-                {/* Borda Gradiente estilo Stories do Instagram (Cores do Brasil: Amarelo, Verde e Azul) */}
-                <div className={`p-[2.5px] rounded-full transition-transform duration-300 group-hover:scale-105 ${
-                  isSelected
-                    ? 'bg-gradient-to-tr from-[#FFB703] via-[#135136] to-[#023E8A] shadow-md ring-2 ring-[#FFB703]'
-                    : 'bg-gradient-to-tr from-stone-200 to-stone-300 group-hover:from-[#FFB703] group-hover:to-[#135136]'
-                }`}>
-                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white p-0.5 flex items-center justify-center overflow-hidden">
-                    <div className="w-full h-full rounded-full bg-[#135136]/10 flex items-center justify-center font-black text-xs text-[#135136]">
-                      {bairro.id === 'todos' ? '🌴' : 
-                       bairro.id === 'martim-de-sa' ? '🏖️' :
-                       bairro.id === 'centro' ? '🏛️' :
-                       bairro.id === 'indaia' ? '🌊' :
-                       bairro.id === 'massaguacu' ? '🐟' : '🦐'}
+      {/* 2. BARRA DE STORIES DOS 53 BAIRROS DE CARAGUATATUBA */}
+      <section className="bg-white border-b border-stone-200/80 py-3.5 px-4 overflow-x-auto no-scrollbar shadow-sm sticky top-0 z-40 backdrop-blur-md bg-white/95">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center justify-between mb-2 px-1">
+            <span className="text-[10px] font-black uppercase tracking-wider text-[#135136] flex items-center gap-1.5">
+              <MapPin className="w-3 h-3 text-[#FFB703]" />
+              53 Bairros Oficiais de Caraguatatuba
+            </span>
+            <span className="text-[10px] font-bold text-stone-500">
+              Deslize para explorar →
+            </span>
+          </div>
+
+          <div className="flex items-center gap-3 overflow-x-auto no-scrollbar pb-1">
+            {NEIGHBORHOODS.map((bairro) => {
+              const isSelected = selectedNeighborhood === bairro.id;
+              return (
+                <button
+                  key={bairro.id}
+                  onClick={() => handleSelectNeighborhood(bairro.id)}
+                  title={`${bairro.name}: ${bairro.tagline}`}
+                  className="flex flex-col items-center gap-1.5 shrink-0 group focus:outline-none"
+                >
+                  {/* Borda Gradiente estilo Stories do Instagram (Amarelo Solar, Verde Floresta e Azul Oceano) */}
+                  <div className={`p-[2.5px] rounded-full transition-all duration-300 group-hover:scale-105 ${
+                    isSelected
+                      ? 'bg-gradient-to-tr from-[#FFB703] via-[#135136] to-[#023E8A] shadow-md ring-2 ring-[#FFB703]'
+                      : 'bg-gradient-to-tr from-stone-200 to-stone-300 group-hover:from-[#FFB703] group-hover:to-[#135136]'
+                  }`}>
+                    <div className="w-[54px] h-[54px] sm:w-[60px] sm:h-[60px] rounded-full bg-white p-0.5 flex items-center justify-center overflow-hidden">
+                      <div className="w-full h-full rounded-full bg-[#135136]/10 flex items-center justify-center font-black text-sm text-[#135136] group-hover:bg-[#FFB703]/20 transition-colors">
+                        {bairro.emoji || '🌴'}
+                      </div>
                     </div>
                   </div>
-                </div>
-                <span className={`text-[11px] font-bold tracking-tight whitespace-nowrap ${
-                  isSelected ? 'text-[#135136] font-extrabold' : 'text-stone-600'
-                }`}>
-                  {bairro.name.split(' ')[0]}
-                </span>
-              </button>
-            );
-          })}
+                  <span className={`text-[10px] font-bold tracking-tight whitespace-nowrap max-w-[68px] truncate ${
+                    isSelected ? 'text-[#135136] font-black' : 'text-stone-600'
+                  }`}>
+                    {bairro.name}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </section>
 
@@ -368,7 +377,7 @@ export default function InstagramFoodFeedPage() {
                   </a>
                 </div>
 
-                {/* 4.2 IMAGEM DO PRATO (CENTRO DO POST) COM SUPORTE A DOUBLE-TAP */}
+                {/* 4.2 IMAGEM DO PRATO COM DOUBLE-TAP & IN-IMAGE DISH TAGGING (XIAOHONGSHU/RED) */}
                 <div 
                   className="relative aspect-square sm:aspect-[4/3] bg-stone-900 overflow-hidden cursor-pointer select-none group"
                   onDoubleClick={() => handleDoubleTapPhoto(post.id)}
@@ -380,25 +389,50 @@ export default function InstagramFoodFeedPage() {
                     loading="lazy"
                   />
 
-                  {/* Coração Animado de Double-Tap */}
+                  {/* Coração Animado de Double-Tap (60fps Spring Gabriel Lamé) */}
                   <AnimatePresence>
                     {heartAnimPostId === post.id && (
                       <motion.div
                         initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: [0, 1.3, 1], opacity: [0, 1, 0.9] }}
+                        animate={{ scale: [0, 1.35, 1], opacity: [0, 1, 0.95] }}
                         exit={{ scale: 1.5, opacity: 0 }}
-                        transition={{ duration: 0.6 }}
-                        className="absolute inset-0 flex items-center justify-center pointer-events-none z-20"
+                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                        className="absolute inset-0 flex items-center justify-center pointer-events-none z-30"
                       >
-                        <Heart className="w-24 h-24 text-rose-500 fill-rose-500 drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]" />
+                        <Heart className="w-24 h-24 text-[#FFB703] fill-[#FFB703] drop-shadow-[0_12px_28px_rgba(0,0,0,0.6)]" />
                       </motion.div>
                     )}
                   </AnimatePresence>
 
-                  {/* Badges Flutuantes Orgânicos na Imagem */}
+                  {/* IN-IMAGE DISH TAGGING (XIAOHONGSHU / RED BENCHMARK) */}
+                  {post.dishTag && (
+                    <div 
+                      className="absolute z-20 group/tag cursor-pointer"
+                      style={{ left: `${post.dishTag.x}%`, top: `${post.dishTag.y}%` }}
+                    >
+                      <div className="relative flex items-center justify-center">
+                        <span className="absolute w-6 h-6 rounded-full bg-[#FFB703]/70 animate-ping" />
+                        <span className="relative w-3.5 h-3.5 rounded-full bg-[#FFB703] border-2 border-white shadow-[0_2px_8px_rgba(0,0,0,0.4)]" />
+                      </div>
+
+                      {/* Tooltip Xiaohongshu com Nome, Preço e Destaque */}
+                      <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 opacity-95 group-hover/tag:opacity-100 transition-all pointer-events-auto">
+                        <div className="px-3 py-1.5 rounded-2xl bg-stone-950/90 backdrop-blur-md text-white shadow-2xl border border-white/20 whitespace-nowrap text-left">
+                          <div className="flex items-center gap-2 font-bold text-xs">
+                            <span className="text-white font-black">{post.dishTag.label}</span>
+                            <span className="text-[#FFB703] font-black">R$ {post.dishTag.price.toFixed(2)}</span>
+                          </div>
+                          <div className="text-[10px] text-amber-200 font-medium">{post.dishTag.highlight}</div>
+                        </div>
+                        <div className="w-2 h-2 bg-stone-950/90 rotate-45 mx-auto -mt-1 border-r border-b border-white/20" />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Badges Flutuantes Orgânicos na Imagem (Liquid Glass) */}
                   <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
                     {post.caraguaGostoAward && (
-                      <span className="px-3 py-1 rounded-full text-[11px] font-black bg-[#FFB703] text-stone-900 shadow-lg flex items-center gap-1 border border-white/40">
+                      <span className="px-3 py-1 rounded-full text-[11px] font-black bg-[#FFB703] text-stone-900 shadow-lg flex items-center gap-1 border border-white/40 backdrop-blur-md">
                         <Award className="w-3.5 h-3.5" />
                         {post.caraguaGostoAward}
                       </span>
@@ -412,7 +446,7 @@ export default function InstagramFoodFeedPage() {
                   </div>
 
                   {post.isVegan && (
-                    <div className="absolute top-3 right-3 px-3 py-1 rounded-full text-[11px] font-bold bg-[#135136] text-white shadow-lg border border-white/30">
+                    <div className="absolute top-3 right-3 px-3 py-1 rounded-full text-[11px] font-bold bg-[#135136] text-white shadow-lg border border-white/30 backdrop-blur-md">
                       🌿 100% Vegano
                     </div>
                   )}

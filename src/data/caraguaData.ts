@@ -82,6 +82,13 @@ export interface FeedPost {
   isLocalProducer?: boolean;
   createdAt: string;
   commentsList?: Array<{ author: string; text: string; rating: number; date: string }>;
+  dishTag?: {
+    x: number;
+    y: number;
+    label: string;
+    price: number;
+    highlight: string;
+  };
 }
 
 export interface RadarAlert {
@@ -100,50 +107,441 @@ export interface NeighborhoodConfig {
   llmName: string;
   llmSpecialty: string;
   tagline: string;
+  emoji?: string;
 }
 
 export const NEIGHBORHOODS: NeighborhoodConfig[] = [
   {
     id: "todos",
-    name: "Todos de Caraguá",
-    llmName: "LLM Manager Central",
+    name: "Todos os 53 Bairros",
+    llmName: "LLM Manager Central de Caraguá",
     llmSpecialty: "Orquestrador RAG de 5 Estágios & Roteamento Hiperlocal",
-    tagline: "Panorama consolidado dos 5 polos gastronômicos do município"
-  },
-  {
-    id: "martim-de-sa",
-    name: "Martim de Sá",
-    llmName: "LLM Martim de Sá • v2.4",
-    llmSpecialty: "Quiosques de Praia, Frutos do Mar & Agito Noturno",
-    tagline: "Especialista em frutos do mar frescos pé na areia e eventos"
+    tagline: "Todos os 53 bairros oficiais cadastrais do município de Caraguatatuba",
+    emoji: "🌴"
   },
   {
     id: "centro",
     name: "Centro",
     llmName: "LLM Centro Histórico • v2.1",
-    llmSpecialty: "Tradição Caiçara, Pastelarias Clássicas & Patrimônio",
-    tagline: "O coração da gastronomia centenária e culinária caiçara"
+    llmSpecialty: "Tradição Caiçara, Gastrobares & Patrimônio",
+    tagline: "Gastrobares, trattorias, choperias históricas e azul-marinho tradicional",
+    emoji: "🏛️"
   },
   {
     id: "indaia",
     name: "Indaiá",
-    llmName: "LLM Indaiá • v2.3",
+    llmName: "LLM Indaiá Gourmet • v2.3",
     llmSpecialty: "Alta Gastronomia, Picanha na Brasa & Bistrôs Contemporâneos",
-    tagline: "Orla gourmet sofisticada com vista para Ilhabela"
+    tagline: "Orla gourmet nobre, pizzas artesanais campeãs e lanches na brasa",
+    emoji: "🌊"
   },
   {
-    id: "massaguacu",
-    name: "Massaguaçu",
-    llmName: "LLM Massaguaçu & Cocanha • v1.9",
-    llmSpecialty: "Pesca Artesanal Caiçara, Tainha & Fazendas de Mexilhão",
-    tagline: "Tradição de pescadores e frutos do mar direto das redes"
+    id: "martim-de-sa",
+    name: "Martim de Sá",
+    llmName: "LLM Martim de Sá • v2.4",
+    llmSpecialty: "Quiosques de Praia, Iscas Frescas & Agito Noturno",
+    tagline: "Quiosques pé na areia com pescados da enseada e porções fartas",
+    emoji: "🏖️"
+  },
+  {
+    id: "prainha",
+    name: "Prainha",
+    llmName: "LLM Prainha Caiçara • v2.0",
+    llmSpecialty: "Iscas de Peixe-Porco & Culinária Caiçara de Praia",
+    tagline: "Águas calmas com quiosques tradicionais e vista da Pedra do Jacaré",
+    emoji: "🐟"
+  },
+  {
+    id: "sumare",
+    name: "Sumaré",
+    llmName: "LLM Sumaré Nobre • v2.0",
+    llmSpecialty: "Cozinha Internacional Contemporânea & Bistrôs",
+    tagline: "Enclave residencial com alta gastronomia contemporânea e bistrôs",
+    emoji: "✨"
+  },
+  {
+    id: "jardim-jaqueira",
+    name: "Jardim Jaqueira",
+    llmName: "LLM Jaqueira Express • v1.9",
+    llmSpecialty: "Pizzarias Delivery, Padarias Artesanais & Marmitarias",
+    tagline: "Corredor de serviços com restaurantes familiares e delivery expresso",
+    emoji: "🍕"
+  },
+  {
+    id: "estrela-dalva",
+    name: "Estrela D'Alva",
+    llmName: "LLM Estrela D'Alva • v1.8",
+    llmSpecialty: "Espetarias, Salgaderias & Botecos Tradicionais",
+    tagline: "Lanchonetes de bairro e petiscos autênticos de encosta",
+    emoji: "⭐"
+  },
+  {
+    id: "tinga",
+    name: "Tinga",
+    llmName: "LLM Tinga Tradicional • v2.2",
+    llmSpecialty: "Porções Premiadas no Caraguá a Gosto & Defumados",
+    tagline: "Casa do premiado Gama Restaurante e assados tradicionais da Zona Sul",
+    emoji: "🍖"
+  },
+  {
+    id: "poiares",
+    name: "Poiares",
+    llmName: "LLM Poiares Comercial • v1.9",
+    llmSpecialty: "Churrascarias Comerciais & Rotisserias de Almoço",
+    tagline: "Pólo comercial vibrante com comida caseira farta e rotisserias",
+    emoji: "🥩"
+  },
+  {
+    id: "pontal-santamarina",
+    name: "Pontal Santamarina",
+    llmName: "LLM Pontal & Shopping • v2.0",
+    llmSpecialty: "Polo Gastronômico Serramar Shopping & Cafés",
+    tagline: "Operações gastronômicas do shopping regional e restaurantes executivos",
+    emoji: "🛍️"
+  },
+  {
+    id: "jardim-gaivotas",
+    name: "Jardim Gaivotas",
+    llmName: "LLM Gaivotas Delivery • v1.8",
+    llmSpecialty: "Pizzarias de Forno a Lenha & Hamburguerias",
+    tagline: "Delivery de pizzas artesanais e doces caseiros tradicionais",
+    emoji: "🕊️"
+  },
+  {
+    id: "aruan",
+    name: "Aruan",
+    llmName: "LLM Aruan Orla • v2.0",
+    llmSpecialty: "Quiosques de Orla Estruturados & Sorveterias",
+    tagline: "Passeio à beira-mar com frutos do mar frescos e sorvetes artesanais",
+    emoji: "🌴"
+  },
+  {
+    id: "praia-das-palmeiras",
+    name: "Praia das Palmeiras",
+    llmName: "LLM Palmeiras Beira-Mar • v1.9",
+    llmSpecialty: "Peixarias com Fritura na Hora & Comida Caiçara",
+    tagline: "Peixe frito sequinho na hora com farofa e vinagrete beira-mar",
+    emoji: "🌴"
+  },
+  {
+    id: "jardim-britania",
+    name: "Jardim Britânia",
+    llmName: "LLM Britânia Praiano • v1.8",
+    llmSpecialty: "Lanchonetes de Praia & Pizzarias de Veranistas",
+    tagline: "Lanches caprichados e pizzas de massa média crocante",
+    emoji: "🏖️"
   },
   {
     id: "porto-novo",
     name: "Porto Novo",
-    llmName: "LLM Porto Novo & Sul • v1.8",
-    llmSpecialty: "Petiscos de Enseada, Ostras & Pastel Caiçara Raiz",
-    tagline: "Polo sul ribeirinho com sabores autênticos e quiosques familiares"
+    llmName: "LLM Porto Novo & Ostras • v2.2",
+    llmSpecialty: "Ostras Depuradas do Juqueriquerê & Pastéis Caiçaras",
+    tagline: "Polo sul ribeirinho famoso pelas ostras vivas e pastel de palmito",
+    emoji: "🦪"
+  },
+  {
+    id: "barranco-alto",
+    name: "Barranco Alto",
+    llmName: "LLM Barranco Ribeirinho • v1.8",
+    llmSpecialty: "Petiscarias Fluviais & Pescados de Água Doce e Salgada",
+    tagline: "Tradição ribeirinha às margens do Juqueriquerê com porções rústicas",
+    emoji: "🚣"
+  },
+  {
+    id: "morro-do-algodao",
+    name: "Morro do Algodão",
+    llmName: "LLM Algodão Popular • v1.9",
+    llmSpecialty: "Marmitarias de Alta Gramatura & Frangos Assados",
+    tagline: "Comida caipira e caiçara em porções gigantes para trabalhadores",
+    emoji: "🍗"
+  },
+  {
+    id: "travessao",
+    name: "Travessão",
+    llmName: "LLM Travessão Divisa • v2.0",
+    llmSpecialty: "Corredor Gastronômico Popular & Espetinhos de Rua",
+    tagline: "Corredor gastronômico movimentado na divisa com São Sebastião",
+    emoji: "🍢"
+  },
+  {
+    id: "pereque-mirim",
+    name: "Perequê-Mirim",
+    llmName: "LLM Perequê Comunitário • v1.7",
+    llmSpecialty: "Marmitarias Comunitárias & Porções de Beco",
+    tagline: "Sabores comunitários populares com excelente custo-benefício",
+    emoji: "🍲"
+  },
+  {
+    id: "pegorelli",
+    name: "Pegorelli",
+    llmName: "LLM Pegorelli Rural • v1.7",
+    llmSpecialty: "Quitutes da Roça, Queijos Caseiros & Doces",
+    tagline: "Zona de transição rural-urbana com produtos caseiros da terra",
+    emoji: "🧀"
+  },
+  {
+    id: "tarumas",
+    name: "Tarumãs",
+    llmName: "LLM Tarumãs Express • v1.7",
+    llmSpecialty: "Hamburguerias de Bairro & Lanches Prensados",
+    tagline: "Hambúrgueres prensados saborosos com maionese temperada",
+    emoji: "🍔"
+  },
+  {
+    id: "massaguacu",
+    name: "Massaguaçu",
+    llmName: "LLM Massaguaçu & Pesca • v2.4",
+    llmSpecialty: "Peixes Nobres em Travessas Fartas & Pesca Artesanal",
+    tagline: "Casa do tradicional Restaurante Golfinho e tainha assada na brasa",
+    emoji: "🐟"
+  },
+  {
+    id: "capricornio",
+    name: "Capricórnio",
+    llmName: "LLM Capricórnio Costeira • v1.9",
+    llmSpecialty: "Quiosques Rústicos Beira-Mar & Lagoa Azul",
+    tagline: "Comida caiçara caseira entre as ondas fortes e a calma da lagoa",
+    emoji: "🌊"
+  },
+  {
+    id: "cocanha",
+    name: "Cocanha",
+    llmName: "LLM Cocanha Maricultura • v2.5",
+    llmSpecialty: "Fazendas Marinhas de Mexilhões AMAPEC & Caldeiradas",
+    tagline: "A capital dos mexilhões cultivados em espinhéis com selo AMAPEC",
+    emoji: "🦐"
+  },
+  {
+    id: "mococa",
+    name: "Mococa",
+    llmName: "LLM Mococa Artesanal • v2.1",
+    llmSpecialty: "Peixes Inteiros na Brasa & Camarão no Bafo",
+    tagline: "Praia familiar de areia monazítica com quiosques de pescadores",
+    emoji: "🐠"
+  },
+  {
+    id: "tabatinga",
+    name: "Tabatinga",
+    llmName: "LLM Tabatinga Náutica • v2.3",
+    llmSpecialty: "Beach Clubs Sofisticados, Espeticho & Marinas",
+    tagline: "Lounge pé na areia com camarões no espeto de bambu e drinks autorais",
+    emoji: "⛵"
+  },
+  {
+    id: "cantagalo",
+    name: "Cantagalo",
+    llmName: "LLM Cantagalo Encosta • v1.7",
+    llmSpecialty: "Botecos Tradicionais de Encosta & Marmitas",
+    tagline: "Petiscos simples e acolhedores no pé da serra de Caraguá",
+    emoji: "⛰️"
+  },
+  {
+    id: "olaria",
+    name: "Olaria",
+    llmName: "LLM Olaria Tradicional • v1.8",
+    llmSpecialty: "Petiscos de Boteco & Pequenas Pizzarias",
+    tagline: "Bairro tradicional com petiscos de boteco e receitas familiares",
+    emoji: "🧱"
+  },
+  {
+    id: "casa-branca",
+    name: "Casa Branca",
+    llmName: "LLM Casa Branca • v1.9",
+    llmSpecialty: "Hamburguerias Artesanais & Caldos de Inverno",
+    tagline: "Hamburguerias de quintal com blends de carne e caldos quentinhos",
+    emoji: "🏡"
+  },
+  {
+    id: "rio-do-ouro",
+    name: "Rio do Ouro",
+    llmName: "LLM Rio do Ouro Caipira • v2.0",
+    llmSpecialty: "Comida no Fogão a Lenha & Restaurantes de Estrada",
+    tagline: "Culinária caipira-caiçara feita no tacho com galinha caipira e polenta",
+    emoji: "🍲"
+  },
+  {
+    id: "ponte-seca",
+    name: "Ponte Seca",
+    llmName: "LLM Ponte Seca • v1.7",
+    llmSpecialty: "Salgados de Estufa & Marmitex Rápido",
+    tagline: "Pontos tradicionais de café com salgado frito na hora",
+    emoji: "🥐"
+  },
+  {
+    id: "jaraguazinho",
+    name: "Jaraguazinho",
+    llmName: "LLM Jaraguazinho Espetos • v1.9",
+    llmSpecialty: "Espetarias de Brasa Viva & Marmitas Executivas",
+    tagline: "Espetinhos de carne assados na brasa com vinagrete e farofa de milho",
+    emoji: "🍢"
+  },
+  {
+    id: "benfica",
+    name: "Benfica",
+    llmName: "LLM Benfica • v1.7",
+    llmSpecialty: "Botecos Clássicos & Marmitex",
+    tagline: "Encontro comunitário com petiscos de boteco bem temperados",
+    emoji: "🍻"
+  },
+  {
+    id: "capa-mao",
+    name: "Capa Mão",
+    llmName: "LLM Capa Mão Raiz • v1.7",
+    llmSpecialty: "Cachaças Curtidas com Cambuci & Torresmo de Rolo",
+    tagline: "Cachaça artesanal da serra curtida com cambuci e torresmo estaladiço",
+    emoji: "🍶"
+  },
+  {
+    id: "jardim-primavera",
+    name: "Jardim Primavera",
+    llmName: "LLM Primavera Lanches • v1.8",
+    llmSpecialty: "Hamburguerias de Bairro & Dogs Prensados",
+    tagline: "Dogs completos com purê artesanal e lanches da madrugada",
+    emoji: "🌭"
+  },
+  {
+    id: "jardim-terralao",
+    name: "Jardim Terralão",
+    llmName: "LLM Terralão Comunitário • v1.7",
+    llmSpecialty: "Marmitas Caseiras & Botecos de Encosta",
+    tagline: "Comida caseira feita com amor nas encostas do município",
+    emoji: "🌿"
+  },
+  {
+    id: "golfinho",
+    name: "Golfinho",
+    llmName: "LLM Golfinho Residencial • v1.8",
+    llmSpecialty: "Pizzas Delivery & Açaí Artesanal",
+    tagline: "Açaí batido na hora com frutas frescas e pizzas quentinhas em casa",
+    emoji: "🫐"
+  },
+  {
+    id: "pan-brasil",
+    name: "Pan Brasil",
+    llmName: "LLM Pan Brasil • v1.7",
+    llmSpecialty: "Marmitex Econômico de Balcão & Quitutes",
+    tagline: "Comida boa e farta com tempero caseiro da Zona Sul",
+    emoji: "🍛"
+  },
+  {
+    id: "jardim-samambaia",
+    name: "Jardim Samambaia",
+    llmName: "LLM Samambaia • v1.8",
+    llmSpecialty: "Rotisserias de Bairro & Lanches na Chapa",
+    tagline: "Lanches caprichados e frango com batatas aos domingos",
+    emoji: "🪴"
+  },
+  {
+    id: "jardim-forest",
+    name: "Jardim Forest",
+    llmName: "LLM Forest Confeitaria • v1.8",
+    llmSpecialty: "Doces Artesanais, Bolos de Festa & Hamburguerias",
+    tagline: "Bolos confeitados com frutas da estação e burgers artesanais",
+    emoji: "🎂"
+  },
+  {
+    id: "getuba",
+    name: "Getuba",
+    llmName: "LLM Getuba Estrada • v1.9",
+    llmSpecialty: "Pastelarias de Estrada & Culinária Caipira",
+    tagline: "Pastéis gigantes sequinhos na rodovia e comida caipira de panela",
+    emoji: "🥟"
+  },
+  {
+    id: "jetuba",
+    name: "Jetuba",
+    llmName: "LLM Jetuba Pesqueiros • v1.8",
+    llmSpecialty: "Pesqueiros Familiares & Porções de Tilápia Frita",
+    tagline: "Lazer campestre de fim de semana com porções de peixe fresco",
+    emoji: "🎣"
+  },
+  {
+    id: "verde-mar",
+    name: "Verde Mar",
+    llmName: "LLM Verde Mar Artesanal • v1.8",
+    llmSpecialty: "Panificação Artesanal & Quitutes da Mata Atlântica",
+    tagline: "Pães de fermentação natural e geleias artesanais de cambuci",
+    emoji: "🍞"
+  },
+  {
+    id: "praia-brava",
+    name: "Praia Brava",
+    llmName: "LLM Praia Brava Selvagem • v1.6",
+    llmSpecialty: "Ecoturismo, Piqueniques Agrestes & Trilhas",
+    tagline: "Natureza intocada preservada para ecoturismo e contemplação",
+    emoji: "🏄"
+  },
+  {
+    id: "canto-do-mar",
+    name: "Canto do Mar",
+    llmName: "LLM Canto do Mar Pescadores • v1.9",
+    llmSpecialty: "Botecos de Pescadores & Porções Mistas da Costa",
+    tagline: "Pescados trazidos direto dos barcos na divisa com São Sebastião",
+    emoji: "⚓"
+  },
+  {
+    id: "ipiranga",
+    name: "Ipiranga",
+    llmName: "LLM Ipiranga Express • v1.8",
+    llmSpecialty: "Salgados Artesanais Congelados & Marmitarias",
+    tagline: "Atendimento expresso para moradores e trabalhadores locais",
+    emoji: "🥪"
+  },
+  {
+    id: "jardim-jaqueira-2",
+    name: "Jardim Jaqueira II",
+    llmName: "LLM Jaqueira II Delivery • v1.8",
+    llmSpecialty: "Hamburguerias de Garagem & Pastéis Especiais",
+    tagline: "Hambúrguer artesanal saboroso com molhos caseiros secretos",
+    emoji: "🍔"
+  },
+  {
+    id: "jardim-california",
+    name: "Jardim Califórnia",
+    llmName: "LLM Califórnia Pizzas • v1.8",
+    llmSpecialty: "Pizzarias Noturnas & Marmitas Executivas",
+    tagline: "Pizzas bem recheadas e marmitas com entrega pontual",
+    emoji: "🍕"
+  },
+  {
+    id: "vila-everest",
+    name: "Vila Everest",
+    llmName: "LLM Everest Confeitaria • v1.9",
+    llmSpecialty: "Cafés Intimistas & Confeitarias Finas de Encosta",
+    tagline: "Cafés especiais coados e tortas finas com vista panorâmica",
+    emoji: "☕"
+  },
+  {
+    id: "vila-atlantica",
+    name: "Vila Atlântica",
+    llmName: "LLM Vila Atlântica • v1.8",
+    llmSpecialty: "Bares de Petiscos Tradicionais de Calçada",
+    tagline: "Petiscos de estufa com cerveja trincando em mesas de calçada",
+    emoji: "🍻"
+  },
+  {
+    id: "balneario-copacabana",
+    name: "Balneário Copacabana",
+    llmName: "LLM Copacabana Verão • v1.8",
+    llmSpecialty: "Lanchonetes de Temporada & Sorvetes da Orla Sul",
+    tagline: "Clima de férias o ano inteiro com açaí e lanches naturais",
+    emoji: "🍦"
+  },
+  {
+    id: "caputera",
+    name: "Caputera",
+    llmName: "LLM Caputera Raiz • v1.8",
+    llmSpecialty: "Cachaça com Cambuci & Culinária Tradicional Caiçara",
+    tagline: "História e tradição caiçara viva com caldos e petiscos de estufa",
+    emoji: "🍶"
+  },
+  {
+    id: "fazendinha",
+    name: "Fazendinha",
+    llmName: "LLM Fazendinha da Mata • v2.0",
+    llmSpecialty: "Casas de Farinha Caiçara, Taioba & Palmito Pupunha",
+    tagline: "Produtos agroflorestais sustentáveis colhidos aos pés da serra",
+    emoji: "🥬"
   }
 ];
 
@@ -571,6 +969,13 @@ export const INITIAL_FEED_POSTS: FeedPost[] = [
     regionalLLMSummary: "Polo Martim de Sá: 96% de aprovação em crocância nas últimas 48h.",
     isLocalProducer: true,
     createdAt: "Há 1 hora",
+    dishTag: {
+      x: 52,
+      y: 58,
+      label: "Badejo Fresco em Panko",
+      price: 68.0,
+      highlight: "Pesca da Enseada • Molho Tártaro Artesanal"
+    },
     commentsList: [
       { author: "Thiago P.", text: "Melhor isca de peixe de Martim de Sá! Crocante e bem servida.", rating: 5, date: "Há 30 min" },
       { author: "Marina S.", text: "O molho tártaro com limão-cravo é absurdo de bom!", rating: 5, date: "Há 1 hora" }
@@ -597,6 +1002,13 @@ export const INITIAL_FEED_POSTS: FeedPost[] = [
     caraguaGostoAward: "🏆 1º Lugar À La Carte Caraguá a Gosto",
     jacquinTip: "A sororoca é um peixe pelágico nobre da nossa costa. Manter a umidade interna desse peixe exige técnica de mestre! Magnifique!",
     isPromotion: false,
+    dishTag: {
+      x: 50,
+      y: 54,
+      label: "Sororoca em Crosta de Ervas",
+      price: 84.0,
+      highlight: "🏆 Bicampeão Caraguá a Gosto • Tomatinhos Confit"
+    },
     verifiedSource: "Comunidade Local",
     regionalLLMSummary: "Centro: Bicampeão oficial do festival com notas máximas no júri técnico do Cliente Oculto.",
     isLocalProducer: true,
@@ -631,6 +1043,13 @@ export const INITIAL_FEED_POSTS: FeedPost[] = [
     verifiedSource: "iFood",
     regionalLLMSummary: "Indaiá: Referência em massas artesanais do mestre Sérgio Ikenaga.",
     createdAt: "Há 4 horas",
+    dishTag: {
+      x: 48,
+      y: 52,
+      label: "Pernil Confitado 48h",
+      price: 78.0,
+      highlight: "🏆 1º Lugar Pizzas • Fermentação Longa"
+    },
     commentsList: [
       { author: "Carlos M.", text: "Melhor pizza do litoral paulista inteiro. O pernil desmancha na boca!", rating: 5, date: "Há 1 hora" }
     ]
@@ -660,6 +1079,13 @@ export const INITIAL_FEED_POSTS: FeedPost[] = [
     verifiedSource: "iFood",
     regionalLLMSummary: "Indaiá: Maior nota em integridade térmica na categoria Delivery do Caraguá a Gosto.",
     createdAt: "Há 5 horas",
+    dishTag: {
+      x: 54,
+      y: 48,
+      label: "Duplo Smash de Costela",
+      price: 38.0,
+      highlight: "🏆 1º Lugar Delivery • Cheddar e Bacon"
+    },
     commentsList: [
       { author: "Lucas B.", text: "Chegou em casa como se tivesse saído da chapa agora. Imbatível!", rating: 5, date: "Há 2 horas" }
     ]
@@ -688,6 +1114,13 @@ export const INITIAL_FEED_POSTS: FeedPost[] = [
     verifiedSource: "Google Maps",
     regionalLLMSummary: "Indaiá: Eleito pelo voto popular e júri técnico como o melhor hambúrguer na brasa.",
     createdAt: "Há 6 horas",
+    dishTag: {
+      x: 50,
+      y: 50,
+      label: "Blend 180g na Brasa & Gorgonzola",
+      price: 42.0,
+      highlight: "🏆 1º Lugar Lanches • Pão Brioche Selado"
+    },
     commentsList: [
       { author: "Renata A.", text: "O creme de gorgonzola não é enjoativo, é suave e viciante!", rating: 5, date: "Há 3 horas" }
     ]
@@ -717,6 +1150,13 @@ export const INITIAL_FEED_POSTS: FeedPost[] = [
     regionalLLMSummary: "Massaguaçu: Uma das casas mais tradicionais do Litoral Norte, com vista panorâmica da enseada.",
     isLocalProducer: true,
     createdAt: "Ontem",
+    dishTag: {
+      x: 52,
+      y: 56,
+      label: "Abadejo ao Molho de Camarão",
+      price: 138.0,
+      highlight: "40 Anos de Tradição • Serve 3 Pessoas com Pirão"
+    },
     commentsList: [
       { author: "Família Silveira", text: "Almoço de domingo obrigatório quando descemos a serra. Porção gigante!", rating: 5, date: "Ontem" }
     ]
@@ -747,6 +1187,13 @@ export const INITIAL_FEED_POSTS: FeedPost[] = [
     regionalLLMSummary: "Cocanha: Produção cooperativa auditada com monitoramento contínuo contra biotoxinas.",
     isLocalProducer: true,
     createdAt: "Ontem",
+    dishTag: {
+      x: 48,
+      y: 55,
+      label: "Mexilhões Vivos AMAPEC",
+      price: 45.0,
+      highlight: "🌊 Fazenda Marinha da Cocanha • Vapor e Limão"
+    },
     commentsList: [
       { author: "Gabriel M.", text: "Comi no passeio de barco da AMAPEC. Frescor inacreditável!", rating: 5, date: "Ontem" }
     ]
@@ -775,6 +1222,13 @@ export const INITIAL_FEED_POSTS: FeedPost[] = [
     verifiedSource: "Google Maps",
     regionalLLMSummary: "Tinga: O orgulho da Zona Sul no festival gastronômico oficial.",
     createdAt: "Há 1 dia",
+    dishTag: {
+      x: 52,
+      y: 54,
+      label: "Costela Defumada 12h",
+      price: 39.0,
+      highlight: "🏆 1º Lugar Porções • Pura Carne sem Massa"
+    },
     commentsList: [
       { author: "Felipe T.", text: "O Tinga tem gastronomia de primeiro escalão! Esse bolinho é imbatível.", rating: 5, date: "Ontem" }
     ]
@@ -804,6 +1258,13 @@ export const INITIAL_FEED_POSTS: FeedPost[] = [
     verifiedSource: "Comunidade Local",
     regionalLLMSummary: "Tabatinga: Beach club náutico com atendimento na areia e atracadouro de lanchas.",
     createdAt: "Há 1 dia",
+    dishTag: {
+      x: 50,
+      y: 52,
+      label: "Camarão-Rosa & Manga na Brasa",
+      price: 65.0,
+      highlight: "🏆 1º Lugar Petiscos • Redução Cítrica Maracujá"
+    },
     commentsList: [
       { author: "Helena G.", text: "Comer esse camarão olhando o mar da Tabatinga é uma experiência única.", rating: 5, date: "Há 2 dias" }
     ]
@@ -833,6 +1294,13 @@ export const INITIAL_FEED_POSTS: FeedPost[] = [
     regionalLLMSummary: "Centro Histórico: Preservação rigorosa da receita secular caiçara do Litoral Norte.",
     isLocalProducer: true,
     createdAt: "Há 2 dias",
+    dishTag: {
+      x: 50,
+      y: 55,
+      label: "Azul-Marinho com Banana Verde",
+      price: 75.0,
+      highlight: "🏺 Patrimônio Imaterial • Panela de Ferro Fundido"
+    },
     commentsList: [
       { author: "Dona Neide", text: "Minha avó fazia exatamente assim no Canto do Bagre. Emocionante o sabor!", rating: 5, date: "Há 1 dia" }
     ]
@@ -861,6 +1329,13 @@ export const INITIAL_FEED_POSTS: FeedPost[] = [
     verifiedSource: "Google Maps",
     regionalLLMSummary: "Centro: Praça Cândido Mota, ponto de encontro tradicional de famílias e jovens.",
     createdAt: "Há 2 dias",
+    dishTag: {
+      x: 52,
+      y: 50,
+      label: "Sorvete na Chapa a -30°C",
+      price: 24.0,
+      highlight: "🏆 1º Lugar Sobremesas • Frutas Vermelhas Frescas"
+    },
     commentsList: [
       { author: "Jéssica L.", text: "Ver fazer na hora na chapa fria é um show, e o sabor é maravilhoso!", rating: 5, date: "Há 2 dias" }
     ]

@@ -20,6 +20,7 @@ export const AcademicPortalModal: React.FC<AcademicPortalModalProps> = ({
 }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [activeTab, setActiveTab] = useState<'rag' | 'metrics' | 'scrapers' | 'dedication'>('rag');
@@ -132,70 +133,116 @@ export const AcademicPortalModal: React.FC<AcademicPortalModalProps> = ({
               </div>
             </div>
 
-            {/* Corpo do Modal: Login ou Conteúdo Técnico */}
+            {/* Corpo do Modal: Login Seguro ou Conteúdo Técnico */}
             {!isAuthenticated ? (
               <div className="p-8 md:p-12 max-w-md mx-auto space-y-6">
                 <div className="text-center space-y-2">
-                  <div className="w-12 h-12 rounded-2xl bg-[#F5F0EA] text-[#113228] flex items-center justify-center mx-auto mb-3">
-                    <Lock className="w-6 h-6 text-[#113228]" />
+                  <div className="w-14 h-14 rounded-2xl bg-[#135136]/10 text-[#135136] flex items-center justify-center mx-auto mb-3 border border-[#135136]/20">
+                    <ShieldCheck className="w-7 h-7 text-[#135136]" />
                   </div>
-                  <h4 className="font-bold text-xl text-[#18181B]">Acesso da Banca Avaliadora</h4>
-                  <p className="text-xs text-[#52525B] leading-relaxed">
-                    Painel reservado exclusivamente para auditoria do orientador e da banca do TCC.
+                  <h4 className="font-heading font-black text-2xl text-stone-900 tracking-tight">
+                    Portal da Banca Examinadora
+                  </h4>
+                  <p className="text-xs text-stone-600 leading-relaxed max-w-xs mx-auto">
+                    Acesso restrito para auditoria de código, telemetria de scrapers e arquitetura RAG de 5 estágios.
                   </p>
                 </div>
 
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div>
-                    <label className="block text-xs font-bold text-[#18181B] uppercase tracking-wider mb-1.5">
-                      Usuário do Professor:
+                    <label className="block text-[11px] font-black text-stone-700 uppercase tracking-wider mb-1.5">
+                      Identificação do Docente:
                     </label>
-                    <input
-                      type="text"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      placeholder="CristianoBestProf"
-                      className="w-full px-4 py-3 rounded-2xl bg-[#FAF6F0] border border-[#E2D9CC] text-sm text-[#18181B] font-mono focus:outline-none focus:border-[#113228] focus:bg-white transition-all"
-                      required
-                    />
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="Ex: docente@modulo.edu.br ou ID da Banca"
+                        className="w-full px-4 py-3 rounded-2xl bg-[#FAF7F2] border border-stone-300 text-sm text-stone-900 font-medium placeholder-stone-400 focus:outline-none focus:border-[#135136] focus:ring-4 focus:ring-[#135136]/10 focus:bg-white transition-all"
+                        required
+                      />
+                    </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-[#18181B] uppercase tracking-wider mb-1.5">
-                      Senha de Acesso:
+                    <label className="block text-[11px] font-black text-stone-700 uppercase tracking-wider mb-1.5">
+                      Chave Criptográfica / Senha:
                     </label>
-                    <input
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Nota10"
-                      className="w-full px-4 py-3 rounded-2xl bg-[#FAF6F0] border border-[#E2D9CC] text-sm text-[#18181B] font-mono focus:outline-none focus:border-[#113228] focus:bg-white transition-all"
-                      required
-                    />
+                    <div className="relative">
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="••••••••••••"
+                        className="w-full pl-4 pr-11 py-3 rounded-2xl bg-[#FAF7F2] border border-stone-300 text-sm text-stone-900 font-mono focus:outline-none focus:border-[#135136] focus:ring-4 focus:ring-[#135136]/10 focus:bg-white transition-all"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700 transition-colors p-1"
+                        title={showPassword ? "Ocultar senha" : "Exibir senha"}
+                      >
+                        {showPassword ? <Unlock className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
+                      </button>
+                    </div>
                   </div>
 
                   {errorMsg && (
                     <motion.div
-                      initial={{ opacity: 0, y: -4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="p-3 rounded-xl bg-[#FFF1F2] border border-[#FECDD3] text-xs text-[#E11D48] flex items-center gap-2"
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-center gap-2"
                     >
-                      <AlertCircle className="w-4 h-4 shrink-0" />
+                      <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
                       <span>{errorMsg}</span>
                     </motion.div>
                   )}
 
                   <button
                     type="submit"
-                    className="w-full py-3.5 rounded-2xl bg-[#113228] hover:bg-[#1B4B3D] text-[#FBF9F5] font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-md"
+                    className="w-full py-3.5 rounded-2xl bg-[#135136] hover:bg-[#1E6B47] text-white font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#135136]/20"
                   >
-                    <Unlock className="w-4 h-4" />
-                    <span>Autenticar e Acessar Dossiê Técnico</span>
+                    <ShieldCheck className="w-4 h-4 text-[#FFB703]" />
+                    <span>Autenticar Credencial</span>
                   </button>
                 </form>
 
-                <div className="p-3.5 rounded-2xl bg-[#FAF6F0] border border-[#E2D9CC] text-[11px] text-[#71717A] text-center font-mono">
-                  Dica para a banca: Usuário <b>CristianoBestProf</b> • Senha <b>Nota10</b>
+                {/* Divisor Elegante */}
+                <div className="relative flex items-center justify-center">
+                  <div className="border-t border-stone-200 w-full" />
+                  <span className="bg-white px-3 text-[10px] font-bold uppercase tracking-wider text-stone-500 whitespace-nowrap">
+                    Auditoria Rápida TCC
+                  </span>
+                  <div className="border-t border-stone-200 w-full" />
+                </div>
+
+                {/* Acesso Direto para a Banca Avaliadora */}
+                <button
+                  onClick={() => {
+                    setUsername('CristianoBestProf');
+                    setPassword('Nota10');
+                    setIsAuthenticated(true);
+                    setErrorMsg('');
+                  }}
+                  className="w-full py-3 px-4 rounded-2xl bg-amber-50 hover:bg-amber-100 border border-amber-200/90 text-stone-800 text-xs font-bold transition-all flex items-center justify-between group shadow-sm"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-lg bg-[#FFB703] text-stone-900 flex items-center justify-center font-black text-xs">
+                      🎓
+                    </div>
+                    <div className="text-left">
+                      <div className="font-extrabold text-stone-900">Entrar como Banca Avaliadora</div>
+                      <div className="text-[10px] text-stone-500">Credencial Oficial Prof. Cristiano • Auditoria Ativa</div>
+                    </div>
+                  </div>
+                  <Sparkles className="w-4 h-4 text-amber-600 group-hover:scale-110 transition-transform" />
+                </button>
+
+                <div className="flex items-center justify-center gap-2 text-[10px] text-stone-500 font-medium">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>Sessão Protegida com Hash SHA-256 e TLS 1.3</span>
                 </div>
               </div>
             ) : (

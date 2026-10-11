@@ -52,13 +52,22 @@ export default function InstagramFoodFeedPage() {
     INITIAL_FEED_POSTS.forEach(p => { counts[p.id] = p.likes; });
     return counts;
   });
-  const [savedPosts, setSavedPosts] = useState<Record<string, boolean>>({});
+  const [savedPosts, setSavedPosts] = useState<Record<string, boolean>>({
+    'post-centro-azul-marinho': true,
+    'post-cocanha-mexilhoes': true,
+  });
+  const [saveToast, setSaveToast] = useState<{ show: boolean; isAdded: boolean; dishName: string } | null>(null);
   const [heartAnimPostId, setHeartAnimPostId] = useState<string | null>(null);
   const [userCredits, setUserCredits] = useState<number>(350);
 
-  // Modal / Drawer de Comentários & Avaliação (+50 pts)
+  // Cédula Oficial do Festival Caraguá a Gosto (5 Critérios Auditados - Eixo 3.2 Dossiê Histórico)
   const [activeReviewPost, setActiveReviewPost] = useState<FeedPost | null>(null);
-  const [reviewScore, setReviewScore] = useState<number>(5);
+  const [flavorScore, setFlavorScore] = useState<number>(5); // 1. Sabor & Tempero Caiçara (Peso 35%)
+  const [presentationScore, setPresentationScore] = useState<number>(5); // 2. Apresentação & Cocção (Peso 20%)
+  const [originalityScore, setOriginalityScore] = useState<number>(5); // 3. Originalidade & Insumos Locais (Peso 15%)
+  const [serviceScore, setServiceScore] = useState<number>(5); // 4. Atendimento & Equipe (Peso 15%)
+  const [ambianceScore, setAmbianceScore] = useState<number>(5); // 5. Ambiente & Higiene (Peso 15%)
+  const [tableVoucher, setTableVoucher] = useState<string>('');
   const [reviewComment, setReviewComment] = useState<string>('');
   const [reviewToast, setReviewToast] = useState<boolean>(false);
   const [shareToast, setShareToast] = useState<boolean>(false);
@@ -75,6 +84,15 @@ export default function InstagramFoodFeedPage() {
   });
 
   const feedTopRef = useRef<HTMLDivElement>(null);
+
+  // Contagem de pratos salvos para a pílula do roteiro
+  const savedCount = useMemo(() => Object.values(savedPosts).filter(Boolean).length, [savedPosts]);
+
+  // Cálculo da Super Nota Ponderada da Cédula Oficial Caraguá a Gosto
+  const calculatedWeightedScore = useMemo(() => {
+    const score = flavorScore * 0.35 + presentationScore * 0.20 + originalityScore * 0.15 + serviceScore * 0.15 + ambianceScore * 0.15;
+    return score.toFixed(2);
+  }, [flavorScore, presentationScore, originalityScore, serviceScore, ambianceScore]);
 
   // Filtros de Bairro e Categoria com scroll suave
   const handleSelectNeighborhood = (bairroId: string) => {
@@ -101,7 +119,7 @@ export default function InstagramFoodFeedPage() {
     }));
   };
 
-  // Duplo clique na foto (Double-tap to like estilo Instagram)
+  // Duplo clique na foto (Double-tap to like estilo Instagram com partículas solares)
   const handleDoubleTapPhoto = (postId: string) => {
     if (!likedPosts[postId]) {
       setLikedPosts(prev => ({ ...prev, [postId]: true }));
@@ -111,8 +129,16 @@ export default function InstagramFoodFeedPage() {
     setTimeout(() => setHeartAnimPostId(null), 900);
   };
 
-  const handleToggleSave = (postId: string) => {
-    setSavedPosts(prev => ({ ...prev, [postId]: !prev[postId] }));
+  // Salvar no Roteiro Gastronômico de Caraguá (Coleção)
+  const handleToggleSave = (post: FeedPost) => {
+    const willBeSaved = !savedPosts[post.id];
+    setSavedPosts(prev => ({ ...prev, [post.id]: willBeSaved }));
+    setSaveToast({
+      show: true,
+      isAdded: willBeSaved,
+      dishName: post.dishName
+    });
+    setTimeout(() => setSaveToast(null), 3500);
   };
 
   const handleShare = (post: FeedPost) => {
@@ -129,14 +155,18 @@ export default function InstagramFoodFeedPage() {
     }
   };
 
+  // Emissão de Cédula Oficial Auditada do Festival Caraguá a Gosto
   const handleSubmitReview = (e: React.FormEvent) => {
     e.preventDefault();
     if (!activeReviewPost || !reviewComment.trim()) return;
 
+    const voucherTag = tableVoucher.trim() ? ` [Comprovante: ${tableVoucher.trim()}]` : '';
+    const criteriaSummary = `[Critérios: Sabor ${flavorScore}★ | Cocção ${presentationScore}★ | Insumos ${originalityScore}★ | Atendimento ${serviceScore}★ | Ambiente ${ambianceScore}★]`;
+
     const newComment = {
-      author: 'Você (Comensal Gourmet)',
-      text: reviewComment.trim(),
-      rating: reviewScore,
+      author: 'Você (Comensal Auditado Caraguá a Gosto)',
+      text: `${reviewComment.trim()} ${criteriaSummary}${voucherTag}`,
+      rating: parseFloat(calculatedWeightedScore),
       date: 'Agora mesmo'
     };
 
@@ -148,45 +178,67 @@ export default function InstagramFoodFeedPage() {
     setUserCredits(c => c + 50);
     setReviewToast(true);
     setReviewComment('');
+    setTableVoucher('');
     setActiveReviewPost(null);
-    setTimeout(() => setReviewToast(false), 3500);
+    setTimeout(() => setReviewToast(false), 4000);
   };
 
-  // Filtragem dos Posts do Feed
+  // Filtragem dos Posts do Feed com Normalização Diacrítica
   const filteredPosts = useMemo(() => {
+    const normalize = (txt: string) => txt.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
     return INITIAL_FEED_POSTS.filter(post => {
+      // 0. Filtro Meus Salvos
+      if (selectedCategory === 'salvos' && !savedPosts[post.id]) {
+        return false;
+      }
+
       // 1. Filtro de Bairro
       if (selectedNeighborhood !== 'todos') {
-        const cleanBairro = post.neighborhood.toLowerCase().replace(/\s+/g, '-');
-        if (!cleanBairro.includes(selectedNeighborhood) && !selectedNeighborhood.includes(cleanBairro)) {
+        const cleanBairro = normalize(post.neighborhood).replace(/\s+/g, '-');
+        const cleanSelected = normalize(selectedNeighborhood);
+        if (!cleanBairro.includes(cleanSelected) && !cleanSelected.includes(cleanBairro)) {
           return false;
         }
       }
 
       // 2. Filtro de Categoria
-      if (selectedCategory !== 'todos') {
+      if (selectedCategory !== 'todos' && selectedCategory !== 'salvos') {
         if (selectedCategory === 'vegano' && !post.isVegan) return false;
         if (selectedCategory === 'promoção' && !post.isPromotion) return false;
         if (selectedCategory === 'premiados' && !post.caraguaGostoAward) return false;
-        if (selectedCategory === 'camarão' && !post.dishName.toLowerCase().includes('camarão') && !post.caption.toLowerCase().includes('camarão')) return false;
-        if (selectedCategory === 'peixe' && !post.dishName.toLowerCase().includes('peixe') && !post.dishName.toLowerCase().includes('badejo') && !post.dishName.toLowerCase().includes('sororoca')) return false;
+        if (selectedCategory === 'camarão') {
+          const hasCamarao = normalize(post.dishName).includes('camarao') || normalize(post.caption).includes('camarao');
+          if (!hasCamarao) return false;
+        }
+        if (selectedCategory === 'peixe') {
+          const hasPeixe = normalize(post.dishName).includes('peixe') || normalize(post.dishName).includes('badejo') || normalize(post.dishName).includes('sororoca') || normalize(post.dishName).includes('polvo') || normalize(post.dishName).includes('abadejo');
+          if (!hasPeixe) return false;
+        }
+        if (selectedCategory === 'maricultura') {
+          const hasMussels = normalize(post.dishName).includes('mexilhao') || normalize(post.caption).includes('cocanha') || normalize(post.caption).includes('amapec');
+          if (!hasMussels) return false;
+        }
         if (selectedCategory === 'pizza' && post.dishCategory !== 'Pizzas') return false;
         if (selectedCategory === 'burger' && post.dishCategory !== 'Lanches Artesanais') return false;
       }
 
-      // 3. Filtro de Busca por Texto
+      // 3. Filtro de Busca por Texto com Normalização Diacrítica
       if (searchQuery.trim()) {
-        const q = searchQuery.toLowerCase();
-        const matchName = post.dishName.toLowerCase().includes(q);
-        const matchRest = post.restaurantName.toLowerCase().includes(q);
-        const matchNeighborhood = post.neighborhood.toLowerCase().includes(q);
-        const matchCaption = post.caption.toLowerCase().includes(q);
-        if (!matchName && !matchRest && !matchNeighborhood && !matchCaption) return false;
+        const q = normalize(searchQuery);
+        const matchName = normalize(post.dishName).includes(q);
+        const matchRest = normalize(post.restaurantName).includes(q);
+        const matchNeighborhood = normalize(post.neighborhood).includes(q);
+        const matchCaption = normalize(post.caption).includes(q);
+        const matchTip = normalize(post.jacquinTip || '').includes(q);
+        const matchCategory = normalize(post.dishCategory || '').includes(q);
+        const matchTag = post.dishTag ? (normalize(post.dishTag.label).includes(q) || normalize(post.dishTag.highlight).includes(q)) : false;
+        if (!matchName && !matchRest && !matchNeighborhood && !matchCaption && !matchTip && !matchCategory && !matchTag) return false;
       }
 
       return true;
     });
-  }, [selectedNeighborhood, selectedCategory, searchQuery]);
+  }, [selectedNeighborhood, selectedCategory, searchQuery, savedPosts]);
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] text-[#1A202C] selection:bg-[#FFB703]/30 selection:text-[#135136]">
@@ -303,11 +355,37 @@ export default function InstagramFoodFeedPage() {
           )}
         </div>
 
-        {/* Pílulas de Filtro Rápido com Cores do Brasil (Amarelo, Verde e Azul) */}
+        {/* Chips de Sugestão de Busca por Insumos Históricos (Dossiê Histórico) */}
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar text-[11px] text-stone-500 pt-0.5">
+          <span className="font-bold text-stone-400 shrink-0">Sugestões:</span>
+          {[
+            { label: '🦪 Mexilhões da Cocanha', query: 'Cocanha' },
+            { label: '🏺 Azul-Marinho', query: 'Azul-Marinho' },
+            { label: '🐙 Polvo Grelhado', query: 'Polvo' },
+            { label: '🐟 Iscas no Fubá', query: 'Fubá' },
+            { label: '🍕 Forno a Lenha', query: 'Lenha' },
+            { label: '🥩 Costela no Tinga', query: 'Costela' },
+          ].map((chip) => (
+            <button
+              key={chip.query}
+              onClick={() => {
+                setSearchQuery(chip.query);
+                if (feedTopRef.current) feedTopRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }}
+              className="px-2.5 py-1 rounded-full bg-stone-100 hover:bg-[#FFB703]/25 hover:text-stone-900 border border-stone-200/80 whitespace-nowrap transition-colors font-medium text-stone-700"
+            >
+              {chip.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Pílulas de Filtro Rápido com Cores do Brasil e Coleção de Salvos */}
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
           {[
             { id: 'todos', label: '🍽️ Todos os Posts' },
+            { id: 'salvos', label: `📌 Meus Salvos (${savedCount})` },
             { id: 'premiados', label: '🏆 Caraguá a Gosto' },
+            { id: 'maricultura', label: '🦪 Maricultura Cocanha' },
             { id: 'peixe', label: '🐟 Peixes Frescos' },
             { id: 'camarão', label: '🦐 Camarões da Costa' },
             { id: 'pizza', label: '🍕 Pizzas a Lenha' },
@@ -337,15 +415,33 @@ export default function InstagramFoodFeedPage() {
       <main ref={feedTopRef} className="max-w-xl mx-auto px-4 py-4 space-y-8 pb-32">
         {filteredPosts.length === 0 ? (
           <div className="p-12 text-center rounded-[32px] bg-white border border-stone-200 shadow-sm space-y-3">
-            <Utensils className="w-12 h-12 text-stone-300 mx-auto" />
-            <h3 className="font-heading font-black text-xl text-stone-800">Nenhum post encontrado</h3>
-            <p className="text-xs text-stone-500">Tente ajustar a busca ou os filtros para ver todos os pratos deliciosos de Caraguá.</p>
-            <button
-              onClick={() => { setSelectedNeighborhood('todos'); setSelectedCategory('todos'); setSearchQuery(''); }}
-              className="px-5 py-2.5 rounded-full bg-[#135136] text-white text-xs font-bold hover:bg-[#1E6B47] transition-colors"
-            >
-              Ver Todo o Feed
-            </button>
+            {selectedCategory === 'salvos' ? (
+              <>
+                <Bookmark className="w-12 h-12 text-[#FFB703] mx-auto fill-[#FFB703]/20" />
+                <h3 className="font-heading font-black text-xl text-stone-800">Nenhum prato salvo no seu roteiro</h3>
+                <p className="text-xs text-stone-500 max-w-sm mx-auto">
+                  Toque no ícone de marcador (bookmark) em qualquer prato do feed para salvar e montar seu roteiro gastronômico personalizado de Caraguá!
+                </p>
+                <button
+                  onClick={() => setSelectedCategory('todos')}
+                  className="px-5 py-2.5 rounded-full bg-[#135136] text-white text-xs font-bold hover:bg-[#1E6B47] transition-colors"
+                >
+                  Explorar Todo o Feed
+                </button>
+              </>
+            ) : (
+              <>
+                <Utensils className="w-12 h-12 text-stone-300 mx-auto" />
+                <h3 className="font-heading font-black text-xl text-stone-800">Nenhum post encontrado</h3>
+                <p className="text-xs text-stone-500">Tente ajustar a busca ou os filtros para ver todos os pratos deliciosos de Caraguá.</p>
+                <button
+                  onClick={() => { setSelectedNeighborhood('todos'); setSelectedCategory('todos'); setSearchQuery(''); }}
+                  className="px-5 py-2.5 rounded-full bg-[#135136] text-white text-xs font-bold hover:bg-[#1E6B47] transition-colors"
+                >
+                  Ver Todo o Feed
+                </button>
+              </>
+            )}
           </div>
         ) : (
           filteredPosts.map((post) => {
@@ -381,12 +477,26 @@ export default function InstagramFoodFeedPage() {
                         </span>
                       </div>
                       
-                      {/* Localização e Bairro em Azul Marinho */}
-                      <div className="flex items-center gap-1 text-[11px] text-[#023E8A] font-bold mt-0.5">
-                        <MapPin className="w-3 h-3 text-[#023E8A]" />
-                        <span>{post.neighborhood}, Caraguá</span>
+                      {/* Localização, Bairro e Indicador de Proximidade da Orla */}
+                      <div className="flex items-center gap-1.5 text-[11px] font-bold mt-0.5 flex-wrap">
+                        <span className="text-[#023E8A] flex items-center gap-1">
+                          <MapPin className="w-3 h-3 text-[#023E8A]" />
+                          <span>{post.neighborhood}, Caraguá</span>
+                        </span>
                         <span className="text-stone-300">•</span>
-                        <span className="text-stone-500 font-normal">{post.distanceKm} km da orla</span>
+                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                          post.distanceKm <= 0.5 
+                            ? 'bg-amber-100/90 text-amber-900 border border-amber-300/70'
+                            : post.distanceKm <= 2.0
+                            ? 'bg-sky-100/90 text-sky-900 border border-sky-300/70'
+                            : 'bg-emerald-100/90 text-emerald-900 border border-emerald-300/70'
+                        }`}>
+                          {post.distanceKm <= 0.5 
+                            ? `🏖️ Pé na Areia (${Math.round(post.distanceKm * 1000)}m da praia)`
+                            : post.distanceKm <= 2.0
+                            ? `🌊 Orla Marítima (${post.distanceKm} km)`
+                            : `🌴 Eixo Sul / Encosta (${post.distanceKm} km)`}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -396,8 +506,8 @@ export default function InstagramFoodFeedPage() {
                     href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(post.restaurantName + ' Caraguatatuba')}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 rounded-full bg-stone-100 hover:bg-[#135136] hover:text-white text-stone-600 transition-colors"
-                    title="Como Chegar"
+                    className="p-2 rounded-full bg-stone-100 hover:bg-[#135136] hover:text-white text-stone-600 transition-colors shadow-sm"
+                    title={`Ver rotas para ${post.restaurantName} no Google Maps`}
                   >
                     <Navigation className="w-4 h-4" />
                   </a>
@@ -487,17 +597,40 @@ export default function InstagramFoodFeedPage() {
                     </div>
                   )}
 
-                  {/* Badges Flutuantes Orgânicos na Imagem (Liquid Glass) */}
-                  <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
+                  {/* Badges Flutuantes Orgânicos na Imagem (Liquid Glass - Dossiê de Design & Histórico) */}
+                  <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10 max-w-[85%]">
                     {post.caraguaGostoAward && (
-                      <span className="px-3 py-1 rounded-full text-[11px] font-black bg-[#FFB703] text-stone-900 shadow-lg flex items-center gap-1 border border-white/40 backdrop-blur-md">
-                        <Award className="w-3.5 h-3.5" />
-                        {post.caraguaGostoAward}
+                      <span className="px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-black bg-stone-950/85 text-[#FFB703] shadow-lg flex items-center gap-1.5 border border-white/25 backdrop-blur-md">
+                        <Award className="w-3.5 h-3.5 text-[#FFB703] shrink-0" />
+                        <span className="truncate">{post.caraguaGostoAward}</span>
                       </span>
                     )}
+
+                    {/* Badge de Procedência Histórica e Sustentabilidade da Maricultura (Dossiê Histórico) */}
+                    {(post.id.includes('cocanha') || post.caption.toLowerCase().includes('cocanha') || post.dishName.toLowerCase().includes('mexilhão')) && (
+                      <span className="px-3 py-0.5 rounded-full text-[10px] font-bold bg-[#023E8A]/90 text-cyan-200 border border-cyan-300/30 shadow-md backdrop-blur-md flex items-center gap-1">
+                        <span>🦪</span>
+                        <span>Mexilhão AMAPEC • Fazenda Cocanha</span>
+                      </span>
+                    )}
+
+                    {post.dishName.toLowerCase().includes('azul-marinho') && (
+                      <span className="px-3 py-0.5 rounded-full text-[10px] font-bold bg-[#135136]/90 text-emerald-200 border border-emerald-300/30 shadow-md backdrop-blur-md flex items-center gap-1">
+                        <span>🏺</span>
+                        <span>Patrimônio Imaterial • Panela de Ferro & Taninos</span>
+                      </span>
+                    )}
+
+                    {(post.caption.toLowerCase().includes('camaroeiro') || post.caption.toLowerCase().includes('enseada')) && !post.dishName.toLowerCase().includes('azul-marinho') && (
+                      <span className="px-3 py-0.5 rounded-full text-[10px] font-bold bg-[#1E6B47]/90 text-emerald-100 border border-emerald-300/30 shadow-md backdrop-blur-md flex items-center gap-1">
+                        <span>🐟</span>
+                        <span>Pescado do Camaroeiro • Colônia Z-8</span>
+                      </span>
+                    )}
+
                     {post.isPromotion && (
-                      <span className="px-3 py-1 rounded-full text-[11px] font-black bg-rose-600 text-white shadow-lg flex items-center gap-1">
-                        <Flame className="w-3.5 h-3.5" />
+                      <span className="px-3 py-0.5 rounded-full text-[10px] font-black bg-rose-600/90 text-white shadow-lg flex items-center gap-1 backdrop-blur-sm border border-white/20">
+                        <Flame className="w-3 h-3" />
                         {post.promoBadge || 'Promoção'}
                       </span>
                     )}
@@ -549,12 +682,13 @@ export default function InstagramFoodFeedPage() {
                       </button>
                     </div>
 
-                    {/* Botão de Salvar / Bookmark */}
+                    {/* Botão de Salvar / Bookmark no Roteiro de Caraguá */}
                     <button
-                      onClick={() => handleToggleSave(post.id)}
+                      onClick={() => handleToggleSave(post)}
                       className="text-stone-700 hover:text-stone-900 transition-transform hover:scale-125 focus:outline-none"
+                      title={isSaved ? "Salvo no seu Roteiro de Caraguá" : "Salvar no Roteiro de Caraguá"}
                     >
-                      <Bookmark className={`w-6 h-6 ${isSaved ? 'text-[#FFB703] fill-[#FFB703]' : ''}`} />
+                      <Bookmark className={`w-6 h-6 transition-colors ${isSaved ? 'text-[#FFB703] fill-[#FFB703]' : ''}`} />
                     </button>
                   </div>
 
@@ -644,79 +778,137 @@ export default function InstagramFoodFeedPage() {
       {/* 5. MASCÓTE FLUTUANTE JACQUIN PRAIANO */}
       <FloatingJacquin onSelectCategory={handleSelectCategory} />
 
-      {/* 6. MODAL ORGÂNICO DE AVALIAÇÃO DO PRATO (+50 PONTOS) */}
+      {/* 6. MODAL OFICIAL: CÉDULA DIGITAL DO FESTIVAL CARAGUÁ A GOSTO (EIXO 3.2 DOSSIÊ HISTÓRICO) */}
       <AnimatePresence>
         {activeReviewPost && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setActiveReviewPost(null)}
-              className="fixed inset-0 bg-stone-900/60 backdrop-blur-sm"
+              className="fixed inset-0 bg-stone-900/70 backdrop-blur-md"
             />
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-lg bg-white rounded-[32px] p-6 md:p-8 shadow-2xl border border-stone-200 space-y-5 z-10"
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="relative w-full max-w-lg bg-white rounded-[32px] p-5 sm:p-7 shadow-2xl border border-stone-200 space-y-4 z-10 max-h-[92vh] overflow-y-auto no-scrollbar"
             >
-              <div className="flex items-center justify-between border-b border-stone-200 pb-4">
+              {/* Header da Cédula */}
+              <div className="flex items-start justify-between border-b border-stone-100 pb-3">
                 <div>
-                  <h3 className="font-heading font-black text-xl text-stone-900">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#FFB703]/20 border border-[#FFB703]/50 text-[10px] font-black text-amber-900 mb-1">
+                    <Award className="w-3 h-3 text-[#FFB703]" />
+                    <span>CÉDULA OFICIAL • CARAGUÁ A GOSTO</span>
+                  </div>
+                  <h3 className="font-heading font-black text-lg sm:text-xl text-stone-900 leading-tight">
                     Avaliar {activeReviewPost.dishName}
                   </h3>
                   <p className="text-xs text-stone-500 font-medium">
-                    {activeReviewPost.restaurantName} • Ganhe +50 Pontos Gourmet
+                    {activeReviewPost.restaurantName} ({activeReviewPost.neighborhood}) • Ganhe +50 Pontos
                   </p>
                 </div>
                 <button
                   onClick={() => setActiveReviewPost(null)}
-                  className="p-1.5 rounded-full text-stone-400 hover:text-stone-800"
+                  className="p-1.5 rounded-full text-stone-400 hover:text-stone-800 transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <form onSubmit={handleSubmitReview} className="space-y-4">
+              {/* Box de Resumo da Super Nota Ponderada Calculada em Tempo Real */}
+              <div className="p-3.5 rounded-2xl bg-gradient-to-r from-[#135136]/5 to-[#FFB703]/10 border border-[#FFB703]/40 flex items-center justify-between">
                 <div>
-                  <label className="block text-xs font-bold uppercase text-stone-700 mb-2">
-                    Sua Nota para este Prato:
-                  </label>
-                  <div className="flex items-center gap-2">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <button
-                        key={star}
-                        type="button"
-                        onClick={() => setReviewScore(star)}
-                        className="p-1 text-2xl transition-transform hover:scale-110"
-                      >
-                        <span className={star <= reviewScore ? 'text-[#FFB703]' : 'text-stone-300'}>★</span>
-                      </button>
-                    ))}
-                    <span className="font-bold text-sm text-stone-800 ml-2 font-mono">{reviewScore}.0 Estrelas</span>
+                  <span className="text-[10px] font-black uppercase tracking-wider text-[#135136] block">
+                    Super Nota Ponderada da Cédula
+                  </span>
+                  <div className="text-xs text-stone-600 font-medium">
+                    5 Critérios Oficiais Auditados (Regulamento SECTUR)
                   </div>
                 </div>
+                <div className="text-right">
+                  <div className="flex items-center gap-1 justify-end font-heading font-black text-2xl text-[#135136]">
+                    <Star className="w-5 h-5 text-[#FFB703] fill-[#FFB703]" />
+                    <span>{calculatedWeightedScore}</span>
+                    <span className="text-xs text-stone-400 font-normal">/ 5.0</span>
+                  </div>
+                  <span className="text-[10px] font-bold text-amber-700 block">
+                    Equivale a {((parseFloat(calculatedWeightedScore) / 5) * 10).toFixed(1)} / 10.0 oficial
+                  </span>
+                </div>
+              </div>
 
+              {/* Os 5 Critérios Oficiais do Festival */}
+              <form onSubmit={handleSubmitReview} className="space-y-3.5">
+                <div className="space-y-2">
+                  {[
+                    { key: 'flavor', label: '1. Sabor & Tempero Caiçara (Peso 35%)', desc: 'Frescor do produto, ponto de sal e equilíbrio', score: flavorScore, setScore: setFlavorScore },
+                    { key: 'presentation', label: '2. Apresentação Visual & Cocção (Peso 20%)', desc: 'Acabamento do prato, crocância ou suculência', score: presentationScore, setScore: setPresentationScore },
+                    { key: 'originality', label: '3. Originalidade & Insumos Regionais (Peso 15%)', desc: 'Uso de insumos autênticos da costa e mata', score: originalityScore, setScore: setOriginalityScore },
+                    { key: 'service', label: '4. Atendimento & Serviço da Equipe (Peso 15%)', desc: 'Cordialidade dos garçons e agilidade', score: serviceScore, setScore: setServiceScore },
+                    { key: 'ambiance', label: '5. Ambiente & Higiene da Casa (Peso 15%)', desc: 'Conforto térmico, limpeza e acolhimento', score: ambianceScore, setScore: setAmbianceScore },
+                  ].map((crit) => (
+                    <div key={crit.key} className="p-2.5 rounded-2xl bg-stone-50 border border-stone-200/80 flex items-center justify-between gap-2">
+                      <div className="min-w-0">
+                        <span className="text-[11px] font-black text-stone-800 block truncate">{crit.label}</span>
+                        <span className="text-[10px] text-stone-500 font-medium block truncate">{crit.desc}</span>
+                      </div>
+                      <div className="flex items-center gap-1 shrink-0">
+                        {[1, 2, 3, 4, 5].map((s) => (
+                          <button
+                            key={s}
+                            type="button"
+                            onClick={() => crit.setScore(s)}
+                            className="p-0.5 text-base sm:text-lg transition-transform hover:scale-125 focus:outline-none"
+                          >
+                            <span className={s <= crit.score ? 'text-[#FFB703]' : 'text-stone-300'}>★</span>
+                          </button>
+                        ))}
+                        <span className="text-xs font-mono font-bold text-[#135136] w-5 text-right">{crit.score}.0</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Comprovante / Mesa de Auditoria Fiscal */}
                 <div>
-                  <label className="block text-xs font-bold uppercase text-stone-700 mb-2">
-                    O que você achou do sabor, ponto de cocção e apresentação?
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-stone-600">
+                      Nº da Mesa ou Cupom Fiscal (Auditoria Oficial)
+                    </label>
+                    <span className="text-[9px] text-stone-400">Opcional para demonstração</span>
+                  </div>
+                  <input
+                    type="text"
+                    value={tableVoucher}
+                    onChange={(e) => setTableVoucher(e.target.value)}
+                    placeholder="Ex: Mesa 07 / CF-8921 (auditoria contra bots)"
+                    className="w-full px-3.5 py-2 rounded-xl bg-stone-50 border border-stone-200 text-xs text-stone-900 placeholder-stone-400 focus:outline-none focus:bg-white focus:border-[#135136]"
+                  />
+                </div>
+
+                {/* Parecer do Comensal */}
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-stone-600 mb-1">
+                    Parecer do Comensal / Crítica Gastronômica:
                   </label>
                   <textarea
-                    rows={4}
+                    rows={3}
                     value={reviewComment}
                     onChange={(e) => setReviewComment(e.target.value)}
-                    placeholder="Conte como foi sua experiência: o peixe estava fresco? O camarão no ponto? A porção era generosa?"
-                    className="w-full p-4 rounded-2xl bg-stone-50 border border-stone-200 text-xs text-stone-900 placeholder-stone-400 focus:outline-none focus:bg-white focus:border-[#135136] focus:ring-2 focus:ring-[#135136]/10"
+                    placeholder="Conte sobre o sabor, o frescor do peixe ou o ponto da massa..."
+                    className="w-full p-3 rounded-2xl bg-stone-50 border border-stone-200 text-xs text-stone-900 placeholder-stone-400 focus:outline-none focus:bg-white focus:border-[#135136] focus:ring-2 focus:ring-[#135136]/10"
                     required
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full py-3.5 rounded-full bg-[#135136] hover:bg-[#1E6B47] text-white font-bold text-xs transition-colors shadow-lg shadow-[#135136]/20"
+                  className="w-full py-3.5 rounded-full bg-[#135136] hover:bg-[#1E6B47] text-white font-black text-xs transition-colors shadow-lg shadow-[#135136]/20 flex items-center justify-center gap-2"
                 >
-                  Publicar Avaliação (+50 Pontos)
+                  <Award className="w-4 h-4 text-[#FFB703]" />
+                  <span>Emitir Cédula Auditada (+50 Pontos Gourmet)</span>
                 </button>
               </form>
             </motion.div>
@@ -735,8 +927,25 @@ export default function InstagramFoodFeedPage() {
           >
             <CheckCircle2 className="w-5 h-5 text-[#FFB703]" />
             <div>
-              <p>Avaliação publicada com sucesso!</p>
-              <p className="text-emerald-200 font-normal">Você ganhou +50 Pontos Gourmet na sua carteira.</p>
+              <p>🏆 Cédula Auditada Enviada!</p>
+              <p className="text-emerald-200 font-normal">Sua nota ponderada foi computada e você ganhou +50 Pontos Gourmet.</p>
+            </div>
+          </motion.div>
+        )}
+
+        {saveToast && saveToast.show && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="fixed bottom-6 right-6 z-50 p-4 rounded-2xl bg-stone-900 text-white shadow-2xl flex items-center gap-3 text-xs font-bold border border-[#FFB703]"
+          >
+            <Bookmark className={`w-5 h-5 ${saveToast.isAdded ? 'text-[#FFB703] fill-[#FFB703]' : 'text-stone-400'}`} />
+            <div>
+              <p>{saveToast.isAdded ? '📌 Salvo no seu Roteiro de Caraguá!' : 'Removido dos seus salvos.'}</p>
+              <p className="text-amber-200 font-normal text-[11px] truncate max-w-[240px]">
+                {saveToast.dishName}
+              </p>
             </div>
           </motion.div>
         )}
@@ -746,10 +955,10 @@ export default function InstagramFoodFeedPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="fixed bottom-6 left-6 z-50 p-4 rounded-2xl bg-[#023E8A] text-white shadow-2xl flex items-center gap-3 text-xs font-bold"
+            className="fixed bottom-6 left-6 z-50 p-4 rounded-2xl bg-[#023E8A] text-white shadow-2xl flex items-center gap-3 text-xs font-bold border border-cyan-400/40"
           >
             <CheckCircle2 className="w-5 h-5 text-[#FFB703]" />
-            <p>Link copiado para a área de transferência!</p>
+            <p>Link copiado para compartilhar no WhatsApp ou redes!</p>
           </motion.div>
         )}
       </AnimatePresence>

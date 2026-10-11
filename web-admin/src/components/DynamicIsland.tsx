@@ -23,7 +23,9 @@ export const DynamicIsland: React.FC<DynamicIslandProps> = ({
   const [inputText, setInputText] = useState('');
 
   const quickChips = [
-    { label: '🦐 Melhor camarão', query: 'camarão' },
+    { label: '🦪 Mexilhão da Cocanha', query: 'cocanha' },
+    { label: '🏺 Azul-Marinho', query: 'azul marinho' },
+    { label: '🐙 Polvo no Aloha', query: 'polvo' },
     { label: '🐟 Peixe fresco da orla', query: 'peixe' },
     { label: '🏆 Vencedores Caraguá a Gosto', query: 'premiados' },
     { label: '🍕 Pizza artesanal a lenha', query: 'pizza' },
@@ -40,7 +42,20 @@ export const DynamicIsland: React.FC<DynamicIslandProps> = ({
       let reply = '';
       let dish = '';
 
-      if (q.includes('vegano') || q.includes('vegetar') || q.includes('sem carne')) {
+      if (q.includes('cocanha') || q.includes('mexilh') || q.includes('amapec') || q.includes('zanfredo')) {
+        reply = 'Mon ami, os mexilhões da Fazenda Marinha da Cocanha (AMAPEC) são os mais frescos do Brasil! Cultivados em espinhéis longline, servidos ao vapor com limão-cravo ou no Risotto premiado da Cantinetta Zanfredo!';
+        dish = 'Mexilhões da Cocanha ao Vapor';
+        if (onSelectCategory) onSelectCategory('maricultura');
+      } else if (q.includes('azul') || q.includes('marinho') || q.includes('ancestral') || q.includes('banana')) {
+        reply = 'O verdadeiro Azul-Marinho tem que ser feito na panela de ferro fundido bruto com banana nanica verde! A reação dos taninos deixa o caldo ardósia escuro e o pirão na Cantina Caiçara Tradição é patrimônio vivo!';
+        dish = 'Azul-Marinho Tradicional na Panela de Ferro';
+      } else if (q.includes('polvo') || q.includes('aloha')) {
+        reply = 'Polvo exige ponto exato pra não virar borracha! No Aloha Bistrô da Praia no Centro, o polvo é braseado na grelha viva com batatas ao murro na manteiga de garrafa. Pódio consecutivo do festival!';
+        dish = 'Polvo Grelhado Aloha';
+      } else if (q.includes('fub') || q.includes('sol e cia') || q.includes('petisco')) {
+        reply = 'Iscas de peixe fresquinhas no fubá mimoso e limão-cravo pé na areia! O Quiosque Sol e Cia em Martim de Sá levou 3º lugar do festival com a porção Boca da Noite!';
+        dish = 'Boca da Noite – Iscas no Fubá Mimoso';
+      } else if (q.includes('vegano') || q.includes('vegetar') || q.includes('sem carne')) {
         reply = 'Para comer sem carne e com muito frescor: o Bowl Caiçara do Empório Verde Mar é cheio de vida e ingredientes da Mata Atlântica!';
         dish = 'Bowl Caiçara de Quinoa e Shimeji';
         if (onSelectCategory) onSelectCategory('vegano');
@@ -53,7 +68,7 @@ export const DynamicIsland: React.FC<DynamicIslandProps> = ({
         dish = 'Sororoca a Mediterrâneo';
         if (onSelectCategory) onSelectCategory('peixe');
       } else if (q.includes('pizza') || q.includes('lenha')) {
-        reply = 'No Indaiá a Pizzaria Japa Pizza foi multicampeã com a pizza de Pernil Supremo no forno a lenha! Massa com 48h de fermentação, levinha!';
+        reply = 'No Indaiá a Pizzaria Japa Pizza foi multicampeã com a pizza de Pernil Supremo no forno a lenha, e o Garage Steakhouse levou pódio com a Pizza Garage Mar com salmão defumado!';
         dish = 'Pizza Pernil Supremo';
         if (onSelectCategory) onSelectCategory('pizza');
       } else {

@@ -1339,6 +1339,150 @@ export const INITIAL_FEED_POSTS: FeedPost[] = [
     commentsList: [
       { author: "Jéssica L.", text: "Ver fazer na hora na chapa fria é um show, e o sabor é maravilhoso!", rating: 5, date: "Há 2 dias" }
     ]
+  },
+  {
+    id: "post-aloha-polvo",
+    restaurantId: "rest-centro-aloha",
+    restaurantName: "Aloha Bistrô da Praia",
+    restaurantAvatar: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=150&q=80",
+    neighborhood: "Centro",
+    distanceKm: 0.8,
+    postImage: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=1000&q=85",
+    caption: "Consagrado no pódio das duas últimas edições do Caraguá a Gosto! Tentáculo de polvo tenro braseado na grelha viva, servido com batatas rústicas ao murro na manteiga de garrafa e vinagrete artesanal. #AlohaBistro #PolvoGrelhado #CaraguaAGosto",
+    dishName: "Polvo Grelhado Aloha com Batatas ao Murro",
+    dishPrice: 89.0,
+    dishCategory: "Frutos do Mar",
+    isGlutenFree: true,
+    isVegan: false,
+    likes: 630,
+    commentsCount: 48,
+    superRating: 4.93,
+    totalReviews: 740,
+    caraguaGostoAward: "🏆 Pódio Consecutivo Caraguá a Gosto",
+    jacquinTip: "Polvo exige técnica precisa! Se passa um minuto vira borracha, se fica cru não mastiga. Aqui tá tenro, macio e com a crostinha de brasa que eu exijo!",
+    isPromotion: false,
+    verifiedSource: "Comunidade Local",
+    regionalLLMSummary: "Centro: Referência em bistrô contemporâneo com frutos do mar grelhados no ponto exato.",
+    isLocalProducer: true,
+    createdAt: "Há 2 dias",
+    dishTag: {
+      x: 50,
+      y: 53,
+      label: "Polvo Braseado Macio",
+      price: 89.0,
+      highlight: "🏆 Pódio Caraguá a Gosto • Batatas ao Murro"
+    },
+    commentsList: [
+      { author: "Marcos V.", text: "Polvo mais macio que já comi no litoral norte. Vale cada centavo!", rating: 5, date: "Ontem" }
+    ]
+  },
+  {
+    id: "post-zanfredo-risotto",
+    restaurantId: "rest-centro-zanfredo",
+    restaurantName: "Cantinetta Zanfredo",
+    restaurantAvatar: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=150&q=80",
+    neighborhood: "Centro",
+    distanceKm: 0.5,
+    postImage: "https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=1000&q=85",
+    caption: "3º Lugar À La Carte na 20ª edição do Caraguá a Gosto! Arroz arbóreo italiano cozido lentamente no caldo artesanal de peixes da enseada, mexilhões frescos da Fazenda Marinha da Cocanha e alho-poró na manteiga. #Zanfredo #RisottoDiMare #Cocanha",
+    dishName: "Risotto Origem Di Cucina com Mexilhões da Cocanha",
+    dishPrice: 82.0,
+    dishCategory: "Frutos do Mar",
+    isGlutenFree: true,
+    isVegan: false,
+    likes: 470,
+    commentsCount: 36,
+    superRating: 4.91,
+    totalReviews: 512,
+    caraguaGostoAward: "🏆 3º Lugar À La Carte 2025",
+    jacquinTip: "Risoto de verdade tem que ser 'all'onda', cremoso sem creme de leite artificial! O caldo do mar tá concentrado e o mexilhão da Cocanha traz a doçura do mar!",
+    isPromotion: false,
+    verifiedSource: "Google Maps",
+    regionalLLMSummary: "Centro: Trattoria clássica comandada por chef especializado em massas e risotos.",
+    isLocalProducer: true,
+    createdAt: "Há 3 dias",
+    dishTag: {
+      x: 52,
+      y: 55,
+      label: "Risoto com Mexilhões da Cocanha",
+      price: 82.0,
+      highlight: "🏆 Premiado • Caldo da Costa Mantecato"
+    },
+    commentsList: [
+      { author: "Giulia B.", text: "Cremoso no ponto exato, sabor de mar muito limpo!", rating: 5, date: "Há 2 dias" }
+    ]
+  },
+  {
+    id: "post-sol-e-cia-peixe-porco",
+    restaurantId: "rest-martim-sol-e-cia",
+    restaurantName: "Quiosque Sol e Cia",
+    restaurantAvatar: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=150&q=80",
+    neighborhood: "Martim de Sá",
+    distanceKm: 1.5,
+    postImage: "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?auto=format&fit=crop&w=1000&q=85",
+    caption: "3º Lugar na categoria Porções do Caraguá a Gosto! Iscas generosas de peixe fresco empanado no fubá fino mimoso, fritas em óleo limpo, extremamente sequinhas e crocantes. Acompanha molho da casa com limão-cravo. #SolECia #MartimDeSa #PetiscoCaicara",
+    dishName: "Boca da Noite – Iscas de Peixe no Fubá Mimoso",
+    dishPrice: 58.0,
+    dishCategory: "Porções",
+    isGlutenFree: false,
+    isVegan: false,
+    likes: 395,
+    commentsCount: 27,
+    superRating: 4.84,
+    totalReviews: 460,
+    caraguaGostoAward: "🏆 3º Lugar Porções Caraguá a Gosto",
+    jacquinTip: "Fubá fino bem temperado e óleo na temperatura certa! A casquinha fica crocante de verdade e o peixe não resseca por dentro. Respeito com a tradição de praia!",
+    isPromotion: true,
+    promoBadge: "Pé na Areia • Porção Farta",
+    verifiedSource: "Google Maps",
+    regionalLLMSummary: "Martim de Sá: Quiosque tradicional de família com ambiente pé na areia.",
+    isLocalProducer: true,
+    createdAt: "Há 3 dias",
+    dishTag: {
+      x: 50,
+      y: 50,
+      label: "Iscas no Fubá Mimoso",
+      price: 58.0,
+      highlight: "🏆 3º Lugar Porções • Crocante no Limão-Cravo"
+    },
+    commentsList: [
+      { author: "Fábio R.", text: "Sequinha de verdade, não fica oleosa. Melhor porção da praia de Martim!", rating: 5, date: "Há 2 dias" }
+    ]
+  },
+  {
+    id: "post-garage-mar-pizza",
+    restaurantId: "rest-indaia-garage",
+    restaurantName: "Garage Steakhouse & Pizza",
+    restaurantAvatar: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=150&q=80",
+    neighborhood: "Indaiá",
+    distanceKm: 1.0,
+    postImage: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=1000&q=85",
+    caption: "2º Lugar na categoria Pizzas da 20ª edição do Caraguá a Gosto! Molho de tomate rústico, muçarela especial, lascas selecionadas de salmão defumado, cream cheese aerado, lâminas de alcaparras e orégano fresco no forno de alta temperatura. #GaragePizza #Indaia #PizzaPremiada",
+    dishName: "Pizza Garage Mar com Salmão Defumado",
+    dishPrice: 85.0,
+    dishCategory: "Pizzas",
+    isGlutenFree: false,
+    isVegan: false,
+    likes: 520,
+    commentsCount: 41,
+    superRating: 4.89,
+    totalReviews: 620,
+    caraguaGostoAward: "🏆 2º Lugar Pizzas Caraguá a Gosto",
+    jacquinTip: "Salmão defumado com cream cheese numa pizza tem que ter equilíbrio de forno pra não queimar o peixe. A massa assou com borda aerada e o queijo derreteu sem queimar!",
+    isPromotion: false,
+    verifiedSource: "iFood",
+    regionalLLMSummary: "Indaiá: Steakhouse e pizzaria de alta gastronomia com salão temático e delivery premiado.",
+    createdAt: "Há 3 dias",
+    dishTag: {
+      x: 48,
+      y: 52,
+      label: "Pizza Salmão Defumado",
+      price: 85.0,
+      highlight: "🏆 2º Lugar Pizzas • Forno a Lenha"
+    },
+    commentsList: [
+      { author: "Priscila M.", text: "Combinação espetacular de salmão e cream cheese. Massa crocante!", rating: 5, date: "Há 3 dias" }
+    ]
   }
 ];
 

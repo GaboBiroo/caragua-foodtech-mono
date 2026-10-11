@@ -12,6 +12,32 @@ import { NEIGHBORHOODS, INITIAL_FEED_POSTS, INITIAL_RESTAURANTS, FeedPost, Resta
 import { DynamicIsland } from '../components/DynamicIsland';
 import { FloatingJacquin } from '../components/FloatingJacquin';
 import { AcademicPortalModal } from '../components/AcademicPortalModal';
+interface ParticleConfig {
+  id: number;
+  x: number;
+  y: number;
+  scale: number;
+  size: number;
+  color: string;
+  isStar?: boolean;
+}
+
+const GOLDEN_PARTICLES: ParticleConfig[] = [
+  { id: 1, x: 0, y: -90, scale: 1.3, size: 12, color: '#FFB703', isStar: true },
+  { id: 2, x: 60, y: -70, scale: 0.9, size: 8, color: '#FCD34D' },
+  { id: 3, x: 90, y: -20, scale: 1.2, size: 10, color: '#F59E0B', isStar: true },
+  { id: 4, x: 80, y: 40, scale: 0.8, size: 7, color: '#FEF3C7' },
+  { id: 5, x: 55, y: 80, scale: 1.3, size: 11, color: '#FFB703', isStar: true },
+  { id: 6, x: 0, y: 95, scale: 0.9, size: 8, color: '#FCD34D' },
+  { id: 7, x: -55, y: 80, scale: 1.2, size: 10, color: '#F59E0B', isStar: true },
+  { id: 8, x: -80, y: 40, scale: 0.8, size: 7, color: '#FEF3C7' },
+  { id: 9, x: -90, y: -20, scale: 1.3, size: 11, color: '#FFB703', isStar: true },
+  { id: 10, x: -60, y: -70, scale: 0.9, size: 8, color: '#FCD34D' },
+  { id: 11, x: 35, y: -45, scale: 0.7, size: 6, color: '#FFFFFF' },
+  { id: 12, x: -35, y: -45, scale: 0.7, size: 6, color: '#FFFFFF' },
+  { id: 13, x: 45, y: 35, scale: 0.6, size: 6, color: '#FFB703' },
+  { id: 14, x: -45, y: 35, scale: 0.6, size: 6, color: '#FFB703' },
+];
 
 export default function InstagramFoodFeedPage() {
   const [selectedNeighborhood, setSelectedNeighborhood] = useState<string>('todos');
@@ -389,18 +415,50 @@ export default function InstagramFoodFeedPage() {
                     loading="lazy"
                   />
 
-                  {/* Coração Animado de Double-Tap (60fps Spring Gabriel Lamé) */}
+                  {/* Coração Animado de Double-Tap + Explosão de Partículas Douradas (Ideia 5) */}
                   <AnimatePresence>
                     {heartAnimPostId === post.id && (
-                      <motion.div
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: [0, 1.35, 1], opacity: [0, 1, 0.95] }}
-                        exit={{ scale: 1.5, opacity: 0 }}
-                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                        className="absolute inset-0 flex items-center justify-center pointer-events-none z-30"
-                      >
-                        <Heart className="w-24 h-24 text-[#FFB703] fill-[#FFB703] drop-shadow-[0_12px_28px_rgba(0,0,0,0.6)]" />
-                      </motion.div>
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30">
+                        {/* Coração Central com Mola Gabriel Lamé */}
+                        <motion.div
+                          initial={{ scale: 0, opacity: 0 }}
+                          animate={{ scale: [0, 1.4, 1], opacity: [0, 1, 0.95] }}
+                          exit={{ scale: 1.6, opacity: 0 }}
+                          transition={{ type: "spring", stiffness: 450, damping: 28 }}
+                          className="relative"
+                        >
+                          <Heart className="w-24 h-24 text-[#FFB703] fill-[#FFB703] drop-shadow-[0_12px_36px_rgba(255,183,3,0.7)]" />
+                        </motion.div>
+
+                        {/* Partículas Douradas e Centelhas Solares Radiantes (Benchmark Starbucks & Apple HIG) */}
+                        {GOLDEN_PARTICLES.map((p) => (
+                          <motion.div
+                            key={p.id}
+                            initial={{ x: 0, y: 0, scale: 0, opacity: 1 }}
+                            animate={{
+                              x: p.x,
+                              y: p.y,
+                              scale: [0, p.scale, 0],
+                              opacity: [1, 1, 0],
+                              rotate: p.isStar ? [0, 90, 180] : 0,
+                            }}
+                            transition={{ duration: 0.75, ease: "easeOut" }}
+                            style={{
+                              position: 'absolute',
+                              width: p.size,
+                              height: p.size,
+                              backgroundColor: p.isStar ? 'transparent' : p.color,
+                              borderRadius: p.isStar ? '0' : '9999px',
+                              boxShadow: `0 0 12px ${p.color}`,
+                            }}
+                            className="flex items-center justify-center pointer-events-none"
+                          >
+                            {p.isStar && (
+                              <Sparkles className="w-full h-full" style={{ color: p.color }} />
+                            )}
+                          </motion.div>
+                        ))}
+                      </div>
                     )}
                   </AnimatePresence>
 

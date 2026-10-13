@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useRef } from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Heart, MessageCircle, Share2, Bookmark, Star, MapPin, 
@@ -9,6 +10,7 @@ import {
 } from 'lucide-react';
 
 import { NEIGHBORHOODS, INITIAL_FEED_POSTS, INITIAL_RESTAURANTS, FeedPost, RestaurantItem } from '../data/caraguaData';
+import { Navbar } from '../components/Navbar';
 import { DynamicIsland } from '../components/DynamicIsland';
 import { FloatingJacquin } from '../components/FloatingJacquin';
 import { AcademicPortalModal } from '../components/AcademicPortalModal';
@@ -243,14 +245,17 @@ export default function InstagramFoodFeedPage() {
   return (
     <div className="min-h-screen bg-[#F8F9FA] text-[#1A202C] selection:bg-[#FFB703]/30 selection:text-[#135136]">
       
-      {/* DYNAMIC ISLAND DO CHEF JACQUIN (CENTRALIZADA NO TOPO) */}
+      {/* NAVBAR GLOBAL INTEGRADA (ENTREGA S06) */}
+      <Navbar onOpenAcademicModal={() => setIsAcademicModalOpen(true)} />
+
+      {/* DYNAMIC ISLAND DO CHEF JACQUIN (CENTRALIZADA LOGO ABAIXO DA NAVBAR) */}
       <DynamicIsland
         onSelectCategory={handleSelectCategory}
         onFilterNeighborhood={handleSelectNeighborhood}
       />
 
       {/* 1. HEADER COM COR SÓLIDA VERDE TROPICAL & NOME BEM GRANDE */}
-      <header className="w-full bg-[#135136] text-white pt-24 pb-8 px-6 shadow-xl border-b-4 border-[#FFB703]">
+      <header className="w-full bg-[#135136] text-white pt-20 pb-8 px-6 shadow-xl border-b-4 border-[#FFB703]">
         <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="text-center md:text-left space-y-2">
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 border border-white/20 text-xs font-bold text-[#FFB703] backdrop-blur-md">
@@ -718,9 +723,13 @@ export default function InstagramFoodFeedPage() {
                   {/* 4.5 LEGENDA DO POST (CAPTION) */}
                   <div className="space-y-1 text-xs text-stone-800 leading-relaxed">
                     <p>
-                      <strong className="font-heading font-extrabold text-sm text-stone-900 mr-1.5">
+                      <Link 
+                        href={`/prato/${post.id}`} 
+                        className="font-heading font-extrabold text-sm text-stone-900 mr-1.5 hover:text-[#135136] hover:underline transition-colors"
+                        title="Ver ficha técnica completa do prato"
+                      >
                         {post.dishName}
-                      </strong>
+                      </Link>
                       <span className="text-stone-600 font-medium">{post.caption}</span>
                     </p>
                   </div>
@@ -760,14 +769,24 @@ export default function InstagramFoodFeedPage() {
                     </div>
                   )}
 
-                  {/* Ação de Adicionar Avaliação (+50 pontos) */}
-                  <button
-                    onClick={() => setActiveReviewPost(post)}
-                    className="w-full py-2.5 rounded-full bg-stone-100 hover:bg-[#FFB703] hover:text-stone-900 text-stone-700 font-bold text-xs transition-colors flex items-center justify-center gap-1.5"
-                  >
-                    <span>Avaliar este prato e ganhar +50 pontos</span>
-                    <ArrowUpRight className="w-3.5 h-3.5" />
-                  </button>
+                  {/* Ações: Ver Ficha Completa (Master-Detail S09) & Cédula Oficial */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                    <Link
+                      href={`/prato/${post.id}`}
+                      className="w-full py-2.5 rounded-full bg-[#135136] hover:bg-[#0D3825] text-white font-bold text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm hover:scale-[1.02]"
+                    >
+                      <Utensils className="w-3.5 h-3.5 text-[#FFB703]" />
+                      <span>Ver Ficha Completa & Rota</span>
+                    </Link>
+
+                    <button
+                      onClick={() => setActiveReviewPost(post)}
+                      className="w-full py-2.5 rounded-full bg-stone-100 hover:bg-[#FFB703] hover:text-stone-900 text-stone-700 font-bold text-xs transition-all flex items-center justify-center gap-1.5 hover:scale-[1.02]"
+                    >
+                      <span>Avaliar (+50 Pontos)</span>
+                      <ArrowUpRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
               </article>
             );

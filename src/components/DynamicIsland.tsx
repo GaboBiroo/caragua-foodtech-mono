@@ -80,7 +80,7 @@ export const DynamicIsland: React.FC<DynamicIslandProps> = ({
   };
 
   return (
-    <aside aria-label="Dynamic Island do Chef Jacquin" className="fixed top-3.5 left-1/2 -translate-x-1/2 z-50 select-none">
+    <aside aria-label="Dynamic Island do Chef Jacquin" className="fixed top-20 left-1/2 -translate-x-1/2 z-40 select-none">
       <motion.div
         layout
         transition={{ type: 'spring', stiffness: 400, damping: 30 }}

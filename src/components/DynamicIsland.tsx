@@ -80,41 +80,41 @@ export const DynamicIsland: React.FC<DynamicIslandProps> = ({
   };
 
   return (
-    <aside aria-label="Dynamic Island do Chef Jacquin" className="fixed top-20 left-1/2 -translate-x-1/2 z-40 select-none">
+    <aside aria-label="Dynamic Island do Chef Jacquin" className="fixed top-24 left-1/2 -translate-x-1/2 z-40 select-none">
       <motion.div
         layout
         transition={{ type: 'spring', stiffness: 400, damping: 30 }}
         onClick={() => !isExpanded && setIsExpanded(true)}
         className={`bg-[#135136] text-white border-2 border-[#FFB703]/80 shadow-[0_16px_36px_-6px_rgba(19,81,54,0.45),0_2px_8px_rgba(0,0,0,0.3)] cursor-pointer overflow-hidden transition-all duration-300 ${
           isExpanded
-            ? 'w-[min(540px,94vw)] p-5 rounded-[32px]'
-            : 'w-[310px] sm:w-[360px] hover:w-[380px] px-3.5 py-2 rounded-full'
+            ? 'w-[min(560px,94vw)] p-6 rounded-[36px]'
+            : 'w-[340px] sm:w-[420px] hover:w-[440px] px-4 py-2.5 rounded-full'
         }`}
       >
         {!isExpanded ? (
           /* ESTADO COMPACTO: JACQUIN RECORTADO VIVO DENTRO DA ILHA */
-          <div className="flex items-center justify-between gap-2.5">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-9 shrink-0 drop-shadow-sm">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-11 h-13 shrink-0 -my-1 drop-shadow-md">
                 <img
                   src="/jacquin-praiano.png"
                   alt="Chef Jacquin Praiano"
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-contain filter drop-shadow-[0_2px_6px_rgba(255,183,3,0.4)]"
                 />
               </div>
 
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <span className="font-bold text-xs text-white">Chef Jacquin</span>
+                  <span className="font-extrabold text-xs sm:text-sm text-white">Chef Jacquin</span>
                   <span className="w-2 h-2 rounded-full bg-[#FFB703] animate-pulse" />
                 </div>
-                <p className="text-[11px] text-amber-200 truncate">
+                <p className="text-[11px] sm:text-xs text-amber-200 truncate font-medium">
                   &quot;Badejo crocante no Canto Bravo tá incrível!&quot;
                 </p>
               </div>
             </div>
 
-            <div className="px-3 py-1 rounded-full bg-[#FFB703] hover:bg-[#F59E0B] text-[10px] font-black text-stone-900 shrink-0 shadow-sm transition-colors">
+            <div className="px-3.5 py-1 rounded-full bg-[#FFB703] hover:bg-[#F59E0B] text-xs font-black text-stone-900 shrink-0 shadow-sm transition-colors">
               Falar
             </div>
           </div>
@@ -128,12 +128,12 @@ export const DynamicIsland: React.FC<DynamicIslandProps> = ({
           >
             {/* Header da Ilha Expandida */}
             <div className="flex items-center justify-between border-b border-white/15 pb-3">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-14 shrink-0 drop-shadow-md">
+              <div className="flex items-center gap-3.5">
+                <div className="w-16 h-20 shrink-0 -my-2 drop-shadow-md">
                   <img
                     src="/jacquin-praiano.png"
                     alt="Chef Jacquin Praiano"
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-contain filter drop-shadow-[0_4px_10px_rgba(255,183,3,0.5)]"
                   />
                 </div>
                 <div>

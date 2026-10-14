@@ -384,8 +384,33 @@ export const AcademicPortalModal: React.FC<AcademicPortalModalProps> = ({
                       Ao Professor Cristiano & Banca Examinadora
                     </h4>
                     <p className="text-xs text-[#52525B] leading-relaxed">
-                      Este projeto foi concebido e implementado por <b>Gabriel Rodrigues (@GaboBiroo)</b> como Trabalho de Conclusão de Curso em Análise e Desenvolvimento de Sistemas no <b>Centro Universitário Módulo</b>.
+                      Este projeto foi concebido e desenvolvido pela equipe de alunos do curso de Análise e Desenvolvimento de Sistemas no <b>Centro Universitário Módulo</b> sob a orientação do <b>Prof. Cristiano S. Negrão</b>.
                     </p>
+
+                    {/* COMPOSIÇÃO OFICIAL DO GRUPO */}
+                    <div className="space-y-2 pt-1">
+                      <span className="text-[11px] font-black uppercase tracking-wider text-[#135136] block">
+                        Equipe de Desenvolvimento (Composição do Grupo):
+                      </span>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                        <div className="p-3 rounded-xl bg-white border border-[#E2D9CC] text-xs space-y-0.5">
+                          <strong className="block text-stone-900 font-bold">Gabriel Rodrigues</strong>
+                          <span className="text-[10px] text-emerald-800 font-semibold block">Product Owner & Lead Architect</span>
+                          <span className="text-[9px] text-stone-500 block">Dev Full-Stack / Prompt RAG</span>
+                        </div>
+                        <div className="p-3 rounded-xl bg-white border border-[#E2D9CC] text-xs space-y-0.5">
+                          <strong className="block text-stone-900 font-bold">Matheus Vicente</strong>
+                          <span className="text-[10px] text-emerald-800 font-semibold block">Dev Back-End & Banco de Dados</span>
+                          <span className="text-[9px] text-stone-500 block">Modelagem & Engenharia de Dados</span>
+                        </div>
+                        <div className="p-3 rounded-xl bg-white border border-[#E2D9CC] text-xs space-y-0.5">
+                          <strong className="block text-stone-900 font-bold">Pedro Simone</strong>
+                          <span className="text-[10px] text-emerald-800 font-semibold block">Dev Front-End & Interfaces UX</span>
+                          <span className="text-[9px] text-stone-500 block">QA / Testes & Documentação</span>
+                        </div>
+                      </div>
+                    </div>
+
                     <p className="text-xs text-[#52525B] leading-relaxed">
                       A proposta integra inteligência artificial hiperlocal de última geração com um sistema de design rigoroso de nível internacional, valorizando a cultura caiçara, a pesca artesanal e os quiosques de Caraguatatuba/SP.
                     </p>

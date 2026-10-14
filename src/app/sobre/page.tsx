@@ -189,17 +189,39 @@ export default function SobreNosPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm text-stone-700">
-            <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200/80">
-              <span className="text-stone-500 font-bold block text-[11px] uppercase">Aluno / Desenvolvedor:</span>
-              <span className="font-heading font-bold text-stone-900 text-base">Gabriel Rodrigues (@GaboBiroo)</span>
-              <span className="text-stone-500 block text-xs">Curso: Análise e Desenvolvimento de Sistemas (ADS)</span>
+          <div className="space-y-3">
+            <span className="text-[11px] font-bold text-stone-500 uppercase tracking-wider block">
+              Composição da Equipe Discente:
+            </span>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-stone-700">
+              <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200/80 space-y-1">
+                <span className="text-stone-400 font-bold block text-[10px] uppercase">Product Owner / Full-Stack:</span>
+                <span className="font-heading font-black text-stone-900 text-sm block">Gabriel Rodrigues</span>
+                <span className="text-stone-500 block text-[11px]">Lead Software Architect • RAG & IA</span>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200/80 space-y-1">
+                <span className="text-stone-400 font-bold block text-[10px] uppercase">Dev Back-End / Banco:</span>
+                <span className="font-heading font-black text-stone-900 text-sm block">Matheus Vicente</span>
+                <span className="text-stone-500 block text-[11px]">Engenharia de Dados & Modelagem</span>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200/80 space-y-1">
+                <span className="text-stone-400 font-bold block text-[10px] uppercase">Dev Front-End / UX & QA:</span>
+                <span className="font-heading font-black text-stone-900 text-sm block">Pedro Simone</span>
+                <span className="text-stone-500 block text-[11px]">Interfaces Reativas & Testes</span>
+              </div>
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200/80">
-              <span className="text-stone-500 font-bold block text-[11px] uppercase">Docente Orientador:</span>
-              <span className="font-heading font-bold text-stone-900 text-base">Prof. Cristiano S. Negrão</span>
-              <span className="text-stone-500 block text-xs">Disciplina: Análise e Projeto de Sistemas II</span>
+            <div className="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 flex items-center justify-between text-xs text-stone-700 mt-2">
+              <div>
+                <span className="text-stone-500 font-bold block text-[10px] uppercase">Docente Orientador:</span>
+                <span className="font-heading font-black text-[#135136] text-sm">Prof. Cristiano S. Negrão</span>
+                <span className="text-stone-500 block text-[11px]">Disciplina: Análise e Projeto de Sistemas II</span>
+              </div>
+              <span className="px-3 py-1 rounded-full bg-[#135136] text-white font-bold text-[10px]">
+                Centro Universitário Módulo
+              </span>
             </div>
           </div>
         </section>

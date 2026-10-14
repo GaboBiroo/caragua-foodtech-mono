@@ -39,25 +39,35 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAcademicModal }) => {
         aria-label="Navegação Principal"
         className="sticky top-0 z-40 w-full bg-[#135136]/95 backdrop-blur-md border-b-2 border-[#FFB703]/80 text-white shadow-md transition-all"
       >
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
           
-          {/* LOGO & IDENTIDADE VISUAL */}
+          {/* LOGO & IDENTIDADE VISUAL COM JACQUIN PROTAGONISTA BEM MAIOR */}
           <Link 
             href="/"
-            className="flex items-center gap-2.5 group focus:outline-none focus:ring-2 focus:ring-[#FFB703] rounded-xl px-1.5 py-1"
+            className="flex items-center gap-3 group focus:outline-none focus:ring-2 focus:ring-[#FFB703] rounded-2xl px-2 py-1 transition-transform hover:scale-[1.02]"
           >
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#FFB703] to-amber-300 p-0.5 shadow-sm group-hover:scale-105 transition-transform">
-              <div className="w-full h-full rounded-[10px] bg-[#135136] flex items-center justify-center text-white">
-                <ChefHat className="w-5 h-5 text-[#FFB703]" />
-              </div>
+            {/* Jacquin Praiano Recortado em Destaque Gigante na Navbar */}
+            <div className="relative w-14 h-16 sm:w-16 sm:h-20 md:w-20 md:h-24 shrink-0 -my-3 drop-shadow-[0_8px_18px_rgba(0,0,0,0.45)] group-hover:scale-110 transition-transform duration-300">
+              <img
+                src="/jacquin-praiano.png"
+                alt="Chef Jacquin Praiano - Personagem Oficial"
+                className="w-full h-full object-contain filter drop-shadow-[0_4px_12px_rgba(255,183,3,0.4)]"
+              />
+              <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-[#FFB703] border-2 border-[#135136] rounded-full shadow-sm animate-pulse" />
             </div>
+
             <div className="flex flex-col">
-              <span className="font-heading font-black text-lg tracking-tight text-white leading-none group-hover:text-amber-200 transition-colors">
+              <span className="font-heading font-black text-xl sm:text-2xl md:text-3xl tracking-tight text-white leading-none group-hover:text-amber-200 transition-colors">
                 CARAGUÁ <span className="text-[#FFB703]">FOODTECH</span>
               </span>
-              <span className="text-[10px] text-emerald-200 font-semibold tracking-wider uppercase mt-0.5">
-                Guia Caiçara Oficial
-              </span>
+              <div className="flex items-center gap-1.5 mt-1">
+                <span className="text-[10px] sm:text-[11px] text-amber-200 font-extrabold tracking-wider uppercase bg-white/10 px-2.5 py-0.5 rounded-full border border-white/20">
+                  Chef Jacquin Praiano
+                </span>
+                <span className="hidden sm:inline text-[10px] text-emerald-200 font-medium">
+                  • Curadoria Oficial Caiçara
+                </span>
+              </div>
             </div>
           </Link>
 

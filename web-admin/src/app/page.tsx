@@ -256,7 +256,7 @@ export default function InstagramFoodFeedPage() {
 
       {/* 1. HEADER COM COR SÓLIDA VERDE TROPICAL & NOME BEM GRANDE */}
       <header className="w-full bg-[#135136] text-white pt-20 pb-8 px-6 shadow-xl border-b-4 border-[#FFB703]">
-        <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="text-center md:text-left space-y-2">
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 border border-white/20 text-xs font-bold text-[#FFB703] backdrop-blur-md">
               <Sparkles className="w-3.5 h-3.5 text-[#FFB703]" />
@@ -293,7 +293,7 @@ export default function InstagramFoodFeedPage() {
 
       {/* 2. BARRA DE STORIES DOS 53 BAIRROS DE CARAGUATATUBA */}
       <section className="bg-white border-b border-stone-200/80 py-3.5 px-4 overflow-x-auto no-scrollbar shadow-sm sticky top-0 z-40 backdrop-blur-md bg-white/95">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <div className="flex items-center justify-between mb-2 px-1">
             <span className="text-[10px] font-black uppercase tracking-wider text-[#135136] flex items-center gap-1.5">
               <MapPin className="w-3 h-3 text-[#FFB703]" />
@@ -339,7 +339,7 @@ export default function InstagramFoodFeedPage() {
       </section>
 
       {/* 3. BARRA DE BUSCA E PÍLULAS DE CATEGORIAS ORGÂNICAS */}
-      <section className="max-w-2xl mx-auto px-4 pt-6 pb-2 space-y-4">
+      <section className="max-w-4xl mx-auto px-4 pt-6 pb-2 space-y-4">
         {/* Input de Busca */}
         <div className="relative">
           <Search className="w-5 h-5 text-[#135136] absolute left-4 top-1/2 -translate-y-1/2" />
@@ -417,7 +417,7 @@ export default function InstagramFoodFeedPage() {
       </section>
 
       {/* 4. O FEED DO INSTAGRAM (CARDS ORGÂNICOS COM FOTO NO MEIO, PERFIL EM CIMA, LIKES E PREÇO EMBAIXO) */}
-      <main ref={feedTopRef} className="max-w-xl mx-auto px-4 py-4 space-y-8 pb-32">
+      <main ref={feedTopRef} className="max-w-3xl lg:max-w-4xl mx-auto px-4 py-6 space-y-12 pb-44">
         {filteredPosts.length === 0 ? (
           <div className="p-12 text-center rounded-[32px] bg-white border border-stone-200 shadow-sm space-y-3">
             {selectedCategory === 'salvos' ? (
@@ -735,15 +735,15 @@ export default function InstagramFoodFeedPage() {
                   </div>
 
                   {/* 4.6 DICA EXCLUSIVA DO CHEF JACQUIN (BOX ORGÂNICO VERDE) */}
-                  <div className="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 flex items-start gap-3">
-                    <div className="w-9 h-10 shrink-0 drop-shadow-sm">
+                  <div className="p-4 rounded-3xl bg-emerald-50/80 border-2 border-emerald-200/90 flex items-start gap-3.5 shadow-sm">
+                    <div className="w-14 h-16 sm:w-16 sm:h-20 shrink-0 -my-1 drop-shadow-md">
                       <img src="/jacquin-praiano.png" alt="Chef Jacquin" className="w-full h-full object-contain" />
                     </div>
-                    <div className="text-xs">
-                      <span className="font-heading font-black text-[#135136] block">
-                        Dica do Chef Jacquin:
+                    <div className="text-xs sm:text-sm">
+                      <span className="font-heading font-black text-[#135136] text-sm sm:text-base block">
+                        Dica Exclusiva do Chef Jacquin:
                       </span>
-                      <p className="text-stone-700 italic font-medium mt-0.5">
+                      <p className="text-stone-800 italic font-semibold mt-1 leading-relaxed">
                         &quot;{post.jacquinTip}&quot;
                       </p>
                     </div>

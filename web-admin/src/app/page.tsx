@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Heart, MessageCircle, Share2, Bookmark, Star, MapPin, 
   Sparkles, Search, X, CheckCircle2, Navigation, Award,
-  Flame, Utensils, GraduationCap, ChevronRight, Send, ArrowUpRight
+  Flame, Utensils, GraduationCap, ChevronRight, ChevronLeft, Send, ArrowUpRight
 } from 'lucide-react';
 
 import { NEIGHBORHOODS, INITIAL_FEED_POSTS, INITIAL_RESTAURANTS, FeedPost, RestaurantItem } from '../data/caraguaData';
@@ -86,6 +86,14 @@ export default function InstagramFoodFeedPage() {
   });
 
   const feedTopRef = useRef<HTMLDivElement>(null);
+  const storiesRef = useRef<HTMLDivElement>(null);
+
+  const scrollStories = (direction: 'left' | 'right') => {
+    if (storiesRef.current) {
+      const scrollAmount = direction === 'left' ? -260 : 260;
+      storiesRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
 
   // Contagem de pratos salvos para a pílula do roteiro
   const savedCount = useMemo(() => Object.values(savedPosts).filter(Boolean).length, [savedPosts]);
@@ -248,52 +256,43 @@ export default function InstagramFoodFeedPage() {
       {/* NAVBAR GLOBAL INTEGRADA (ENTREGA S06) */}
       <Navbar onOpenAcademicModal={() => setIsAcademicModalOpen(true)} />
 
-      {/* DYNAMIC ISLAND DO CHEF JACQUIN (CENTRALIZADA LOGO ABAIXO DA NAVBAR) */}
-      <DynamicIsland
-        onSelectCategory={handleSelectCategory}
-        onFilterNeighborhood={handleSelectNeighborhood}
-      />
-
-      {/* 1. HEADER COM COR SÓLIDA VERDE TROPICAL & NOME BEM GRANDE */}
-      <header className="w-full bg-[#135136] text-white pt-20 pb-8 px-6 shadow-xl border-b-4 border-[#FFB703]">
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="text-center md:text-left space-y-2">
+      {/* 1. HEADER COM IDENTIDADE CAIÇARA & DYNAMIC ISLAND INTEGRADA */}
+      <header className="w-full bg-[#135136] text-white pt-6 pb-6 px-4 sm:px-6 shadow-xl border-b-4 border-[#FFB703]">
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="text-center md:text-left space-y-1.5">
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 border border-white/20 text-xs font-bold text-[#FFB703] backdrop-blur-md">
               <Sparkles className="w-3.5 h-3.5 text-[#FFB703]" />
               <span>O Feed Oficial de Caraguatatuba</span>
             </div>
             
-            {/* NOME BEM GRANDE COMO PEDIDO PELA NAMORADA */}
-            <h1 className="font-heading font-black text-4xl sm:text-5xl md:text-6xl tracking-tight text-white leading-none">
-              CARAGUÁ <span className="text-[#FFB703]">FOODTECH</span>
+            <h1 className="font-heading font-black text-2xl sm:text-3xl md:text-4xl tracking-tight text-white leading-tight">
+              Alta Gastronomia Caiçara & Roteiro dos 53 Bairros
             </h1>
             
-            <p className="text-sm sm:text-base text-emerald-100 font-medium max-w-xl">
-              Descubra os pratos que dão água na boca na capital do Litoral Norte. Fotos reais, avaliações auditadas e curadoria do Chef Jacquin!
+            <p className="text-xs sm:text-sm text-emerald-100 font-medium max-w-xl">
+              Descubra os pratos que dão água na boca na capital do Litoral Norte. Fotos reais, avaliações auditadas do festival e curadoria do Chef Jacquin!
             </p>
           </div>
 
-          {/* Cartão de Pontos do Usuário & Atalho Acadêmico */}
-          <div className="flex flex-row md:flex-col items-center md:items-end gap-3 shrink-0">
-            <div className="flex items-center gap-2.5 px-4 py-2 rounded-2xl bg-white text-[#135136] font-bold text-sm shadow-md border border-[#FFB703]">
-              <span className="text-[#FFB703] text-lg">★</span>
-              <span>{userCredits} Pontos Gourmet</span>
-            </div>
-
-            <button
-              onClick={() => setIsAcademicModalOpen(true)}
-              className="text-[11px] text-emerald-200 hover:text-white flex items-center gap-1.5 font-bold transition-colors"
-            >
-              <GraduationCap className="w-4 h-4 text-[#FFB703]" />
-              <span>Portal Prof. Cristiano</span>
-            </button>
+          {/* Cartão de Pontos do Usuário */}
+          <div className="flex items-center gap-2.5 px-4 py-2 rounded-2xl bg-white text-[#135136] font-bold text-sm shadow-md border border-[#FFB703] shrink-0">
+            <span className="text-[#FFB703] text-lg">★</span>
+            <span>{userCredits} Pontos Gourmet</span>
           </div>
+        </div>
+
+        {/* DYNAMIC ISLAND DO CHEF JACQUIN (INTEGRADA NO HERO, SEM COLISÕES VISUAIS) */}
+        <div className="mt-4 pt-3 border-t border-white/10">
+          <DynamicIsland
+            onSelectCategory={handleSelectCategory}
+            onFilterNeighborhood={handleSelectNeighborhood}
+          />
         </div>
       </header>
 
-      {/* 2. BARRA DE STORIES DOS 53 BAIRROS DE CARAGUATATUBA */}
-      <section className="bg-white border-b border-stone-200/80 py-3.5 px-4 overflow-x-auto no-scrollbar shadow-sm sticky top-0 z-40 backdrop-blur-md bg-white/95">
-        <div className="max-w-5xl mx-auto">
+      {/* 2. BARRA DE STORIES DOS 53 BAIRROS DE CARAGUATATUBA (STICKY TOP-20 Z-30 COM NAVEGAÇÃO SUAVE) */}
+      <section className="bg-white/95 backdrop-blur-md border-b border-stone-200/80 py-3 px-4 shadow-sm sticky top-20 z-30 relative group/stories">
+        <div className="max-w-5xl mx-auto relative">
           <div className="flex items-center justify-between mb-2 px-1">
             <span className="text-[10px] font-black uppercase tracking-wider text-[#135136] flex items-center gap-1.5">
               <MapPin className="w-3 h-3 text-[#FFB703]" />
@@ -304,7 +303,27 @@ export default function InstagramFoodFeedPage() {
             </span>
           </div>
 
-          <div className="flex items-center gap-3 overflow-x-auto no-scrollbar pb-1">
+          {/* Botões de Rolagem Horizontal para Desktop */}
+          <button
+            onClick={() => scrollStories('left')}
+            className="hidden md:flex absolute -left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white/95 border border-stone-300 text-stone-700 hover:text-stone-950 hover:bg-white shadow-md items-center justify-center transition-all opacity-85 hover:opacity-100"
+            aria-label="Rolar bairros para esquerda"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+
+          <button
+            onClick={() => scrollStories('right')}
+            className="hidden md:flex absolute -right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white/95 border border-stone-300 text-stone-700 hover:text-stone-950 hover:bg-white shadow-md items-center justify-center transition-all opacity-85 hover:opacity-100"
+            aria-label="Rolar bairros para direita"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+
+          <div 
+            ref={storiesRef}
+            className="flex items-center gap-3 overflow-x-auto no-scrollbar pb-1 scroll-smooth px-1"
+          >
             {NEIGHBORHOODS.map((bairro) => {
               const isSelected = selectedNeighborhood === bairro.id;
               return (
@@ -320,7 +339,7 @@ export default function InstagramFoodFeedPage() {
                       ? 'bg-gradient-to-tr from-[#FFB703] via-[#135136] to-[#023E8A] shadow-md ring-2 ring-[#FFB703]'
                       : 'bg-gradient-to-tr from-stone-200 to-stone-300 group-hover:from-[#FFB703] group-hover:to-[#135136]'
                   }`}>
-                    <div className="w-[54px] h-[54px] sm:w-[60px] sm:h-[60px] rounded-full bg-white p-0.5 flex items-center justify-center overflow-hidden">
+                    <div className="w-[52px] h-[52px] sm:w-[58px] sm:h-[58px] rounded-full bg-white p-0.5 flex items-center justify-center overflow-hidden">
                       <div className="w-full h-full rounded-full bg-[#135136]/10 flex items-center justify-center font-black text-sm text-[#135136] group-hover:bg-[#FFB703]/20 transition-colors">
                         {bairro.emoji || '🌴'}
                       </div>
@@ -338,7 +357,7 @@ export default function InstagramFoodFeedPage() {
         </div>
       </section>
 
-      {/* 3. BARRA DE BUSCA E PÍLULAS DE CATEGORIAS ORGÂNICAS */}
+      {/* 3. BARRA DE BUSCA, CATEGORIAS E FEEDBACK DE FILTRO */}
       <section className="max-w-4xl mx-auto px-4 pt-6 pb-2 space-y-4">
         {/* Input de Busca */}
         <div className="relative">
@@ -414,6 +433,28 @@ export default function InstagramFoodFeedPage() {
             );
           })}
         </div>
+
+        {/* Feedback de Filtro Ativo por Bairro com Botão de Limpar */}
+        {selectedNeighborhood !== 'todos' && (
+          <div className="flex items-center justify-between p-3 sm:p-3.5 rounded-2xl bg-emerald-50 border-2 border-[#135136]/30 text-[#135136] shadow-sm animate-fadeIn">
+            <div className="flex items-center gap-2 min-w-0">
+              <MapPin className="w-4 h-4 text-[#FFB703] shrink-0" />
+              <span className="text-xs sm:text-sm font-black truncate">
+                Filtrando pelo Bairro: <span className="underline decoration-[#FFB703] decoration-2">{NEIGHBORHOODS.find(n => n.id === selectedNeighborhood)?.name || selectedNeighborhood}</span>
+              </span>
+              <span className="text-xs text-stone-600 font-medium hidden sm:inline">
+                • {filteredPosts.length} {filteredPosts.length === 1 ? 'prato encontrado' : 'pratos encontrados'}
+              </span>
+            </div>
+            <button
+              onClick={() => handleSelectNeighborhood('todos')}
+              className="px-3 py-1 rounded-full bg-white text-xs font-bold text-stone-800 border border-stone-300 hover:bg-[#FFB703] hover:text-stone-900 transition-colors shadow-sm flex items-center gap-1 shrink-0 ml-2"
+            >
+              <X className="w-3.5 h-3.5" />
+              <span>Limpar filtro</span>
+            </button>
+          </div>
+        )}
       </section>
 
       {/* 4. O FEED DO INSTAGRAM (CARDS ORGÂNICOS COM FOTO NO MEIO, PERFIL EM CIMA, LIKES E PREÇO EMBAIXO) */}
@@ -602,41 +643,41 @@ export default function InstagramFoodFeedPage() {
                     </div>
                   )}
 
-                  {/* Badges Flutuantes Orgânicos na Imagem (Liquid Glass - Dossiê de Design & Histórico) */}
-                  <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10 max-w-[85%]">
+                  {/* Badges Flutuantes Orgânicos na Imagem (Alinhamento Horizontal Translúcido - Não Obstrui o Prato) */}
+                  <div className="absolute top-3 left-3 flex flex-wrap items-center gap-1.5 z-10 max-w-[92%]">
                     {post.caraguaGostoAward && (
-                      <span className="px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-black bg-stone-950/85 text-[#FFB703] shadow-lg flex items-center gap-1.5 border border-white/25 backdrop-blur-md">
-                        <Award className="w-3.5 h-3.5 text-[#FFB703] shrink-0" />
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-stone-950/85 text-[#FFB703] shadow-md flex items-center gap-1 border border-white/25 backdrop-blur-md">
+                        <Award className="w-3 h-3 text-[#FFB703] shrink-0" />
                         <span className="truncate">{post.caraguaGostoAward}</span>
                       </span>
                     )}
 
                     {/* Badge de Procedência Histórica e Sustentabilidade da Maricultura (Dossiê Histórico) */}
                     {(post.id.includes('cocanha') || post.caption.toLowerCase().includes('cocanha') || post.dishName.toLowerCase().includes('mexilhão')) && (
-                      <span className="px-3 py-0.5 rounded-full text-[10px] font-bold bg-[#023E8A]/90 text-cyan-200 border border-cyan-300/30 shadow-md backdrop-blur-md flex items-center gap-1">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#023E8A]/90 text-cyan-200 border border-cyan-300/30 shadow-md backdrop-blur-md flex items-center gap-1">
                         <span>🦪</span>
-                        <span>Mexilhão AMAPEC • Fazenda Cocanha</span>
+                        <span>Mexilhão AMAPEC • Cocanha</span>
                       </span>
                     )}
 
                     {post.dishName.toLowerCase().includes('azul-marinho') && (
-                      <span className="px-3 py-0.5 rounded-full text-[10px] font-bold bg-[#135136]/90 text-emerald-200 border border-emerald-300/30 shadow-md backdrop-blur-md flex items-center gap-1">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#135136]/90 text-emerald-200 border border-emerald-300/30 shadow-md backdrop-blur-md flex items-center gap-1">
                         <span>🏺</span>
-                        <span>Patrimônio Imaterial • Panela de Ferro & Taninos</span>
+                        <span>Azul-Marinho Tradicional</span>
                       </span>
                     )}
 
                     {(post.caption.toLowerCase().includes('camaroeiro') || post.caption.toLowerCase().includes('enseada')) && !post.dishName.toLowerCase().includes('azul-marinho') && (
-                      <span className="px-3 py-0.5 rounded-full text-[10px] font-bold bg-[#1E6B47]/90 text-emerald-100 border border-emerald-300/30 shadow-md backdrop-blur-md flex items-center gap-1">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#1E6B47]/90 text-emerald-100 border border-emerald-300/30 shadow-md backdrop-blur-md flex items-center gap-1">
                         <span>🐟</span>
-                        <span>Pescado do Camaroeiro • Colônia Z-8</span>
+                        <span>Pescado do Camaroeiro (Z-8)</span>
                       </span>
                     )}
 
                     {post.isPromotion && (
-                      <span className="px-3 py-0.5 rounded-full text-[10px] font-black bg-rose-600/90 text-white shadow-lg flex items-center gap-1 backdrop-blur-sm border border-white/20">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-rose-600/90 text-white shadow-md flex items-center gap-1 backdrop-blur-sm border border-white/20">
                         <Flame className="w-3 h-3" />
-                        {post.promoBadge || 'Promoção'}
+                        <span>{post.promoBadge || 'Promoção'}</span>
                       </span>
                     )}
                   </div>

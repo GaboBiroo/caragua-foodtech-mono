@@ -15,7 +15,7 @@ export const FloatingJacquin: React.FC<FloatingJacquinProps> = ({
   onSelectCategory,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [showSpeechBubble, setShowSpeechBubble] = useState(true);
+  const [isMinimized, setIsMinimized] = useState(false);
   const [inputText, setInputText] = useState('');
   const [chatMessages, setChatMessages] = useState<Array<{ sender: 'jacquin' | 'user'; text: string; recDish?: string }>>([
     {
@@ -98,113 +98,101 @@ export const FloatingJacquin: React.FC<FloatingJacquinProps> = ({
 
   return (
     <>
-      {/* 1. MASCÓTE FLUTUANTE CENTRALIZADO COMO PROTAGONISTA À DIREITA EM BAIXO */}
+      {/* 1. MASCÓTE FLUTUANTE COESO INSPIRADO EM KORUS / COUCOU */}
       <aside 
         aria-label="Assistente Central Chef Jacquin Praiano"
-        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 md:bottom-8 md:right-8 z-40 flex flex-col items-end pointer-events-auto select-none"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 md:bottom-6 md:right-6 z-30 flex flex-col items-end pointer-events-auto select-none"
       >
-        {/* Balão de Fala Animado e Expressivo */}
-        <AnimatePresence>
-          {!isOpen && showSpeechBubble && (
-            <motion.div
-              initial={{ opacity: 0, y: 14, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 14, scale: 0.9 }}
-              onClick={() => setIsOpen(true)}
-              className="mb-3 max-w-[280px] sm:max-w-[320px] bg-white border-2 border-[#135136] p-4 rounded-3xl shadow-[0_16px_36px_-6px_rgba(19,81,54,0.35)] cursor-pointer hover:scale-105 transition-transform relative speech-bubble"
+        <AnimatePresence mode="wait">
+          {isMinimized ? (
+            /* ESTADO MINIMIZADO: PÍLULA FLUTUANTE DISCRETA */
+            <motion.button
+              key="minimized"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setIsMinimized(false)}
+              className="flex items-center gap-2.5 px-3.5 py-2 rounded-full bg-[#135136] text-white border-2 border-[#FFB703] shadow-[0_12px_28px_rgba(19,81,54,0.45)] cursor-pointer group"
+              aria-label="Expandir Chef Jacquin"
             >
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowSpeechBubble(false);
-                }}
-                className="absolute -top-2.5 -left-2.5 w-6 h-6 bg-[#FAF7F2] border-2 border-[#135136] rounded-full text-stone-700 hover:text-stone-950 flex items-center justify-center text-xs font-bold shadow-sm"
-                title="Fechar balão"
+              <div className="relative w-8 h-10 shrink-0 -my-1">
+                <img
+                  src="/jacquin-praiano.png"
+                  alt="Chef Jacquin"
+                  className="w-full h-full object-contain filter drop-shadow-[0_2px_4px_rgba(255,183,3,0.5)]"
+                />
+                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border border-[#135136] animate-pulse" />
+              </div>
+              <div className="text-left hidden sm:block">
+                <span className="block font-heading font-black text-xs text-white leading-none">Chef Jacquin</span>
+                <span className="text-[10px] text-amber-200 font-bold">Online • Dicas</span>
+              </div>
+              <span className="text-[#FFB703] text-xs font-black ml-1">↑</span>
+            </motion.button>
+          ) : (
+            /* ESTADO EXPANDIDO: CARD COMPANHEIRO UNIFICADO E ELEGANTE */
+            <motion.div
+              key="expanded"
+              initial={{ opacity: 0, y: 16, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 16, scale: 0.95 }}
+              className="relative bg-white/95 backdrop-blur-md border-2 border-[#135136] rounded-3xl p-3.5 sm:p-4 shadow-[0_16px_36px_-6px_rgba(19,81,54,0.35)] max-w-[280px] sm:max-w-[320px]"
+            >
+              {/* Header com Status e Botão Minimizar */}
+              <div className="flex items-center justify-between border-b border-stone-200/80 pb-2 mb-2.5">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="font-heading font-black text-xs text-[#135136] uppercase tracking-wide">
+                    Chef Jacquin • Online
+                  </span>
+                </div>
+                <button
+                  onClick={() => setIsMinimized(true)}
+                  className="w-6 h-6 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 hover:text-stone-900 flex items-center justify-center text-xs font-black transition-colors"
+                  title="Minimizar assistente"
+                  aria-label="Minimizar assistente"
+                >
+                  –
+                </button>
+              </div>
+
+              {/* Corpo: Jacquin + Dica Dinâmica */}
+              <div 
+                onClick={() => setIsOpen(true)}
+                className="flex items-center gap-3 cursor-pointer group"
               >
-                ✕
+                <div className="w-14 h-18 sm:w-16 sm:h-20 shrink-0 drop-shadow-md group-hover:scale-105 transition-transform">
+                  <img
+                    src="/jacquin-praiano.png"
+                    alt="Chef Jacquin Praiano"
+                    className="w-full h-full object-contain filter drop-shadow-[0_4px_8px_rgba(255,183,3,0.4)]"
+                  />
+                </div>
+
+                <div className="space-y-1 min-w-0">
+                  <p className="text-[11px] sm:text-xs font-bold text-stone-900 leading-tight">
+                    &ldquo;{speechHints[currentHintIdx]}&rdquo;
+                  </p>
+                  <div className="flex items-center gap-1 text-[9px] font-extrabold text-[#135136]">
+                    <CheckCircle2 className="w-2.5 h-2.5 text-emerald-600 shrink-0" />
+                    <span className="truncate">53 Bairros & AMAPEC Conectados</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Botão de Ação Direta */}
+              <button
+                onClick={() => setIsOpen(true)}
+                className="mt-2.5 w-full py-2 rounded-full bg-[#135136] hover:bg-[#0D3825] text-[#FFB703] text-xs font-black flex items-center justify-center gap-1.5 shadow-md transition-colors"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-[#FFB703]" />
+                <span>Conversar com o Chef</span>
               </button>
-              <div className="flex items-center gap-1.5 text-[#135136] font-black text-xs uppercase tracking-wider mb-1">
-                <Sparkles className="w-4 h-4 text-[#FFB703] shrink-0" />
-                <span>Chef Jacquin Diz:</span>
-              </div>
-              <p className="text-xs sm:text-sm font-extrabold text-stone-900 leading-snug">
-                &ldquo;{speechHints[currentHintIdx]}&rdquo;
-              </p>
-              <div className="mt-2 flex items-center justify-between text-[10px] text-stone-500 font-bold border-t border-stone-100 pt-1.5">
-                <span className="text-[#135136]">Toque para conversar</span>
-                <span className="text-[#FFB703] font-black">★ IA Hiperlocal</span>
-              </div>
             </motion.div>
           )}
         </AnimatePresence>
-
-        {/* CONTAINER DO PERSONAGEM CENTRAL COM DESIGN INSPIRADO EM KORUS / COUCOU */}
-        <div className="flex flex-col items-end group">
-          
-          {/* Card Companheiro Acoplado (Estilo Korus / Claude Code Benchmark) */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="mb-2 hidden sm:flex flex-col items-end p-2.5 rounded-2xl bg-stone-950/85 backdrop-blur-md text-white border border-[#FFB703]/50 shadow-xl space-y-1.5 cursor-pointer max-w-[210px]"
-            onClick={() => setIsOpen(true)}
-          >
-            <div className="flex items-center justify-between w-full">
-              <span className="font-heading font-black text-xs text-[#FFB703] uppercase tracking-wide">
-                Chef Jacquin
-              </span>
-              <span className="flex items-center gap-1 text-[9px] font-bold text-emerald-400 bg-emerald-950/80 px-1.5 py-0.5 rounded-full border border-emerald-500/40">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                No Ar
-              </span>
-            </div>
-            
-            {/* Checklist de Status Ativo do Personagem */}
-            <div className="space-y-0.5 text-[10px] text-stone-300 w-full">
-              <div className="flex items-center gap-1.5 text-stone-200">
-                <CheckCircle2 className="w-3 h-3 text-[#FFB703] shrink-0" />
-                <span className="truncate">Paladar Caiçara Ativo</span>
-              </div>
-              <div className="flex items-center gap-1.5 text-stone-200">
-                <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
-                <span className="truncate">53 Bairros Mapeados</span>
-              </div>
-              <div className="flex items-center gap-1.5 text-stone-200">
-                <CheckCircle2 className="w-3 h-3 text-cyan-400 shrink-0" />
-                <span className="truncate">AMAPEC & Z-8 Conectados</span>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* O JACQUIN EM TAMANHO GIGANTE PROTAGONISTA COM ANIMAÇÃO SUAVE DE RESPIRAÇÃO */}
-          <motion.button
-            whileHover={{ scale: 1.08, rotate: -2 }}
-            whileTap={{ scale: 0.95 }}
-            animate={{
-              y: [0, -8, 0],
-            }}
-            transition={{
-              y: {
-                duration: 4,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }
-            }}
-            onClick={() => setIsOpen(true)}
-            className="relative w-32 h-40 sm:w-44 sm:h-52 md:w-52 md:h-60 drop-shadow-[0_16px_32px_rgba(0,0,0,0.5)] focus:outline-none cursor-pointer"
-            aria-label="Abrir assistente oficial Chef Jacquin Praiano"
-          >
-            <img
-              src="/jacquin-praiano.png"
-              alt="Chef Jacquin Praiano - Personagem Central"
-              className="w-full h-full object-contain filter drop-shadow-[0_10px_20px_rgba(19,81,54,0.45)]"
-            />
-            {/* Halo / Emblema Dourado Flutuante */}
-            <div className="absolute -bottom-1 right-2 sm:right-4 px-3 py-1 rounded-full bg-[#135136] text-[#FFB703] border-2 border-[#FFB703] shadow-lg flex items-center gap-1.5 text-[10px] sm:text-xs font-black">
-              <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#FFB703]" />
-              <span>Falar com o Chef</span>
-            </div>
-          </motion.button>
-        </div>
       </aside>
 
       {/* 2. MODAL CONVERSACIONAL DE ALTA FIDELIDADE COM O CHEF JACQUIN */}

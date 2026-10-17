@@ -1,0 +1,28 @@
+Prezado Prof. Me. Cristiano S. Negrão,
+
+Espero que esteja tudo ótimo com o senhor.
+
+Realizo por meio deste a submissão individual referente à Semana 08 (S08 — Lista Principal / Catálogo) da disciplina de Análise e Projeto de Sistemas II (APS II).
+
+📌 DADOS DA SUBMISSÃO:
+• Projeto: CaráFood (Caraguá FoodTech) — Ecossistema Hiperlocal de Descoberta Gastronômica e Auditoria Cultural dos 53 Bairros de Caraguatatuba
+• Arquivo Anexado (.docx): APSII_S08_CARAFOOD.docx
+• Equipe de Engenharia:
+  1. Gabriel Rodrigues (Product Owner, Tech Lead & Dev Front-End / IA)
+  2. Matheus Vicente (Engenheiro de Dados, Dev Back-End & Curadoria Territorial)
+  3. Pedro Simone (Engenheiro de Qualidade QA, UX Researcher & Documentação)
+
+📋 RESUMO EXECUTIVO DA ENTREGA (S08):
+No documento anexado (`APSII_S08_CARAFOOD.docx`), apresentamos a implementação da Lista Principal / Catálogo do CaráFood tanto na visão de Feed Social em Cards (`/`) quanto na visão analítica de Rankings (`/rankings`). Cada item exibe os dados essenciais do domínio (foto real, prato, restaurante, bairro entre os 53 de Caraguatatuba, distância da praia, preço, Super Nota Ponderada, Sparkline de 30 dias e selos AMAPEC/Z-8), acompanhados de filtros dinâmicos e da análise teórica conectando o catálogo às Histórias de Usuário.
+
+🌐 LINKS OFICIAIS DO PROJETO EM PRODUÇÃO:
+• Catálogo Principal / Feed (Vercel): https://foddtech.vercel.app/
+• Catálogo Classificatório / Rankings: https://foddtech.vercel.app/rankings
+• Repositório GitHub (Monorepo): https://github.com/GaboBiroo/caragua-foodtech-mono
+
+Agradecemos pela avaliação e orientação!
+
+Atenciosamente,
+
+[SEU NOME COMPLETO — Gabriel Rodrigues / Matheus Vicente / Pedro Simone]
+Curso de Ciência da Computação — Centro Universitário Módulo

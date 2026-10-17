@@ -1,0 +1,28 @@
+Prezado Prof. Me. Cristiano S. Negrão,
+
+Espero que esteja tudo excelente com o senhor.
+
+Encaminho por meio deste a submissão individual referente à Semana 04 (S04 — Página "Sobre Nós") da disciplina de Análise e Projeto de Sistemas II (APS II).
+
+📌 DADOS DA SUBMISSÃO:
+• Projeto: CaráFood (Caraguá FoodTech) — Ecossistema Hiperlocal de Descoberta Gastronômica e Auditoria Cultural dos 53 Bairros de Caraguatatuba
+• Arquivo Anexado (.docx): APSII_S04_CARAFOOD.docx
+• Equipe de Engenharia:
+  1. Gabriel Rodrigues (Product Owner, Tech Lead & Dev Front-End / IA)
+  2. Matheus Vicente (Engenheiro de Dados, Dev Back-End & Curadoria Territorial)
+  3. Pedro Simone (Engenheiro de Qualidade QA, UX Researcher & Documentação)
+
+📋 RESUMO EXECUTIVO DA ENTREGA (S04):
+No documento anexado (`APSII_S04_CARAFOOD.docx`), apresentamos a implementação em produção da página institucional `/sobre` (`src/app/sobre/page.tsx`), integrada ao menu global de navegação. A página comunica a identidade do CaráFood, a história da gastronomia de Caraguatatuba (Mexilhões da Cocanha AMAPEC, Colônia Z-8 do Camaroeiro, Azul-Marinho e Festival Caraguá a Gosto), nossa Missão, Visão, Valores e a equipe acadêmica do Módulo. Também incluímos o mapeamento explícito conectando o relatório técnico à página e a resposta reflexiva sobre a adaptação da linguagem técnica para o usuário final.
+
+🌐 LINKS OFICIAIS DO PROJETO EM PRODUÇÃO:
+• Página "Sobre Nós" em Produção (Vercel): https://foddtech.vercel.app/sobre
+• Home Page Principal: https://foddtech.vercel.app/
+• Repositório GitHub (Monorepo): https://github.com/GaboBiroo/caragua-foodtech-mono
+
+Agradecemos pela contínua orientação e atenção!
+
+Atenciosamente,
+
+[SEU NOME COMPLETO — Gabriel Rodrigues / Matheus Vicente / Pedro Simone]
+Curso de Ciência da Computação — Centro Universitário Módulo

@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { 
   Compass, Info, Mail, Trophy, GraduationCap, 
-  Menu, X, Sparkles, ArrowRight
+  Menu, X, Sparkles, ArrowRight, Lock
 } from 'lucide-react';
 import { AcademicPortalModal } from './AcademicPortalModal';
 
@@ -83,6 +83,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAcademicModal }) => {
     { name: 'Sobre Nós', href: '/sobre', icon: Info, label: 'História & TCC' },
     { name: 'Contato', href: '/contato', icon: Mail, label: 'Credenciamento' },
     { name: 'Rankings', href: '/rankings', icon: Trophy, label: 'Pódio & Métricas' },
+    { name: 'Login', href: '/login', icon: Lock, label: 'Acesso Restrito' },
   ];
 
   return (

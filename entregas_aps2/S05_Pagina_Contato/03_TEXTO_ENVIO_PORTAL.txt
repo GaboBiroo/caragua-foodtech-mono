@@ -1,0 +1,28 @@
+Prezado Prof. Me. Cristiano S. Negrão,
+
+Espero que esteja tendo uma ótima semana.
+
+Realizo por meio deste a submissão individual referente à Semana 05 (S05 — Página "Entre em Contato" / Credenciamento) da disciplina de Análise e Projeto de Sistemas II (APS II).
+
+📌 DADOS DA SUBMISSÃO:
+• Projeto: CaráFood (Caraguá FoodTech) — Ecossistema Hiperlocal de Descoberta Gastronômica e Auditoria Cultural dos 53 Bairros de Caraguatatuba
+• Arquivo Anexado (.docx): APSII_S05_CARAFOOD.docx
+• Equipe de Engenharia:
+  1. Gabriel Rodrigues (Product Owner, Tech Lead & Dev Front-End / IA)
+  2. Matheus Vicente (Engenheiro de Dados, Dev Back-End & Curadoria Territorial)
+  3. Pedro Simone (Engenheiro de Qualidade QA, UX Researcher & Documentação)
+
+📋 RESUMO EXECUTIVO DA ENTREGA (S05):
+No documento anexado (`APSII_S05_CARAFOOD.docx`), apresentamos a página `/contato` (`src/app/contato/page.tsx`) publicada em produção e integrada ao menu global. O formulário foi estruturado para atender tanto ao suporte ao usuário quanto ao credenciamento B2B de restaurantes e quiosques dos 53 bairros de Caraguatatuba (HU04 e HU06), contando com validação de campos, seletor territorial oficial e feedback visual imediato de confirmação, além da análise teórica sobre o papel da página no funil de captação e triagem do sistema.
+
+🌐 LINKS OFICIAIS DO PROJETO EM PRODUÇÃO:
+• Página de Contato / Credenciamento (Vercel): https://foddtech.vercel.app/contato
+• Home Page Principal: https://foddtech.vercel.app/
+• Repositório GitHub (Monorepo): https://github.com/GaboBiroo/caragua-foodtech-mono
+
+Muito obrigado pela atenção e avaliação!
+
+Atenciosamente,
+
+[SEU NOME COMPLETO — Gabriel Rodrigues / Matheus Vicente / Pedro Simone]
+Curso de Ciência da Computação — Centro Universitário Módulo

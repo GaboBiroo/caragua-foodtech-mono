@@ -1,0 +1,31 @@
+Prezado Prof. Me. Cristiano S. Negrão,
+
+Espero que esteja tendo uma excelente semana.
+
+Realizo por meio deste a submissão individual referente à Semana 11 (S11 — Melhoria Contínua e Versionamento) da disciplina de Análise e Projeto de Sistemas II (APS II).
+
+📌 DADOS DA SUBMISSÃO:
+• Projeto: CaráFood (Caraguá FoodTech) — Ecossistema Hiperlocal de Descoberta Gastronômica e Auditoria Cultural dos 53 Bairros de Caraguatatuba
+• Arquivo Anexado (.docx): APSII_S11_CARAFOOD.docx
+• Equipe de Engenharia:
+  1. Gabriel Rodrigues (Product Owner, Tech Lead & Dev Front-End / IA)
+  2. Matheus Vicente (Engenheiro de Dados, Dev Back-End & Curadoria Territorial)
+  3. Pedro Simone (Engenheiro de Qualidade QA, UX Researcher & Documentação)
+
+📋 RESUMO EXECUTIVO DA ENTREGA (S11):
+No documento anexado (`APSII_S11_CARAFOOD.docx`), apresentamos o Changelog estruturado ("Antes -> Depois") com 4 grandes melhorias implementadas em produção:
+1. Despoluição cognitiva dos 53 bairros (Arquitetura em 2 camadas: 10 Polos Curados na barra rápida + Modal Explorador com Mapa Vetorial e 4 Macro-Regiões);
+2. Reengenharia de Stacking Context (`z-10` a `z-50`) e selos horizontais translúcidos que não obstruem a foto do prato;
+3. Identidade CaráFood com Símbolo de Onda Municipal, zoom óptico de 108% e física 60fps "Coucou" no Chef Jacquin;
+4. Telemetria visual com Sparkline SVG de decaimento exponencial de 30 dias, Passaporte Caiçara e Modo Reels, acompanhados do histórico real de commits no GitHub (`git log`).
+
+🌐 LINKS OFICIAIS DO PROJETO EM PRODUÇÃO:
+• Aplicação Web em Produção (Vercel): https://foddtech.vercel.app/
+• Repositório GitHub & Histórico de Commits: https://github.com/GaboBiroo/caragua-foodtech-mono/commits/main
+
+Muito obrigado pela avaliação e orientação!
+
+Atenciosamente,
+
+[SEU NOME COMPLETO — Gabriel Rodrigues / Matheus Vicente / Pedro Simone]
+Curso de Ciência da Computação — Centro Universitário Módulo

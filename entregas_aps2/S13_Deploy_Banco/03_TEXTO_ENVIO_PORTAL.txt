@@ -1,0 +1,28 @@
+Prezado Prof. Me. Cristiano S. Negrão,
+
+Espero que esteja tendo uma excelente semana.
+
+Realizo por meio deste a submissão individual referente à Semana 13 (S13 — Deploy Inicial + Banco de Dados Funcionando) da disciplina de Análise e Projeto de Sistemas II (APS II).
+
+📌 DADOS DA SUBMISSÃO:
+• Projeto: CaráFood (Caraguá FoodTech) — Ecossistema Hiperlocal de Descoberta Gastronômica e Auditoria Cultural dos 53 Bairros de Caraguatatuba
+• Arquivo Anexado (.docx): APSII_S13_CARAFOOD.docx
+• Equipe de Engenharia:
+  1. Gabriel Rodrigues (Product Owner, Tech Lead & Dev Front-End / IA)
+  2. Matheus Vicente (Engenheiro de Dados, Dev Back-End & DBA PostgreSQL)
+  3. Pedro Simone (Engenheiro de Qualidade QA, UX Researcher & Documentação)
+
+📋 RESUMO EXECUTIVO DA ENTREGA (S13):
+No documento anexado (`APSII_S13_CARAFOOD.docx`), documentamos a arquitetura de produção do CaráFood na Vercel integrada ao banco de dados relacional PostgreSQL (Supabase/Neon + Prisma ORM). Detalhamos os scripts DDL das 5 tabelas do domínio (`neighborhoods`, `restaurants`, `dishes`, `reviews` e `merchant_leads`), o fluxo completo de gravação e leitura de Cédulas Oficiais Auditadas (`POST /api/reviews` e `GET /api/reviews`) e de credenciamento B2B (`/contato`), além do passo a passo do pipeline CI/CD e configuração segura das variáveis de ambiente (`DATABASE_URL`, `DIRECT_URL` e `GEMINI_API_KEY`).
+
+🌐 LINKS OFICIAIS DO PROJETO EM PRODUÇÃO:
+• Aplicação em Produção (Vercel): https://foddtech.vercel.app/
+• API de Restaurantes / Catálogo: https://foddtech.vercel.app/api/restaurants
+• Repositório GitHub (Monorepo): https://github.com/GaboBiroo/caragua-foodtech-mono
+
+Agradecemos pela avaliação e orientação!
+
+Atenciosamente,
+
+[SEU NOME COMPLETO — Gabriel Rodrigues / Matheus Vicente / Pedro Simone]
+Curso de Ciência da Computação — Centro Universitário Módulo

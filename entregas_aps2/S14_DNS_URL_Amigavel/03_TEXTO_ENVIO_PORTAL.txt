@@ -1,0 +1,28 @@
+Prezado Prof. Me. Cristiano S. Negrão,
+
+Espero que esteja tudo excelente com o senhor.
+
+Encaminho por meio deste a submissão individual referente à Semana 14 (S14 — Domínios, DNS e URL Amigável) da disciplina de Análise e Projeto de Sistemas II (APS II).
+
+📌 DADOS DA SUBMISSÃO:
+• Projeto: CaráFood (Caraguá FoodTech) — Ecossistema Hiperlocal de Descoberta Gastronômica e Auditoria Cultural dos 53 Bairros de Caraguatatuba
+• Arquivo Anexado (.docx): APSII_S14_CARAFOOD.docx
+• Equipe de Engenharia:
+  1. Gabriel Rodrigues (Product Owner, Tech Lead & Dev Front-End / IA)
+  2. Matheus Vicente (Engenheiro de Dados, Dev Back-End & Infraestrutura)
+  3. Pedro Simone (Engenheiro de QA, UX Researcher & Documentação)
+
+📋 RESUMO EXECUTIVO DA ENTREGA (S14):
+No documento anexado (`APSII_S14_CARAFOOD.docx`), apresentamos o estudo conceitual completo sobre a estrutura de Domínios (TLD, SLD e Subdomínio), o funcionamento do DNS (registros A, AAAA, CNAME e TXT) e a comparação técnica entre Domínio Próprio Comercial e Subdomínio Gratuito de PaaS. Documentamos também a tabela de URLs amigáveis semânticas do CaráFood em produção (`https://foddtech.vercel.app/`) e a reflexão crítica sobre segurança HTTPS/HSTS, confiabilidade e experiência do usuário.
+
+🌐 LINKS OFICIAIS DO PROJETO EM PRODUÇÃO:
+• URL Principal Amigável (Vercel): https://foddtech.vercel.app/
+• Exemplo de Rota Semântica (Slug): https://foddtech.vercel.app/prato/post-cocanha-mexilhoes
+• Repositório GitHub (Monorepo): https://github.com/GaboBiroo/caragua-foodtech-mono
+
+Agradecemos pela avaliação e orientação!
+
+Atenciosamente,
+
+[SEU NOME COMPLETO — Gabriel Rodrigues / Matheus Vicente / Pedro Simone]
+Curso de Ciência da Computação — Centro Universitário Módulo

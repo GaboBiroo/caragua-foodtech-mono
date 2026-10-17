@@ -1,0 +1,28 @@
+Prezado Prof. Me. Cristiano S. Negrão,
+
+Espero que esteja tendo uma excelente semana.
+
+Realizo por meio deste a submissão individual referente à Semana 15 (S15 — Checklist Final & Plano de Apresentação) da disciplina de Análise e Projeto de Sistemas II (APS II).
+
+📌 DADOS DA SUBMISSÃO (DUPLA ENTREGA DOCUMENTAL):
+• Projeto: CaráFood (Caraguá FoodTech) — Ecossistema Hiperlocal de Descoberta Gastronômica e Auditoria Cultural dos 53 Bairros de Caraguatatuba
+• Arquivo Anexado 1 (.docx): APSII_S15_CARAFOOD.docx (Plano de Apresentação de 18 minutos com divisão equilibrada entre os 3 integrantes + Autoavaliação Crítica de Forças e Limitações)
+• Arquivo Anexado 2 (.docx): APSII_S15_CARAFOOD_CHECKLIST.docx (Checklist Oficial de Entrega Final 100% conferido e validado)
+• Equipe de Engenharia:
+  1. Gabriel Rodrigues (Product Owner, Tech Lead & Dev Front-End / IA)
+  2. Matheus Vicente (Engenheiro de Dados, Dev Back-End & Curadoria Territorial)
+  3. Pedro Simone (Engenheiro de QA, UX Researcher & Documentação)
+
+📋 RESUMO EXECUTIVO DA ENTREGA (S15):
+Nos dois documentos anexados, consolidamos o roteiro cronometrado da nossa defesa final (dividido em 6 blocos de 3 minutos entre Gabriel, Matheus e Pedro, cobrindo problema, demonstração ao vivo, arquitetura, banco de dados e testes), nossa autoavaliação honesta de engenharia e a conferência completa do Checklist Oficial comprovando 100% das páginas, rotas, filtros, autenticação e persistência operando em produção.
+
+🌐 LINKS OFICIAIS DO PROJETO EM PRODUÇÃO:
+• Aplicação Web em Produção (Vercel): https://foddtech.vercel.app/
+• Repositório GitHub (Monorepo): https://github.com/GaboBiroo/caragua-foodtech-mono
+
+Muito obrigado pela orientação ao longo de todo o semestre!
+
+Atenciosamente,
+
+[SEU NOME COMPLETO — Gabriel Rodrigues / Matheus Vicente / Pedro Simone]
+Curso de Ciência da Computação — Centro Universitário Módulo

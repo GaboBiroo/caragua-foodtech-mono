@@ -1,0 +1,31 @@
+Prezado Prof. Me. Cristiano S. Negrão,
+
+Espero que esteja tudo ótimo com o senhor.
+
+Encaminho por meio deste a submissão individual referente à Semana 02 (S02 — Protótipo Inicial + Histórias de Usuário + Mapa de Páginas) da disciplina de Análise e Projeto de Sistemas II (APS II).
+
+📌 DADOS DA SUBMISSÃO:
+• Projeto: CaráFood (Caraguá FoodTech) — Ecossistema Hiperlocal de Descoberta Gastronômica e Auditoria Cultural dos 53 Bairros de Caraguatatuba
+• Arquivo Anexado (.docx): APSII_S02_CARAFOOD.docx
+• Equipe de Engenharia:
+  1. Gabriel Rodrigues (Product Owner, Tech Lead & Dev Front-End / IA)
+  2. Matheus Vicente (Engenheiro de Dados, Dev Back-End & Curadoria Territorial)
+  3. Pedro Simone (Engenheiro de Qualidade QA, UX Researcher & Documentação)
+
+📋 RESUMO EXECUTIVO DA ENTREGA (S02):
+No relatório anexado (`APSII_S02_CARAFOOD.docx`), apresentamos:
+1. As 6 Histórias de Usuário no padrão Connextra ("Como... quero... para..."), contemplando 3 do Usuário Final (HU01 a HU03), 2 do Gestor/Admin (HU04 e HU05) e 1 dos Produtores Caiçaras da AMAPEC Cocanha e Colônia Z-8 do Camaroeiro (HU06);
+2. Os protótipos de alta fidelidade das telas centrais (Home/Catálogo, Explorador dos 53 Bairros e Detalhe Master-Detail com Cédula de Avaliação);
+3. O Mapa de Navegação em caixas conectando todas as rotas do sistema e o texto de rastreabilidade;
+4. As respostas objetivas às 3 questões teóricas sobre Scrum vs. Kanban, Backlog e Sprint.
+
+🌐 LINKS OFICIAIS DO PROJETO EM PRODUÇÃO:
+• Aplicação Web em Produção (Vercel): https://foddtech.vercel.app/
+• Repositório GitHub (Monorepo): https://github.com/GaboBiroo/caragua-foodtech-mono
+
+Agradecemos pela avaliação e seguimos à disposição!
+
+Atenciosamente,
+
+[SEU NOME COMPLETO — Gabriel Rodrigues / Matheus Vicente / Pedro Simone]
+Curso de Ciência da Computação — Centro Universitário Módulo

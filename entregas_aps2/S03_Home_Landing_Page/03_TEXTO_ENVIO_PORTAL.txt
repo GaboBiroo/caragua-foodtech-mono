@@ -1,0 +1,27 @@
+Prezado Prof. Me. Cristiano S. Negrão,
+
+Espero que esteja tendo uma excelente semana.
+
+Realizo por meio deste a submissão individual referente à Semana 03 (S03 — Entrega da Home Page / Landing Page) da disciplina de Análise e Projeto de Sistemas II (APS II).
+
+📌 DADOS DA SUBMISSÃO:
+• Projeto: CaráFood (Caraguá FoodTech) — Ecossistema Hiperlocal de Descoberta Gastronômica e Auditoria Cultural dos 53 Bairros de Caraguatatuba
+• Arquivo Anexado (.docx): APSII_S03_CARAFOOD.docx
+• Equipe de Engenharia:
+  1. Gabriel Rodrigues (Product Owner, Tech Lead & Dev Front-End / IA)
+  2. Matheus Vicente (Engenheiro de Dados, Dev Back-End & Curadoria Territorial)
+  3. Pedro Simone (Engenheiro de Qualidade QA, UX Researcher & Documentação)
+
+📋 RESUMO EXECUTIVO DA ENTREGA (S03):
+No documento anexado (`APSII_S03_CARAFOOD.docx`), documentamos a primeira entrega de código funcional em produção: a Home Page / Landing Page do CaráFood (`src/app/page.tsx`). A entrega contempla o Hero com título claro e contexto regional de 3 linhas, a Dynamic Island do Chef Jacquin, a barra despoluída dos 10 Polos com CTA para o Mapa Vetorial dos 53 Bairros, o Seletor Sensorial de Clima & Ocasião, os cards de pratos com CTAs funcionais, o mapeamento completo com as Histórias de Usuário da S02 e a nossa reflexão técnica sobre a transição do papel para a interface real.
+
+🌐 LINKS OFICIAIS DO PROJETO EM PRODUÇÃO:
+• Home Page em Produção (Vercel): https://foddtech.vercel.app/
+• Repositório GitHub (Monorepo): https://github.com/GaboBiroo/caragua-foodtech-mono
+
+Muito obrigado pela atenção e orientação. Seguimos à disposição!
+
+Atenciosamente,
+
+[SEU NOME COMPLETO — Gabriel Rodrigues / Matheus Vicente / Pedro Simone]
+Curso de Ciência da Computação — Centro Universitário Módulo

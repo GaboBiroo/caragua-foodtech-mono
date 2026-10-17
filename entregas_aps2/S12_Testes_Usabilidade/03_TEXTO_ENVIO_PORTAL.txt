@@ -1,0 +1,27 @@
+Prezado Prof. Me. Cristiano S. Negrão,
+
+Espero que esteja tudo excelente com o senhor.
+
+Encaminho por meio deste a submissão individual referente à Semana 12 (S12 — Testes de Usabilidade) da disciplina de Análise e Projeto de Sistemas II (APS II).
+
+📌 DADOS DA SUBMISSÃO:
+• Projeto: CaráFood (Caraguá FoodTech) — Ecossistema Hiperlocal de Descoberta Gastronômica e Auditoria Cultural dos 53 Bairros de Caraguatatuba
+• Arquivo Anexado (.docx): APSII_S12_CARAFOOD.docx
+• Equipe de Engenharia:
+  1. Gabriel Rodrigues (Product Owner, Tech Lead & Dev Front-End / IA)
+  2. Matheus Vicente (Engenheiro de Dados, Dev Back-End & Curadoria Territorial)
+  3. Pedro Simone (Engenheiro de Qualidade QA, UX Researcher & Condutor dos Testes)
+
+📋 RESUMO EXECUTIVO DA ENTREGA (S12):
+No documento anexado (`APSII_S12_CARAFOOD.docx`), apresentamos o relatório completo dos 3 Cenários de Testes de Usabilidade executados com perfis distintos de usuários (Turista de fim de semana, Universitário morador local e Comerciante de quiosque da Orla Sul). Documentamos o perfil de cada testador, a tarefa executada, o tempo cronometrado em segundos, as hesitações observadas pelo método Think-Aloud e a síntese priorizada das Top 3 melhorias aplicando o método MoSCoW.
+
+🌐 LINKS OFICIAIS DO PROJETO EM PRODUÇÃO:
+• Aplicação Web Testada (Vercel): https://foddtech.vercel.app/
+• Repositório GitHub (Monorepo): https://github.com/GaboBiroo/caragua-foodtech-mono
+
+Agradecemos pela avaliação e orientação!
+
+Atenciosamente,
+
+[SEU NOME COMPLETO — Gabriel Rodrigues / Matheus Vicente / Pedro Simone]
+Curso de Ciência da Computação — Centro Universitário Módulo

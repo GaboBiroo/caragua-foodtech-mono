@@ -1,0 +1,28 @@
+Prezado Prof. Me. Cristiano S. Negrão,
+
+Espero que esteja tendo uma ótima semana.
+
+Realizo por meio deste a submissão individual referente à Semana 07 (S07 — Tela de Login / Acesso Restrito) da disciplina de Análise e Projeto de Sistemas II (APS II).
+
+📌 DADOS DA SUBMISSÃO:
+• Projeto: CaráFood (Caraguá FoodTech) — Ecossistema Hiperlocal de Descoberta Gastronômica e Auditoria Cultural dos 53 Bairros de Caraguatatuba
+• Arquivo Anexado (.docx): APSII_S07_CARAFOOD.docx
+• Equipe de Engenharia:
+  1. Gabriel Rodrigues (Product Owner, Tech Lead & Dev Front-End / IA)
+  2. Matheus Vicente (Engenheiro de Dados, Dev Back-End & Curadoria Territorial)
+  3. Pedro Simone (Engenheiro de Qualidade QA, UX Researcher & Documentação)
+
+📋 RESUMO EXECUTIVO DA ENTREGA (S07):
+No documento anexado (`APSII_S07_CARAFOOD.docx`), apresentamos a implementação da Tela de Login e Controle de Acesso (`/login`) integrada à Navbar global. A interface conta com validação de E-mail/Usuário e Senha, seleção de perfis RBAC (Comensal Auditado, Gestor de Restaurante e Curador/Admin), botões de preenchimento rápido para teste da banca e feedbacks visuais imediatos de erro e sucesso com redirecionamento para `/moderation` ou `/`. Também incluímos a análise teórica conectando a autenticação às regras de negócio anti-fraude do CaráFood.
+
+🌐 LINKS OFICIAIS DO PROJETO EM PRODUÇÃO:
+• Tela de Login em Produção (Vercel): https://foddtech.vercel.app/login
+• Home Page Principal: https://foddtech.vercel.app/
+• Repositório GitHub (Monorepo): https://github.com/GaboBiroo/caragua-foodtech-mono
+
+Agradecemos pela atenção e avaliação!
+
+Atenciosamente,
+
+[SEU NOME COMPLETO — Gabriel Rodrigues / Matheus Vicente / Pedro Simone]
+Curso de Ciência da Computação — Centro Universitário Módulo

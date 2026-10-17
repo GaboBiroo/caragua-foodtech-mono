@@ -1,0 +1,37 @@
+Prezado Prof. Me. Cristiano S. Negrão,
+
+Espero que esta mensagem o encontre com excelente saúde.
+
+Realizo por meio deste a submissão individual referente à Semana 10 (S10 / Avaliação A2 — Entrega Intermediária: Relatório Parcial Consolidado) da disciplina de Análise e Projeto de Sistemas II (APS II).
+
+📌 DADOS DA SUBMISSÃO:
+• Projeto: CaráFood (Caraguá FoodTech) — Ecossistema Hiperlocal de Descoberta Gastronômica e Auditoria Cultural dos 53 Bairros de Caraguatatuba
+• Arquivo Anexado (.docx): APSII_S10_CARAFOOD.docx
+• Equipe de Engenharia:
+  1. Gabriel Rodrigues (Product Owner, Tech Lead & Dev Front-End / IA)
+  2. Matheus Vicente (Engenheiro de Dados, Dev Back-End & Curadoria Territorial)
+  3. Pedro Simone (Engenheiro de Qualidade QA, UX Researcher & Documentação)
+
+📋 RESUMO EXECUTIVO DA ENTREGA INTERMEDIÁRIA (S10 / A2):
+No relatório consolidado em anexo (`APSII_S10_CARAFOOD.docx`), unificamos todo o desenvolvimento executado da S01 à S09 nos 5 capítulos oficiais exigidos:
+1. Contexto Regional de Caraguatatuba, Problema de Negócio e Objetivos (Geral e Específicos);
+2. Quadro Consolidado das 6 Histórias de Usuário (HU01 a HU06) e Mapa de Páginas;
+3. Documentação Técnica e Evidências Visuais das 6 Superfícies Implementadas em Produção (Home `/`, Sobre Nós `/sobre`, Contato/Credenciamento `/contato`, Login `/login`, Catálogo/Rankings `/rankings` e Página de Detalhe Master–Detail `/prato/[id]`);
+4. Detalhamento dos Fluxos Principais de Navegação;
+5. Análise Crítica Parcial (conquistas, desafios superados e planejamento do backlog da S11 até a entrega final A1).
+
+🌐 LINKS OFICIAIS DO SISTEMA EM PRODUÇÃO (VERCEL):
+• Home & Catálogo Principal: https://foddtech.vercel.app/
+• Rankings Oficiais: https://foddtech.vercel.app/rankings
+• Sobre Nós: https://foddtech.vercel.app/sobre
+• Contato & Credenciamento: https://foddtech.vercel.app/contato
+• Tela de Login: https://foddtech.vercel.app/login
+• Exemplo Master–Detail: https://foddtech.vercel.app/prato/post-centro-azul-marinho
+• Repositório GitHub (Monorepo): https://github.com/GaboBiroo/caragua-foodtech-mono
+
+Agradecemos imensamente pela dedicação, compreensão e orientação ao longo do semestre!
+
+Atenciosamente,
+
+[SEU NOME COMPLETO — Gabriel Rodrigues / Matheus Vicente / Pedro Simone]
+Curso de Ciência da Computação — Centro Universitário Módulo

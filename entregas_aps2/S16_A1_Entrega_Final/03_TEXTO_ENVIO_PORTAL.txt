@@ -1,0 +1,38 @@
+Prezado Prof. Me. Cristiano S. Negrão,
+
+Espero que esta mensagem o encontre com excelente saúde e disposição.
+
+Realizo por meio deste a submissão individual referente à Entrega Final Consolidada (S16–S18 / Avaliação A1) da disciplina de Análise e Projeto de Sistemas II (APS II).
+
+📌 DADOS DA SUBMISSÃO FINAL (A1):
+• Projeto: CaráFood (Caraguá FoodTech) — Ecossistema Hiperlocal de Descoberta Gastronômica, Auditoria Cultural (Caraguá a Gosto) e Curadoria IA dos 53 Bairros de Caraguatatuba
+• Arquivo Anexado (.docx): APSII_A1_Entrega_Final_CARAFOOD.docx
+• Equipe de Engenharia:
+  1. Gabriel Rodrigues (Product Owner, Tech Lead & Dev Front-End / IA)
+  2. Matheus Vicente (Engenheiro de Dados, Dev Back-End & DBA PostgreSQL)
+  3. Pedro Simone (Engenheiro de Qualidade QA, UX Researcher & Documentação)
+
+📋 RESUMO EXECUTIVO DO RELATÓRIO TÉCNICO FINAL (A1):
+No documento consolidado em anexo (`APSII_A1_Entrega_Final_CARAFOOD.docx`), entregamos a documentação integral de Engenharia de Software do CaráFood, contemplando:
+1. Contexto Regional de Caraguatatuba (53 bairros, AMAPEC Cocanha, Colônia Z-8 Camaroeiro e Festival Caraguá a Gosto), Problema e Objetivos SMART;
+2. Delimitação de Escopo (MVP 100% implementado em produção vs. Roadmap Futuro);
+3. Especificação completa de Requisitos Funcionais (RF01 a RF12), Não Funcionais (RNF01 a RNF06) e Regras de Negócio Matemáticas (RN01 a RN06 — Super Nota Ponderada de 5 Critérios, Meia-Vida Exponencial de 30 dias e Escudo Anti-Bot Z-Score);
+4. Histórias de Usuário consolidadas (HU01 a HU06) e Mapa de Navegação Final;
+5. Arquitetura em 3 Camadas (Next.js 14 App Router / Serverless API Routes + IA / PostgreSQL + PostGIS) e Modelo Entidade-Relacionamento (DER);
+6. Bateria de Casos de Teste Funcionais (CT01 a CT08), Consolidação dos Testes de Usabilidade e Manual de Deploy/Execução Local.
+
+🌐 LINKS OFICIAIS DO SISTEMA EM PRODUÇÃO PARA A BANCA (VERCEL):
+• Home & Catálogo Principal: https://foddtech.vercel.app/
+• Rankings Oficiais: https://foddtech.vercel.app/rankings
+• Sobre Nós: https://foddtech.vercel.app/sobre
+• Contato & Credenciamento: https://foddtech.vercel.app/contato
+• Tela de Login / Acesso Restrito: https://foddtech.vercel.app/login
+• Página de Detalhe Master–Detail: https://foddtech.vercel.app/prato/post-centro-azul-marinho
+• Repositório GitHub (Monorepo): https://github.com/GaboBiroo/caragua-foodtech-mono
+
+Em nome de todo o grupo (Gabriel Rodrigues, Matheus Vicente e Pedro Simone), registro nosso profundo agradecimento pelos ensinamentos, pela paciência e pela excelência na condução da disciplina ao longo deste semestre.
+
+Atenciosamente,
+
+[SEU NOME COMPLETO — Gabriel Rodrigues / Matheus Vicente / Pedro Simone]
+Curso de Ciência da Computação — Centro Universitário Módulo

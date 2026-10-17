@@ -1,0 +1,27 @@
+Prezado Prof. Me. Cristiano S. Negrão,
+
+Espero que este envio o encontre com excelente saúde.
+
+Realizo por meio deste a submissão individual referente à Semana 01 (S01 — Registro Inicial de Projeto) da disciplina de Análise e Projeto de Sistemas II (APS II).
+
+📌 DADOS DA SUBMISSÃO:
+• Projeto: CaráFood (Caraguá FoodTech) — Ecossistema Hiperlocal de Descoberta Gastronômica e Auditoria Cultural dos 53 Bairros de Caraguatatuba
+• Arquivo Anexado (.docx): APSII_S01_CARAFOOD.docx
+• Equipe de Engenharia:
+  1. Gabriel Rodrigues (Product Owner, Tech Lead & Dev Front-End / IA)
+  2. Matheus Vicente (Engenheiro de Dados, Dev Back-End & Curadoria Territorial)
+  3. Pedro Simone (Engenheiro de Qualidade QA, UX Researcher & Documentação)
+
+📋 RESUMO EXECUTIVO DA ENTREGA (S01):
+No documento oficial anexado (`APSII_S01_CARAFOOD.docx`), formalizamos a estruturação da equipe, a definição de papéis ágeis, o acordo de trabalho (GitHub, Vercel, Discord/WhatsApp) e a delimitação do problema real de negócio: a assimetria de visibilidade digital dos estabelecimentos gastronômicos distribuídos pelos 53 bairros de Caraguatatuba (incluindo a maricultura da Cocanha - AMAPEC e a pesca artesanal do Camaroeiro - Colônia Z-8) e a necessidade de auditoria confiável inspirada no Festival Caraguá a Gosto.
+
+🌐 LINKS OFICIAIS DO PROJETO EM PRODUÇÃO:
+• Aplicação Web em Produção (Vercel): https://foddtech.vercel.app/
+• Repositório GitHub (Monorepo): https://github.com/GaboBiroo/caragua-foodtech-mono
+
+Agradeço imensamente pela orientação e atenção dedicadas ao nosso projeto. Permanecemos à inteira disposição para quaisquer esclarecimentos ou recomendações de evolução.
+
+Atenciosamente,
+
+[SEU NOME COMPLETO — Gabriel Rodrigues / Matheus Vicente / Pedro Simone]
+Curso de Ciência da Computação — Centro Universitário Módulo

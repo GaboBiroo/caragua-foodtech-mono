@@ -1,0 +1,27 @@
+Prezado Prof. Me. Cristiano S. Negrão,
+
+Espero que esteja tudo excelente com o senhor.
+
+Encaminho por meio deste a submissão individual referente à Semana 06 (S06 — Menu e Estrutura de Navegação) da disciplina de Análise e Projeto de Sistemas II (APS II).
+
+📌 DADOS DA SUBMISSÃO:
+• Projeto: CaráFood (Caraguá FoodTech) — Ecossistema Hiperlocal de Descoberta Gastronômica e Auditoria Cultural dos 53 Bairros de Caraguatatuba
+• Arquivo Anexado (.docx): APSII_S06_CARAFOOD.docx
+• Equipe de Engenharia:
+  1. Gabriel Rodrigues (Product Owner, Tech Lead & Dev Front-End / IA)
+  2. Matheus Vicente (Engenheiro de Dados, Dev Back-End & Curadoria Territorial)
+  3. Pedro Simone (Engenheiro de Qualidade QA, UX Researcher & Documentação)
+
+📋 RESUMO EXECUTIVO DA ENTREGA (S06):
+No documento anexado (`APSII_S06_CARAFOOD.docx`), documentamos a implementação do componente global `Navbar.tsx` presente em todas as páginas da aplicação (`https://foddtech.vercel.app/`), interligando sem falhas as rotas de Início (`/`), Rankings (`/rankings`), Sobre Nós (`/sobre`), Contato/Credenciamento (`/contato`) e Login (`/login`), além das rotas dinâmicas `/prato/[id]`. Apresentamos também o Mapa de Navegação atualizado refletindo o código real e a justificativa técnica de Arquitetura de Informação, hierarquia visual e caminho típico do usuário.
+
+🌐 LINKS OFICIAIS DO PROJETO EM PRODUÇÃO:
+• Aplicação Web em Produção (Vercel): https://foddtech.vercel.app/
+• Repositório GitHub (Monorepo): https://github.com/GaboBiroo/caragua-foodtech-mono
+
+Muito obrigado pela avaliação e orientação!
+
+Atenciosamente,
+
+[SEU NOME COMPLETO — Gabriel Rodrigues / Matheus Vicente / Pedro Simone]
+Curso de Ciência da Computação — Centro Universitário Módulo

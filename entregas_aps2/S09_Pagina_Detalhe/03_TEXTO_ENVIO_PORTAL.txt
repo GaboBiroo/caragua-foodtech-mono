@@ -1,0 +1,29 @@
+Prezado Prof. Me. Cristiano S. Negrão,
+
+Espero que esteja tendo uma excelente semana.
+
+Encaminho por meio deste a submissão individual referente à Semana 09 (S09 — Página de Detalhe / Master–Detail) da disciplina de Análise e Projeto de Sistemas II (APS II).
+
+📌 DADOS DA SUBMISSÃO:
+• Projeto: CaráFood (Caraguá FoodTech) — Ecossistema Hiperlocal de Descoberta Gastronômica e Auditoria Cultural dos 53 Bairros de Caraguatatuba
+• Arquivo Anexado (.docx): APSII_S09_CARAFOOD.docx
+• Equipe de Engenharia:
+  1. Gabriel Rodrigues (Product Owner, Tech Lead & Dev Front-End / IA)
+  2. Matheus Vicente (Engenheiro de Dados, Dev Back-End & Curadoria Territorial)
+  3. Pedro Simone (Engenheiro de Qualidade QA, UX Researcher & Documentação)
+
+📋 RESUMO EXECUTIVO DA ENTREGA (S09):
+No documento anexado (`APSII_S09_CARAFOOD.docx`), documentamos a implementação da Página de Detalhe (`/prato/[id]`) seguindo o padrão Master–Detail. Acessada diretamente pelo clique nos itens do catálogo (S08), a página apresenta a ficha técnica completa do prato, selo de procedência auditada, Sparkline de 30 dias, parecer do Chef Jacquin e CTAs claros ("Como Chegar no Google Maps/Waze", "Avaliar na Cédula Oficial Caraguá a Gosto" e "Salvar no Roteiro"), acompanhada da fundamentação teórica sobre o padrão Master–Detail e sua relação estrutural com operações de CRUD.
+
+🌐 LINKS OFICIAIS DO PROJETO EM PRODUÇÃO:
+• Página de Detalhe Exemplo 1 (Azul-Marinho): https://foddtech.vercel.app/prato/post-centro-azul-marinho
+• Página de Detalhe Exemplo 2 (Mexilhões Cocanha): https://foddtech.vercel.app/prato/post-cocanha-mexilhoes
+• Catálogo Principal (Home): https://foddtech.vercel.app/
+• Repositório GitHub (Monorepo): https://github.com/GaboBiroo/caragua-foodtech-mono
+
+Muito obrigado pela avaliação e orientação!
+
+Atenciosamente,
+
+[SEU NOME COMPLETO — Gabriel Rodrigues / Matheus Vicente / Pedro Simone]
+Curso de Ciência da Computação — Centro Universitário Módulo

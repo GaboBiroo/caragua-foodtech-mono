@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { FeedPost, INITIAL_FEED_POSTS } from '../../../data/caraguaData';
 import { Navbar } from '../../../components/Navbar';
+import { DecaySparklineBadge } from '../../../components/CorporateUXSuite';
 
 interface PratoDetailClientProps {
   post: FeedPost;
@@ -252,26 +253,34 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({ post, rela
                   </h1>
                 </div>
 
-                {/* Preço e Super Nota */}
-                <div className="flex items-center justify-between p-4 rounded-2xl bg-[#F8F9FA] border border-stone-200">
-                  <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 block">
-                      Valor no Cardápio
-                    </span>
-                    <span className="font-heading font-black text-2xl text-[#135136]">
-                      R$ {post.dishPrice.toFixed(2)}
-                    </span>
-                  </div>
-
-                  <div className="text-right">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 block">
-                      Super Nota Ponderada
-                    </span>
-                    <div className="flex items-center gap-1.5 justify-end font-heading font-black text-xl text-stone-900">
-                      <Star className="w-5 h-5 text-[#FFB703] fill-[#FFB703]" />
-                      <span>{post.superRating.toFixed(2)}</span>
-                      <span className="text-xs text-stone-500 font-normal">({post.totalReviews} votos)</span>
+                {/* Preço, Super Nota & Telemetria de Decaimento Exponencial */}
+                <div className="p-4 rounded-2xl bg-[#F8F9FA] border border-stone-200 space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 block">
+                        Valor no Cardápio
+                      </span>
+                      <span className="font-heading font-black text-2xl text-[#135136]">
+                        R$ {post.dishPrice.toFixed(2)}
+                      </span>
                     </div>
+
+                    <div className="text-right">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 block">
+                        Super Nota Ponderada
+                      </span>
+                      <div className="flex items-center gap-1.5 justify-end font-heading font-black text-xl text-stone-900">
+                        <Star className="w-5 h-5 text-[#FFB703] fill-[#FFB703]" />
+                        <span>{post.superRating.toFixed(2)}</span>
+                        <span className="text-xs text-stone-500 font-normal">({post.totalReviews} votos)</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="pt-2 border-t border-stone-200/80 flex items-center justify-between flex-wrap gap-2">
+                    <DecaySparklineBadge rating={post.superRating} reviews={post.totalReviews} />
+                    <span className="text-[9px] font-mono font-bold text-stone-500">
+                      📍 H3 Res.9 • {post.neighborhood}
+                    </span>
                   </div>
                 </div>
 

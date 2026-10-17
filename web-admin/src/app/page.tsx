@@ -14,6 +14,15 @@ import { Navbar, CaraguaWaveEmblem } from '../components/Navbar';
 import { DynamicIsland } from '../components/DynamicIsland';
 import { FloatingJacquin } from '../components/FloatingJacquin';
 import { AcademicPortalModal } from '../components/AcademicPortalModal';
+import {
+  DecaySparklineBadge,
+  ClimateOccasionBar,
+  ClimateOccasion,
+  CaraguaInteractiveVectorMap,
+  PassaporteCarafoodModal,
+  DishStoryReelModal,
+  DesignSystemRoadmapModal,
+} from '../components/CorporateUXSuite';
 
 // Os 10 Polos Gastronômicos Principais da Barra Rápida (Elimina a Hiper Poluição de 54 círculos seguidos)
 const TOP_CURATED_POLE_IDS = [
@@ -117,6 +126,13 @@ export default function InstagramFoodFeedPage() {
   const [isBairrosModalOpen, setIsBairrosModalOpen] = useState<boolean>(false);
   const [bairroSearchQuery, setBairroSearchQuery] = useState<string>('');
   const [activeMacroRegion, setActiveMacroRegion] = useState<string>('todas');
+
+  // Estados da Trilha Industrial de 3 Meses (Mês 2 & Mês 3 - CorporateUXSuite)
+  const [activeOccasion, setActiveOccasion] = useState<ClimateOccasion>('todos');
+  const [isPassportOpen, setIsPassportOpen] = useState<boolean>(false);
+  const [isReelsOpen, setIsReelsOpen] = useState<boolean>(false);
+  const [reelsInitialIdx, setReelsInitialIdx] = useState<number>(0);
+  const [isRoadmapOpen, setIsRoadmapOpen] = useState<boolean>(false);
   
   // Interações de Feed do Instagram
   const [likedPosts, setLikedPosts] = useState<Record<string, boolean>>({ 'post-1': true, 'post-marujo-sororoca': true });
@@ -317,6 +333,18 @@ export default function InstagramFoodFeedPage() {
         if (selectedCategory === 'burger' && post.dishCategory !== 'Lanches Artesanais') return false;
       }
 
+      // Filtro de Clima & Ocasião Sensorial (Mês 2 - Semana 6)
+      if (activeOccasion === 'sol-praia') {
+        const isBeachOrFresh = post.distanceKm <= 1.2 || normalize(post.dishName).includes('isca') || normalize(post.dishName).includes('camarao') || normalize(post.dishName).includes('mexilhao') || normalize(post.dishName).includes('lula') || normalize(post.dishName).includes('casquinha');
+        if (!isBeachOrFresh) return false;
+      } else if (activeOccasion === 'noite-panela') {
+        const isNightOrPanela = normalize(post.dishName).includes('azul-marinho') || normalize(post.dishName).includes('caldeirada') || normalize(post.dishName).includes('moqueca') || normalize(post.dishName).includes('pizza') || normalize(post.dishName).includes('costela') || normalize(post.dishName).includes('polvo') || normalize(post.dishName).includes('risoto') || post.dishCategory === 'Pizzas' || post.dishCategory === 'Lanches Artesanais';
+        if (!isNightOrPanela) return false;
+      } else if (activeOccasion === 'maricultura-z8') {
+        const isMaricultura = normalize(post.dishName).includes('mexilhao') || normalize(post.caption).includes('cocanha') || normalize(post.caption).includes('amapec') || normalize(post.caption).includes('camaroeiro') || normalize(post.dishName).includes('ostra') || normalize(post.dishName).includes('azul-marinho') || normalize(post.dishName).includes('badejo') || normalize(post.dishName).includes('sororoca');
+        if (!isMaricultura) return false;
+      }
+
       if (searchQuery.trim()) {
         const q = normalize(searchQuery);
         const matchName = normalize(post.dishName).includes(q);
@@ -331,7 +359,7 @@ export default function InstagramFoodFeedPage() {
 
       return true;
     });
-  }, [selectedNeighborhood, selectedCategory, searchQuery, savedPosts]);
+  }, [selectedNeighborhood, selectedCategory, activeOccasion, searchQuery, savedPosts]);
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] text-[#1A202C] selection:bg-[#FFB703]/30 selection:text-[#135136]">
@@ -357,14 +385,20 @@ export default function InstagramFoodFeedPage() {
             </p>
           </div>
 
-          {/* Cartão de Pontos do Usuário com Micro-Animação */}
-          <motion.div
+          {/* Cartão de Pontos do Usuário com Micro-Animação (Abre o Passaporte Caiçara Gamificado) */}
+          <motion.button
             whileHover={{ scale: 1.04 }}
-            className="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-white text-[#135136] font-bold text-sm shadow-lg border-2 border-[#FFB703] shrink-0"
+            whileTap={{ scale: 0.96 }}
+            onClick={() => setIsPassportOpen(true)}
+            title="Abrir Passaporte Gastronômico Caiçara"
+            className="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-white text-[#135136] font-bold text-sm shadow-lg border-2 border-[#FFB703] shrink-0 cursor-pointer hover:bg-amber-50 transition-colors"
           >
             <span className="text-[#FFB703] text-lg animate-pulse">★</span>
             <span>{userCredits} Pontos Gourmet</span>
-          </motion.div>
+            <span className="px-2 py-0.5 rounded-full bg-[#135136] text-[#FFB703] text-[10px] font-black">
+              Passaporte
+            </span>
+          </motion.button>
         </div>
 
         {/* DYNAMIC ISLAND DO CHEF JACQUIN */}
@@ -474,8 +508,24 @@ export default function InstagramFoodFeedPage() {
         </div>
       </section>
 
-      {/* 3. BARRA DE BUSCA, CATEGORIAS E FEEDBACK DE FILTRO */}
-      <section className="max-w-4xl mx-auto px-4 pt-6 pb-2 space-y-4">
+      {/* 3. BARRA DE CLIMA & OCASIÃO SENSORIAL (MÊS 2) + BUSCA, CATEGORIAS E FEEDBACK DE FILTRO */}
+      <section className="max-w-4xl mx-auto px-4 pt-5 pb-2 space-y-4">
+        {/* Seletor Sensorial de Clima & Ocasião + Passaporte + Reels + Trilha 3 Meses */}
+        <ClimateOccasionBar
+          activeOccasion={activeOccasion}
+          onSelectOccasion={(occ) => {
+            setActiveOccasion(occ);
+            if (feedTopRef.current) feedTopRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }}
+          onOpenPassport={() => setIsPassportOpen(true)}
+          onOpenReels={() => {
+            setReelsInitialIdx(0);
+            setIsReelsOpen(true);
+          }}
+          onOpenRoadmap={() => setIsRoadmapOpen(true)}
+          userCredits={userCredits}
+          savedCount={savedCount}
+        />
         {/* Input de Busca */}
         <div className="relative">
           <Search className="w-5 h-5 text-[#135136] absolute left-4 top-1/2 -translate-y-1/2" />
@@ -808,7 +858,23 @@ export default function InstagramFoodFeedPage() {
                     </div>
                   )}
 
-                  {/* Timestamp Discreto */}
+                  {/* Botão Rápido Modo Reels Vertical & Timestamp Discreto */}
+                  <div className="absolute bottom-3 left-3 z-10">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setReelsInitialIdx(idx);
+                        setIsReelsOpen(true);
+                      }}
+                      className="px-2.5 py-1 rounded-full bg-stone-950/80 hover:bg-[#135136] text-[#FFB703] border border-white/20 backdrop-blur-md text-[10px] font-black flex items-center gap-1 shadow-md transition-colors"
+                      title="Assistir em Modo Reels / Story Vertical"
+                    >
+                      <span>🎬</span>
+                      <span>Modo Reels</span>
+                    </button>
+                  </div>
+
                   <div className="absolute bottom-3 right-3 px-2.5 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-[10px] text-white font-medium">
                     {post.createdAt}
                   </div>
@@ -856,26 +922,36 @@ export default function InstagramFoodFeedPage() {
                     </motion.button>
                   </div>
 
-                  {/* 4.4 PREÇO E SUPER NOTA EM ESTRELAS */}
-                  <div className="flex items-center justify-between p-3.5 rounded-2xl bg-[#FAF7F2] border border-stone-200/90">
-                    <div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 block">
-                        Preço no Cardápio
-                      </span>
-                      <span className="font-heading font-black text-xl text-[#135136]">
-                        R$ {post.dishPrice.toFixed(2)}
-                      </span>
+                  {/* 4.4 PREÇO, SUPER NOTA EM ESTRELAS & SPARKLINE DE DECAIMENTO EXPONENCIAL (MÊS 3) */}
+                  <div className="p-3.5 rounded-2xl bg-[#FAF7F2] border border-stone-200/90 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 block">
+                          Preço no Cardápio
+                        </span>
+                        <span className="font-heading font-black text-xl text-[#135136]">
+                          R$ {post.dishPrice.toFixed(2)}
+                        </span>
+                      </div>
+
+                      <div className="text-right">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 block">
+                          Super Nota Auditada
+                        </span>
+                        <div className="flex items-center gap-1 justify-end font-heading font-black text-lg text-stone-900">
+                          <Star className="w-4 h-4 text-[#FFB703] fill-[#FFB703]" />
+                          <span>{post.superRating.toFixed(2)}</span>
+                          <span className="text-[11px] text-stone-500 font-normal">({post.totalReviews})</span>
+                        </div>
+                      </div>
                     </div>
 
-                    <div className="text-right">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 block">
-                        Super Nota Auditada
+                    {/* Telemetria Algorítmica: Sparkline λ=ln(2)/30 + Escudo Z-Score + Malha H3 */}
+                    <div className="pt-2 border-t border-stone-200/70 flex items-center justify-between flex-wrap gap-2">
+                      <DecaySparklineBadge rating={post.superRating} reviews={post.totalReviews} />
+                      <span className="text-[9px] font-mono font-bold text-stone-500">
+                        📍 Malha H3 Res.9 • {post.neighborhood}
                       </span>
-                      <div className="flex items-center gap-1 justify-end font-heading font-black text-lg text-stone-900">
-                        <Star className="w-4 h-4 text-[#FFB703] fill-[#FFB703]" />
-                        <span>{post.superRating.toFixed(2)}</span>
-                        <span className="text-[11px] text-stone-500 font-normal">({post.totalReviews})</span>
-                      </div>
                     </div>
                   </div>
 
@@ -1049,8 +1125,15 @@ export default function InstagramFoodFeedPage() {
                 </div>
               </div>
 
-              {/* Lista Categorizada dos 53 Bairros */}
+              {/* Lista Categorizada dos 53 Bairros + Mapa Vetorial Interativo (Mês 2 - Semana 5) */}
               <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+                {/* Mapa Cartográfico Vetorial Interativo da Enseada de Caraguatatuba */}
+                <CaraguaInteractiveVectorMap
+                  activeMacroRegion={activeMacroRegion}
+                  onSelectMacroRegion={(id) => setActiveMacroRegion(id)}
+                  onSelectPole={(poleId) => handleSelectNeighborhood(poleId)}
+                />
+
                 {/* Botão Todos os 53 Bairros */}
                 <div className="flex items-center justify-between p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200">
                   <div className="flex items-center gap-3">
@@ -1362,7 +1445,32 @@ export default function InstagramFoodFeedPage() {
         isOpen={isAcademicModalOpen}
         onClose={() => setIsAcademicModalOpen(false)}
       />
+
+      {/* MODAIS INTERATIVOS DA TRILHA INDUSTRIAL DE 3 MESES (MÊS 2 & MÊS 3) */}
+      <PassaporteCarafoodModal
+        isOpen={isPassportOpen}
+        onClose={() => setIsPassportOpen(false)}
+        userCredits={userCredits}
+        savedCount={savedCount}
+      />
+
+      <DishStoryReelModal
+        isOpen={isReelsOpen}
+        onClose={() => setIsReelsOpen(false)}
+        posts={filteredPosts.length > 0 ? filteredPosts : INITIAL_FEED_POSTS}
+        initialIndex={reelsInitialIdx}
+        likedPosts={likedPosts}
+        savedPosts={savedPosts}
+        onToggleLike={handleToggleLike}
+        onToggleSave={handleToggleSave}
+      />
+
+      <DesignSystemRoadmapModal
+        isOpen={isRoadmapOpen}
+        onClose={() => setIsRoadmapOpen(false)}
+      />
     </div>
   );
 }
+
 

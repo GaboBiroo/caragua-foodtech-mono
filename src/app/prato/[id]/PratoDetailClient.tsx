@@ -57,7 +57,7 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({ post, rela
     if (navigator.share) {
       navigator.share({
         title: `${post.dishName} — ${post.restaurantName}`,
-        text: `Olha esse prato que encontrei no Caraguá FoodTech: ${post.dishName} por R$ ${post.dishPrice.toFixed(2)} em ${post.neighborhood}!`,
+        text: `Olha esse prato que encontrei no CaráFood: ${post.dishName} por R$ ${post.dishPrice.toFixed(2)} em ${post.neighborhood}!`,
         url: window.location.href,
       }).catch(() => {});
     } else {
@@ -618,7 +618,7 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({ post, rela
       {/* FOOTER */}
       <footer className="mt-16 bg-[#135136] text-white py-8 px-4 text-center border-t-2 border-[#FFB703]/80">
         <p className="text-xs text-emerald-200">
-          Caraguá FoodTech • Ficha Oficial do Prato & Rastreabilidade Gastronômica Caiçara.
+          CaráFood • Ficha Oficial do Prato & Rastreabilidade Gastronômica Caiçara.
         </p>
       </footer>
     </div>

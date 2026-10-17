@@ -249,7 +249,7 @@ export default function RankingsPage() {
       {/* FOOTER */}
       <footer className="mt-16 bg-[#135136] text-white py-8 px-4 text-center border-t-2 border-[#FFB703]/80">
         <p className="text-xs text-emerald-200">
-          Caraguá FoodTech • Auditoria Científica de Reputação Gastronômica Caiçara.
+          CaráFood • Auditoria Científica de Reputação Gastronômica Caiçara.
         </p>
       </footer>
     </div>

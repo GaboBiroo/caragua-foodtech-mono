@@ -2,13 +2,13 @@ import './globals.css';
 import { Metadata, Viewport } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Caraguá FoodTech — O Guia Gastronômico da Costa Caiçara',
-  description: 'Descubra os melhores quiosques, frutos do mar frescos e pratos de Caraguatatuba com a curadoria do Chef Jacquin Praiano.',
+  title: 'CaráFood — O Guia Gastronômico Oficial da Costa Caiçara de Caraguatatuba',
+  description: 'Descubra os melhores quiosques, mexilhões da Cocanha (AMAPEC), frutos do mar do Camaroeiro e os 53 bairros de Caraguatatuba no CaráFood com o Chef Jacquin Praiano.',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Caraguá FoodTech',
+    title: 'CaráFood',
   },
 };
 

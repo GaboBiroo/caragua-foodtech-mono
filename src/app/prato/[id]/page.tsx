@@ -20,12 +20,12 @@ export function generateMetadata({ params }: Props): Metadata {
   const post = INITIAL_FEED_POSTS.find((p) => p.id === params.id);
   if (!post) {
     return {
-      title: 'Prato Não Encontrado | Caraguá FoodTech',
+      title: 'Prato Não Encontrado | CaráFood',
     };
   }
 
   return {
-    title: `${post.dishName} — ${post.restaurantName} (${post.neighborhood}) | Caraguá FoodTech`,
+    title: `${post.dishName} — ${post.restaurantName} (${post.neighborhood}) | CaráFood`,
     description: `${post.dishName} no ${post.restaurantName}. Preço: R$ ${post.dishPrice.toFixed(2)}. ${post.caption}`,
     openGraph: {
       title: `${post.dishName} — ${post.restaurantName}`,

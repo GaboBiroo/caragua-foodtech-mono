@@ -6,14 +6,82 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Heart, MessageCircle, Share2, Bookmark, Star, MapPin, 
   Sparkles, Search, X, CheckCircle2, Navigation, Award,
-  Flame, Utensils, GraduationCap, ChevronRight, ChevronLeft, Send, ArrowUpRight
+  Flame, Utensils, GraduationCap, ChevronRight, ChevronLeft, ArrowUpRight, Compass, Map
 } from 'lucide-react';
 
-import { NEIGHBORHOODS, INITIAL_FEED_POSTS, INITIAL_RESTAURANTS, FeedPost, RestaurantItem } from '../data/caraguaData';
-import { Navbar } from '../components/Navbar';
+import { NEIGHBORHOODS, INITIAL_FEED_POSTS, FeedPost } from '../data/caraguaData';
+import { Navbar, CaraguaWaveEmblem } from '../components/Navbar';
 import { DynamicIsland } from '../components/DynamicIsland';
 import { FloatingJacquin } from '../components/FloatingJacquin';
 import { AcademicPortalModal } from '../components/AcademicPortalModal';
+
+// Os 10 Polos Gastronômicos Principais da Barra Rápida (Elimina a Hiper Poluição de 54 círculos seguidos)
+const TOP_CURATED_POLE_IDS = [
+  'todos',
+  'centro',
+  'martim-de-sa',
+  'indaia',
+  'cocanha',
+  'prainha',
+  'tabatinga',
+  'tinga',
+  'massaguacu',
+  'porto-novo',
+];
+
+// Agrupamento Oficial dos 53 Bairros nas 4 Macro-Zonas Territoriais (Dossiê 1 - Caraguatatuba)
+const MACRO_REGIONS: Array<{
+  id: string;
+  title: string;
+  subtitle: string;
+  badge: string;
+  neighborhoodIds: string[];
+}> = [
+  {
+    id: 'orla-central',
+    title: '🌊 Orla Central, Histórica & Eixo Nobre',
+    subtitle: 'Gastrobares, bistrôs, Camaroeiro (Colônia Z-8), quiosques de Martim de Sá e orla gourmet do Indaiá',
+    badge: '15 Bairros',
+    neighborhoodIds: [
+      'centro', 'martim-de-sa', 'indaia', 'prainha', 'sumare', 'aruan',
+      'jardim-jaqueira', 'estrela-dalva', 'poiares', 'pontal-santamarina',
+      'jardim-primavera', 'vila-everest', 'jardim-california', 'ipiranga', 'jardim-jaqueira-2'
+    ],
+  },
+  {
+    id: 'costa-norte',
+    title: '🦪 Costa Norte & Maricultura (AMAPEC)',
+    subtitle: 'Fazenda Marinha da Cocanha, peixes na brasa na Massaguaçu, marinas da Tabatinga e quiosques da Mococa',
+    badge: '14 Bairros',
+    neighborhoodIds: [
+      'cocanha', 'massaguacu', 'tabatinga', 'mococa', 'capricornio',
+      'getuba', 'jetuba', 'verde-mar', 'praia-brava', 'fazendinha',
+      'jardim-samambaia', 'jardim-forest', 'casa-branca', 'olaria'
+    ],
+  },
+  {
+    id: 'eixo-sul',
+    title: '🏖️ Orla Sul & Bacia Ribeirinha do Juqueriquerê',
+    subtitle: 'Ostras depuradas no Porto Novo, peixarias nas Palmeiras, Barranco Alto e corredor sul',
+    badge: '14 Bairros',
+    neighborhoodIds: [
+      'porto-novo', 'praia-das-palmeiras', 'jardim-britania', 'jardim-gaivotas',
+      'barranco-alto', 'travessao', 'pereque-mirim', 'pegorelli', 'tarumas',
+      'golfinho', 'pan-brasil', 'vila-atlantica', 'balneario-copacabana', 'canto-do-mar'
+    ],
+  },
+  {
+    id: 'serra-interior',
+    title: '⛰️ Encostas da Serra do Mar & Raiz Caiçara',
+    subtitle: 'Defumados premiados no Tinga, fogão a lenha no Rio do Ouro e cachaça com cambuci',
+    badge: '10 Bairros',
+    neighborhoodIds: [
+      'tinga', 'morro-do-algodao', 'rio-do-ouro', 'cantagalo', 'ponte-seca',
+      'jaraguazinho', 'benfica', 'capa-mao', 'jardim-terralao', 'caputera'
+    ],
+  },
+];
+
 interface ParticleConfig {
   id: number;
   x: number;
@@ -46,6 +114,9 @@ export default function InstagramFoodFeedPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('todos');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isAcademicModalOpen, setIsAcademicModalOpen] = useState<boolean>(false);
+  const [isBairrosModalOpen, setIsBairrosModalOpen] = useState<boolean>(false);
+  const [bairroSearchQuery, setBairroSearchQuery] = useState<string>('');
+  const [activeMacroRegion, setActiveMacroRegion] = useState<string>('todas');
   
   // Interações de Feed do Instagram
   const [likedPosts, setLikedPosts] = useState<Record<string, boolean>>({ 'post-1': true, 'post-marujo-sororoca': true });
@@ -64,11 +135,11 @@ export default function InstagramFoodFeedPage() {
 
   // Cédula Oficial do Festival Caraguá a Gosto (5 Critérios Auditados - Eixo 3.2 Dossiê Histórico)
   const [activeReviewPost, setActiveReviewPost] = useState<FeedPost | null>(null);
-  const [flavorScore, setFlavorScore] = useState<number>(5); // 1. Sabor & Tempero Caiçara (Peso 35%)
-  const [presentationScore, setPresentationScore] = useState<number>(5); // 2. Apresentação & Cocção (Peso 20%)
-  const [originalityScore, setOriginalityScore] = useState<number>(5); // 3. Originalidade & Insumos Locais (Peso 15%)
-  const [serviceScore, setServiceScore] = useState<number>(5); // 4. Atendimento & Equipe (Peso 15%)
-  const [ambianceScore, setAmbianceScore] = useState<number>(5); // 5. Ambiente & Higiene (Peso 15%)
+  const [flavorScore, setFlavorScore] = useState<number>(5);
+  const [presentationScore, setPresentationScore] = useState<number>(5);
+  const [originalityScore, setOriginalityScore] = useState<number>(5);
+  const [serviceScore, setServiceScore] = useState<number>(5);
+  const [ambianceScore, setAmbianceScore] = useState<number>(5);
   const [tableVoucher, setTableVoucher] = useState<string>('');
   const [reviewComment, setReviewComment] = useState<string>('');
   const [reviewToast, setReviewToast] = useState<boolean>(false);
@@ -95,6 +166,21 @@ export default function InstagramFoodFeedPage() {
     }
   };
 
+  // Polos visíveis na barra limpa do topo (10 Polos Curados + eventual bairro específico selecionado pelo usuário no Mapa dos 53 Bairros)
+  const visibleStoryPoles = useMemo(() => {
+    const basePoles = TOP_CURATED_POLE_IDS
+      .map(id => NEIGHBORHOODS.find(n => n.id === id))
+      .filter(Boolean) as typeof NEIGHBORHOODS;
+
+    if (selectedNeighborhood !== 'todos' && !TOP_CURATED_POLE_IDS.includes(selectedNeighborhood)) {
+      const activeExtra = NEIGHBORHOODS.find(n => n.id === selectedNeighborhood);
+      if (activeExtra) {
+        return [basePoles[0], activeExtra, ...basePoles.slice(1)];
+      }
+    }
+    return basePoles;
+  }, [selectedNeighborhood]);
+
   // Contagem de pratos salvos para a pílula do roteiro
   const savedCount = useMemo(() => Object.values(savedPosts).filter(Boolean).length, [savedPosts]);
 
@@ -107,6 +193,7 @@ export default function InstagramFoodFeedPage() {
   // Filtros de Bairro e Categoria com scroll suave
   const handleSelectNeighborhood = (bairroId: string) => {
     setSelectedNeighborhood(bairroId);
+    setIsBairrosModalOpen(false);
     if (feedTopRef.current) {
       feedTopRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -155,11 +242,11 @@ export default function InstagramFoodFeedPage() {
     if (navigator.share) {
       navigator.share({
         title: `${post.dishName} no ${post.restaurantName}`,
-        text: `Olha esse prato que encontrei no Caraguá FoodTech: ${post.dishName} por R$ ${post.dishPrice.toFixed(2)} em ${post.neighborhood}!`,
+        text: `Olha esse prato que encontrei no CaráFood: ${post.dishName} por R$ ${post.dishPrice.toFixed(2)} em ${post.neighborhood}!`,
         url: window.location.href,
       }).catch(() => {});
     } else {
-      navigator.clipboard.writeText(`${post.dishName} - ${post.restaurantName} (Caraguatatuba)`);
+      navigator.clipboard.writeText(`${post.dishName} - ${post.restaurantName} (CaráFood • Caraguatatuba)`);
       setShareToast(true);
       setTimeout(() => setShareToast(false), 3000);
     }
@@ -198,12 +285,10 @@ export default function InstagramFoodFeedPage() {
     const normalize = (txt: string) => txt.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
     return INITIAL_FEED_POSTS.filter(post => {
-      // 0. Filtro Meus Salvos
       if (selectedCategory === 'salvos' && !savedPosts[post.id]) {
         return false;
       }
 
-      // 1. Filtro de Bairro
       if (selectedNeighborhood !== 'todos') {
         const cleanBairro = normalize(post.neighborhood).replace(/\s+/g, '-');
         const cleanSelected = normalize(selectedNeighborhood);
@@ -212,7 +297,6 @@ export default function InstagramFoodFeedPage() {
         }
       }
 
-      // 2. Filtro de Categoria
       if (selectedCategory !== 'todos' && selectedCategory !== 'salvos') {
         if (selectedCategory === 'vegano' && !post.isVegan) return false;
         if (selectedCategory === 'promoção' && !post.isPromotion) return false;
@@ -233,7 +317,6 @@ export default function InstagramFoodFeedPage() {
         if (selectedCategory === 'burger' && post.dishCategory !== 'Lanches Artesanais') return false;
       }
 
-      // 3. Filtro de Busca por Texto com Normalização Diacrítica
       if (searchQuery.trim()) {
         const q = normalize(searchQuery);
         const matchName = normalize(post.dishName).includes(q);
@@ -251,38 +334,41 @@ export default function InstagramFoodFeedPage() {
   }, [selectedNeighborhood, selectedCategory, searchQuery, savedPosts]);
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] text-[#1A202C] selection:bg-[#FFB703]/30 selection:text-[#135136]">
+    <div className="min-h-screen bg-[#FAF7F2] text-[#1A202C] selection:bg-[#FFB703]/30 selection:text-[#135136]">
       
-      {/* NAVBAR GLOBAL INTEGRADA (ENTREGA S06) */}
+      {/* NAVBAR GLOBAL INTEGRADA */}
       <Navbar onOpenAcademicModal={() => setIsAcademicModalOpen(true)} />
 
-      {/* 1. HEADER COM IDENTIDADE CAIÇARA & DYNAMIC ISLAND INTEGRADA */}
-      <header className="w-full bg-[#135136] text-white pt-6 pb-6 px-4 sm:px-6 shadow-xl border-b-4 border-[#FFB703]">
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      {/* 1. HEADER COM IDENTIDADE CARÁFOOD, SÍMBOLO DE MARÉ & DYNAMIC ISLAND INTEGRADA */}
+      <header className="w-full bg-gradient-to-b from-[#135136] to-[#0E3F2A] text-white pt-6 pb-6 px-4 sm:px-6 shadow-xl border-b-4 border-[#FFB703] relative overflow-hidden">
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 relative z-10">
           <div className="text-center md:text-left space-y-1.5">
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 border border-white/20 text-xs font-bold text-[#FFB703] backdrop-blur-md">
-              <Sparkles className="w-3.5 h-3.5 text-[#FFB703]" />
-              <span>O Feed Oficial de Caraguatatuba</span>
+              <CaraguaWaveEmblem className="w-4 h-4" />
+              <span>CaráFood • O App Oficial da Gastronomia de Caraguatatuba</span>
             </div>
             
-            <h1 className="font-heading font-black text-2xl sm:text-3xl md:text-4xl tracking-tight text-white leading-tight">
-              Alta Gastronomia Caiçara & Roteiro dos 53 Bairros
+            <h1 className="font-heading font-black text-2xl sm:text-3xl md:text-4xl tracking-tight text-white leading-tight flex items-center justify-center md:justify-start gap-2.5 flex-wrap">
+              <span>Sabores Caiçaras & Roteiro dos 53 Bairros</span>
             </h1>
             
             <p className="text-xs sm:text-sm text-emerald-100 font-medium max-w-xl">
-              Descubra os pratos que dão água na boca na capital do Litoral Norte. Fotos reais, avaliações auditadas do festival e curadoria do Chef Jacquin!
+              Dos mexilhões frescos da Fazenda da Cocanha (AMAPEC) ao Azul-Marinho na panela de ferro. Fotos reais, cédula auditada do festival e dicas ao vivo do Chef Jacquin!
             </p>
           </div>
 
-          {/* Cartão de Pontos do Usuário */}
-          <div className="flex items-center gap-2.5 px-4 py-2 rounded-2xl bg-white text-[#135136] font-bold text-sm shadow-md border border-[#FFB703] shrink-0">
-            <span className="text-[#FFB703] text-lg">★</span>
+          {/* Cartão de Pontos do Usuário com Micro-Animação */}
+          <motion.div
+            whileHover={{ scale: 1.04 }}
+            className="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-white text-[#135136] font-bold text-sm shadow-lg border-2 border-[#FFB703] shrink-0"
+          >
+            <span className="text-[#FFB703] text-lg animate-pulse">★</span>
             <span>{userCredits} Pontos Gourmet</span>
-          </div>
+          </motion.div>
         </div>
 
-        {/* DYNAMIC ISLAND DO CHEF JACQUIN (INTEGRADA NO HERO, SEM COLISÕES VISUAIS) */}
-        <div className="mt-4 pt-3 border-t border-white/10">
+        {/* DYNAMIC ISLAND DO CHEF JACQUIN */}
+        <div className="mt-4 pt-3 border-t border-white/10 relative z-10">
           <DynamicIsland
             onSelectCategory={handleSelectCategory}
             onFilterNeighborhood={handleSelectNeighborhood}
@@ -290,69 +376,100 @@ export default function InstagramFoodFeedPage() {
         </div>
       </header>
 
-      {/* 2. BARRA DE STORIES DOS 53 BAIRROS DE CARAGUATATUBA (STICKY TOP-20 Z-30 COM NAVEGAÇÃO SUAVE) */}
-      <section className="bg-white/95 backdrop-blur-md border-b border-stone-200/80 py-3 px-4 shadow-sm sticky top-20 z-30 relative group/stories">
+      {/* 2. BARRA LIMPA E VICIANTE DOS 10 POLOS GASTRONÔMICOS + EXPLORADOR DOS 53 BAIRROS (STICKY TOP-20 Z-30) */}
+      <section className="bg-white/95 backdrop-blur-md border-b border-stone-200/80 py-3 px-4 shadow-sm sticky top-20 z-30 relative">
         <div className="max-w-5xl mx-auto relative">
-          <div className="flex items-center justify-between mb-2 px-1">
-            <span className="text-[10px] font-black uppercase tracking-wider text-[#135136] flex items-center gap-1.5">
-              <MapPin className="w-3 h-3 text-[#FFB703]" />
-              53 Bairros Oficiais de Caraguatatuba
+          <div className="flex items-center justify-between mb-2.5 px-1 gap-2">
+            <span className="text-[11px] font-black uppercase tracking-wider text-[#135136] flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-[#FFB703]" />
+              <span>Polos Gastronômicos em Destaque</span>
             </span>
-            <span className="text-[10px] font-bold text-stone-500">
-              Deslize para explorar →
-            </span>
+
+            {/* Botão Principal Despoluidor: Abre o Mapa Categorizado dos 53 Bairros */}
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.96 }}
+              onClick={() => setIsBairrosModalOpen(true)}
+              className="px-3.5 py-1 rounded-full bg-[#135136] hover:bg-[#0D3825] text-white text-[11px] font-black flex items-center gap-1.5 shadow-sm border border-[#FFB703]/60 transition-colors"
+            >
+              <Map className="w-3.5 h-3.5 text-[#FFB703]" />
+              <span>Explorar todos os 53 Bairros</span>
+              <span className="px-1.5 py-0.2 rounded-full bg-[#FFB703] text-stone-900 text-[9px] font-black">53</span>
+            </motion.button>
           </div>
 
           {/* Botões de Rolagem Horizontal para Desktop */}
           <button
             onClick={() => scrollStories('left')}
-            className="hidden md:flex absolute -left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white/95 border border-stone-300 text-stone-700 hover:text-stone-950 hover:bg-white shadow-md items-center justify-center transition-all opacity-85 hover:opacity-100"
-            aria-label="Rolar bairros para esquerda"
+            className="hidden md:flex absolute -left-3 top-[60%] -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white/95 border border-stone-300 text-stone-700 hover:text-stone-950 hover:bg-white shadow-md items-center justify-center transition-all opacity-85 hover:opacity-100"
+            aria-label="Rolar polos para esquerda"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
 
           <button
             onClick={() => scrollStories('right')}
-            className="hidden md:flex absolute -right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white/95 border border-stone-300 text-stone-700 hover:text-stone-950 hover:bg-white shadow-md items-center justify-center transition-all opacity-85 hover:opacity-100"
-            aria-label="Rolar bairros para direita"
+            className="hidden md:flex absolute -right-3 top-[60%] -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white/95 border border-stone-300 text-stone-700 hover:text-stone-950 hover:bg-white shadow-md items-center justify-center transition-all opacity-85 hover:opacity-100"
+            aria-label="Rolar polos para direita"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
 
           <div 
             ref={storiesRef}
-            className="flex items-center gap-3 overflow-x-auto no-scrollbar pb-1 scroll-smooth px-1"
+            className="flex items-center gap-3.5 overflow-x-auto no-scrollbar pb-1 scroll-smooth px-1"
           >
-            {NEIGHBORHOODS.map((bairro) => {
+            {visibleStoryPoles.map((bairro) => {
               const isSelected = selectedNeighborhood === bairro.id;
               return (
-                <button
+                <motion.button
                   key={bairro.id}
+                  whileHover={{ y: -2, scale: 1.04 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => handleSelectNeighborhood(bairro.id)}
                   title={`${bairro.name}: ${bairro.tagline}`}
                   className="flex flex-col items-center gap-1.5 shrink-0 group focus:outline-none"
                 >
-                  {/* Borda Gradiente estilo Stories do Instagram (Amarelo Solar, Verde Floresta e Azul Oceano) */}
-                  <div className={`p-[2.5px] rounded-full transition-all duration-300 group-hover:scale-105 ${
+                  <div className={`p-[2.5px] rounded-full transition-all duration-300 ${
                     isSelected
                       ? 'bg-gradient-to-tr from-[#FFB703] via-[#135136] to-[#023E8A] shadow-md ring-2 ring-[#FFB703]'
                       : 'bg-gradient-to-tr from-stone-200 to-stone-300 group-hover:from-[#FFB703] group-hover:to-[#135136]'
                   }`}>
-                    <div className="w-[52px] h-[52px] sm:w-[58px] sm:h-[58px] rounded-full bg-white p-0.5 flex items-center justify-center overflow-hidden">
-                      <div className="w-full h-full rounded-full bg-[#135136]/10 flex items-center justify-center font-black text-sm text-[#135136] group-hover:bg-[#FFB703]/20 transition-colors">
+                    <div className="w-[52px] h-[52px] sm:w-[56px] sm:h-[56px] rounded-full bg-white p-0.5 flex items-center justify-center overflow-hidden">
+                      <div className={`w-full h-full rounded-full flex items-center justify-center font-black text-base transition-colors ${
+                        isSelected
+                          ? 'bg-[#FFB703]/25 text-[#135136]'
+                          : 'bg-[#135136]/10 text-[#135136] group-hover:bg-[#FFB703]/20'
+                      }`}>
                         {bairro.emoji || '🌴'}
                       </div>
                     </div>
                   </div>
-                  <span className={`text-[10px] font-bold tracking-tight whitespace-nowrap max-w-[68px] truncate ${
-                    isSelected ? 'text-[#135136] font-black' : 'text-stone-600'
+                  <span className={`text-[10px] font-bold tracking-tight whitespace-nowrap max-w-[74px] truncate ${
+                    isSelected ? 'text-[#135136] font-black underline decoration-[#FFB703] decoration-2' : 'text-stone-600'
                   }`}>
-                    {bairro.name}
+                    {bairro.id === 'todos' ? 'Destaques (53)' : bairro.name}
                   </span>
-                </button>
+                </motion.button>
               );
             })}
+
+            {/* Card Final da Barra: Atalho Visual para Abrir o Mapa Completo dos 53 Bairros */}
+            <motion.button
+              whileHover={{ y: -2, scale: 1.04 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setIsBairrosModalOpen(true)}
+              className="flex flex-col items-center gap-1.5 shrink-0 group focus:outline-none"
+            >
+              <div className="p-[2.5px] rounded-full bg-gradient-to-tr from-[#FFB703] to-[#135136] shadow-sm">
+                <div className="w-[52px] h-[52px] sm:w-[56px] sm:h-[56px] rounded-full bg-[#135136] text-[#FFB703] flex items-center justify-center font-black text-xs">
+                  +43
+                </div>
+              </div>
+              <span className="text-[10px] font-black text-[#135136] whitespace-nowrap">
+                Ver 53 Bairros
+              </span>
+            </motion.button>
           </div>
         </div>
       </section>
@@ -490,16 +607,20 @@ export default function InstagramFoodFeedPage() {
             )}
           </div>
         ) : (
-          filteredPosts.map((post) => {
+          filteredPosts.map((post, idx) => {
             const isLiked = !!likedPosts[post.id];
             const isSaved = !!savedPosts[post.id];
             const currentLikes = likesCount[post.id] || post.likes;
             const comments = postComments[post.id] || [];
 
             return (
-              <article
+              <motion.article
                 key={post.id}
-                className="bg-white rounded-[32px] border border-stone-200/90 shadow-[0_12px_36px_-8px_rgba(19,81,54,0.08)] overflow-hidden transition-all duration-300 hover:shadow-[0_18px_48px_-10px_rgba(19,81,54,0.12)]"
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ type: 'spring', stiffness: 320, damping: 28, delay: Math.min(idx * 0.04, 0.2) }}
+                className="bg-white rounded-[32px] border border-stone-200/90 shadow-[0_12px_36px_-8px_rgba(19,81,54,0.08)] overflow-hidden transition-all duration-300 hover:shadow-[0_22px_52px_-10px_rgba(19,81,54,0.16)] hover:-translate-y-1"
               >
                 {/* 4.1 HEADER DO POST: PERFIL DO RESTAURANTE */}
                 <div className="p-4 sm:p-5 flex items-center justify-between border-b border-stone-100">
@@ -518,17 +639,20 @@ export default function InstagramFoodFeedPage() {
                         <h2 className="font-heading font-black text-sm sm:text-base text-stone-900 tracking-tight">
                           {post.restaurantName}
                         </h2>
-                        <span className="w-4 h-4 rounded-full bg-[#023E8A] text-white flex items-center justify-center text-[9px] font-bold" title="Verificado">
+                        <span className="w-4 h-4 rounded-full bg-[#023E8A] text-white flex items-center justify-center text-[9px] font-bold" title="Verificado pelo CaráFood">
                           ✓
                         </span>
                       </div>
                       
                       {/* Localização, Bairro e Indicador de Proximidade da Orla */}
                       <div className="flex items-center gap-1.5 text-[11px] font-bold mt-0.5 flex-wrap">
-                        <span className="text-[#023E8A] flex items-center gap-1">
+                        <button
+                          onClick={() => handleSelectNeighborhood(post.neighborhood.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '-'))}
+                          className="text-[#023E8A] hover:underline flex items-center gap-1"
+                        >
                           <MapPin className="w-3 h-3 text-[#023E8A]" />
-                          <span>{post.neighborhood}, Caraguá</span>
-                        </span>
+                          <span>{post.neighborhood}, Caraguatatuba</span>
+                        </button>
                         <span className="text-stone-300">•</span>
                         <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
                           post.distanceKm <= 0.5 
@@ -552,7 +676,7 @@ export default function InstagramFoodFeedPage() {
                     href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(post.restaurantName + ' Caraguatatuba')}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 rounded-full bg-stone-100 hover:bg-[#135136] hover:text-white text-stone-600 transition-colors shadow-sm"
+                    className="p-2.5 rounded-full bg-stone-100 hover:bg-[#135136] hover:text-white text-stone-600 transition-colors shadow-sm"
                     title={`Ver rotas para ${post.restaurantName} no Google Maps`}
                   >
                     <Navigation className="w-4 h-4" />
@@ -567,15 +691,14 @@ export default function InstagramFoodFeedPage() {
                   <img
                     src={post.postImage}
                     alt={post.dishName}
-                    className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500"
+                    className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
                     loading="lazy"
                   />
 
-                  {/* Coração Animado de Double-Tap + Explosão de Partículas Douradas (Ideia 5) */}
+                  {/* Coração Animado de Double-Tap + Explosão de Partículas Douradas */}
                   <AnimatePresence>
                     {heartAnimPostId === post.id && (
                       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30">
-                        {/* Coração Central com Mola Gabriel Lamé */}
                         <motion.div
                           initial={{ scale: 0, opacity: 0 }}
                           animate={{ scale: [0, 1.4, 1], opacity: [0, 1, 0.95] }}
@@ -586,7 +709,6 @@ export default function InstagramFoodFeedPage() {
                           <Heart className="w-24 h-24 text-[#FFB703] fill-[#FFB703] drop-shadow-[0_12px_36px_rgba(255,183,3,0.7)]" />
                         </motion.div>
 
-                        {/* Partículas Douradas e Centelhas Solares Radiantes (Benchmark Starbucks & Apple HIG) */}
                         {GOLDEN_PARTICLES.map((p) => (
                           <motion.div
                             key={p.id}
@@ -629,7 +751,6 @@ export default function InstagramFoodFeedPage() {
                         <span className="relative w-3.5 h-3.5 rounded-full bg-[#FFB703] border-2 border-white shadow-[0_2px_8px_rgba(0,0,0,0.4)]" />
                       </div>
 
-                      {/* Tooltip Xiaohongshu com Nome, Preço e Destaque */}
                       <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 opacity-95 group-hover/tag:opacity-100 transition-all pointer-events-auto">
                         <div className="px-3 py-1.5 rounded-2xl bg-stone-950/90 backdrop-blur-md text-white shadow-2xl border border-white/20 whitespace-nowrap text-left">
                           <div className="flex items-center gap-2 font-bold text-xs">
@@ -643,7 +764,7 @@ export default function InstagramFoodFeedPage() {
                     </div>
                   )}
 
-                  {/* Badges Flutuantes Orgânicos na Imagem (Alinhamento Horizontal Translúcido - Não Obstrui o Prato) */}
+                  {/* Badges Flutuantes Orgânicos na Imagem (Alinhamento Horizontal Translúcido z-10 - Não Obstrui o Prato) */}
                   <div className="absolute top-3 left-3 flex flex-wrap items-center gap-1.5 z-10 max-w-[92%]">
                     {post.caraguaGostoAward && (
                       <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-stone-950/85 text-[#FFB703] shadow-md flex items-center gap-1 border border-white/25 backdrop-blur-md">
@@ -652,7 +773,6 @@ export default function InstagramFoodFeedPage() {
                       </span>
                     )}
 
-                    {/* Badge de Procedência Histórica e Sustentabilidade da Maricultura (Dossiê Histórico) */}
                     {(post.id.includes('cocanha') || post.caption.toLowerCase().includes('cocanha') || post.dishName.toLowerCase().includes('mexilhão')) && (
                       <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#023E8A]/90 text-cyan-200 border border-cyan-300/30 shadow-md backdrop-blur-md flex items-center gap-1">
                         <span>🦪</span>
@@ -698,8 +818,8 @@ export default function InstagramFoodFeedPage() {
                 <div className="p-4 sm:p-5 space-y-3.5">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      {/* Botão de Curtir com Coração */}
-                      <button
+                      <motion.button
+                        whileTap={{ scale: 0.85 }}
                         onClick={() => handleToggleLike(post.id)}
                         className="flex items-center gap-1.5 group focus:outline-none"
                       >
@@ -707,9 +827,8 @@ export default function InstagramFoodFeedPage() {
                           isLiked ? 'text-rose-500 fill-rose-500' : 'text-stone-700 hover:text-stone-900'
                         }`} />
                         <span className="text-xs font-bold text-stone-800">{currentLikes}</span>
-                      </button>
+                      </motion.button>
 
-                      {/* Botão de Comentar */}
                       <button
                         onClick={() => setActiveReviewPost(post)}
                         className="flex items-center gap-1.5 group text-stone-700 hover:text-stone-900 focus:outline-none"
@@ -718,31 +837,30 @@ export default function InstagramFoodFeedPage() {
                         <span className="text-xs font-bold">{comments.length}</span>
                       </button>
 
-                      {/* Botão de Compartilhar */}
                       <button
                         onClick={() => handleShare(post)}
                         className="text-stone-700 hover:text-stone-900 transition-transform hover:scale-125 focus:outline-none"
-                        title="Compartilhar"
+                        title="Compartilhar no CaráFood"
                       >
                         <Share2 className="w-5 h-5" />
                       </button>
                     </div>
 
-                    {/* Botão de Salvar / Bookmark no Roteiro de Caraguá */}
-                    <button
+                    <motion.button
+                      whileTap={{ scale: 0.85 }}
                       onClick={() => handleToggleSave(post)}
                       className="text-stone-700 hover:text-stone-900 transition-transform hover:scale-125 focus:outline-none"
-                      title={isSaved ? "Salvo no seu Roteiro de Caraguá" : "Salvar no Roteiro de Caraguá"}
+                      title={isSaved ? "Salvo no seu Roteiro CaráFood" : "Salvar no Roteiro CaráFood"}
                     >
                       <Bookmark className={`w-6 h-6 transition-colors ${isSaved ? 'text-[#FFB703] fill-[#FFB703]' : ''}`} />
-                    </button>
+                    </motion.button>
                   </div>
 
-                  {/* 4.4 PREÇO E SUPER NOTA EM ESTRELAS (DESTAQUE GASTRONÔMICO PEDIDO) */}
-                  <div className="flex items-center justify-between p-3.5 rounded-2xl bg-[#F8F9FA] border border-stone-200">
+                  {/* 4.4 PREÇO E SUPER NOTA EM ESTRELAS */}
+                  <div className="flex items-center justify-between p-3.5 rounded-2xl bg-[#FAF7F2] border border-stone-200/90">
                     <div>
                       <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 block">
-                        Preço do Prato
+                        Preço no Cardápio
                       </span>
                       <span className="font-heading font-black text-xl text-[#135136]">
                         R$ {post.dishPrice.toFixed(2)}
@@ -751,7 +869,7 @@ export default function InstagramFoodFeedPage() {
 
                     <div className="text-right">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 block">
-                        Super Nota
+                        Super Nota Auditada
                       </span>
                       <div className="flex items-center gap-1 justify-end font-heading font-black text-lg text-stone-900">
                         <Star className="w-4 h-4 text-[#FFB703] fill-[#FFB703]" />
@@ -775,9 +893,9 @@ export default function InstagramFoodFeedPage() {
                     </p>
                   </div>
 
-                  {/* 4.6 DICA EXCLUSIVA DO CHEF JACQUIN (BOX ORGÂNICO VERDE) */}
-                  <div className="p-4 rounded-3xl bg-emerald-50/80 border-2 border-emerald-200/90 flex items-start gap-3.5 shadow-sm">
-                    <div className="w-14 h-16 sm:w-16 sm:h-20 shrink-0 -my-1 drop-shadow-md">
+                  {/* 4.6 DICA EXCLUSIVA DO CHEF JACQUIN (COM ANIMAÇÃO COUCOU) */}
+                  <div className="p-4 rounded-3xl bg-emerald-50/80 border-2 border-emerald-200/90 flex items-start gap-3.5 shadow-sm group/jacquin">
+                    <div className="w-14 h-16 sm:w-16 sm:h-20 shrink-0 -my-1 drop-shadow-md animate-coucou-wave">
                       <img src="/jacquin-praiano.png" alt="Chef Jacquin" className="w-full h-full object-contain" />
                     </div>
                     <div className="text-xs sm:text-sm">
@@ -810,7 +928,7 @@ export default function InstagramFoodFeedPage() {
                     </div>
                   )}
 
-                  {/* Ações: Ver Ficha Completa (Master-Detail S09) & Cédula Oficial */}
+                  {/* Ações: Ver Ficha Completa & Cédula Oficial */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
                     <Link
                       href={`/prato/${post.id}`}
@@ -829,14 +947,200 @@ export default function InstagramFoodFeedPage() {
                     </button>
                   </div>
                 </div>
-              </article>
+              </motion.article>
             );
           })
         )}
       </main>
 
-      {/* 5. MASCÓTE FLUTUANTE JACQUIN PRAIANO */}
+      {/* 5. MASCOTE FLUTUANTE JACQUIN PRAIANO (COUCOU 60FPS) */}
       <FloatingJacquin onSelectCategory={handleSelectCategory} />
+
+      {/* 5.5 MODAL EXPLORADOR INTELIGENTE DOS 53 BAIRROS POR MACRO-ZONAS (DESPOLUIÇÃO VISUAL Z-50) */}
+      <AnimatePresence>
+        {isBairrosModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsBairrosModalOpen(false)}
+              className="fixed inset-0 bg-stone-950/75 backdrop-blur-md"
+            />
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.94, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.94, y: 20 }}
+              transition={{ type: 'spring', stiffness: 360, damping: 28 }}
+              className="relative w-full max-w-4xl bg-[#FAF7F2] rounded-[36px] shadow-2xl border-4 border-[#135136] overflow-hidden z-10 flex flex-col max-h-[88vh]"
+            >
+              {/* Header do Explorador dos 53 Bairros */}
+              <div className="bg-gradient-to-r from-[#135136] via-[#1E6B47] to-[#135136] text-white p-5 sm:p-6 flex items-center justify-between border-b-4 border-[#FFB703]">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-12 h-12 rounded-2xl bg-[#FFB703] text-stone-900 flex items-center justify-center shadow-md shrink-0">
+                    <Map className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-white/15 text-[#FFB703]">
+                        Mapeamento Territorial Oficial • Dossiê 1
+                      </span>
+                    </div>
+                    <h3 className="font-heading font-black text-xl sm:text-2xl text-white mt-0.5">
+                      Explorador dos 53 Bairros de Caraguatatuba
+                    </h3>
+                    <p className="text-xs text-emerald-100 font-medium">
+                      Agrupados nas 4 Macro-Regiões Gastronômicas para navegação rápida e sem poluição visual
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setIsBairrosModalOpen(false)}
+                  className="p-2 rounded-full text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+                  aria-label="Fechar mapa de bairros"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* Barra de Busca Instantânea de Bairro + Seletor de Macro-Região */}
+              <div className="p-4 sm:p-5 bg-white border-b border-stone-200 space-y-3">
+                <div className="relative">
+                  <Search className="w-4 h-4 text-[#135136] absolute left-4 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={bairroSearchQuery}
+                    onChange={(e) => setBairroSearchQuery(e.target.value)}
+                    placeholder="Buscar entre os 53 bairros ou especialidades (ex: Cocanha, Tinga, Massaguaçu, Ostras, Cambuci)..."
+                    className="w-full pl-11 pr-9 py-2.5 rounded-full bg-[#FAF7F2] border border-stone-300 text-xs sm:text-sm font-medium text-stone-900 placeholder-stone-400 focus:outline-none focus:border-[#135136] focus:bg-white"
+                  />
+                  {bairroSearchQuery && (
+                    <button
+                      onClick={() => setBairroSearchQuery('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+                  {[
+                    { id: 'todas', label: '🗺️ Todas as 4 Macro-Regiões (53 Bairros)' },
+                    { id: 'orla-central', label: '🌊 Orla Central & Nobre (15)' },
+                    { id: 'costa-norte', label: '🦪 Costa Norte & Cocanha (14)' },
+                    { id: 'eixo-sul', label: '🏖️ Orla Sul & Juqueriquerê (14)' },
+                    { id: 'serra-interior', label: '⛰️ Serra & Interior Caiçara (10)' },
+                  ].map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveMacroRegion(tab.id)}
+                      className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
+                        activeMacroRegion === tab.id
+                          ? 'bg-[#135136] text-[#FFB703] shadow-sm'
+                          : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Lista Categorizada dos 53 Bairros */}
+              <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+                {/* Botão Todos os 53 Bairros */}
+                <div className="flex items-center justify-between p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">🌴</span>
+                    <div>
+                      <div className="font-heading font-black text-sm text-[#135136]">
+                        Ver Feed Completo (Todos os 53 Bairros de Caraguatatuba)
+                      </div>
+                      <div className="text-[11px] text-stone-600">
+                        Exibe todos os pratos premiados, quiosques e restaurantes sem restrição territorial
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleSelectNeighborhood('todos')}
+                    className="px-4 py-2 rounded-full bg-[#135136] hover:bg-[#0D3825] text-[#FFB703] text-xs font-black shrink-0 shadow-sm"
+                  >
+                    Selecionar Tudo
+                  </button>
+                </div>
+
+                {MACRO_REGIONS.filter(r => activeMacroRegion === 'todas' || r.id === activeMacroRegion).map((region) => {
+                  const q = bairroSearchQuery.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                  const regionBairros = region.neighborhoodIds
+                    .map(id => NEIGHBORHOODS.find(n => n.id === id))
+                    .filter((b): b is NonNullable<typeof b> => {
+                      if (!b) return false;
+                      if (!q) return true;
+                      const matchName = b.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(q);
+                      const matchSpec = b.llmSpecialty.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(q);
+                      const matchTag = b.tagline.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(q);
+                      return matchName || matchSpec || matchTag;
+                    });
+
+                  if (regionBairros.length === 0) return null;
+
+                  return (
+                    <div key={region.id} className="space-y-3">
+                      <div className="flex items-center justify-between border-b border-stone-200 pb-2">
+                        <div>
+                          <h4 className="font-heading font-black text-base text-stone-900">
+                            {region.title}
+                          </h4>
+                          <p className="text-xs text-stone-500">{region.subtitle}</p>
+                        </div>
+                        <span className="px-2.5 py-0.5 rounded-full bg-[#FFB703]/20 text-amber-900 font-black text-[11px]">
+                          {regionBairros.length} bairros
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                        {regionBairros.map((bairro) => {
+                          const isSelected = selectedNeighborhood === bairro.id;
+                          return (
+                            <button
+                              key={bairro.id}
+                              onClick={() => handleSelectNeighborhood(bairro.id)}
+                              className={`p-3 rounded-2xl border text-left transition-all flex items-start gap-3 group ${
+                                isSelected
+                                  ? 'bg-[#135136] text-white border-[#FFB703] shadow-md'
+                                  : 'bg-white hover:bg-amber-50/60 text-stone-900 border-stone-200/90 hover:border-[#135136]'
+                              }`}
+                            >
+                              <span className="text-xl shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
+                                {bairro.emoji || '🌴'}
+                              </span>
+                              <div className="min-w-0">
+                                <div className={`font-heading font-black text-xs sm:text-sm truncate ${
+                                  isSelected ? 'text-[#FFB703]' : 'text-stone-900'
+                                }`}>
+                                  {bairro.name}
+                                </div>
+                                <div className={`text-[10px] font-medium line-clamp-2 mt-0.5 ${
+                                  isSelected ? 'text-emerald-100' : 'text-stone-500'
+                                }`}>
+                                  {bairro.llmSpecialty}
+                                </div>
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* 6. MODAL OFICIAL: CÉDULA DIGITAL DO FESTIVAL CARAGUÁ A GOSTO (EIXO 3.2 DOSSIÊ HISTÓRICO) */}
       <AnimatePresence>
@@ -1002,7 +1306,7 @@ export default function InstagramFoodFeedPage() {
           >
             <Bookmark className={`w-5 h-5 ${saveToast.isAdded ? 'text-[#FFB703] fill-[#FFB703]' : 'text-stone-400'}`} />
             <div>
-              <p>{saveToast.isAdded ? '📌 Salvo no seu Roteiro de Caraguá!' : 'Removido dos seus salvos.'}</p>
+              <p>{saveToast.isAdded ? '📌 Salvo no seu Roteiro do CaráFood!' : 'Removido dos seus salvos.'}</p>
               <p className="text-amber-200 font-normal text-[11px] truncate max-w-[240px]">
                 {saveToast.dishName}
               </p>
@@ -1018,18 +1322,23 @@ export default function InstagramFoodFeedPage() {
             className="fixed bottom-6 left-6 z-50 p-4 rounded-2xl bg-[#023E8A] text-white shadow-2xl flex items-center gap-3 text-xs font-bold border border-cyan-400/40"
           >
             <CheckCircle2 className="w-5 h-5 text-[#FFB703]" />
-            <p>Link copiado para compartilhar no WhatsApp ou redes!</p>
+            <p>Link do CaráFood copiado para compartilhar no WhatsApp ou redes!</p>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* 7. FOOTER SÓLIDO COM ACESSO AO PROFESSOR CRISTIANO */}
+      {/* 7. FOOTER SÓLIDO CARÁFOOD COM SÍMBOLO DE ONDA & CRÉDITOS DA EQUIPE */}
       <footer className="bg-[#135136] text-white py-12 px-6 border-t-4 border-[#FFB703]">
         <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
-          <div className="space-y-1">
-            <h4 className="font-heading font-black text-2xl text-white">Caraguá FoodTech</h4>
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-center md:justify-start gap-2">
+              <h4 className="font-heading font-black text-2xl sm:text-3xl text-white">
+                Cará<span className="text-[#FFB703]">Food</span>
+              </h4>
+              <CaraguaWaveEmblem className="w-7 h-7" />
+            </div>
             <p className="text-xs text-emerald-200 max-w-md">
-              O feed gastronômico definitivo de Caraguatatuba. Valorizando quiosques de praia, produtores locais e a cultura caiçara autêntica.
+              A plataforma gastronômica oficial de Caraguatatuba. Valorizando quiosques de praia, maricultores da Cocanha (AMAPEC), pescadores do Camaroeiro (Z-8) e os 53 bairros.
             </p>
           </div>
 
@@ -1042,7 +1351,7 @@ export default function InstagramFoodFeedPage() {
               <span>Portal Acadêmico / TCC Módulo (Prof. Cristiano)</span>
             </button>
             <span className="text-[10px] text-emerald-300 font-mono">
-              Centro Universitário Módulo • ADS • Gabriel Rodrigues
+              Centro Universitário Módulo • Gabriel Rodrigues • Matheus Vicente • Pedro Simone
             </span>
           </div>
         </div>
@@ -1056,3 +1365,4 @@ export default function InstagramFoodFeedPage() {
     </div>
   );
 }
+

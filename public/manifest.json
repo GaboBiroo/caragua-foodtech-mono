@@ -1,17 +1,17 @@
 {
-  "name": "Caragu\u00e1 FoodTech",
-  "short_name": "Caragu\u00e1Food",
-  "description": "Agregador Gastron\u00f4mico Hiperlocal com IA & RAG de 5 Est\u00e1gios em Caraguatatuba/SP",
+  "name": "CaráFood — Gastronomia Oficial de Caraguatatuba",
+  "short_name": "CaráFood",
+  "description": "Agregador Gastronômico Hiperlocal com IA & RAG de 5 Estágios nos 53 Bairros de Caraguatatuba/SP",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#020617",
-  "theme_color": "#0ea5e9",
+  "background_color": "#FAF7F2",
+  "theme_color": "#135136",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/icon.svg",
+      "src": "/jacquin-praiano.png",
       "sizes": "192x192 512x512",
-      "type": "image/svg+xml"
+      "type": "image/png"
     }
   ]
 }

@@ -1,10 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  MessageSquare, X, Sparkles, Send, Star, Flame, 
-  Utensils, CheckCircle2, ChevronRight, Compass, ShieldCheck 
+  X, Sparkles, Send, Star, CheckCircle2
 } from 'lucide-react';
 
 interface FloatingJacquinProps {
@@ -17,27 +16,58 @@ export const FloatingJacquin: React.FC<FloatingJacquinProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [inputText, setInputText] = useState('');
+  const [isJumping, setIsJumping] = useState(false);
+  const [cursorParallax, setCursorParallax] = useState({ x: 0, y: 0, rotate: 0 });
+  const mascotRef = useRef<HTMLDivElement>(null);
+
   const [chatMessages, setChatMessages] = useState<Array<{ sender: 'jacquin' | 'user'; text: string; recDish?: string }>>([
     {
       sender: 'jacquin',
-      text: 'Bonjour, mon ami! Bateu aquela fome de praia em Caraguá? Me diz o que você quer comer hoje: peixe frito, frutos do mar da enseada ou uma pizza a lenha?',
+      text: 'Bonjour, mon ami! Bem-vindo ao CaráFood! Bateu aquela fome de praia em Caraguatatuba? Me diz o que você quer comer hoje: peixe frito, frutos do mar da enseada ou uma pizza a lenha?',
     }
   ]);
 
   const speechHints = [
-    'Mon ami! Clica em mim pra achar os melhores peixes de Caraguá!',
-    'Mexilhão fresco tem que ser da Fazenda Cocanha! Quer ver?',
+    'Mon ami! Clica em mim pra achar os melhores peixes no CaráFood!',
+    'Mexilhão fresco tem que ser da Fazenda Cocanha (AMAPEC)! Quer ver?',
     'Azul-Marinho na panela de ferro é patrimônio sagrado! Vem ver onde tem!',
     'Quer uma dica dos grandes campeões do Festival Caraguá a Gosto?',
   ];
   const [currentHintIdx, setCurrentHintIdx] = useState(0);
 
+  // Rastreamento físico 60fps estilo Coucou (calcula vetor em direção ao cursor)
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!mascotRef.current) return;
+      const rect = mascotRef.current.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const dx = Math.max(-1, Math.min(1, (e.clientX - centerX) / 420));
+      const dy = Math.max(-1, Math.min(1, (e.clientY - centerY) / 420));
+      setCursorParallax({
+        x: dx * 9,
+        y: dy * 7,
+        rotate: dx * 6.5,
+      });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentHintIdx((prev) => (prev + 1) % speechHints.length);
+      setIsJumping(true);
+      setTimeout(() => setIsJumping(false), 650);
     }, 6000);
     return () => clearInterval(timer);
   }, [speechHints.length]);
+
+  const triggerHappyJump = () => {
+    setIsJumping(true);
+    setTimeout(() => setIsJumping(false), 650);
+  };
 
   const quickPrompts = [
     { label: '🦪 Mexilhão da Cocanha', query: 'cocanha' },
@@ -51,6 +81,7 @@ export const FloatingJacquin: React.FC<FloatingJacquinProps> = ({
   const handleSend = (text: string) => {
     if (!text.trim()) return;
 
+    triggerHappyJump();
     setChatMessages((prev) => [...prev, { sender: 'user', text }]);
     setInputText('');
 
@@ -73,7 +104,7 @@ export const FloatingJacquin: React.FC<FloatingJacquinProps> = ({
         reply = 'Iscas de peixe sequinhas no fubá mimoso e limão-cravo na beira da praia! O Quiosque Sol e Cia em Martim de Sá levou 3º lugar do festival com a porção Boca da Noite!';
         dish = 'Boca da Noite – Iscas no Fubá Mimoso';
       } else if (q.includes('vegano') || q.includes('vegetar') || q.includes('sem carne')) {
-        reply = 'Mon ami, aqui em Caraguá tem comida limpa e consciente! O Bowl Caiçara do Empório Verde Mar no Indaiá é feito com shimeji fresco e banana da serra!';
+        reply = 'Mon ami, aqui no CaráFood tem comida limpa e consciente! O Bowl Caiçara do Empório Verde Mar no Indaiá é feito com shimeji fresco e banana da serra!';
         dish = 'Bowl Caiçara de Quinoa e Shimeji';
         if (onSelectCategory) onSelectCategory('vegano');
       } else if (q.includes('camar') || q.includes('risoto')) {
@@ -89,63 +120,78 @@ export const FloatingJacquin: React.FC<FloatingJacquinProps> = ({
         dish = 'Pizza Pernil Supremo';
         if (onSelectCategory) onSelectCategory('pizza');
       } else {
-        reply = 'Os pescadores do Camaroeiro trouxeram peixes fresquíssimos hoje! Dá uma olhada no feed dos pratos logo abaixo na página. Quer que eu filtre alguma categoria para você?';
+        reply = 'Os pescadores do Camaroeiro (Colônia Z-8) trouxeram peixes fresquíssimos hoje! Dá uma olhada no feed do CaráFood logo abaixo. Quer que eu filtre alguma categoria para você?';
       }
 
       setChatMessages((prev) => [...prev, { sender: 'jacquin', text: reply, recDish: dish }]);
+      triggerHappyJump();
     }, 550);
   };
 
   return (
     <>
-      {/* 1. MASCÓTE FLUTUANTE COESO INSPIRADO EM KORUS / COUCOU */}
+      {/* 1. MASCOTE FLUTUANTE INTERATIVO PADRÃO COUCOU / KORUS (60FPS CURSOR TRACKING) */}
       <aside 
-        aria-label="Assistente Central Chef Jacquin Praiano"
+        ref={mascotRef}
+        aria-label="Assistente Central Chef Jacquin Praiano CaráFood"
         className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 md:bottom-6 md:right-6 z-30 flex flex-col items-end pointer-events-auto select-none"
       >
         <AnimatePresence mode="wait">
           {isMinimized ? (
-            /* ESTADO MINIMIZADO: PÍLULA FLUTUANTE DISCRETA */
+            /* ESTADO MINIMIZADO: PÍLULA VIVA COM FÍSICA DE MOLA */
             <motion.button
               key="minimized"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              whileHover={{ scale: 1.08 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setIsMinimized(false)}
-              className="flex items-center gap-2.5 px-3.5 py-2 rounded-full bg-[#135136] text-white border-2 border-[#FFB703] shadow-[0_12px_28px_rgba(19,81,54,0.45)] cursor-pointer group"
-              aria-label="Expandir Chef Jacquin"
+              initial={{ scale: 0.8, opacity: 0, y: 12 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.8, opacity: 0, y: 12 }}
+              whileHover={{ scale: 1.08, y: -3 }}
+              whileTap={{ scale: 0.94 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 26 }}
+              onClick={() => {
+                setIsMinimized(false);
+                triggerHappyJump();
+              }}
+              className="flex items-center gap-2.5 px-4 py-2 rounded-full bg-[#135136] text-white border-2 border-[#FFB703] shadow-[0_14px_32px_rgba(19,81,54,0.48)] cursor-pointer group"
+              aria-label="Expandir Chef Jacquin do CaráFood"
             >
-              <div className="relative w-8 h-10 shrink-0 -my-1">
+              <motion.div
+                animate={{
+                  x: cursorParallax.x * 0.5,
+                  y: cursorParallax.y * 0.5,
+                  rotate: cursorParallax.rotate,
+                }}
+                transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+                className="relative w-9 h-11 shrink-0 -my-1.5"
+              >
                 <img
                   src="/jacquin-praiano.png"
                   alt="Chef Jacquin"
-                  className="w-full h-full object-contain filter drop-shadow-[0_2px_4px_rgba(255,183,3,0.5)]"
+                  className="w-full h-full object-contain filter drop-shadow-[0_2px_6px_rgba(255,183,3,0.6)]"
                 />
                 <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border border-[#135136] animate-pulse" />
-              </div>
+              </motion.div>
               <div className="text-left hidden sm:block">
                 <span className="block font-heading font-black text-xs text-white leading-none">Chef Jacquin</span>
-                <span className="text-[10px] text-amber-200 font-bold">Online • Dicas</span>
+                <span className="text-[10px] text-amber-200 font-bold">CaráFood • Online</span>
               </div>
-              <span className="text-[#FFB703] text-xs font-black ml-1">↑</span>
+              <span className="text-[#FFB703] text-xs font-black ml-1 group-hover:-translate-y-0.5 transition-transform">↑</span>
             </motion.button>
           ) : (
-            /* ESTADO EXPANDIDO: CARD COMPANHEIRO UNIFICADO E ELEGANTE */
+            /* ESTADO EXPANDIDO: COMPANHEIRO VIVO ESTILO COUCOU COM PARALLAX 60FPS */
             <motion.div
               key="expanded"
-              initial={{ opacity: 0, y: 16, scale: 0.95 }}
+              initial={{ opacity: 0, y: 20, scale: 0.92 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 16, scale: 0.95 }}
-              className="relative bg-white/95 backdrop-blur-md border-2 border-[#135136] rounded-3xl p-3.5 sm:p-4 shadow-[0_16px_36px_-6px_rgba(19,81,54,0.35)] max-w-[280px] sm:max-w-[320px]"
+              exit={{ opacity: 0, y: 20, scale: 0.92 }}
+              transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+              className="relative bg-white/95 backdrop-blur-md border-2 border-[#135136] rounded-[28px] p-3.5 sm:p-4 shadow-[0_20px_44px_-8px_rgba(19,81,54,0.38)] max-w-[290px] sm:max-w-[335px] hover:border-[#FFB703] transition-colors"
             >
-              {/* Header com Status e Botão Minimizar */}
+              {/* Header com Status Ao Vivo e Botão Minimizar */}
               <div className="flex items-center justify-between border-b border-stone-200/80 pb-2 mb-2.5">
                 <div className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10B981]" />
                   <span className="font-heading font-black text-xs text-[#135136] uppercase tracking-wide">
-                    Chef Jacquin • Online
+                    Chef Jacquin • CaráFood
                   </span>
                 </div>
                 <button
@@ -158,38 +204,65 @@ export const FloatingJacquin: React.FC<FloatingJacquinProps> = ({
                 </button>
               </div>
 
-              {/* Corpo: Jacquin + Dica Dinâmica */}
+              {/* Corpo Interativo: Jacquin com Parallax Coucou + Balão de Fala Dinâmico */}
               <div 
-                onClick={() => setIsOpen(true)}
-                className="flex items-center gap-3 cursor-pointer group"
+                onClick={() => {
+                  triggerHappyJump();
+                  setIsOpen(true);
+                }}
+                className="flex items-center gap-3.5 cursor-pointer group"
               >
-                <div className="w-14 h-18 sm:w-16 sm:h-20 shrink-0 drop-shadow-md group-hover:scale-105 transition-transform">
+                <motion.div
+                  animate={{
+                    x: cursorParallax.x,
+                    y: cursorParallax.y,
+                    rotate: cursorParallax.rotate,
+                  }}
+                  transition={{ type: 'spring', stiffness: 320, damping: 22 }}
+                  className={`relative w-16 h-20 sm:w-20 sm:h-24 shrink-0 -my-1 drop-shadow-lg animate-coucou-wave ${
+                    isJumping ? 'animate-coucou-jump' : ''
+                  }`}
+                >
                   <img
                     src="/jacquin-praiano.png"
                     alt="Chef Jacquin Praiano"
-                    className="w-full h-full object-contain filter drop-shadow-[0_4px_8px_rgba(255,183,3,0.4)]"
+                    className="w-full h-full object-contain filter drop-shadow-[0_6px_12px_rgba(255,183,3,0.45)]"
                   />
-                </div>
+                </motion.div>
 
-                <div className="space-y-1 min-w-0">
-                  <p className="text-[11px] sm:text-xs font-bold text-stone-900 leading-tight">
-                    &ldquo;{speechHints[currentHintIdx]}&rdquo;
-                  </p>
+                <div className="space-y-1.5 min-w-0">
+                  <AnimatePresence mode="wait">
+                    <motion.p
+                      key={currentHintIdx}
+                      initial={{ opacity: 0, y: 5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -5 }}
+                      transition={{ duration: 0.25 }}
+                      className="text-[11px] sm:text-xs font-bold text-stone-900 leading-snug"
+                    >
+                      &ldquo;{speechHints[currentHintIdx]}&rdquo;
+                    </motion.p>
+                  </AnimatePresence>
                   <div className="flex items-center gap-1 text-[9px] font-extrabold text-[#135136]">
-                    <CheckCircle2 className="w-2.5 h-2.5 text-emerald-600 shrink-0" />
+                    <CheckCircle2 className="w-3 h-3 text-emerald-600 shrink-0" />
                     <span className="truncate">53 Bairros & AMAPEC Conectados</span>
                   </div>
                 </div>
               </div>
 
-              {/* Botão de Ação Direta */}
-              <button
-                onClick={() => setIsOpen(true)}
-                className="mt-2.5 w-full py-2 rounded-full bg-[#135136] hover:bg-[#0D3825] text-[#FFB703] text-xs font-black flex items-center justify-center gap-1.5 shadow-md transition-colors"
+              {/* Botão de Ação Direta com Micro-Interação */}
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => {
+                  triggerHappyJump();
+                  setIsOpen(true);
+                }}
+                className="mt-3 w-full py-2.5 rounded-full bg-[#135136] hover:bg-[#0D3825] text-[#FFB703] text-xs font-black flex items-center justify-center gap-1.5 shadow-md transition-colors border border-[#FFB703]/40"
               >
-                <Sparkles className="w-3.5 h-3.5 text-[#FFB703]" />
-                <span>Conversar com o Chef</span>
-              </button>
+                <Sparkles className="w-3.5 h-3.5 text-[#FFB703] animate-spin" style={{ animationDuration: '6s' }} />
+                <span>Pedir Dica ao Chef Jacquin</span>
+              </motion.button>
             </motion.div>
           )}
         </AnimatePresence>
@@ -217,23 +290,30 @@ export const FloatingJacquin: React.FC<FloatingJacquinProps> = ({
               {/* Header com Jacquin Gigante e Imersivo */}
               <div className="bg-gradient-to-r from-[#135136] via-[#1E6B47] to-[#135136] text-white p-5 sm:p-6 flex items-center justify-between border-b-4 border-[#FFB703]">
                 <div className="flex items-center gap-4">
-                  <div className="w-16 h-20 sm:w-20 sm:h-24 shrink-0 -my-3 drop-shadow-xl">
+                  <motion.div
+                    animate={{
+                      rotate: cursorParallax.rotate * 0.8,
+                      y: [0, -4, 0],
+                    }}
+                    transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+                    className="w-16 h-20 sm:w-20 sm:h-24 shrink-0 -my-3 drop-shadow-xl"
+                  >
                     <img
                       src="/jacquin-praiano.png"
                       alt="Chef Jacquin Praiano"
                       className="w-full h-full object-contain filter drop-shadow-[0_6px_14px_rgba(255,183,3,0.5)]"
                     />
-                  </div>
+                  </motion.div>
                   <div>
                     <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/15 border border-white/20 text-[10px] font-bold text-[#FFB703] mb-1">
                       <Sparkles className="w-3 h-3 text-[#FFB703]" />
-                      <span>Curador Oficial de Caraguá</span>
+                      <span>Curador Oficial • CaráFood</span>
                     </div>
                     <h3 className="font-heading font-black text-xl sm:text-2xl text-white leading-tight">
                       Chef Jacquin Praiano
                     </h3>
                     <p className="text-xs sm:text-sm text-emerald-100 font-medium mt-0.5">
-                      Crítica gastronômica, insumos frescos & 53 bairros
+                      Crítica gastronômica caiçara, insumos frescos & 53 bairros
                     </p>
                   </div>
                 </div>

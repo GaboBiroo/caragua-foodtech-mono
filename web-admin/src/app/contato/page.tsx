@@ -65,7 +65,7 @@ export default function ContatoPage() {
           </h1>
 
           <p className="text-sm sm:text-base text-emerald-100 font-medium max-w-2xl leading-relaxed">
-            Deseja credenciar seu quiosque ou restaurante no Caraguá FoodTech, sugerir um prato caiçara tradicional ou tirar dúvidas sobre o projeto acadêmico? Envie sua mensagem!
+            Deseja credenciar seu quiosque ou restaurante no CaráFood, sugerir um prato caiçara tradicional ou tirar dúvidas sobre o projeto acadêmico? Envie sua mensagem!
           </p>
         </div>
       </header>
@@ -286,7 +286,7 @@ export default function ContatoPage() {
                 <div>
                   <strong className="text-stone-900 block">O credenciamento é gratuito?</strong>
                   <p className="text-stone-600">
-                    Sim! O Caraguá FoodTech é um projeto acadêmico de TCC sem fins lucrativos, com taxa zero para os quiosques e pequenos negócios da cidade.
+                    Sim! O CaráFood é um projeto acadêmico de TCC sem fins lucrativos, com taxa zero para os quiosques e pequenos negócios da cidade.
                   </p>
                 </div>
 
@@ -314,7 +314,7 @@ export default function ContatoPage() {
       {/* FOOTER */}
       <footer className="mt-16 bg-[#135136] text-white py-8 px-4 text-center border-t-2 border-[#FFB703]/80">
         <p className="text-xs text-emerald-200">
-          Caraguá FoodTech • Canal Oficial de Atendimento e Credenciamento Comunitário.
+          CaráFood • Canal Oficial de Atendimento e Credenciamento Comunitário.
         </p>
       </footer>
     </div>

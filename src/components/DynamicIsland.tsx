@@ -17,7 +17,7 @@ export const DynamicIsland: React.FC<DynamicIslandProps> = ({
   const [chatMessages, setChatMessages] = useState<Array<{ sender: 'jacquin' | 'user'; text: string; recDish?: string }>>([
     {
       sender: 'jacquin',
-      text: 'Mon ami! Bem-vindo a Caraguá! Tá procurando um camarão crocante, uma isca de badejo pé na areia ou um prato caiçara de verdade hoje?',
+      text: 'Mon ami! Bem-vindo ao CaráFood! Tá procurando um camarão crocante, uma isca de badejo pé na areia ou um prato caiçara de verdade hoje?',
     }
   ]);
   const [inputText, setInputText] = useState('');
@@ -56,7 +56,7 @@ export const DynamicIsland: React.FC<DynamicIslandProps> = ({
         reply = 'Iscas de peixe fresquinhas no fubá mimoso e limão-cravo pé na areia! O Quiosque Sol e Cia em Martim de Sá levou 3º lugar do festival com a porção Boca da Noite!';
         dish = 'Boca da Noite – Iscas no Fubá Mimoso';
       } else if (q.includes('vegano') || q.includes('vegetar') || q.includes('sem carne')) {
-        reply = 'Para comer sem carne e com muito frescor: o Bowl Caiçara do Empório Verde Mar é cheio de vida e ingredientes da Mata Atlântica!';
+        reply = 'Para comer sem carne e com muito frescor no CaráFood: o Bowl Caiçara do Empório Verde Mar é cheio de vida e ingredientes da Mata Atlântica!';
         dish = 'Bowl Caiçara de Quinoa e Shimeji';
         if (onSelectCategory) onSelectCategory('vegano');
       } else if (q.includes('camar') || q.includes('risoto')) {
@@ -72,7 +72,7 @@ export const DynamicIsland: React.FC<DynamicIslandProps> = ({
         dish = 'Pizza Pernil Supremo';
         if (onSelectCategory) onSelectCategory('pizza');
       } else {
-        reply = 'Na orla de Caraguatatuba os quiosques e restaurantes estão com os peixes frescos da safra que chegaram hoje no Camaroeiro. Olha os pratos do feed!';
+        reply = 'Na orla de Caraguatatuba os quiosques e restaurantes estão com os peixes frescos da safra que chegaram hoje no Camaroeiro. Olha os pratos do feed do CaráFood!';
       }
 
       setChatMessages(prev => [...prev, { sender: 'jacquin', text: reply, recDish: dish }]);
@@ -80,22 +80,22 @@ export const DynamicIsland: React.FC<DynamicIslandProps> = ({
   };
 
   return (
-    <aside aria-label="Dynamic Island do Chef Jacquin" className="relative w-full max-w-xl mx-auto px-2 z-20 select-none flex justify-center">
+    <aside aria-label="Dynamic Island do Chef Jacquin CaráFood" className="relative w-full max-w-xl mx-auto px-2 z-20 select-none flex justify-center">
       <motion.div
         layout
         transition={{ type: 'spring', stiffness: 400, damping: 30 }}
         onClick={() => !isExpanded && setIsExpanded(true)}
-        className={`bg-[#0D3825] text-white border-2 border-[#FFB703]/80 shadow-[0_12px_28px_-6px_rgba(0,0,0,0.35)] cursor-pointer overflow-hidden transition-all duration-300 ${
+        className={`bg-[#0D3825] text-white border-2 border-[#FFB703]/85 shadow-[0_14px_32px_-6px_rgba(0,0,0,0.38)] cursor-pointer overflow-hidden transition-all duration-300 ${
           isExpanded
             ? 'w-full p-5 sm:p-6 rounded-[32px]'
-            : 'w-full max-w-md sm:max-w-lg hover:border-[#FFB703] px-4 py-2 rounded-full'
+            : 'w-full max-w-md sm:max-w-lg hover:border-[#FFB703] hover:scale-[1.01] px-4 py-2 rounded-full'
         }`}
       >
         {!isExpanded ? (
           /* ESTADO COMPACTO: JACQUIN RECORTADO VIVO DENTRO DA ILHA */
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">
-              <div className="w-10 h-12 shrink-0 -my-1 drop-shadow-md">
+              <div className="w-10 h-12 shrink-0 -my-1 drop-shadow-md animate-coucou-wave">
                 <img
                   src="/jacquin-praiano.png"
                   alt="Chef Jacquin Praiano"
@@ -105,7 +105,7 @@ export const DynamicIsland: React.FC<DynamicIslandProps> = ({
 
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <span className="font-extrabold text-xs sm:text-sm text-white">Chef Jacquin</span>
+                  <span className="font-extrabold text-xs sm:text-sm text-white">Chef Jacquin • CaráFood</span>
                   <span className="w-2 h-2 rounded-full bg-[#FFB703] animate-pulse" />
                 </div>
                 <p className="text-[11px] sm:text-xs text-amber-200 truncate font-medium">
@@ -129,7 +129,7 @@ export const DynamicIsland: React.FC<DynamicIslandProps> = ({
             {/* Header da Ilha Expandida */}
             <div className="flex items-center justify-between border-b border-white/15 pb-3">
               <div className="flex items-center gap-3.5">
-                <div className="w-16 h-20 shrink-0 -my-2 drop-shadow-md">
+                <div className="w-16 h-20 shrink-0 -my-2 drop-shadow-md animate-coucou-wave">
                   <img
                     src="/jacquin-praiano.png"
                     alt="Chef Jacquin Praiano"
@@ -140,11 +140,11 @@ export const DynamicIsland: React.FC<DynamicIslandProps> = ({
                   <h4 className="font-bold text-sm text-white flex items-center gap-1.5">
                     Chef Jacquin Praiano
                     <span className="text-[10px] text-stone-900 bg-[#FFB703] px-2 py-0.5 rounded-full font-black">
-                      Guia Oficial
+                      CaráFood Oficial
                     </span>
                   </h4>
                   <p className="text-[11px] text-emerald-100 font-medium">
-                    Dicas dos melhores quiosques e peixes frescos de Caraguá
+                    Dicas dos melhores quiosques e peixes frescos de Caraguatatuba
                   </p>
                 </div>
               </div>

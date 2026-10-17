@@ -1,4 +1,4 @@
-# 🌊 Caraguá FoodTech — Plataforma de Inteligência Gastronômica & Roteiro dos 53 Bairros
+# 🌊 CaráFood — Plataforma de Inteligência Gastronômica & Roteiro dos 53 Bairros
 
 [![Next.js 14](https://img.shields.io/badge/Next.js-14.2_App_Router-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![TypeScript 5](https://img.shields.io/badge/TypeScript-5.4_Strict-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
@@ -34,9 +34,9 @@ Este projeto constitui o núcleo prático e experimental da disciplina de **Aná
 
 ## 📌 Resumo Executivo & Proposta de Valor
 
-O **Caraguá FoodTech** é um ecossistema digital desenvolvido para solucionar a fragmentação da informação gastronômica e a invisibilidade de produtores locais em **Caraguatatuba**, a Capital Gastronômica do Litoral Norte paulista. 
+O **CaráFood** é um ecossistema digital desenvolvido para solucionar a fragmentação da informação gastronômica e a invisibilidade de produtores locais em **Caraguatatuba**, a Capital Gastronômica do Litoral Norte paulista. 
 
-Diferente dos agregadores generalistas de mercado (como iFood ou TripAdvisor), que aplicam algoritmos genéricos e sofrem de severa sazonalidade turística, o Caraguá FoodTech fundamenta-se em três pilares exclusivos:
+Diferente dos agregadores generalistas de mercado (como iFood ou TripAdvisor), que aplicam algoritmos genéricos e sofrem de severa sazonalidade turística, o CaráFood fundamenta-se em três pilares exclusivos:
 
 1. **Hiperlocalismo Genuíno (53 Bairros Oficiais):** Mapeamento exaustivo desde os polos turísticos consolidados (*Martim de Sá*, *Prainha*, *Indaiá*) até as comunidades tradicionais da Zona Sul e Encostas (*Tinga*, *Perequê-Mirim*, *Morro do Algodão*, *Rio do Ouro*, *Pegorelli*).
 2. **Cultura & Patrimônio Caiçara:** Integração factual da Maricultura da Cocanha (**AMAPEC** — maior parque produtor de mexilhões do Brasil), do Entreposto de Pesca Artesanal do Camaroeiro (**Colônia Z-8**) e de pratos seculares como o *Azul-Marinho na panela de ferro com banana verde*.
@@ -129,7 +129,7 @@ Em estrito atendimento aos requisitos pedagógicos da disciplina de **Análise e
 > *"O Scrum organiza o trabalho em ciclos temporais fixos e estruturados chamados Sprints com papéis e cerimônias bem definidos (como PO e Daily), enquanto o Kanban gerencia o fluxo de trabalho de forma visual e contínua através de limites estritos de trabalho em andamento (WIP), focando na entrega sob demanda sem iterações pré-fixadas."*
 
 ### 2. O que é Backlog?
-> **Backlog** é o inventário ordenado, dinâmico e priorizado de tudo o que é necessário para construir ou aprimorar o produto — abrangendo novas funcionalidades (requisitos funcionais), correções de bugs, débitos técnicos e melhorias de arquitetura/usabilidade. No Caraguá FoodTech, o Product Backlog é mantido sob responsabilidade do Product Owner e serve de fonte primária para o planejamento das entregas acadêmicas e de engenharia.
+> **Backlog** é o inventário ordenado, dinâmico e priorizado de tudo o que é necessário para construir ou aprimorar o produto — abrangendo novas funcionalidades (requisitos funcionais), correções de bugs, débitos técnicos e melhorias de arquitetura/usabilidade. No CaráFood, o Product Backlog é mantido sob responsabilidade do Product Owner e serve de fonte primária para o planejamento das entregas acadêmicas e de engenharia.
 
 ### 3. O que é Sprint?
 > **Sprint** é um intervalo de tempo predeterminado (geralmente de 1 a 4 semanas), chamado de *time-box*, durante o qual a equipe de desenvolvimento se compromete a transformar um subconjunto selecionado de itens do Backlog (Sprint Backlog) em um incremento de produto funcional, testado e potencialmente publicável (*Definition of Done*). No nosso projeto, cada semana do cronograma docente (S01 a S06) funcionou como uma Sprint de iteração com entregas incrementais.

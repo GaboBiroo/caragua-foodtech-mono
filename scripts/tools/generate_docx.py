@@ -34,7 +34,7 @@ def build_academic_docx():
 
     p_title = doc.add_paragraph()
     p_title.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    r_title = p_title.add_run('\nRELATÓRIO TÉCNICO & MEMORIAL DESCRITIVO DE ENGENHARIA DE SOFTWARE\nPROJETO: CARAGUÁ FOODTECH\n')
+    r_title = p_title.add_run('\nRELATÓRIO TÉCNICO & MEMORIAL DESCRITIVO DE ENGENHARIA DE SOFTWARE\nPROJETO: CARÁFOOD\n')
     r_title.font.name = 'Arial'
     r_title.font.size = Pt(16)
     r_title.font.bold = True
@@ -54,7 +54,7 @@ def build_academic_docx():
 
     p_id = doc.add_paragraph()
     p_id.add_run('Nome do Sistema: ').bold = True
-    p_id.add_run('Caraguá FoodTech — Plataforma de Inteligência Gastronômica & Roteiro dos 53 Bairros de Caraguatatuba\n')
+    p_id.add_run('CaráFood — Plataforma de Inteligência Gastronômica & Roteiro dos 53 Bairros de Caraguatatuba\n')
     p_id.add_run('Docente Responsável: ').bold = True
     p_id.add_run('Prof. Me. Cristiano S. Negrão\n')
     p_id.add_run('Tema / Domínio Principal: ').bold = True

@@ -30,7 +30,7 @@ export default function SobreNosPage() {
           </h1>
 
           <p className="text-base sm:text-lg text-emerald-100 font-medium max-w-2xl leading-relaxed">
-            O Caraguá FoodTech nasceu como Trabalho de Conclusão de Curso (TCC) em Análise e Desenvolvimento de Sistemas no Centro Universitário Módulo, sob a orientação do Prof. Cristiano S. Negrão.
+            O CaráFood nasceu como Trabalho de Conclusão de Curso (TCC) em Análise e Desenvolvimento de Sistemas no Centro Universitário Módulo, sob a orientação do Prof. Cristiano S. Negrão.
           </p>
         </div>
       </header>
@@ -250,7 +250,7 @@ export default function SobreNosPage() {
       {/* FOOTER INSTITUCIONAL */}
       <footer className="mt-16 bg-[#135136] text-white py-8 px-4 text-center border-t-2 border-[#FFB703]/80">
         <p className="text-xs text-emerald-200">
-          Caraguá FoodTech • Desenvolvido com amor caiçara para o TCC ADS do Centro Universitário Módulo.
+          CaráFood • Desenvolvido com amor caiçara para o TCC ADS do Centro Universitário Módulo.
         </p>
       </footer>
     </div>

@@ -14,7 +14,7 @@
 
 ## 👥 1. IDENTIFICAÇÃO INSTITUCIONAL & EQUIPE DO PROJETO
 
-- **Nome do Sistema:** Caraguá FoodTech
+- **Nome do Sistema:** CaráFood
 - **Tema / Domínio Principal:** Inteligência Gastronômica Regional, Turismo Sustentável, Mapeamento Territorial Hiperlocal e Preservação da Cultura Caiçara
 - **Tipo de Aplicação:** Web Responsiva (PWA / Mobile-First), otimizada para Desktop, Tablets e Smartphones
 - **Ambiente de Produção (Deploy Ativo):** [https://foddtech.vercel.app/](https://foddtech.vercel.app/)
@@ -73,7 +73,7 @@ Em atendimento aos requisitos teóricos da semana avaliada, formulamos as respos
 ### Questão 2: O que é Backlog?
 > **Backlog** é o inventário dinâmico, ordenado e centralizado de todas as necessidades, entregas, funcionalidades e melhorias necessárias para a evolução de um produto de software. 
 > 
-> No ciclo de vida do Caraguá FoodTech, distinguimos duas categorias de backlog:
+> No ciclo de vida do CaráFood, distinguimos duas categorias de backlog:
 > 1. **Product Backlog:** A lista macro gerida pelo Product Owner, contendo os épicos e histórias de usuário futuras (ex.: integração de pagamentos via PIX, raspador dinâmico de cardápios, módulo de auditoria sanitária em tempo real).
 > 2. **Sprint Backlog:** O subconjunto de itens extraídos do Product Backlog pela equipe de desenvolvimento durante o *Sprint Planning*, o qual nos comprometemos a codificar, testar e publicar no ciclo corrente (como a entrega da Landing Page e do Feed interativo).
 
@@ -82,7 +82,7 @@ Em atendimento aos requisitos teóricos da semana avaliada, formulamos as respos
 ### Questão 3: O que é Sprint?
 > **Sprint** é um ciclo de tempo pré-determinado e inegociável (*time-box*), tipicamente compreendido entre 1 e 4 semanas, no qual a equipe multidisciplinar transforma os itens acordados no Sprint Backlog em um incremento de produto funcional, testado e de valor comercial ou acadêmico (**Definition of Done**).
 > 
-> No Caraguá FoodTech, operamos em Sprints semanais alinhadas com as entregas da disciplina (S01 a S06), onde cada iteração culminou em código auditável publicado na Vercel e validado por critérios rigorosos de aceitação.
+> No CaráFood, operamos em Sprints semanais alinhadas com as entregas da disciplina (S01 a S06), onde cada iteração culminou em código auditável publicado na Vercel e validado por critérios rigorosos de aceitação.
 
 ---
 
@@ -150,7 +150,7 @@ $$\text{Como } [\text{tipo de usuário}], \text{ quero } [\text{ação/funcional
 
 ## 🗺️ 5. MAPA DE PÁGINAS & FLUXO DE NAVEGAÇÃO (SITE MAP / USER FLOW)
 
-A arquitetura de informação do Caraguá FoodTech foi desenhada segundo o princípio de **Fricção Zero (Zero-Friction UX)**:
+A arquitetura de informação do CaráFood foi desenhada segundo o princípio de **Fricção Zero (Zero-Friction UX)**:
 
 ```mermaid
 flowchart TD

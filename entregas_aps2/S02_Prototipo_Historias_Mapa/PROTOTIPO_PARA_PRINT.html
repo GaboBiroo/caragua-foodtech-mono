@@ -3,473 +3,408 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Protótipo Inicial (S02 / Item 4.1 A2) — CaráFood (Caraguá FoodTech)</title>
+  <title>Visão Panorâmica da Arquitetura de Telas — CaráFood (APS II)</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Inter', sans-serif; }
     .mono { font-family: 'JetBrains Mono', monospace; }
-    .blueprint-grid {
+    .canvas-bg {
       background-color: #f8fafc;
-      background-image: 
-        linear-gradient(to right, #e2e8f0 1px, transparent 1px),
-        linear-gradient(to bottom, #e2e8f0 1px, transparent 1px);
-      background-size: 24px 24px;
+      background-image:
+        radial-gradient(#cbd5e1 1.25px, transparent 1.25px);
+      background-size: 20px 20px;
     }
-    .wire-box {
-      border: 2px dashed #94a3b8;
-      background: rgba(255, 255, 255, 0.92);
-    }
-    .wire-solid {
-      border: 2px solid #475569;
+    .screen-card {
       background: #ffffff;
-      box-shadow: 4px 4px 0px #cbd5e1;
+      border: 2px solid #1e293b;
+      box-shadow: 0 6px 0 #cbd5e1, 0 10px 20px rgba(15, 23, 42, 0.06);
     }
-    .img-placeholder {
-      background: repeating-linear-gradient(
-        -45deg,
-        #f1f5f9,
-        #f1f5f9 10px,
-        #e2e8f0 10px,
-        #e2e8f0 20px
-      );
+    .wire-block {
+      border: 1.5px dashed #94a3b8;
+      background: #f8fafc;
+    }
+    .flow-pill {
+      background: #0f172a;
+      color: #f8fafc;
     }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen">
+<body class="canvas-bg text-slate-800 min-h-screen flex flex-col">
 
-  <!-- BARRA DE CONTROLE (PODE SER OCULTADA COM TECLA H OU CLIQUE PARA TIRAR O PRINT LIMPO) -->
-  <div id="controlBar" class="sticky top-0 z-50 bg-amber-950 text-amber-100 px-6 py-3 flex flex-wrap items-center justify-between gap-4 shadow-lg border-b border-amber-800">
+  <!-- BARRA DE CONTROLE (OCULTAR COM TECLA H ANTES DO PRINT) -->
+  <div id="controlBar" class="bg-slate-900 text-white px-6 py-2 flex items-center justify-between text-xs border-b border-slate-700">
     <div class="flex items-center gap-3">
-      <span class="px-2.5 py-1 rounded bg-amber-500 text-slate-950 font-bold text-xs uppercase tracking-wider">Modo Print S10 / Item 4.1</span>
-      <span class="text-sm font-medium">Escolha qual versão do protótipo inicial você quer fotografar:</span>
+      <span class="px-2 py-0.5 rounded bg-amber-400 text-slate-950 font-extrabold uppercase">Modo Print Panorâmico</span>
+      <span class="text-slate-300">Aperte a tecla <strong class="text-amber-300">H</strong> para ocultar esta barra preta e tirar o print em tela cheia (<code class="text-sky-300">Win + Shift + S</code>).</span>
     </div>
-    <div class="flex items-center gap-2">
-      <button onclick="switchTab('wireframe')" id="btn-wireframe" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-900 shadow">
-        1. Wireframe Estrutural S02 (Figma/Balsamiq)
-      </button>
-      <button onclick="switchTab('v01')" id="btn-v01" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-amber-900/70 text-amber-200 hover:bg-amber-800">
-        2. 1ª Versão em Código (Commit 9ab8144 - Set/2026)
-      </button>
-      <button onclick="hideControls()" class="ml-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-500 text-slate-950 hover:bg-emerald-400">
-        Ocultar esta barra para Print (Tecla H)
-      </button>
-    </div>
+    <button onclick="toggleBar()" class="px-3 py-1 rounded bg-emerald-500 text-slate-950 font-bold hover:bg-emerald-400">
+      Ocultar Barra (Tecla H)
+    </button>
   </div>
 
-  <!-- ========================================================================= -->
-  <!-- MODO 1: WIREFRAME ESTRUTURAL INICIAL (SEMANA 02 - BAIXA/MÉDIA FIDELIDADE) -->
-  <!-- ========================================================================= -->
-  <div id="view-wireframe" class="blueprint-grid min-h-screen p-8">
-    <div class="max-w-7xl mx-auto space-y-6">
+  <!-- CANVAS PANORÂMICO 16:9 (CABE INTEIRO EM UMA TELA SEM SCROLL) -->
+  <main class="flex-1 max-w-[1600px] w-full mx-auto px-6 py-4 flex flex-col justify-between gap-3">
 
-      <!-- Cabeçalho do Quadro de Prototipação (Estilo Figma Canvas) -->
-      <div class="flex flex-wrap items-center justify-between gap-4 bg-white border-2 border-slate-700 px-5 py-3 rounded-lg shadow-sm">
-        <div class="flex items-center gap-3">
-          <span class="mono text-xs font-bold px-2.5 py-1 bg-slate-800 text-white rounded">FIGMA / CANVAS S02</span>
-          <div>
-            <h1 class="text-base font-extrabold text-slate-900">Protótipo Estrutural v0.1 — CaráFood (Roteiro Gastronômico dos 53 Bairros)</h1>
-            <p class="text-xs text-slate-500">Disciplina APS II • Prof. Me. Cristiano S. Negrão • Grupo: Gabriel Rodrigues, Matheus Vicente e Pedro Simone</p>
+    <!-- 1. CABEÇALHO DO DIAGRAMA ARQUITETURAL -->
+    <header class="bg-white border-2 border-slate-900 rounded-xl px-5 py-2.5 flex items-center justify-between shadow-sm">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-lg bg-slate-900 text-white flex items-center justify-center font-black text-base">🌊</div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-base font-black text-slate-900 tracking-tight uppercase">
+              Arquitetura Panorâmica de Telas & Fluxo de Navegação — CaráFood (Caraguá FoodTech)
+            </h1>
+            <span class="mono text-[10px] px-2 py-0.5 bg-sky-100 text-sky-900 border border-sky-300 rounded font-bold">
+              APS II • S01–S10 (Base A2)
+            </span>
           </div>
+          <p class="text-[11px] text-slate-500">
+            Centro Universitário Módulo • Prof. Me. Cristiano S. Negrão • Grupo: Gabriel Rodrigues, Matheus Vicente e Pedro Simone • Deploy: <span class="mono font-semibold text-slate-700">https://foddtech.vercel.app/</span>
+          </p>
         </div>
-        <div class="flex items-center gap-2 mono text-xs">
-          <span class="px-2.5 py-1 bg-sky-50 border border-sky-300 text-sky-800 rounded font-semibold">6 Telas Mapeadas</span>
-          <span class="px-2.5 py-1 bg-amber-50 border border-amber-300 text-amber-800 rounded font-semibold">HU01–HU06 Vinculadas</span>
+      </div>
+
+      <!-- Legenda Rápida da Arquitetura -->
+      <div class="flex items-center gap-2 mono text-[10px]">
+        <span class="px-2.5 py-1 rounded bg-emerald-50 border border-emerald-300 text-emerald-900 font-bold">6 Rotas Implementadas</span>
+        <span class="px-2.5 py-1 rounded bg-amber-50 border border-amber-300 text-amber-900 font-bold">53 Bairros (Norte • Centro • Sul)</span>
+        <span class="px-2.5 py-1 rounded bg-indigo-50 border border-indigo-300 text-indigo-900 font-bold">Next.js App Router + TypeScript</span>
+      </div>
+    </header>
+
+    <!-- 2. CAMADA GLOBAL DE NAVEGAÇÃO (HUB CENTRAL QUE CONECTA TODAS AS TELAS) -->
+    <section class="bg-slate-900 text-white rounded-xl px-5 py-2.5 border-2 border-slate-900 shadow-sm">
+      <div class="flex items-center justify-between gap-4">
+        <div class="flex items-center gap-2">
+          <span class="mono text-[10px] font-bold px-2 py-0.5 rounded bg-sky-500 text-slate-950 uppercase">Camada Global (S06)</span>
+          <span class="text-xs font-bold">Sticky Navbar (<code class="mono text-amber-300">src/components/Navbar.tsx</code>) — Presente em 100% das telas:</span>
+        </div>
+        <div class="flex items-center gap-2 mono text-[11px]">
+          <span class="px-2.5 py-1 rounded bg-slate-800 border border-slate-600 text-sky-300">🌊 Logo ➔ <strong>/</strong></span>
+          <span>───►</span>
+          <span class="px-2.5 py-1 rounded bg-slate-800 border border-slate-600">Explorar ➔ <strong>/</strong></span>
+          <span>───►</span>
+          <span class="px-2.5 py-1 rounded bg-slate-800 border border-slate-600">Ranking ➔ <strong>/rankings</strong></span>
+          <span>───►</span>
+          <span class="px-2.5 py-1 rounded bg-slate-800 border border-slate-600">Sobre ➔ <strong>/sobre</strong></span>
+          <span>───►</span>
+          <span class="px-2.5 py-1 rounded bg-slate-800 border border-slate-600">Contato ➔ <strong>/contato</strong></span>
+          <span>───►</span>
+          <span class="px-2.5 py-1 rounded bg-amber-400 text-slate-950 font-extrabold">Entrar ➔ <strong>/login</strong></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. GRADE PANORÂMICA DAS 6 TELAS DO SISTEMA (2 LINHAS x 3 COLUNAS COM SETAS DE FLUXO) -->
+    <section class="grid grid-cols-3 gap-4">
+
+      <!-- ==================== TELA 01: HOME / LANDING PAGE ==================== -->
+      <div class="screen-card rounded-xl overflow-hidden flex flex-col">
+        <div class="bg-slate-900 text-white px-3.5 py-1.5 flex items-center justify-between mono text-[11px]">
+          <div class="flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span class="font-bold">TELA 01 • Home / Landing Page (S03)</span>
+          </div>
+          <span class="px-1.5 py-0.5 bg-sky-500/20 text-sky-300 rounded font-bold">Rota: /</span>
+        </div>
+        <div class="p-3 space-y-2 flex-1 flex flex-col justify-between text-[11px]">
+          <!-- Mini Wireframe Interno -->
+          <div class="space-y-2">
+            <div class="wire-block p-2 rounded flex items-center justify-between">
+              <div>
+                <span class="mono text-[9px] font-bold uppercase text-sky-700 block">[Hero Institucional + Identidade]</span>
+                <p class="font-extrabold text-slate-900 text-xs">CaráFood 🌊 Roteiro dos 53 Bairros</p>
+                <p class="text-[10px] text-slate-500">Valorização AMAPEC (Cocanha) & Colônia Z-8</p>
+              </div>
+              <div class="px-2 py-1 bg-slate-900 text-white mono text-[9px] rounded font-bold shrink-0">
+                [CTA Explorar ➔]
+              </div>
+            </div>
+
+            <div class="border border-amber-400 bg-amber-50/70 p-2 rounded">
+              <div class="flex justify-between items-center mono text-[9px] font-bold text-amber-900 mb-1">
+                <span>[Carrossel Destaques da Maré]</span>
+                <span>Top 3 Campeões</span>
+              </div>
+              <div class="grid grid-cols-3 gap-1.5 mono text-[9px] text-center">
+                <div class="bg-white border border-amber-300 rounded p-1 font-semibold">🦪 Cocanha 4.9★</div>
+                <div class="bg-white border border-amber-300 rounded p-1 font-semibold">🐟 Camaroeiro 4.8★</div>
+                <div class="bg-white border border-amber-300 rounded p-1 font-semibold">🦐 Indaiá 4.9★</div>
+              </div>
+            </div>
+
+            <div class="border border-sky-400 bg-sky-50/60 p-2 rounded">
+              <span class="mono text-[9px] font-bold text-sky-900 block mb-1">
+                [HU01] Filtro Geográfico em 2 Níveis (Sem Poluição Visual):
+              </span>
+              <div class="flex gap-1 mono text-[9px]">
+                <span class="px-1.5 py-0.5 bg-slate-900 text-white rounded font-bold">Todos (53)</span>
+                <span class="px-1.5 py-0.5 bg-white border border-slate-300 rounded">Norte (14)</span>
+                <span class="px-1.5 py-0.5 bg-white border border-slate-300 rounded">Centro (21)</span>
+                <span class="px-1.5 py-0.5 bg-white border border-slate-300 rounded">Sul (18)</span>
+                <span class="ml-auto px-1.5 py-0.5 bg-amber-200 text-amber-950 rounded font-bold">[Gaveta 53 Bairros]</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-1.5 border-t border-slate-200 flex items-center justify-between mono text-[10px] text-slate-600">
+            <span><strong>Saídas:</strong> Filtra Lista ou abre <code class="text-sky-700 font-bold">/prato/[id]</code></span>
+            <span class="px-1.5 py-0.5 bg-slate-100 rounded font-bold text-slate-800">HU01 • HU06</span>
+          </div>
         </div>
       </div>
 
-      <!-- Grid Principal com 2 Telas Lado a Lado + Fluxo Lateral -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-
-        <!-- TELA 1: WIREFRAME DA HOME + CATÁLOGO + FILTRO DE 53 BAIRROS (7 COLUNAS) -->
-        <div class="lg:col-span-7 wire-solid rounded-xl overflow-hidden">
-          <!-- Barra de Janela do Navegador -->
-          <div class="bg-slate-800 text-slate-200 px-4 py-2.5 flex items-center justify-between text-xs mono">
-            <div class="flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-rose-400 inline-block"></span>
-              <span class="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block"></span>
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block"></span>
-              <span class="ml-2 text-slate-300 font-semibold">[TELA 01] Home / Catálogo Principal & Filtro Territorial</span>
-            </div>
-            <span class="bg-slate-700 px-2 py-0.5 rounded text-[11px]">Rota: /</span>
+      <!-- ==================== TELA 02: LISTA PRINCIPAL & RANKING ==================== -->
+      <div class="screen-card rounded-xl overflow-hidden flex flex-col">
+        <div class="bg-slate-900 text-white px-3.5 py-1.5 flex items-center justify-between mono text-[11px]">
+          <div class="flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span class="font-bold">TELA 02 • Lista Principal & Ranking (S08)</span>
           </div>
-
-          <div class="p-5 space-y-4">
-            <!-- Wireframe Navbar Global -->
-            <div class="wire-box p-3 rounded-lg flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <div class="w-7 h-7 border-2 border-slate-700 rounded flex items-center justify-center font-bold text-xs">🌊</div>
-                <span class="font-extrabold text-sm text-slate-900">CaráFood</span>
-                <span class="mono text-[10px] bg-slate-200 px-1.5 py-0.5 rounded text-slate-600">Sticky Navbar (S06)</span>
-              </div>
-              <div class="flex items-center gap-2 mono text-[11px]">
-                <span class="px-2 py-1 bg-slate-800 text-white rounded">[Explorar]</span>
-                <span class="px-2 py-1 border border-slate-400 rounded">[Ranking]</span>
-                <span class="px-2 py-1 border border-slate-400 rounded">[Sobre]</span>
-                <span class="px-2 py-1 border border-slate-400 rounded">[Contato]</span>
-                <span class="px-2.5 py-1 border-2 border-slate-800 font-bold rounded bg-amber-100">[Login]</span>
-              </div>
-            </div>
-
-            <!-- Wireframe Hero Banner -->
-            <div class="wire-box p-4 rounded-lg bg-slate-50 relative">
-              <div class="flex items-start justify-between gap-4">
-                <div class="space-y-2 max-w-md">
-                  <span class="mono text-[10px] font-bold uppercase px-2 py-0.5 bg-sky-100 text-sky-800 border border-sky-300 rounded">
-                    [HERO S03] Proposta de Valor + Identidade Caiçara
-                  </span>
-                  <h2 class="text-base font-extrabold text-slate-900">
-                    Descubra a gastronomia autêntica dos 53 bairros de Caraguatatuba
-                  </h2>
-                  <p class="text-xs text-slate-600">
-                    Curadoria com nota ponderada (Google + TripAdvisor + Auditoria Técnica) e origem local (AMAPEC Cocanha & Colônia Z-8).
-                  </p>
-                  <div class="flex gap-2 pt-1 mono text-xs">
-                    <span class="px-3 py-1.5 bg-slate-800 text-white font-bold rounded">[CTA: Explorar Pratos]</span>
-                    <span class="px-3 py-1.5 border border-slate-500 rounded">[CTA: Conhecer Projeto]</span>
-                  </div>
-                </div>
-                <div class="w-28 h-24 img-placeholder border-2 border-dashed border-slate-400 rounded flex flex-col items-center justify-center text-center p-2 shrink-0">
-                  <span class="mono text-[10px] font-bold text-slate-600">[ILUSTRAÇÃO]</span>
-                  <span class="mono text-[9px] text-slate-500">Mascote Chef / Maré</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Wireframe Barra de Filtro de Regiões (Solução para os 53 Bairros - HU01) -->
-            <div class="border-2 border-sky-600 bg-sky-50/50 p-3.5 rounded-lg space-y-2.5">
-              <div class="flex items-center justify-between">
-                <span class="mono text-[11px] font-bold text-sky-900">
-                  ★ [HU01] FILTRO PROGRESSIVO DE REGIÕES (Evita poluição de 53 botões soltos)
-                </span>
-                <span class="mono text-[10px] bg-sky-200 text-sky-900 px-2 py-0.5 rounded font-bold">2 Cliques</span>
-              </div>
-              <div class="flex flex-wrap items-center gap-1.5 mono text-xs">
-                <span class="px-2.5 py-1 bg-slate-900 text-white rounded font-bold">[Todos (53)]</span>
-                <span class="px-2.5 py-1 bg-white border border-slate-400 rounded">[Região Norte (14)]</span>
-                <span class="px-2.5 py-1 bg-white border border-slate-400 rounded">[Região Centro (21)]</span>
-                <span class="px-2.5 py-1 bg-white border border-slate-400 rounded">[Região Sul (18)]</span>
-                <span class="ml-auto px-2.5 py-1 bg-amber-100 border-2 border-amber-600 text-amber-950 rounded font-bold">
-                  [🗺️ Gaveta: Buscar nos 53 Bairros ▾]
-                </span>
-              </div>
-              <div class="bg-white border border-slate-300 rounded px-3 py-1.5 text-xs text-slate-400 mono flex items-center justify-between">
-                <span>🔍 [Input Busca Instantânea]: Buscar prato, ingrediente (ex: mexilhão) ou bairro...</span>
-                <span class="text-[10px] text-slate-500">Ordenar: [Super Nota ▾]</span>
-              </div>
-            </div>
-
-            <!-- Wireframe Grid de Cards de Pratos (S08) -->
-            <div>
-              <div class="flex items-center justify-between mb-2">
-                <span class="mono text-xs font-bold text-slate-700">[LISTA PRINCIPAL S08] Grid de Cards Padronizados (3 Colunas)</span>
-                <span class="mono text-[10px] text-slate-500">Clique no Card ➔ Abre Rota /prato/[id]</span>
-              </div>
-              <div class="grid grid-cols-3 gap-3">
-                <!-- Card Wireframe 1 -->
-                <div class="border-2 border-slate-600 rounded-lg p-2.5 bg-white space-y-2">
-                  <div class="h-20 img-placeholder border border-slate-400 rounded flex flex-col items-center justify-center mono text-[10px] text-slate-600">
-                    <span>[FOTO 4:3]</span>
-                    <span class="font-bold">Mexilhão na Casca</span>
-                  </div>
-                  <div class="flex justify-between items-center mono text-[10px]">
-                    <span class="px-1.5 py-0.5 bg-emerald-100 text-emerald-900 rounded font-bold">📍 Cocanha (Norte)</span>
-                    <span class="px-1.5 py-0.5 bg-amber-200 text-amber-950 rounded font-bold">★ 4.9</span>
-                  </div>
-                  <p class="text-xs font-bold text-slate-900 leading-tight">Marisco ao Vinho Branco AMAPEC</p>
-                  <p class="text-[11px] text-slate-500 leading-tight">Quiosque Seu Chico • R$ 68,00</p>
-                  <div class="pt-1 border-t border-dashed border-slate-300 mono text-[10px] text-sky-700 font-bold text-center">
-                    [Ver Ficha Técnica ➔]
-                  </div>
-                </div>
-
-                <!-- Card Wireframe 2 -->
-                <div class="border-2 border-slate-400 rounded-lg p-2.5 bg-white space-y-2">
-                  <div class="h-20 img-placeholder border border-slate-400 rounded flex flex-col items-center justify-center mono text-[10px] text-slate-600">
-                    <span>[FOTO 4:3]</span>
-                    <span class="font-bold">Azul Marinho</span>
-                  </div>
-                  <div class="flex justify-between items-center mono text-[10px]">
-                    <span class="px-1.5 py-0.5 bg-sky-100 text-sky-900 rounded font-bold">📍 Camaroeiro</span>
-                    <span class="px-1.5 py-0.5 bg-amber-200 text-amber-950 rounded font-bold">★ 4.8</span>
-                  </div>
-                  <p class="text-xs font-bold text-slate-900 leading-tight">Peixe com Banana Verde Z-8</p>
-                  <p class="text-[11px] text-slate-500 leading-tight">Tradição Caiçara • R$ 74,00</p>
-                  <div class="pt-1 border-t border-dashed border-slate-300 mono text-[10px] text-sky-700 font-bold text-center">
-                    [Ver Ficha Técnica ➔]
-                  </div>
-                </div>
-
-                <!-- Card Wireframe 3 -->
-                <div class="border-2 border-slate-400 rounded-lg p-2.5 bg-white space-y-2">
-                  <div class="h-20 img-placeholder border border-slate-400 rounded flex flex-col items-center justify-center mono text-[10px] text-slate-600">
-                    <span>[FOTO 4:3]</span>
-                    <span class="font-bold">Caldeirada Caiçara</span>
-                  </div>
-                  <div class="flex justify-between items-center mono text-[10px]">
-                    <span class="px-1.5 py-0.5 bg-purple-100 text-purple-900 rounded font-bold">📍 Indaiá (Centro)</span>
-                    <span class="px-1.5 py-0.5 bg-amber-200 text-amber-950 rounded font-bold">★ 4.9</span>
-                  </div>
-                  <p class="text-xs font-bold text-slate-900 leading-tight">Caldeirada Frutos do Mar</p>
-                  <p class="text-[11px] text-slate-500 leading-tight">Festival Caraguá a Gosto • R$ 118</p>
-                  <div class="pt-1 border-t border-dashed border-slate-300 mono text-[10px] text-sky-700 font-bold text-center">
-                    [Ver Ficha Técnica ➔]
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <span class="px-1.5 py-0.5 bg-sky-500/20 text-sky-300 rounded font-bold">Rotas: / e /rankings</span>
         </div>
-
-        <!-- COLUNA DIREITA: TELA DE DETALHE (S09) + MAPA DAS DEMAIS PÁGINAS (5 COLUNAS) -->
-        <div class="lg:col-span-5 space-y-5">
-
-          <!-- TELA 2: WIREFRAME PÁGINA DE DETALHE (/prato/[id]) -->
-          <div class="wire-solid rounded-xl overflow-hidden">
-            <div class="bg-slate-800 text-slate-200 px-4 py-2 flex items-center justify-between text-xs mono">
-              <span class="font-semibold">[TELA 02] Página de Detalhe do Prato (S09)</span>
-              <span class="bg-slate-700 px-2 py-0.5 rounded text-[11px]">Rota: /prato/[id]</span>
-            </div>
-            <div class="p-4 space-y-3">
-              <div class="mono text-[11px] text-slate-600 border-b pb-1.5 flex justify-between">
-                <span>[← Voltar ao Catálogo]</span>
-                <span class="font-bold text-emerald-800">[Selo Origem: AMAPEC Cocanha - HU06]</span>
+        <div class="p-3 space-y-2 flex-1 flex flex-col justify-between text-[11px]">
+          <div class="space-y-2">
+            <!-- Barra de Busca e Categorias -->
+            <div class="wire-block p-2 rounded space-y-1.5">
+              <div class="bg-white border border-slate-300 rounded px-2 py-1 mono text-[9px] text-slate-500 flex justify-between">
+                <span>🔍 Buscar por prato, ingrediente ou restaurante...</span>
+                <span class="font-bold text-slate-700">Ordenar: [Super Nota ▾]</span>
               </div>
-              <div class="grid grid-cols-12 gap-3">
-                <div class="col-span-5 h-28 img-placeholder border-2 border-dashed border-slate-400 rounded flex flex-col items-center justify-center p-2 text-center mono text-[10px]">
-                  <span class="font-bold">[FOTO HD PRATO]</span>
-                  <span>+ Tags de Insumos</span>
+              <div class="flex gap-1 mono text-[9px] flex-wrap">
+                <span class="px-1.5 py-0.5 bg-slate-800 text-white rounded">🏆 Festival Caraguá a Gosto</span>
+                <span class="px-1.5 py-0.5 bg-white border border-slate-300 rounded">🦪 Frutos do Mar</span>
+                <span class="px-1.5 py-0.5 bg-white border border-slate-300 rounded">🐟 Caiçara Raiz</span>
+                <span class="px-1.5 py-0.5 bg-white border border-slate-300 rounded">🏖️ Quiosques</span>
+              </div>
+            </div>
+
+            <!-- Grid de Cards Padronizados -->
+            <div class="grid grid-cols-2 gap-2">
+              <div class="border border-slate-300 rounded p-2 bg-white space-y-1">
+                <div class="flex justify-between mono text-[9px]">
+                  <span class="px-1 bg-emerald-100 text-emerald-900 rounded font-bold">📍 Cocanha</span>
+                  <span class="px-1 bg-amber-200 text-amber-950 rounded font-bold">★ 4.92</span>
                 </div>
-                <div class="col-span-7 space-y-1.5">
-                  <span class="mono text-[10px] px-2 py-0.5 bg-amber-100 border border-amber-400 rounded font-bold">
-                    [HU02] Decomposição da Super Nota: 4.9 ★
-                  </span>
-                  <div class="mono text-[10px] bg-slate-50 p-2 rounded border border-slate-300 space-y-0.5">
-                    <div>• Google Maps (50%): <strong>4.9</strong></div>
-                    <div>• TripAdvisor (30%): <strong>4.8</strong></div>
-                    <div>• Auditoria Chef (20%): <strong>5.0</strong></div>
-                  </div>
-                  <p class="text-[11px] text-slate-600 italic">"Parecer técnico sobre ponto de cocção e frescor..."</p>
+                <p class="font-bold text-slate-900 text-[11px] truncate">Mexilhão ao Vinho AMAPEC</p>
+                <p class="text-[10px] text-slate-500">Quiosque Seu Chico • <strong>R$ 68</strong></p>
+                <div class="mono text-[9px] text-sky-700 font-bold pt-0.5">[Clicar ➔ /prato/1]</div>
+              </div>
+              <div class="border border-slate-300 rounded p-2 bg-white space-y-1">
+                <div class="flex justify-between mono text-[9px]">
+                  <span class="px-1 bg-sky-100 text-sky-900 rounded font-bold">📍 Camaroeiro</span>
+                  <span class="px-1 bg-amber-200 text-amber-950 rounded font-bold">★ 4.88</span>
                 </div>
-              </div>
-              <div class="grid grid-cols-2 gap-2 pt-1 mono text-[11px]">
-                <div class="p-2 bg-emerald-100 border-2 border-emerald-700 text-emerald-950 rounded text-center font-bold">
-                  [HU03: Chamar WhatsApp]
-                </div>
-                <div class="p-2 bg-sky-100 border-2 border-sky-700 text-sky-950 rounded text-center font-bold">
-                  [HU03: Traçar Rota Maps]
-                </div>
+                <p class="font-bold text-slate-900 text-[11px] truncate">Azul Marinho Tradicional Z-8</p>
+                <p class="text-[10px] text-slate-500">Canto Caiçara • <strong>R$ 74</strong></p>
+                <div class="mono text-[9px] text-sky-700 font-bold pt-0.5">[Clicar ➔ /prato/2]</div>
               </div>
             </div>
           </div>
 
-          <!-- TELAS 3, 4, 5 E 6: RESUMO ESTRUTURAL DO MAPA DE NAVEGAÇÃO -->
-          <div class="wire-solid rounded-xl overflow-hidden">
-            <div class="bg-slate-800 text-slate-200 px-4 py-2 flex items-center justify-between text-xs mono">
-              <span class="font-semibold">[MAPA DE TELAS COMPLEMENTARES — S04, S05, S07, S08]</span>
-              <span class="text-amber-300">Fluxo Completo</span>
-            </div>
-            <div class="p-4 grid grid-cols-2 gap-3 text-xs">
-              <div class="wire-box p-2.5 rounded space-y-1">
-                <span class="mono text-[10px] font-bold bg-slate-200 px-1.5 py-0.5 rounded">Rota: /sobre (S04)</span>
-                <p class="font-bold text-slate-900">Página Sobre Nós</p>
-                <p class="text-[11px] text-slate-600">História do projeto, defesa da AMAPEC/Z-8, cálculo da Super Nota e equipe.</p>
-              </div>
-              <div class="wire-box p-2.5 rounded space-y-1">
-                <span class="mono text-[10px] font-bold bg-slate-200 px-1.5 py-0.5 rounded">Rota: /contato (S05)</span>
-                <p class="font-bold text-slate-900">Contato / Credenciamento</p>
-                <p class="text-[11px] text-slate-600">[HU04] Formulário validado para indicação e parceria de restaurantes.</p>
-              </div>
-              <div class="wire-box p-2.5 rounded space-y-1">
-                <span class="mono text-[10px] font-bold bg-slate-200 px-1.5 py-0.5 rounded">Rota: /login (S07)</span>
-                <p class="font-bold text-slate-900">Tela de Login Parceiro</p>
-                <p class="text-[11px] text-slate-600">[HU04] Acesso para Restaurantes e Curadores com modo demonstração.</p>
-              </div>
-              <div class="wire-box p-2.5 rounded space-y-1">
-                <span class="mono text-[10px] font-bold bg-slate-200 px-1.5 py-0.5 rounded">Rota: /rankings (S08)</span>
-                <p class="font-bold text-slate-900">Ranking Oficial</p>
-                <p class="text-[11px] text-slate-600">[HU05] Tabela comparativa filtrada por categoria e Super Nota.</p>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========================================================================= -->
-  <!-- MODO 2: PRIMEIRA VERSÃO EM CÓDIGO (COMMIT 9ab8144 - SETEMBRO/2026)        -->
-  <!-- ========================================================================= -->
-  <div id="view-v01" class="hidden bg-slate-950 text-slate-100 min-h-screen flex">
-    <!-- Sidebar Original do Commit 9ab8144 -->
-    <aside class="w-64 bg-slate-900 border-r border-slate-800 p-6 flex flex-col justify-between shrink-0">
-      <div>
-        <div class="flex items-center gap-3 mb-8">
-          <div class="w-9 h-9 rounded-lg bg-sky-500/20 border border-sky-500/40 flex items-center justify-center text-lg">🌊</div>
-          <div>
-            <h1 class="font-bold text-sm text-white">Caraguá FoodTech</h1>
-            <span class="text-[11px] text-sky-400 font-mono">Protótipo v0.1 (Alpha)</span>
-          </div>
-        </div>
-        <nav class="space-y-2 text-sm">
-          <div class="px-3 py-2.5 rounded-lg bg-sky-500/15 text-sky-400 font-semibold border border-sky-500/30">
-            📊 Visão Geral (Home)
-          </div>
-          <div class="px-3 py-2.5 rounded-lg text-slate-400">
-            🏆 Rankings & Notas
-          </div>
-          <div class="px-3 py-2.5 rounded-lg text-slate-400">
-            🗺️ Malha de Bairros
-          </div>
-          <div class="px-3 py-2.5 rounded-lg text-slate-400">
-            🛡️ Moderação & Curadoria
-          </div>
-          <div class="px-3 py-2.5 rounded-lg text-slate-400">
-            🔐 Login de Parceiro
-          </div>
-        </nav>
-      </div>
-      <div class="p-3 bg-slate-950 rounded-lg border border-slate-800 text-xs text-slate-400">
-        <p class="font-semibold text-slate-300">APS II — Módulo</p>
-        <p class="text-[11px] mt-0.5">Primeira Iteração Funcional</p>
-      </div>
-    </aside>
-
-    <!-- Conteúdo Principal Original do Commit 9ab8144 -->
-    <main class="flex-1">
-      <header class="h-16 border-b border-slate-800 px-8 flex items-center justify-between bg-slate-900/50">
-        <h2 class="text-lg font-semibold text-white">Visão Geral do Ecossistema Gastronômico — Caraguatatuba</h2>
-        <span class="text-xs px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-          Protótipo Inicial S02/S03
-        </span>
-      </header>
-
-      <div class="p-8 space-y-8 max-w-6xl mx-auto">
-        <div class="grid grid-cols-4 gap-6">
-          <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
-            <div class="flex justify-between items-start mb-3">
-              <span class="text-2xl">📍</span>
-              <span class="text-[11px] px-2 py-0.5 rounded bg-sky-500/10 text-sky-400 font-medium">53 Bairros</span>
-            </div>
-            <p class="text-2xl font-bold text-white">48</p>
-            <p class="text-xs font-medium text-slate-300 mt-1">Restaurantes em Caraguá</p>
-            <p class="text-[11px] text-slate-500 mt-0.5">Mapeados nas regiões Norte, Centro e Sul</p>
-          </div>
-          <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
-            <div class="flex justify-between items-start mb-3">
-              <span class="text-2xl">🍲</span>
-              <span class="text-[11px] px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 font-medium">Catálogo Ativo</span>
-            </div>
-            <p class="text-2xl font-bold text-white">1.240</p>
-            <p class="text-xs font-medium text-slate-300 mt-1">Itens de Cardápio</p>
-            <p class="text-[11px] text-slate-500 mt-0.5">Pratos caiçaras e Festival Caraguá a Gosto</p>
-          </div>
-          <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
-            <div class="flex justify-between items-start mb-3">
-              <span class="text-2xl">💬</span>
-              <span class="text-[11px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-medium">Super Nota</span>
-            </div>
-            <p class="text-2xl font-bold text-white">3.890</p>
-            <p class="text-xs font-medium text-slate-300 mt-1">Avaliações Auditadas</p>
-            <p class="text-[11px] text-slate-500 mt-0.5">Google (50%) + TripAdvisor (30%) + Chef (20%)</p>
-          </div>
-          <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
-            <div class="flex justify-between items-start mb-3">
-              <span class="text-2xl">🦪</span>
-              <span class="text-[11px] px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 font-medium">Origem Local</span>
-            </div>
-            <p class="text-2xl font-bold text-white">100%</p>
-            <p class="text-xs font-medium text-slate-300 mt-1">Rastreabilidade Caiçara</p>
-            <p class="text-[11px] text-slate-500 mt-0.5">AMAPEC (Cocanha) & Colônia Z-8 (Camaroeiro)</p>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-8">
-          <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-            <h3 class="text-base font-semibold text-white mb-1">Estrutura Inicial de Descoberta e Curadoria</h3>
-            <p class="text-xs text-slate-400 mb-5">Primeiro protótipo de validação dos critérios de recomendação de pratos.</p>
-            <div class="space-y-3 text-xs">
-              <div class="p-3 bg-slate-950 rounded-lg border border-slate-800 flex gap-3">
-                <span class="w-6 h-6 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold">1</span>
-                <div>
-                  <p class="font-semibold text-white">Filtro Geográfico por Região e Bairro</p>
-                  <p class="text-slate-400">Separação dos 53 bairros entre Norte, Centro e Sul.</p>
-                </div>
-              </div>
-              <div class="p-3 bg-slate-950 rounded-lg border border-slate-800 flex gap-3">
-                <span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">2</span>
-                <div>
-                  <p class="font-semibold text-white">Cálculo Transparente da Super Nota</p>
-                  <p class="text-slate-400">Combinação ponderada evitando notas falsas ou desatualizadas.</p>
-                </div>
-              </div>
-              <div class="p-3 bg-slate-950 rounded-lg border border-slate-800 flex gap-3">
-                <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">3</span>
-                <div>
-                  <p class="font-semibold text-white">Ficha Técnica e Rota Direta</p>
-                  <p class="text-slate-400">Integração com Google Maps e WhatsApp do restaurante.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-            <h3 class="text-base font-semibold text-white mb-1">Primeiros Polos Gastronômicos Mapeados</h3>
-            <p class="text-xs text-slate-400 mb-5">Base inicial antes da expansão para a gaveta completa dos 53 bairros.</p>
-            <div class="grid grid-cols-2 gap-3 text-sm">
-              <div class="p-3.5 bg-slate-950 rounded-lg border border-slate-800">
-                <span class="text-xs font-semibold text-sky-400 block">Massaguaçu / Cocanha (Norte)</span>
-                <span class="text-slate-200 font-medium">14 Estabelecimentos</span>
-              </div>
-              <div class="p-3.5 bg-slate-950 rounded-lg border border-slate-800">
-                <span class="text-xs font-semibold text-sky-400 block">Centro / Camaroeiro</span>
-                <span class="text-slate-200 font-medium">18 Estabelecimentos</span>
-              </div>
-              <div class="p-3.5 bg-slate-950 rounded-lg border border-slate-800">
-                <span class="text-xs font-semibold text-sky-400 block">Martim de Sá / Prainha</span>
-                <span class="text-slate-200 font-medium">9 Estabelecimentos</span>
-              </div>
-              <div class="p-3.5 bg-slate-950 rounded-lg border border-slate-800">
-                <span class="text-xs font-semibold text-sky-400 block">Indaiá / Porto Novo (Sul)</span>
-                <span class="text-slate-200 font-medium">7 Estabelecimentos</span>
-              </div>
-            </div>
+          <div class="pt-1.5 border-t border-slate-200 flex items-center justify-between mono text-[10px] text-slate-600">
+            <span><strong>Ação Master-Detail:</strong> Card ➔ <code class="text-sky-700 font-bold">/prato/[id]</code></span>
+            <span class="px-1.5 py-0.5 bg-slate-100 rounded font-bold text-slate-800">HU01 • HU05</span>
           </div>
         </div>
       </div>
-    </main>
-  </div>
+
+      <!-- ==================== TELA 03: PÁGINA DE DETALHE DO PRATO ==================== -->
+      <div class="screen-card rounded-xl overflow-hidden flex flex-col">
+        <div class="bg-slate-900 text-white px-3.5 py-1.5 flex items-center justify-between mono text-[11px]">
+          <div class="flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span class="font-bold">TELA 03 • Página de Detalhe do Item (S09)</span>
+          </div>
+          <span class="px-1.5 py-0.5 bg-amber-400 text-slate-950 rounded font-extrabold">Rota: /prato/[id]</span>
+        </div>
+        <div class="p-3 space-y-2 flex-1 flex flex-col justify-between text-[11px]">
+          <div class="space-y-2">
+            <div class="flex justify-between items-center mono text-[9px] bg-slate-100 px-2 py-1 rounded">
+              <span class="font-bold text-slate-700">[← Voltar ao Catálogo (/)]</span>
+              <span class="text-emerald-800 font-bold">✓ Selo Rastreabilidade AMAPEC / Z-8</span>
+            </div>
+
+            <!-- Quadro da Super Nota Auditável (HU02) -->
+            <div class="border-2 border-amber-400 bg-amber-50/70 p-2 rounded space-y-1">
+              <div class="flex justify-between items-center">
+                <span class="mono text-[9px] font-bold text-amber-950 uppercase">[HU02] Decomposição da Super Nota</span>
+                <span class="mono text-xs font-black text-amber-900">★ 4.92 / 5.0</span>
+              </div>
+              <div class="grid grid-cols-3 gap-1 mono text-[9px] text-center">
+                <div class="bg-white p-1 rounded border border-amber-300">Google (50%)<br><strong>4.9 ★</strong></div>
+                <div class="bg-white p-1 rounded border border-amber-300">TripAdv (30%)<br><strong>4.8 ★</strong></div>
+                <div class="bg-white p-1 rounded border border-amber-300">Chef (20%)<br><strong>5.0 ★</strong></div>
+              </div>
+            </div>
+
+            <!-- Parecer Técnico + Botões Externos (HU03) -->
+            <div class="wire-block p-2 rounded flex items-center justify-between gap-2">
+              <div class="text-[10px] text-slate-600">
+                <strong class="text-slate-900 block">Ficha Técnica & Parecer Jacquin:</strong>
+                Ingredientes frescos, endereço, horário e tempo de preparo.
+              </div>
+              <div class="flex flex-col gap-1 mono text-[9px] shrink-0">
+                <span class="px-2 py-1 bg-emerald-600 text-white rounded font-bold text-center">[WhatsApp ↗]</span>
+                <span class="px-2 py-1 bg-sky-600 text-white rounded font-bold text-center">[Rota Maps ↗]</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-1.5 border-t border-slate-200 flex items-center justify-between mono text-[10px] text-slate-600">
+            <span><strong>Conversão Real:</strong> Abre Maps / WhatsApp</span>
+            <span class="px-1.5 py-0.5 bg-slate-100 rounded font-bold text-slate-800">HU02 • HU03 • HU06</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== TELA 04: SOBRE NÓS ==================== -->
+      <div class="screen-card rounded-xl overflow-hidden flex flex-col">
+        <div class="bg-slate-900 text-white px-3.5 py-1.5 flex items-center justify-between mono text-[11px]">
+          <div class="flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+            <span class="font-bold">TELA 04 • Página Sobre Nós (S04)</span>
+          </div>
+          <span class="px-1.5 py-0.5 bg-sky-500/20 text-sky-300 rounded font-bold">Rota: /sobre</span>
+        </div>
+        <div class="p-3 space-y-2 flex-1 flex flex-col justify-between text-[11px]">
+          <div class="space-y-2">
+            <div class="wire-block p-2 rounded">
+              <span class="mono text-[9px] font-bold text-sky-800 uppercase block">[Missão & Território de Caraguatatuba]</span>
+              <p class="text-[10px] text-slate-600 mt-0.5">
+                História do projeto acadêmico no Centro Universitário Módulo e defesa dos produtores locais (Maricultores da Cocanha AMAPEC e Pescadores do Camaroeiro Z-8).
+              </p>
+            </div>
+            <div class="grid grid-cols-2 gap-2 mono text-[9px]">
+              <div class="border border-slate-300 rounded p-2 bg-slate-50">
+                <strong class="text-slate-900 block mb-0.5">Fórmula Auditável</strong>
+                Explicação aberta dos pesos (50% / 30% / 20%) contra avaliações falsas.
+              </div>
+              <div class="border border-slate-300 rounded p-2 bg-slate-50">
+                <strong class="text-slate-900 block mb-0.5">Equipe ADS Módulo</strong>
+                Gabriel Rodrigues, Matheus Vicente e Pedro Simone.
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-1.5 border-t border-slate-200 flex items-center justify-between mono text-[10px] text-slate-600">
+            <span><strong>Saídas:</strong> Links para <code class="text-sky-700 font-bold">/contato</code> e <code class="text-sky-700 font-bold">/</code></span>
+            <span class="px-1.5 py-0.5 bg-slate-100 rounded font-bold text-slate-800">HU06 • Institucional</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== TELA 05: CONTATO / CREDENCIAMENTO ==================== -->
+      <div class="screen-card rounded-xl overflow-hidden flex flex-col">
+        <div class="bg-slate-900 text-white px-3.5 py-1.5 flex items-center justify-between mono text-[11px]">
+          <div class="flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+            <span class="font-bold">TELA 05 • Contato / Credenciamento (S05)</span>
+          </div>
+          <span class="px-1.5 py-0.5 bg-sky-500/20 text-sky-300 rounded font-bold">Rota: /contato</span>
+        </div>
+        <div class="p-3 space-y-2 flex-1 flex flex-col justify-between text-[11px]">
+          <div class="space-y-2">
+            <div class="wire-block p-2 rounded space-y-1.5">
+              <span class="mono text-[9px] font-bold text-emerald-800 uppercase block">
+                [HU04] Formulário Interativo com Validação de Estado
+              </span>
+              <div class="grid grid-cols-2 gap-1.5 mono text-[9px]">
+                <div class="bg-white border border-slate-300 p-1 rounded">[Input: Nome Completo *]</div>
+                <div class="bg-white border border-slate-300 p-1 rounded">[Input: E-mail *]</div>
+                <div class="bg-white border border-slate-300 p-1 rounded">[Select: Assunto / Parceria]</div>
+                <div class="bg-white border border-slate-300 p-1 rounded">[Input: Bairro (1 dos 53)]</div>
+              </div>
+              <div class="bg-white border border-slate-300 p-1 rounded mono text-[9px] flex justify-between items-center">
+                <span>[Textarea: Mensagem / Indicação de Prato...]</span>
+                <span class="px-2 py-0.5 bg-slate-900 text-white rounded font-bold">[Enviar ➔]</span>
+              </div>
+            </div>
+            <div class="bg-emerald-50 border border-emerald-300 rounded px-2 py-1 mono text-[9px] text-emerald-900">
+              ✓ Feedback visual de confirmação de envio + Canais institucionais
+            </div>
+          </div>
+
+          <div class="pt-1.5 border-t border-slate-200 flex items-center justify-between mono text-[10px] text-slate-600">
+            <span><strong>Público:</strong> Moradores, Turistas e Restaurantes</span>
+            <span class="px-1.5 py-0.5 bg-slate-100 rounded font-bold text-slate-800">HU04 • Suporte</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== TELA 06: TELA DE LOGIN ==================== -->
+      <div class="screen-card rounded-xl overflow-hidden flex flex-col">
+        <div class="bg-slate-900 text-white px-3.5 py-1.5 flex items-center justify-between mono text-[11px]">
+          <div class="flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+            <span class="font-bold">TELA 06 • Tela de Login Parceiro (S07)</span>
+          </div>
+          <span class="px-1.5 py-0.5 bg-amber-400 text-slate-950 rounded font-extrabold">Rota: /login</span>
+        </div>
+        <div class="p-3 space-y-2 flex-1 flex flex-col justify-between text-[11px]">
+          <div class="space-y-2">
+            <div class="wire-block p-2 rounded space-y-1.5">
+              <div class="flex justify-between items-center mono text-[9px]">
+                <span class="font-bold text-slate-800">[Seletor de Perfil RBAC]</span>
+                <span class="px-1.5 py-0.5 bg-amber-200 text-amber-950 rounded font-bold">[Restaurante] | [Curador]</span>
+              </div>
+              <div class="space-y-1 mono text-[9px]">
+                <div class="bg-white border border-slate-300 p-1 rounded">[Input E-mail: parceiro@carafood.com.br]</div>
+                <div class="bg-white border border-slate-300 p-1 rounded flex justify-between">
+                  <span>[Input Senha: ••••••••]</span>
+                  <span class="text-slate-500">[👁️ Mostrar]</span>
+                </div>
+              </div>
+              <div class="flex gap-1.5 mono text-[9px]">
+                <span class="flex-1 py-1 bg-slate-900 text-white rounded font-bold text-center">[Autenticar ➔]</span>
+                <span class="px-2 py-1 bg-amber-100 border border-amber-400 text-amber-950 rounded font-bold">[Preencher Demo]</span>
+              </div>
+            </div>
+            <div class="bg-sky-50 border border-sky-300 rounded px-2 py-1 mono text-[9px] text-sky-900">
+              ✓ Redirecionamento autenticado para o catálogo (<code class="font-bold">/</code>) ou credenciamento (<code class="font-bold">/contato</code>)
+            </div>
+          </div>
+
+          <div class="pt-1.5 border-t border-slate-200 flex items-center justify-between mono text-[10px] text-slate-600">
+            <span><strong>Segurança:</strong> Validação de campos + Sessão</span>
+            <span class="px-1.5 py-0.5 bg-slate-100 rounded font-bold text-slate-800">HU04 • Acesso</span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- 4. BARRA INFERIOR: RESUMO DOS 4 FLUXOS DE USUÁRIO (USER FLOWS) & RODAPÉ GLOBAL -->
+    <footer class="bg-white border-2 border-slate-900 rounded-xl px-5 py-2.5 shadow-sm">
+      <div class="grid grid-cols-4 gap-3 mono text-[10px]">
+        <div class="p-2 rounded bg-slate-50 border border-slate-300">
+          <span class="font-extrabold text-sky-800 block">FLUXO 1 • Descoberta Territorial (HU01/HU03)</span>
+          <span class="text-slate-600">Home (<code class="font-bold">/</code>) ➔ Região/53 Bairros ➔ Card ➔ Detalhe (<code class="font-bold">/prato/[id]</code>) ➔ Google Maps</span>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-300">
+          <span class="font-extrabold text-amber-800 block">FLUXO 2 • Auditoria & Ranking (HU02/HU05)</span>
+          <span class="text-slate-600">Menu ➔ Ranking (<code class="font-bold">/rankings</code>) ➔ Filtro Categoria ➔ Comparação Super Nota ➔ Ficha</span>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-300">
+          <span class="font-extrabold text-emerald-800 block">FLUXO 3 • Parceiro & Produtor (HU04/HU06)</span>
+          <span class="text-slate-600">Sobre (<code class="font-bold">/sobre</code>) ➔ Contato (<code class="font-bold">/contato</code>) ➔ Envio de Credenciamento Validado</span>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-300">
+          <span class="font-extrabold text-purple-800 block">FLUXO 4 • Autenticação (HU04)</span>
+          <span class="text-slate-600">Navbar ➔ Entrar (<code class="font-bold">/login</code>) ➔ Credencial Parceiro/Curador ➔ Catálogo (<code class="font-bold">/</code>)</span>
+        </div>
+      </div>
+    </footer>
+
+  </main>
 
   <script>
-    function switchTab(tab) {
-      const wf = document.getElementById('view-wireframe');
-      const v01 = document.getElementById('view-v01');
-      const btnWf = document.getElementById('btn-wireframe');
-      const btnV01 = document.getElementById('btn-v01');
-
-      if (tab === 'wireframe') {
-        wf.classList.remove('hidden');
-        v01.classList.add('hidden');
-        btnWf.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-900 shadow';
-        btnV01.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold bg-amber-900/70 text-amber-200 hover:bg-amber-800';
-      } else {
-        wf.classList.add('hidden');
-        v01.classList.remove('hidden');
-        btnV01.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-900 shadow';
-        btnWf.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold bg-amber-900/70 text-amber-200 hover:bg-amber-800';
-      }
+    function toggleBar() {
+      document.getElementById('controlBar').classList.toggle('hidden');
     }
-
-    function hideControls() {
-      const bar = document.getElementById('controlBar');
-      bar.classList.toggle('hidden');
-    }
-
     window.addEventListener('keydown', (e) => {
-      if (e.key.toLowerCase() === 'h') {
-        hideControls();
-      }
+      if (e.key.toLowerCase() === 'h') toggleBar();
     });
   </script>
 </body>

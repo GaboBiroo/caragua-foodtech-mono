@@ -1,103 +1,176 @@
-# 📄 ESPELHO OFICIAL DO TEMPLATE (.DOCX) — SEMANA 10 (S10 / A2 INTERMEDIÁRIA)
-**Arquivo de Destino:** `APSII_S10_CARAFOOD.docx`  
-*(Copie e cole os 5 capítulos consolidados abaixo diretamente no template Word oficial do Relatório Parcial de Projeto do Prof. Me. Cristiano S. Negrão)*
+# 📄 RELATÓRIO PARCIAL DE PROJETO (CONSOLIDAÇÃO S01 A S09 — BASE A2)
+**Nome Oficial do Arquivo (.docx):** `APSII_S10_CARAFOOD.docx`  
+**Disciplina:** Análise e Projeto de Sistemas II (APS II) — Centro Universitário Módulo  
+**Docente Avaliador:** Prof. Me. Cristiano S. Negrão  
 
 ---
 
-## 🏛️ IDENTIFICAÇÃO INSTITUCIONAL DO RELATÓRIO PARCIAL (A2)
+## 1. Identificação do Projeto e do Grupo
 
-| Campo do Template | Conteúdo Oficial Preenchido |
-| :--- | :--- |
-| **Instituição de Ensino** | Centro Universitário Módulo — Caraguatatuba/SP |
-| **Disciplina** | Análise e Projeto de Sistemas II (APS II) — Entrega Intermediária Consolidada (S10 / A2) |
-| **Docente Orientador / Avaliador** | Prof. Me. Cristiano S. Negrão |
-| **Nome Oficial do Sistema** | **CaráFood (Caraguá FoodTech)** — *Ecossistema Hiperlocal de Descoberta Gastronômica, Auditoria Cultural (Caraguá a Gosto) e Curadoria IA dos 53 Bairros de Caraguatatuba* |
-| **Equipe e Papéis** | • **Gabriel Rodrigues:** Product Owner (PO), Tech Lead & Desenvolvedor Front-End / IA<br>• **Matheus Vicente:** Engenheiro de Dados, Desenvolvedor Back-End & Curadoria Territorial<br>• **Pedro Simone:** Engenheiro de Qualidade (QA), UX Researcher & Documentação Técnica |
-| **URL Oficial em Produção** | [https://foddtech.vercel.app/](https://foddtech.vercel.app/) |
-| **Repositório GitHub** | `https://github.com/GaboBiroo/caragua-foodtech-mono` |
+- **Nome do Projeto / Sistema:** **CaráFood** *(Roteiro e Plataforma Gastronômica dos 53 Bairros de Caraguatatuba)*
+- **Docente Responsável:** Prof. Me. Cristiano S. Negrão
+- **Tema / Domínio:** Gastronomia Local, Turismo Regional e Guia de Restaurantes de Caraguatatuba/SP
+- **Tipo de Aplicação:** `( X ) WEB`   `(   ) Mobile`   `(   ) Desktop`   `( X ) Híbrido / Responsivo`
+- **Link do Sistema Publicado (Produção Vercel):** [https://foddtech.vercel.app/](https://foddtech.vercel.app/)
+- **Repositório do Código (GitHub):** `https://github.com/GaboBiroo/caragua-foodtech-mono`
 
----
-
-## 📖 CAPÍTULO 1 — CONTEXTO, PROBLEMA E OBJETIVOS DO PROJETO
-
-### 1.1 Contexto Regional e Problema de Negócio
-Caraguatatuba possui uma das identidades gastronômicas mais ricas do litoral brasileiro, sustentada por **53 bairros oficiais** que abrigam desde a maricultura sustentável de mexilhões na **Praia da Cocanha (Associação AMAPEC)** e a pesca artesanal diária no **Entreposto do Camaroeiro (Colônia Z-8 "Benjamin Constant")**, até o patrimônio imaterial do **Azul-Marinho na panela de ferro** e o festival anual **Caraguá a Gosto**. Contudo, pequenos e médios restaurantes, quiosques de praia e bistrôs de bairros como Tinga, Rio do Ouro, Porto Novo, Massaguaçu e Tabatinga enfrentam grave **invisibilidade digital** diante de aplicativos genéricos de entrega que priorizam apenas redes de *fast-food* na região central. Simultaneamente, os consumidores sofrem com avaliações online facilmente manipuláveis por *bots*, notas defasadas de anos anteriores e ausência de transparência nos preços de cardápio.
-
-### 1.2 Objetivo Geral
-Desenvolver e implantar o **CaráFood**, uma plataforma web responsiva (*PWA*) de descoberta social-gastronômica e auditoria de avaliações que mapeia os **53 bairros de Caraguatatuba**, destaca a rastreabilidade de insumos locais (*AMAPEC Cocanha* e *Colônia Z-8*) e aplica algoritmos matemáticos de ponderação e meia-vida temporal inspirados na cédula oficial do festival *Caraguá a Gosto*.
-
-### 1.3 Objetivos Específicos
-1. Estruturar um **Explorador Territorial em 2 Camadas** (10 Polos Curados na barra rápida + Modal Cartográfico Vetorial com as 4 Macro-Regiões dos 53 bairros) que elimine a sobrecarga cognitiva do usuário;
-2. Implementar a **Cédula Oficial Digital de 5 Critérios Ponderados** (*Sabor: 35%, Cocção: 20%, Originalidade: 15%, Atendimento: 15%, Ambiente: 15%*) acoplada ao decaimento exponencial de 30 dias ($\lambda = \ln(2)/30$) e filtro anti-bot *Z-Score*;
-3. Construir o fluxo completo **Master–Detail** entre o Catálogo Principal (`/`) e as fichas técnicas de pratos (`/prato/[id]`), integrando rotas GPS e o assistente interativo *Chef Jacquin Praiano*;
-4. Disponibilizar os portais institucionais de **Sobre Nós (`/sobre`)**, **Credenciamento B2B (`/contato`)** e **Login / Controle de Acesso (`/login`)** com persistência em banco de dados relacional.
-
----
-
-## 👥 CAPÍTULO 2 — HISTÓRIAS DE USUÁRIO E MAPA DE PÁGINAS
-
-### 2.1 Quadro Consolidado de Histórias de Usuário (S02)
-
-| ID | Ator / Persona | Descrição da História (*Como... Quero... Para...*) | Rotas que Materializam a HU |
+| Integrante | RGM | E-mail Acadêmico | Papel Principal no Grupo |
 | :--- | :--- | :--- | :--- |
-| **HU01** | **Usuário Final** *(Turista / Morador)* | **Como** turista ou morador em Caraguatatuba, **quero** filtrar os pratos pelos 53 bairros (organizados em 10 Polos e 4 Macro-Regiões) e pela ocasião climática, **para** encontrar rapidamente onde comer perto de mim sem poluição visual. | `/` e `/rankings` |
-| **HU02** | **Usuário Final** *(Comensal)* | **Como** cliente interessado em um prato, **quero** acessar sua Página de Detalhe (*Master–Detail*) com foto real, preço exato, dica do Chef Jacquin e rota GPS no Google Maps, **para** tomar minha decisão com total transparência. | `/prato/[id]` |
-| **HU03** | **Usuário Final** *(Avaliador)* | **Como** frequentador do festival *Caraguá a Gosto*, **quero** avaliar o prato nos 5 critérios oficiais ponderados, **para** colaborar com um ranking justo e ganhar Pontos Gourmet no meu Passaporte Caiçara. | `/`, `/prato/[id]` e `/rankings` |
-| **HU04** | **Gestor / Admin** *(Dono de Restaurante)* | **Como** proprietário de restaurante ou quiosque em um dos 53 bairros, **quero** preencher o formulário de Credenciamento informando meu bairro e prato carro-chefe, **para** incluir meu negócio na vitrine do *CaráFood*. | `/contato` |
-| **HU05** | **Gestor / Admin** *(Curador / Admin)* | **Como** administrador da plataforma, **quero** realizar login na área restrita, **para** auditar avaliações suspeitas (*Z-Score*) e aprovar novos restaurantes credenciados. | `/login` e `/moderation` |
-| **HU06** | **Outro Ator** *(Produtor AMAPEC / Z-8)* | **Como** maricultor da Cocanha (AMAPEC) ou pescador do Camaroeiro (Colônia Z-8), **quero** que os pratos com nossos insumos exibam selo oficial de procedência, **para** valorizar a cadeia produtiva caiçara. | `/sobre`, `/` e `/prato/[id]` |
-
-### 2.2 Mapa de Páginas Consolidado (Arquitetura Real em Código)
-- **Nível Global (`z-40`):** Barra de Navegação Fixa (`Navbar.tsx`) presente em 100% das telas.
-- **Nível Primário (Rotas Principais):**
-  1. `https://foddtech.vercel.app/` — Home Page, Explorador dos 53 Bairros, Modo Reels e Catálogo em Cards;
-  2. `https://foddtech.vercel.app/rankings` — Pódio Classificatório e Transparência Matemática;
-  3. `https://foddtech.vercel.app/sobre` — História Gastronômica de Caraguatatuba, Missão, Visão e Equipe;
-  4. `https://foddtech.vercel.app/contato` — Portal de Credenciamento B2B (53 Bairros) e Atendimento;
-  5. `https://foddtech.vercel.app/login` — Autenticação RBAC (Comensal, Gestor e Curador).
-- **Nível Secundário (*Master–Detail* & Restrito):**
-  6. `https://foddtech.vercel.app/prato/[id]` — Página de Detalhe Profundo do Prato com CTAs;
-  7. `https://foddtech.vercel.app/moderation` — Painel de Moderação e Auditoria Anti-Fraude.
+| **Gabriel Rodrigues** | *[Inserir RGM]* | `gabriel.rodrigues@modulo.edu.br` | Product Owner (PO) e Desenvolvimento Front-End / Integração |
+| **Matheus Vicente** | *[Inserir RGM]* | `matheus.vicente@modulo.edu.br` | Levantamento de Dados Regionais, Back-End e Banco de Dados |
+| **Pedro Simone** | *[Inserir RGM]* | `pedro.simone@modulo.edu.br` | Testes de Usabilidade (QA), Revisão de Interface e Documentação |
 
 ---
 
-## 🖥️ CAPÍTULO 3 — PROTÓTIPO E PÁGINAS IMPLEMENTADAS (AS 6 SUPERFÍCIES OBRIGATÓRIAS)
+## 2. Contexto, Problema e Objetivos
 
-| # | Página / Superfície | Rota Oficial em Produção | Componentes e Funcionalidades Entregues (S03 a S09) |
-| :---: | :--- | :--- | :--- |
-| **01** | **Home / Landing Page** | `/` | Hero com proposta de valor, *Dynamic Island* do Chef Jacquin, Barra dos 10 Polos, Modal Cartográfico dos 53 Bairros, Seletor de Clima & Ocasião, Passaporte Caiçara e Modo Reels. |
-| **02** | **Página "Sobre Nós"** | `/sobre` | História da culinária caiçara, Fazenda Marinha da Cocanha (AMAPEC), Colônia Z-8 do Camaroeiro, química do Azul-Marinho, Missão, Visão, Valores e Créditos da Equipe Módulo. |
-| **03** | **Contato / Credenciamento** | `/contato` | Formulário validado com seleção dos 53 bairros, categoria gastronômica, prato carro-chefe, canais de contato e emissão de protocolo de confirmação. |
-| **04** | **Tela de Login / Acesso** | `/login` | Autenticação com seletor de 3 perfis (Comensal, Gestor, Curador), validação de credenciais, botões de teste rápido e estados visuais de erro e sucesso. |
-| **05** | **Lista / Catálogo & Rankings** | `/` e `/rankings` | Cards ricos com In-Image Tagging, preço, distância da praia, Super Nota Ponderada, Sparkline SVG de 30 dias ($\lambda=\ln(2)/30$) e tabela classificatória do festival. |
-| **06** | **Página de Detalhe** | `/prato/[id]` | Padrão *Master–Detail* com Breadcrumb, foto ampliada, ficha técnica, parecer do Chef Jacquin e CTAs funcionais (*"Como Chegar"* e *"Emitir Cédula Oficial"*). |
+### 2.1 Contexto e Motivação (resumo da S01)
+Como moradores e estudantes em Caraguatatuba, percebemos no dia a dia que a nossa cidade tem uma culinária caiçara muito forte e espalhada por **53 bairros**, indo desde a criação artesanal de mexilhões na **Praia da Cocanha (pela associação AMAPEC)** e a chegada diária de peixes frescos no **Entreposto do Camaroeiro (Colônia de Pescadores Z-8)**, até os restaurantes que participam todo ano do festival **Caraguá a Gosto**. A nossa motivação nasceu da vontade de criar uma vitrine digital própria da cidade (o **CaráFood**), com visual de rede social gastronômica, que valorize tanto os restaurantes tradicionais do Centro e Martim de Sá quanto os quiosques e comércios familiares de bairros mais afastados, como Tinga, Rio do Ouro, Massaguaçu, Tabatinga e Porto Novo.
 
-> 📌 **[ESPAÇO PARA PRINTS NO WORD — CAPÍTULO 3]:** Inserir na sequência as 6 capturas de tela correspondentes às rotas acima (`https://foddtech.vercel.app/`, `/sobre`, `/contato`, `/login`, `/rankings` e `/prato/post-centro-azul-marinho`).
+### 2.2 Problema principal que o sistema resolve
+Hoje, quem mora em Caraguá ou vem passar o fim de semana enfrenta dois problemas práticos quando quer sair para comer: primeiro, os aplicativos de delivery comuns mostram quase sempre os mesmos *fast-foods* do Centro e deixam invisíveis dezenas de quiosques de praia e restaurantes de bairro que servem pratos típicos como o *Azul-Marinho na panela de ferro*. Segundo, as avaliações em sites genéricos muitas vezes misturam notas antigas de anos atrás com notas sem critério (ou até combinadas), sem mostrar o preço real do prato no cardápio nem se o peixe ou mexilhão tem procedência local. O **CaráFood** resolve exatamente essa falta de visibilidade dos 53 bairros e a falta de transparência nos preços e avaliações.
 
----
-
-## 🔄 CAPÍTULO 4 — NAVEGAÇÃO E FLUXOS PRINCIPAIS DO SISTEMA
-
-1. **Fluxo 1 — Descoberta Espacial e Climática (Turista/Morador):** O usuário acessa a Home (`/`), escolhe a ocasião *"☀️ Sol & Pé na Areia"* ou abre o **Explorador dos 53 Bairros**, clica no pino da **Praia da Cocanha** no Mapa Vetorial e visualiza instantaneamente os pratos com mexilhões certificados pela AMAPEC.
-2. **Fluxo 2 — Aprofundamento Master–Detail e Rota GPS:** Ao se interessar pelo *Azul-Marinho Caiçara* ou pelos *Mexilhões ao Vinagrete*, o usuário clica em **"Ver Ficha Completa & Rota"**, acessa `/prato/[id]`, lê o parecer técnico do Chef Jacquin e aciona o CTA **"Como Chegar"** para abrir a navegação no Google Maps/Waze.
-3. **Fluxo 3 — Emissão de Cédula Auditada e Gamificação:** Na página do prato ou no feed, o comensal clica em **"Avaliar (+50 Pontos)"**, atribui notas de 1 a 5 nos 5 critérios oficiais da SECTUR, acompanha o cálculo da Super Nota Ponderada em tempo real, envia seu parecer e desbloqueia carimbos no **Passaporte Caiçara**.
-4. **Fluxo 4 — Credenciamento B2B e Governança Restrita:** Um proprietário de quiosque acessa `/contato` pela Navbar, cadastra seu estabelecimento vinculado a um dos 53 bairros, e o curador autenticado em `/login` audita os registros no painel `/moderation`.
+### 2.3 Objetivo geral e 2–3 objetivos específicos
+- **Objetivo Geral:** Desenvolver uma plataforma web responsiva (**CaráFood**) que funcione como catálogo visual e guia gastronômico dos 53 bairros de Caraguatatuba, reunindo fotos reais dos pratos, preços transparentes, rotas de chegada e uma cédula de avaliação justa inspirada no festival *Caraguá a Gosto*.
+- **Objetivos Específicos:**
+  1. **Organizar a busca pelos 53 bairros sem poluição visual:** Criar um filtro rápido com os 10 polos gastronômicos mais procurados no topo da tela e um mapa/modal dividido nas 4 regiões da cidade (Centro, Norte, Sul e Serra/Interior) para localizar facilmente qualquer bairro;
+  2. **Implementar as 6 telas principais interligadas:** Entregar em funcionamento real a Home/Landing Page (`/`), Sobre Nós (`/sobre`), Contato/Credenciamento (`/contato`), Login (`/login`), Catálogo/Rankings (`/rankings`) e Página de Detalhe do Prato (`/prato/[id]`);
+  3. **Estruturar uma avaliação justa e um canal de cadastro para restaurantes locais:** Permitir que o cliente avalie os pratos em 5 critérios claros (sabor, apresentação, ingredientes locais, atendimento e ambiente) e que donos de quiosques/restaurantes solicitem seu credenciamento na plataforma.
 
 ---
 
-## 📈 CAPÍTULO 5 — ANÁLISE PARCIAL DO PROJETO (CONQUISTAS, DIFICULDADES E BACKLOG ATÉ A A1)
+## 3. Histórias de Usuário e Mapa de Páginas
 
-### 5.1 Principais Conquistas Alcançadas (S01 a S10)
-- Conclusão de **100% das 6 superfícies obrigatórias** com design industrial de alto contraste (WCAG 2.2 AAA), animações fluidas a 60fps e deploy contínuo ativo na Vercel (`https://foddtech.vercel.app/`);
-- Solução definitiva para o problema de poluição visual dos 53 bairros por meio da arquitetura em 2 camadas (10 Polos + Modal com Mapa Vetorial e 4 Macro-Regiões);
-- Implementação funcional das regras matemáticas do domínio (Cédula Ponderada de 5 critérios, curva SVG de decaimento exponencial de 30 dias e escudo Z-Score).
+### 3.1 Lista consolidada de histórias de usuário (mín. 6)
 
-### 5.2 Dificuldades Técnicas Encontradas e Superadas
-- **Equilíbrio entre Densidade de Informação e Clareza Visual:** Exibir selos de origem, preço, nota e distância sem tapar a fotografia do prato exigiu refatorar o *Stacking Context* (`z-10` a `z-50`) e criar badges horizontais translúcidos;
-- **Sincronização do Monorepo na Vercel:** Resolvida com a criação do script automatizado `scripts/copy-build.js` no `postbuild`, garantindo paridade absoluta entre `src/` e `web-admin/src/`.
+- **HU01 (Usuário Final — Morador ou Turista):**  
+  *Como* morador ou turista em Caraguatatuba, *quero* filtrar o catálogo de pratos pelos 53 bairros da cidade (ou pelo clima do dia, como praia ou jantar), *para* encontrar opções reais de onde comer perto de mim sem perder tempo procurando em vários perfis diferentes.
+- **HU02 (Usuário Final — Cliente pesquisando prato e rota):**  
+  *Como* cliente interessado em um prato do feed, *quero* clicar nele para abrir sua página de detalhe com foto ampliada, preço no cardápio, descrição dos ingredientes e botão direto para o Google Maps/Waze, *para* saber exatamente quanto vou gastar e como chegar ao restaurante.
+- **HU03 (Usuário Final — Avaliador do Caraguá a Gosto):**  
+  *Como* frequentador dos restaurantes da cidade, *quero* avaliar o prato que consumi dando notas de 1 a 5 nos cinco quesitos do festival (sabor, apresentação, originalidade, atendimento e ambiente), *para* ajudar outros clientes com uma nota honesta e juntar pontos no meu passaporte gastronômico.
+- **HU04 (Gestor / Proprietário de Restaurante ou Quiosque):**  
+  *Como* dono de um restaurante ou quiosque em um dos bairros de Caraguatatuba, *quero* preencher o formulário da página de Contato/Credenciamento informando os dados do meu comércio e meu prato principal, *para* solicitar a inclusão do meu estabelecimento no catálogo do CaráFood.
+- **HU05 (Gestor / Administrador da Plataforma):**  
+  *Como* administrador e moderador do sistema, *quero* acessar a tela de Login com meu e-mail e senha, *para* entrar na área restrita de moderação, conferir os pedidos de cadastro de restaurantes e acompanhar o ranking dos pratos.
+- **HU06 (Outro Ator — Maricultor da AMAPEC Cocanha / Pescador da Colônia Z-8):**  
+  *Como* produtor de mexilhões da Praia da Cocanha (AMAPEC) ou pescador artesanal do Camaroeiro (Colônia Z-8), *quero* que os pratos feitos com nossos produtos frescos tenham um selo de identificação na plataforma e sua história contada na página Sobre Nós, *para* valorizar o trabalho caiçara local.
 
-### 5.3 Plano de Backlog para a Etapa Final (S11 a S16 / A1)
-- **S11:** Documentação formal do Changelog de Melhoria Contínua (*Antes $\rightarrow$ Depois*) e histórico de versionamento Git;
-- **S12:** Execução cronometrada da bateria de Testes de Usabilidade com 3 perfis de usuários externos e priorização MoSCoW;
-- **S13:** Consolidação e documentação da persistência em banco de dados relacional PostgreSQL (Supabase/Neon + API Routes) para avaliações e credenciamentos;
-- **S14 a S16 (A1):** Estudo de DNS/URL Amigável, Checklist Final de Auditoria, Roteiro de Apresentação de 15–20 minutos e entrega do Relatório Técnico Final Consolidado.
+### 3.2 Mapa de páginas / user flow (versão mais atual)
+
+O fluxo abaixo reflete exatamente as rotas que já estão programadas e funcionando hoje no sistema:
+
+```
++-------------------------------------------------------------------------------------------------+
+|                      MENU DE NAVEGAÇÃO PRINCIPAL FIXO NO TOPO (Navbar.tsx)                      |
+|      [ Início (/) ]   [ Sobre Nós (/sobre) ]   [ Contato (/contato) ]   [ Rankings (/rankings) ]|
+|                                      [ Login (/login) ]                                         |
++------------------------------------------------+------------------------------------------------+
+                                                 |
+       +--------------------+--------------------+--------------------+--------------------+
+       |                    |                    |                    |                    |
+       v                    v                    v                    v                    v
++--------------+    +---------------+    +---------------+    +---------------+    +---------------+
+| 1. HOME E    |    | 2. SOBRE NÓS  |    | 3. CONTATO /  |    | 4. LOGIN      |    | 5. LISTA E    |
+| LANDING (/)  |    |   (/sobre)    |    | CREDENCIE-SE  |    |   (/login)    |    | RANKINGS      |
+| - Destaques  |    | - História de |    |  (/contato)   |    | - E-mail/Senha|    | (/ e /rankings|
+| - Filtro 53  |    |   Caraguá     |    | - Formulário  |    | - Perfis de   |    | - Cards dos   |
+|   Bairros    |    | - Missão/Visão|    |   53 Bairros  |    |   Acesso      |    |   Pratos      |
+|   (HU01)     |    | - Equipe      |    |   (HU04)      |    |   (HU05)      |    | - Notas/Preço |
++------+-------+    |   (HU06)      |    +---------------+    +-------+-------+    +-------+-------+
+       |            +---------------+                                 |                    |
+       |                                                              v                    |
+       |                                                      +---------------+            |
+       |                                                      | Área Restrita |            |
+       |                                                      | (/moderation) |            |
+       +--------------------------------------------------------------+--------------------+
+                                       |
+               (Clique em qualquer Prato do Feed ou do Ranking)
+                                       v
+                       +-------------------------------+
+                       | 6. PÁGINA DE DETALHE DO PRATO |
+                       |         (/prato/[id])         |
+                       | - Foto grande, preço e ficha  |
+                       | - CTA 1: Abrir Rota no Maps   |
+                       | - CTA 2: Avaliar Prato (HU03) |
+                       |   (Padrão Master-Detail HU02) |
+                       +-------------------------------+
+```
+
+---
+
+## 4. Protótipo e Páginas Implementadas
+
+### 4.1 Protótipo inicial (prints ou links do protótipo)
+O nosso protótipo inicial foi desenhado na S02 pensando em unir a facilidade visual do Instagram com as informações práticas de um cardápio local. Durante a programação das semanas S03 a S09, evoluímos esse protótipo direto para o código em Next.js 14 publicado na Vercel:
+- **Link Público da Aplicação Funcionando:** [https://foddtech.vercel.app/](https://foddtech.vercel.app/)
+
+> 📌 **[INSERIR PRINT NO WORD — ITEM 4.1]:** Colar aqui o print da visão geral inicial / wireframe do projeto mostrando a evolução para a interface atual.
+
+---
+
+### 4.2 Páginas já implementadas
+
+Todas as 6 páginas solicitadas entre a S03 e a S09 já foram codificadas, estilizadas e estão no ar:
+
+#### 1) Home / Landing Page (`https://foddtech.vercel.app/`)
+- **O que foi feito:** É a porta de entrada do **CaráFood**. Traz o cabeçalho verde e dourado com o nome do projeto e o símbolo das ondas de Caraguatatuba, um resumo direto do propósito do site, a faixa interativa com dicas do mascote *Chef Jacquin Praiano*, a barra dos 10 polos gastronômicos em destaque, o botão que abre o modal completo dos **53 bairros divididos em 4 regiões**, os filtros de ocasião/categoria e o feed principal.
+> 📌 **[INSERIR PRINT NO WORD — HOME / LANDING PAGE]:** Tirar print do topo da página `https://foddtech.vercel.app/` mostrando o banner principal, os polos e o modal dos 53 bairros.
+
+#### 2) Sobre Nós (`https://foddtech.vercel.app/sobre`)
+- **O que foi feito:** Página institucional acessível pelo menu superior. Conta de forma amigável a história da gastronomia de Caraguatatuba (destacando a Fazenda Marinha da Cocanha — AMAPEC, o Entreposto do Camaroeiro — Colônia Z-8 e a tradição do Azul-Marinho e do festival Caraguá a Gosto), apresenta nossa Missão, Visão e Valores, e traz os créditos dos três integrantes do grupo (**Gabriel Rodrigues, Matheus Vicente e Pedro Simone**).
+> 📌 **[INSERIR PRINT NO WORD — PÁGINA SOBRE NÓS]:** Tirar print da página `https://foddtech.vercel.app/sobre`.
+
+#### 3) Contato / Credenciamento (`https://foddtech.vercel.app/contato`)
+- **O que foi feito:** Página voltada tanto para dúvidas de usuários quanto para o pré-cadastro (agendamento de curadoria e credenciamento) de novos restaurantes e quiosques da cidade. Possui um formulário funcional com Nome do Responsável, Nome do Restaurante, seleção de qualquer um dos **53 bairros de Caraguatatuba**, Categoria, E-mail, WhatsApp, Prato Principal e Mensagem. Ao enviar, valida os dados e mostra uma mensagem de confirmação na tela.
+> 📌 **[INSERIR PRINT NO WORD — PÁGINA DE CONTATO]:** Tirar print da página `https://foddtech.vercel.app/contato` mostrando o formulário preenchido.
+
+#### 4) Login (`https://foddtech.vercel.app/login`)
+- **O que foi feito:** Tela de acesso restrito ligada diretamente no menu principal. Possui campos de E-mail/Usuário e Senha (com opção de mostrar/esconder senha), seleção de perfil (*Comensal*, *Gestor de Restaurante* ou *Curador/Admin*) e tratamento visual completo: se o usuário tentar entrar com senha inválida/curta, exibe um alerta vermelho de erro; se entrar com as credenciais corretas, exibe o aviso verde de sucesso e libera o botão para o painel restrito.
+> 📌 **[INSERIR PRINT NO WORD — TELA DE LOGIN]:** Tirar print da página `https://foddtech.vercel.app/login` mostrando os campos de login e a mensagem de feedback.
+
+#### 5) Lista Principal / Catálogo e Rankings (`https://foddtech.vercel.app/` e `https://foddtech.vercel.app/rankings`)
+- **O que foi feito:** O catálogo principal aparece tanto em formato de Cards no Feed da Home quanto em formato de lista classificatória na aba **Rankings (`/rankings`)**. Cada item mostra a foto real do prato, nome do restaurante, bairro em Caraguatatuba, distância da praia, preço no cardápio (`R$`), nota média em estrelas e selos de destaque (*Caraguá a Gosto*, *Mexilhão da Cocanha* ou *Camaroeiro*).
+> 📌 **[INSERIR PRINT NO WORD — LISTA PRINCIPAL / CATÁLOGO]:** Tirar print dos cards de pratos no feed e/ou da tabela na página `https://foddtech.vercel.app/rankings`.
+
+#### 6) Página de Detalhe (`https://foddtech.vercel.app/prato/post-centro-azul-marinho`)
+- **O que foi feito:** Implementa o padrão *Master–Detail*. Quando o usuário clica no nome de qualquer prato da lista ou no botão *"Ver Ficha Completa & Rota"*, o sistema abre a página exclusiva daquele prato (`/prato/[id]`). Ela mostra uma barra de caminho no topo (*Breadcrumb* para voltar fácil), a foto grande do prato, todos os detalhes de preparo, comentário do Chef Jacquin, avaliações de clientes e dois botões de ação principais (CTAs): **"Como Chegar (Abrir no Google Maps / Waze)"** e **"Avaliar Prato na Cédula Oficial (+50 Pontos)"**.
+> 📌 **[INSERIR PRINT NO WORD — PÁGINA DE DETALHE]:** Tirar print da página `https://foddtech.vercel.app/prato/post-centro-azul-marinho` destacando os botões de ação (CTAs).
+
+---
+
+## 5. Navegação e Fluxos Principais
+
+### 5.1 Descrição da navegação (menu, links, caminhos típicos)
+A navegação do **CaráFood** foi centralizada no componente `Navbar.tsx`, que fica fixo no topo da tela (`sticky top-0`) em todas as páginas do sistema para que o usuário nunca fique perdido. No menu principal, colocamos 5 links diretos e fáceis de entender: **Início (`/`)**, **Sobre Nós (`/sobre`)**, **Contato (`/contato`)**, **Rankings (`/rankings`)** e **Login (`/login`)**, além do clique na logo do **CaráFood** que sempre retorna para a Home. O item da página atual fica destacado em amarelo-ouro (`#FFB703`) para o usuário saber exatamente onde está, e no celular o menu se adapta em um botão recolhível (*menu hambúrguer*). Nas páginas internas de prato (`/prato/[id]`), incluímos também um *Breadcrumb* (`Início > Bairro > Nome do Prato`) para facilitar a volta ao catálogo com um único clique.
+
+### 5.2 Fluxos principais hoje possíveis no sistema
+Hoje qualquer pessoa que acessar o link do projeto já consegue realizar 4 fluxos completos do início ao fim:
+1. **Fluxo de Descoberta e Detalhe (Usuário entra $\rightarrow$ filtra bairro $\rightarrow$ vê lista $\rightarrow$ abre detalhe $\rightarrow$ traça rota):**  
+   O usuário entra na Home (`/`), escolhe um bairro (por exemplo, clicando em *Cocanha* na barra ou abrindo o mapa dos *53 Bairros*), vê a lista filtrada apenas com os pratos daquela região, clica em **"Ver Ficha Completa & Rota"** para abrir a Página de Detalhe (`/prato/post-cocanha-mexilhoes`) e clica no botão **"Como Chegar"** para abrir a localização no Google Maps.
+2. **Fluxo de Avaliação de Prato (Usuário na lista ou detalhe $\rightarrow$ abre cédula $\rightarrow$ vota nos 5 critérios $\rightarrow$ envia avaliação):**  
+   O usuário clica em **"Avaliar (+50 Pontos)"**, dá suas notas de 1 a 5 para Sabor, Apresentação, Originalidade, Atendimento e Ambiente, escreve seu comentário e confirma; o comentário passa a aparecer na hora no prato e seus Pontos Gourmet sobem no topo da tela.
+3. **Fluxo de Credenciamento de Restaurante (Dono de comércio entra $\rightarrow$ vai em Contato $\rightarrow$ preenche dados e bairro $\rightarrow$ recebe protocolo):**  
+   O proprietário clica em **Contato (`/contato`)** no menu, preenche os dados do seu restaurante selecionando um dos 53 bairros de Caraguatatuba e envia a solicitação, recebendo a confirmação imediata na tela.
+4. **Fluxo de Acesso Restrito (Gestor/Curador vai em Login $\rightarrow$ valida credenciais $\rightarrow$ acessa moderação):**  
+   O usuário clica em **Login (`/login`)** no menu, seleciona o perfil ou digita e-mail e senha (podendo testar tanto o aviso de erro para senha incorreta quanto o login válido) e segue para o painel de moderação.
+
+---
+
+## 6. Análise Parcial e Próximos Passos
+
+### 6.1 O que foi alcançado até agora (S01–S09)
+Entre as semanas S01 e S09, nosso grupo conseguiu sair da ideia inicial no papel e colocar no ar todas as páginas previstas no escopo da disciplina: definimos o problema real focado nos 53 bairros de Caraguatatuba (S01), escrevemos as 6 histórias de usuário e o mapa de navegação (S02), e programamos em Next.js a Home Page (S03), a página Sobre Nós contando a história caiçara da Cocanha e do Camaroeiro (S04), o formulário de Contato/Credenciamento (S05), o Menu Global presente em todas as rotas (S06), a tela de Login com validação de erro e sucesso (S07), o Catálogo de pratos e Rankings com filtros funcionando (S08) e a Página de Detalhe *Master–Detail* de cada prato com botões de rota e avaliação (S09). Além disso, já deixamos o sistema publicado online na Vercel (`https://foddtech.vercel.app/`).
+
+### 6.2 Principais dificuldades encontradas
+Durante a construção prática das telas, enfrentamos três dificuldades principais que nos ensinaram bastante em grupo:
+1. **Poluição visual ao tentar mostrar os 53 bairros de uma vez:** No começo, colocamos todos os 53 bairros de Caraguatatuba em uma única barra de bolinhas no topo da Home, mas ficou muito poluído e cansativo de rolar. Resolvemos isso deixando apenas os **10 polos mais movimentados** na barra rápida e criando um botão **"Explorar todos os 53 Bairros"** que abre uma janela organizada pelas 4 regiões da cidade com busca rápida.
+2. **Sobreposição de elementos na tela (selos em cima da foto do prato):** Nas primeiras versões dos cards, os selos de premiação e o botão flutuante do mascote Jacquin acabavam tapando parte da foto da comida em telas menores. Tivemos que reorganizar o `z-index` de cada camada e deixar os selos alinhados no topo da foto com fundo translúcido.
+3. **Conciliar a rotina de trabalho e família com o ritmo das entregas:** Como parte do grupo trabalha em regime de turnos puxados e enfrentou questões familiares de saúde nas últimas semanas, tivemos que redobrar a organização pelo WhatsApp e GitHub para dividir as tarefas de código, revisão e documentação sem deixar nenhuma tela faltando.
+
+### 6.3 Próximas entregas até a A1 (o que falta implementar)
+Para a reta final da disciplina (da S11 até a entrega final A1 na S16), nosso cronograma de trabalho foca em quatro pontos:
+1. **Refinamento de layout e registro de versionamento (S11):** Documentar o comparativo *"Antes e Depois"* das melhorias visuais que fizemos na barra de bairros e nos cards, mantendo o histórico organizado de commits no GitHub;
+2. **Testes de Usabilidade com usuários de fora do grupo (S12):** Colocar 3 pessoas (um turista, um estudante morador e um comerciante local) para testar os fluxos do site cronometrando o tempo e anotando onde tiveram dúvida para aplicar melhorias (MoSCoW);
+3. **Integração definitiva com Banco de Dados em produção (S13 e S14):** Conectar os formulários de avaliação de pratos e de credenciamento de restaurantes para gravar e ler os registros de forma persistente no banco PostgreSQL (Supabase/Neon), além de documentar o funcionamento do domínio e DNS;
+4. **Checklist Final, Roteiro de Apresentação e Relatório A1 (S15 e S16):** Revisar todos os itens do checklist final do professor, ensaiar a apresentação dividida entre o Gabriel, o Matheus e o Pedro, e entregar o relatório técnico final completo.

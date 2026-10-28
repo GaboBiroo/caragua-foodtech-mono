@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    width: 1480px;
+    height: 740px;
+    background: #FFFFFF;
+    font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+    color: #111111;
+    padding: 20px 26px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .outer-box {
+    border: 2px solid #000000;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .top-title {
+    background: #D9D9D9;
+    border-bottom: 2px solid #000000;
+    padding: 10px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .top-title h1 {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+  .top-title span {
+    font-size: 13px;
+    font-weight: 700;
+    color: #222222;
+  }
+  .content {
+    padding: 14px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    flex: 1;
+    justify-content: space-around;
+  }
+  .tier {
+    border: 1.5px solid #000000;
+    background: #FAFAFA;
+  }
+  .tier-hdr {
+    background: #EFEFEF;
+    border-bottom: 1.5px solid #000000;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+  }
+  .tier-hdr span.sub {
+    font-weight: 400;
+    color: #333333;
+    font-size: 12px;
+  }
+  .nav-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    padding: 10px 14px;
+    background: #FFFFFF;
+  }
+  .nav-item {
+    border: 1.5px solid #333333;
+    background: #F3F3F3;
+    padding: 7px 10px;
+    text-align: center;
+  }
+  .nav-item .rt {
+    font-family: Consolas, monospace;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #000000;
+    display: block;
+  }
+  .nav-item .lb {
+    font-size: 12.5px;
+    margin-top: 2px;
+    display: block;
+  }
+  .flow-row {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    padding: 11px 14px;
+    background: #FFFFFF;
+    gap: 8px;
+  }
+  .box {
+    flex: 1;
+    border: 1.5px solid #222222;
+    background: #FFFFFF;
+    padding: 8px 11px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .box.gray {
+    background: #EFEFEF;
+  }
+  .box.emph {
+    background: #D9D9D9;
+    border-width: 2px;
+  }
+  .box .step {
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #444444;
+    margin-bottom: 2px;
+  }
+  .box .ttl {
+    font-size: 13px;
+    font-weight: 700;
+    color: #000000;
+  }
+  .box .dsc {
+    font-size: 11.5px;
+    color: #222222;
+    margin-top: 3px;
+    line-height: 1.25;
+  }
+  .arr {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 700;
+    color: #000000;
+    padding: 0 3px;
+  }
+  .foot {
+    background: #EFEFEF;
+    border-top: 1.5px solid #000000;
+    padding: 7px 18px;
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+  <div class="outer-box">
+    <div class="top-title">
+      <h1>MAPA DE PÁGINAS E FLUXO DE NAVEGAÇÃO (USER FLOW) — SISTEMA CARÁFOOD</h1>
+      <span>Entrega Consolidada S10 (Base A2) • Next.js 14 App Router</span>
+    </div>
+
+    <div class="content">
+      <!-- Camada Global -->
+      <div class="tier">
+        <div class="tier-hdr">
+          <span>CAMADA GLOBAL DE NAVEGAÇÃO — Barra Superior Fixa (src/components/Navbar.tsx) e Rodapé</span>
+          <span class="sub">Acessível a partir de todas as páginas no Desktop (barra horizontal) e Celular (menu gaveta)</span>
+        </div>
+        <div class="nav-grid">
+          <div class="nav-item"><span class="rt">/</span><span class="lb">Home e Lista Principal</span></div>
+          <div class="nav-item"><span class="rt">/sobre</span><span class="lb">Sobre Nós (S04)</span></div>
+          <div class="nav-item"><span class="rt">/contato</span><span class="lb">Contato / Parceria (S05)</span></div>
+          <div class="nav-item"><span class="rt">/login</span><span class="lb">Login por Perfil (S07)</span></div>
+          <div class="nav-item"><span class="rt">/rankings</span><span class="lb">Rankings 30 Dias (S08)</span></div>
+          <div class="nav-item"><span class="rt">/prato/[id]</span><span class="lb">Detalhe do Prato (S09)</span></div>
+        </div>
+      </div>
+
+      <!-- Fluxo 1 -->
+      <div class="tier">
+        <div class="tier-hdr">
+          <span>FLUXO 1 — Jornada Principal do Cliente / Morador / Turista (Lista → Filtro → Detalhe → Ação)</span>
+          <span class="sub">Histórias atendidas: HU01, HU02, HU03, HU04 e HU07</span>
+        </div>
+        <div class="flow-row">
+          <div class="box emph">
+            <span class="step">1. Entrada (S03 / S08)</span>
+            <span class="ttl">Home e Catálogo (/)</span>
+            <span class="dsc">Hero, busca textual, Dynamic Island e cards de pratos.</span>
+          </div>
+          <div class="arr">→</div>
+          <div class="box gray">
+            <span class="step">2. Recorte Territorial</span>
+            <span class="ttl">53 Bairros / Categorias</span>
+            <span class="dsc">10 polos rápidos ou modal com 4 macro-regiões e mapa SVG.</span>
+          </div>
+          <div class="arr">→</div>
+          <div class="box">
+            <span class="step">3. Seleção na Lista</span>
+            <span class="ttl">Card do Prato ou /rankings</span>
+            <span class="dsc">Compara preço, selos AMAPEC/Z-8 e nota ponderada recente.</span>
+          </div>
+          <div class="arr">→</div>
+          <div class="box gray">
+            <span class="step">4. Master–Detail (S09)</span>
+            <span class="ttl">Detalhe (/prato/[id])</span>
+            <span class="dsc">Breadcrumb (Início &gt; Bairro &gt; Prato), ficha técnica e avaliações.</span>
+          </div>
+          <div class="arr">→</div>
+          <div class="box emph">
+            <span class="step">5. CTAs Principais</span>
+            <span class="ttl">Rota GPS ou Cédula</span>
+            <span class="dsc">Abre Google Maps/Waze ou modal de avaliação em 5 critérios.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fluxo 2 -->
+      <div class="tier">
+        <div class="tier-hdr">
+          <span>FLUXO 2 — Jornada Institucional e Credenciamento de Restaurante / Produtor Local</span>
+          <span class="sub">Histórias atendidas: HU05 e HU07</span>
+        </div>
+        <div class="flow-row">
+          <div class="box">
+            <span class="step">1. Institucional (S04)</span>
+            <span class="ttl">Sobre Nós (/sobre)</span>
+            <span class="dsc">Contexto de Caraguatatuba, proposta 0% taxa e equipe do projeto.</span>
+          </div>
+          <div class="arr">→</div>
+          <div class="box gray">
+            <span class="step">2. Formulário (S05)</span>
+            <span class="ttl">Contato (/contato)</span>
+            <span class="dsc">Escolha do assunto (Credenciamento, Prato Típico, AMAPEC/Z-8).</span>
+          </div>
+          <div class="arr">→</div>
+          <div class="box">
+            <span class="step">3. Regras de Front-end</span>
+            <span class="ttl">Validação dos 6 Campos</span>
+            <span class="dsc">Verifica Nome, E-mail, Telefone/WhatsApp, Bairro e Mensagem.</span>
+          </div>
+          <div class="arr">→</div>
+          <div class="box emph">
+            <span class="step">4. Retorno ao Usuário</span>
+            <span class="ttl">Confirmação com Protocolo</span>
+            <span class="dsc">Exibe mensagem de sucesso e código único CG-FT-XXXXXX na tela.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fluxo 3 -->
+      <div class="tier">
+        <div class="tier-hdr">
+          <span>FLUXO 3 — Autenticação e Redirecionamento por Perfil de Acesso</span>
+          <span class="sub">Histórias atendidas: HU05 e HU06</span>
+        </div>
+        <div class="flow-row">
+          <div class="box emph">
+            <span class="step">1. Acesso (S07)</span>
+            <span class="ttl">Tela de Login (/login)</span>
+            <span class="dsc">Valida e-mail e senha mínima (bloqueia erro HTTP 401).</span>
+          </div>
+          <div class="arr">→</div>
+          <div class="box">
+            <span class="step">Perfil 1 • Cliente</span>
+            <span class="ttl">Comensal Auditado</span>
+            <span class="dsc">Redireciona para o catálogo (/) com roteiro Salvos e Cédula.</span>
+          </div>
+          <div class="arr">→</div>
+          <div class="box gray">
+            <span class="step">Perfil 2 • Parceiro</span>
+            <span class="ttl">Gestor de Restaurante</span>
+            <span class="dsc">Direciona para credenciamento e atualização em /contato.</span>
+          </div>
+          <div class="arr">→</div>
+          <div class="box">
+            <span class="step">Perfil 3 • Administração</span>
+            <span class="ttl">Curador / Admin Módulo</span>
+            <span class="dsc">Libera fila de moderação de pratos e ofertas em /moderation.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <span>Produção (Vercel): https://foddtech.vercel.app/</span>
+      <span>Repositório (GitHub): https://github.com/GaboBiroo/caragua-foodtech-mono</span>
+      <span>Grupo: Gabriel H. Rodrigues • Matheus Vicente • Pedro Simone</span>
+    </div>
+  </div>
+</body>
+</html>

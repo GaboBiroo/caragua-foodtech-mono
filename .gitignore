@@ -111,3 +111,5 @@ coverage/
 ehthumbs.db
 Thumbs.db
 desktop.ini
+!docker/Dockerfile.db
+!Dockerfile.db

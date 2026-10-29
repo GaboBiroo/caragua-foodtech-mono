@@ -1,0 +1,17 @@
+# ==============================================================================
+# CARAGUATATUBA FOODTECH - DOCKERFILE POSTGRESQL 16 + PGVECTOR + POSTGIS
+# Contexto Acadêmico: Banco Híbrido (Relacional + Espacial + Vetorial)
+# ==============================================================================
+
+FROM pgvector/pgvector:pg16
+
+LABEL maintainer="Gabriel Rodrigues <@GaboBiroo>"
+LABEL description="PostgreSQL 16 com extensões PostGIS 3 e pgvector para o TCC Caraguá FoodTech"
+
+# Instalação do PostGIS para PostgreSQL 16 sobre Debian Bookworm
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    postgresql-16-postgis-3 \
+    postgresql-16-postgis-3-scripts \
+    && rm -rf /var/lib/apt/lists/*
+
+EXPOSE 5432

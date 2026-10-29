@@ -71,6 +71,24 @@ class LLMManager:
         else:
             self.embeddings_model = None
 
+        self._ollama_alive: Optional[bool] = None
+        self._last_ollama_check: float = 0.0
+
+    async def is_ollama_available(self) -> bool:
+        """Sonda rapidamente o Ollama local com timeout de 80ms para viabilizar SLA sub-segundo."""
+        import time
+        now = time.time()
+        if self._ollama_alive is not None and (now - self._last_ollama_check) < 15.0:
+            return self._ollama_alive
+        try:
+            async with httpx.AsyncClient(timeout=0.08) as client:
+                res = await client.get(f"{settings.OLLAMA_BASE_URL}/api/tags")
+                self._ollama_alive = (res.status_code == 200)
+        except Exception:
+            self._ollama_alive = False
+        self._last_ollama_check = now
+        return self._ollama_alive
+
     async def get_embedding(self, text: str) -> List[float]:
         """Gera o vetor de embedding (1536 dimensões) para o texto de consulta."""
         if self.embeddings_model:
@@ -104,28 +122,31 @@ class LLMManager:
             ("human", "{query}")
         ])
 
-        try:
-            if hasattr(self.chat_model, "with_structured_output"):
-                structured_llm = self.chat_model.with_structured_output(ExtractedIntentSchema)
-                chain = prompt | structured_llm
-                result: ExtractedIntentSchema = await chain.ainvoke({"query": user_query})
-                return result
-            else:
-                chain = prompt | self.chat_model
-                response = await chain.ainvoke({"query": user_query})
-                data = json.loads(response.content)
-                return ExtractedIntentSchema(**data)
-        except Exception as e:
-            logger.error(f"Erro na extração de intenção por LLM: {e}. Aplicando heurística determinística.")
-            q_lower = user_query.lower()
-            return ExtractedIntentSchema(
-                semantic_query=user_query,
-                is_vegan="vegano" in q_lower or "vegana" in q_lower,
-                is_vegetarian="vegetariano" in q_lower,
-                is_gluten_free="glúten" in q_lower or "gluten" in q_lower or "celíaco" in q_lower,
-                is_lactose_free="lactose" in q_lower or ("sem" in q_lower and "queijo" in q_lower),
-                neighborhood="Martim de Sá" if "martim" in q_lower or "martin" in q_lower else ("Massaguaçu" if "massagua" in q_lower else ("Centro" if "centro" in q_lower else None))
-            )
+        if await self.is_ollama_available():
+            try:
+                if hasattr(self.chat_model, "with_structured_output"):
+                    structured_llm = self.chat_model.with_structured_output(ExtractedIntentSchema)
+                    chain = prompt | structured_llm
+                    result: ExtractedIntentSchema = await chain.ainvoke({"query": user_query})
+                    return result
+                else:
+                    chain = prompt | self.chat_model
+                    response = await chain.ainvoke({"query": user_query})
+                    data = json.loads(response.content)
+                    return ExtractedIntentSchema(**data)
+            except Exception as e:
+                logger.error(f"Erro na extração de intenção por LLM: {e}. Aplicando heurística determinística.")
+
+        # Heurística Determinística Local de Alta Performance (< 2ms)
+        q_lower = user_query.lower()
+        return ExtractedIntentSchema(
+            semantic_query=user_query,
+            is_vegan="vegano" in q_lower or "vegana" in q_lower,
+            is_vegetarian="vegetariano" in q_lower,
+            is_gluten_free="glúten" in q_lower or "gluten" in q_lower or "celíaco" in q_lower,
+            is_lactose_free="lactose" in q_lower or ("sem" in q_lower and "queijo" in q_lower),
+            neighborhood="Martim de Sá" if "martim" in q_lower or "martin" in q_lower else ("Massaguaçu" if "massagua" in q_lower else ("Centro" if "centro" in q_lower else ("Indaiá" if "indaia" in q_lower or "indaiá" in q_lower else ("Porto Novo" if "porto" in q_lower else ("Tinga" if "tinga" in q_lower else None)))))
+        )
 
     async def stream_generation(
         self,
@@ -168,18 +189,20 @@ class LLMManager:
             ("human", "{content}")
         ])
 
-        chain = prompt | self.chat_model
+        if await self.is_ollama_available():
+            try:
+                chain = prompt | self.chat_model
+                async for chunk in chain.astream({"content": prompt_xml}):
+                    content = chunk.content if hasattr(chunk, "content") else str(chunk)
+                    yield content
+                return
+            except Exception as e:
+                logger.warning(f"LLM externa offline ({e}). Ativando gerador local Jacquin Praiano com ancoragem em <context>.")
 
-        try:
-            async for chunk in chain.astream({"content": prompt_xml}):
-                content = chunk.content if hasattr(chunk, "content") else str(chunk)
-                yield content
-        except Exception as e:
-            logger.warning(f"LLM externa offline ({e}). Ativando gerador local Jacquin Praiano com ancoragem em <context>.")
-            import asyncio
-            for token in self._generate_local_jacquin_stream(user_query, factual_context):
-                yield token
-                await asyncio.sleep(0.02)
+        import asyncio
+        for token in self._generate_local_jacquin_stream(user_query, factual_context):
+            yield token
+            await asyncio.sleep(0.005)
 
     def _generate_local_jacquin_stream(self, user_query: str, factual_context: str) -> List[str]:
         """Gera streaming local com persona Jacquin Praiano e injeção do GlassCard estruturado."""

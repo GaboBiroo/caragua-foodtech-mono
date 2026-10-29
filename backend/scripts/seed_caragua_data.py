@@ -43,8 +43,8 @@ async def seed_database():
             lng = float(r_data.get("longitude", r_data.get("lng", -45.41)))
             point = Point(lng, lat)
             geom = from_shape(point, srid=4326)
-            h3_8 = h3.geo_to_h3(lat, lng, resolution=8)
-            h3_9 = h3.geo_to_h3(lat, lng, resolution=9)
+            h3_8 = h3.latlng_to_cell(lat, lng, 8) if hasattr(h3, 'latlng_to_cell') else h3.geo_to_h3(lat, lng, resolution=8)
+            h3_9 = h3.latlng_to_cell(lat, lng, 9) if hasattr(h3, 'latlng_to_cell') else h3.geo_to_h3(lat, lng, resolution=9)
             gh = geohash2.encode(lat, lng, precision=9)
 
             restaurant = Restaurant(

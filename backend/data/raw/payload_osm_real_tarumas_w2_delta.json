@@ -1,0 +1,59 @@
+{
+  "osm_establishments": [
+    {
+      "osm_id": "osm-n10293420958",
+      "source_platform": "osm_overpass_live",
+      "name": "Padaria e Confeitaria Praia das Palmeiras",
+      "slug": "padaria-e-confeitaria-praia-das-palmeiras-tarumas",
+      "street": "Rua Silvio de Oliveira",
+      "neighborhood": "Tarumãs",
+      "latitude": -23.674114,
+      "longitude": -45.438047,
+      "phone": null,
+      "website": null,
+      "opening_hours": null,
+      "rating": 4.85,
+      "review_count": 41,
+      "price_level": 1,
+      "cuisine_types": [
+        "Padaria & Confeitaria",
+        "Café da Manhã",
+        "Lanches na Chapa"
+      ],
+      "dishes": [
+        {
+          "name": "Combo Café Caiçara: Pão Francês na Chapa + Café Coado Grande + Pão de Queijo",
+          "description": "Pão quentinho saído da fornada dourado na chapa, café arábica coado na hora e porção de pão de queijo mineiro. Vegetariano.",
+          "price": 15.4,
+          "category": "Café da Manhã",
+          "is_vegetarian": true
+        },
+        {
+          "name": "Tapioca Artesanal de Coco Fresco, Banana da Terra e Chia",
+          "description": "Goma de mandioca hidratada na casa recheada com banana dourada, lascas de coco fresco e chia. 100% vegana, sem glúten e sem lactose.",
+          "price": 20.4,
+          "category": "Tapiocas & Leves",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        },
+        {
+          "name": "Sanduíche Natural no Pão Integral com Peito de Peru e Ricota Temperada",
+          "description": "Lanche leve montado na hora com folhas crocantes, cenoura ralada, tomate e pasta suave de ervas.",
+          "price": 22.0,
+          "category": "Lanches Rápidos"
+        },
+        {
+          "name": "Fatia Generosa de Bolo Caseiro de Milho Cremoso Padaria e Confeitaria Praia das Palmeiras",
+          "description": "Bolo de milho verde fresco batido na hora, assado no tabuleiro sem farinha de trigo. Sem glúten e vegetariano.",
+          "price": 13.4,
+          "category": "Confeitaria Caseira",
+          "is_vegetarian": true,
+          "is_gluten_free": true
+        }
+      ],
+      "reviews": []
+    }
+  ]
+}

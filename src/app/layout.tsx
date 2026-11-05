@@ -2,8 +2,8 @@ import './globals.css';
 import { Metadata, Viewport } from 'next';
 
 export const metadata: Metadata = {
-  title: 'CaráFood — Marketplace Hiperlocal & RAG Gastronômico dos 53 Bairros de Caraguatatuba',
-  description: 'Descubra estabelecimentos georreferenciados, pratos auditados, segurança alimentar verificada e busca híbrida SVL-RRF nos 53 bairros oficiais de Caraguatatuba.',
+  title: 'CaráFood — Onde Comer Hoje nos 53 Bairros de Caraguatatuba',
+  description: 'Descubra quiosques, pizzarias, padarias e restaurantes reais em Caraguá, compare cardápios, veja onde o preço baixou e encontre opções para a sua dieta.',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,

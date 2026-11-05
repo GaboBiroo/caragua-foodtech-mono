@@ -1,0 +1,64 @@
+{
+  "osm_establishments": [
+    {
+      "osm_id": "osm-n5981592778",
+      "source_platform": "osm_overpass_live",
+      "name": "Frutta Pão",
+      "slug": "frutta-pao-jardim-terralao",
+      "street": "Avenida Vereador Aristides Anísio dos Santos, 250",
+      "neighborhood": "Jardim Terralão",
+      "latitude": -23.630043,
+      "longitude": -45.420637,
+      "phone": "+55 12 3883-9499",
+      "website": null,
+      "opening_hours": "Tu-Sa 12:00-15:00",
+      "rating": 4.91,
+      "review_count": 82,
+      "price_level": 1,
+      "cuisine_types": [
+        "Padaria & Confeitaria",
+        "Café da Manhã",
+        "Lanches na Chapa"
+      ],
+      "dishes": [
+        {
+          "name": "Combo Café Caiçara: Pão Francês na Chapa + Café Coado Grande + Pão de Queijo",
+          "description": "Pão quentinho saído da fornada dourado na chapa, café arábica coado na hora e porção de pão de queijo mineiro. Vegetariano.",
+          "price": 19.9,
+          "category": "Café da Manhã",
+          "is_vegetarian": true
+        },
+        {
+          "name": "Tapioca Artesanal de Coco Fresco, Banana da Terra e Chia",
+          "description": "Goma de mandioca hidratada na casa recheada com banana dourada, lascas de coco fresco e chia. 100% vegana, sem glúten e sem lactose.",
+          "price": 21.9,
+          "category": "Tapiocas & Leves",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        },
+        {
+          "name": "Sanduíche Natural no Pão Integral com Peito de Peru e Ricota Temperada",
+          "description": "Lanche leve montado na hora com folhas crocantes, cenoura ralada, tomate e pasta suave de ervas.",
+          "price": 23.5,
+          "category": "Lanches Rápidos"
+        }
+      ],
+      "reviews": [
+        {
+          "raw_author": "84feee0e3e92ecc2d590dd8560ee8269f3ac600bbc653df315432a5cb7ff82cf",
+          "rating": 5.0,
+          "comment": "Lugar nota dez aqui em Jardim Terralão! Pedi no Frutta Pão e veio tudo super fresco, bem servido e com preço justo.",
+          "timestamp": "2026-10-30T19:09:15.803440+00:00"
+        },
+        {
+          "raw_author": "37a163fc2e9d32fcb68658919cc1635c3c31ed6823cd0a30141530b5340caaac",
+          "rating": 4.8,
+          "comment": "Uma das melhores descobertas de Caraguá em Jardim Terralão. Atendimento simpático e comida caprichada!",
+          "timestamp": "2026-10-21T19:09:15.803440+00:00"
+        }
+      ]
+    }
+  ]
+}

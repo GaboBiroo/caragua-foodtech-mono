@@ -81,11 +81,11 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAcademicModal, onOpenAICha
   };
 
   const navLinks = [
-    { name: 'Marketplace', href: '/', icon: Compass, label: '53 Bairros & Vitrine' },
-    { name: 'Command Center', href: '/moderation', icon: ShieldCheck, label: 'Moderação & Scraper' },
-    { name: 'Rankings', href: '/rankings', icon: Trophy, label: 'Score Bayesiano' },
-    { name: 'Sobre', href: '/sobre', icon: Info, label: 'Engenharia & TCC' },
-    { name: 'Contato', href: '/contato', icon: Mail, label: 'Credenciamento' },
+    { name: 'Cardápios', href: '/', icon: Compass, label: 'Onde Comer Hoje' },
+    { name: 'Painel da Equipe', href: '/moderation', icon: ShieldCheck, label: 'Curadoria de Cardápios' },
+    { name: 'Favoritos', href: '/rankings', icon: Trophy, label: 'Os Mais Queridos' },
+    { name: 'Sobre', href: '/sobre', icon: Info, label: 'Nossa História' },
+    { name: 'Contato', href: '/contato', icon: Mail, label: 'Cadastrar Local' },
   ];
 
   return (
@@ -131,10 +131,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAcademicModal, onOpenAICha
               </div>
               <div className="flex items-center gap-1.5 mt-1">
                 <span className="text-[10px] text-amber-200 font-extrabold tracking-wider uppercase bg-white/10 px-2 py-0.5 rounded-full border border-white/20">
-                  53 Bairros • SVL-RRF
+                  53 Bairros de Caraguá
                 </span>
                 <span className="hidden xl:inline text-[10px] text-emerald-200 font-semibold">
-                  • PostGIS + pgvector 1536d
+                  • Cardápios & Preços Reais
                 </span>
               </div>
             </div>
@@ -172,8 +172,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAcademicModal, onOpenAICha
                 className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#FFB703] hover:bg-amber-400 text-stone-950 text-xs font-extrabold shadow-md transition-all hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white"
               >
                 <Sparkles className="w-3.5 h-3.5 text-stone-950" />
-                <span className="hidden sm:inline">Assistente IA</span>
-                <span className="sm:hidden">IA</span>
+                <span className="hidden sm:inline">Chef CaráFood</span>
+                <span className="sm:hidden">Chef</span>
               </button>
             )}
 
@@ -184,12 +184,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAcademicModal, onOpenAICha
               {pathname === '/moderation' ? (
                 <>
                   <Compass className="w-3.5 h-3.5 text-[#FFB703]" />
-                  <span>Vitrine</span>
+                  <span>Cardápios</span>
                 </>
               ) : (
                 <>
                   <ShieldCheck className="w-3.5 h-3.5 text-[#FFB703]" />
-                  <span>Moderação</span>
+                  <span>Painel da Equipe</span>
                 </>
               )}
             </Link>

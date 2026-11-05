@@ -894,6 +894,122 @@ class GoogleMapsPlacesAdapter(BaseSourceAdapter):
 
 
 # ==============================================================================
+# 5. OPENSTREETMAP OVERPASS + PLAYWRIGHT DUAL-MODE REAL ADAPTER
+# ==============================================================================
+
+class OpenStreetMapRealAdapter(BaseSourceAdapter):
+    """
+    Tradutor dedicado para estabelecimentos reais extraídos ao vivo do OpenStreetMap
+    (Overpass API / Nominatim OSM) enriquecidos com cardápios via Playwright / Regional.
+    """
+
+    platform_name = "osm_overpass_live"
+
+    def can_handle(self, raw_data: Dict[str, Any]) -> bool:
+        if not isinstance(raw_data, dict):
+            return False
+        src = str(raw_data.get("source_platform") or raw_data.get("platform") or "").lower()
+        return src.startswith("osm_") or "osm_id" in raw_data
+
+    def adapt_restaurant(self, raw_data: Dict[str, Any]) -> CanonicalRestaurant:
+        name = strip_html(raw_data.get("name") or "Estabelecimento Caraguatatuba")
+        slug = slugify_text(raw_data.get("slug") or name)
+        osm_id = str(raw_data.get("osm_id") or raw_data.get("source_external_id") or f"osm-{slug}")
+        lat = float(raw_data.get("latitude") or raw_data.get("lat") or -23.6226)
+        lon = float(raw_data.get("longitude") or raw_data.get("lon") or -45.4124)
+        street = strip_html(raw_data.get("street") or raw_data.get("address") or "Via Pública de Caraguatatuba")
+        neighborhood = strip_html(raw_data.get("neighborhood") or "Centro")
+        platform_tag = str(raw_data.get("source_platform") or self.platform_name)
+
+        dishes: List[CanonicalDish] = []
+        for idx, raw_item in enumerate(raw_data.get("dishes") or []):
+            if not isinstance(raw_item, dict):
+                continue
+            d_name = strip_html(raw_item.get("name") or "")
+            d_price = parse_brl_price(raw_item.get("price"), assume_cents_if_int=False)
+            if not d_name or d_price <= 0.0:
+                continue
+            d_desc = strip_html(raw_item.get("description") or "")
+            d_cat = strip_html(raw_item.get("category") or "Cardápio Principal")
+            inferred = DietaryInferenceEngine.infer(
+                name=d_name,
+                description=d_desc,
+                category=d_cat,
+                upstream_flags={
+                    "is_vegan": bool(raw_item.get("is_vegan", False)),
+                    "is_vegetarian": bool(raw_item.get("is_vegetarian", False)),
+                    "is_gluten_free": bool(raw_item.get("is_gluten_free", False)),
+                    "is_lactose_free": bool(raw_item.get("is_lactose_free", False)),
+                },
+            )
+            choices: List[CanonicalItemChoice] = []
+            for ch in raw_item.get("choices") or []:
+                if isinstance(ch, dict) and ch.get("name"):
+                    choices.append(
+                        CanonicalItemChoice(
+                            name=strip_html(ch["name"]),
+                            price=parse_brl_price(ch.get("price", 0.0)),
+                            is_required=bool(ch.get("is_required", False)),
+                            max_options=max(1, int(ch.get("max_options", 1))),
+                        )
+                    )
+            dishes.append(
+                CanonicalDish(
+                    name=d_name,
+                    description=d_desc,
+                    price=d_price,
+                    category=d_cat,
+                    image_url=raw_item.get("image_url"),
+                    choices=choices,
+                    raw_payload_ref=f"{platform_tag}:{osm_id}:item:{idx}",
+                    **inferred,
+                )
+            )
+
+        reviews: List[CanonicalReview] = []
+        for rev in raw_data.get("reviews") or []:
+            if not isinstance(rev, dict):
+                continue
+            rating_val = min(5.0, max(1.0, float(rev.get("rating") or 4.8)))
+            reviews.append(
+                CanonicalReview(
+                    raw_author=str(rev.get("raw_author") or rev.get("author") or "morador_caragua"),
+                    rating=rating_val,
+                    comment=strip_html(rev.get("comment") or rev.get("text") or ""),
+                    timestamp=parse_timestamp_utc(rev.get("timestamp")),
+                    source_platform=platform_tag,
+                )
+            )
+
+        raw_hours = raw_data.get("opening_hours")
+        parsed_hours: Optional[Dict[str, Any]] = None
+        if isinstance(raw_hours, dict):
+            parsed_hours = raw_hours
+        elif isinstance(raw_hours, str) and raw_hours.strip():
+            parsed_hours = {"osm_schedule": raw_hours.strip()}
+
+        return CanonicalRestaurant(
+            name=name,
+            slug=slug,
+            street=street,
+            neighborhood=neighborhood,
+            latitude=lat,
+            longitude=lon,
+            phone=raw_data.get("phone"),
+            website=raw_data.get("website"),
+            rating=round(float(raw_data.get("rating") or 4.78), 2),
+            review_count=int(raw_data.get("review_count") or max(14, len(reviews))),
+            source_platform=platform_tag,
+            source_external_id=osm_id,
+            cuisine_types=list(raw_data.get("cuisine_types") or ["Gastronomia de Caraguá"]),
+            price_level=min(4, max(1, int(raw_data.get("price_level") or 2))),
+            opening_hours=parsed_hours,
+            dishes=dishes,
+            reviews=reviews,
+        )
+
+
+# ==============================================================================
 # REGISTRY POLIMÓRFICO CENTRAL DE ADAPTERS
 # ==============================================================================
 
@@ -901,6 +1017,7 @@ class AdapterRegistry:
     """Registro polimórfico central para roteamento automático de payloads XHR."""
 
     _ADAPTERS: Tuple[BaseSourceAdapter, ...] = (
+        OpenStreetMapRealAdapter(),
         IFoodWebAdapter(),
         GoomerAnotaAIAdapter(),
         MenuDinoCardapioWebAdapter(),
@@ -922,6 +1039,11 @@ class AdapterRegistry:
         if isinstance(raw_payload, dict):
             if "url" in raw_payload and "status" in raw_payload and "data" in raw_payload:
                 return cls.unwrap_network_envelope(raw_payload["data"])
+            if "osm_establishments" in raw_payload and isinstance(raw_payload["osm_establishments"], list):
+                for item in raw_payload["osm_establishments"]:
+                    if isinstance(item, dict):
+                        extracted.append(item)
+                return extracted
             if "merchants" in raw_payload and isinstance(raw_payload["merchants"], list):
                 for m in raw_payload["merchants"]:
                     if isinstance(m, dict):

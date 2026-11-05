@@ -259,8 +259,17 @@ class HybridRAGEngine:
 
         if intent["matched_neighborhoods"]:
             neigh_lower = [n.lower() for n in intent["matched_neighborhoods"]]
-            where_clauses.append("LOWER(r.neighborhood) = ANY(:neigh_list)")
             params["neigh_list"] = neigh_lower
+            if neighborhood:
+                where_clauses.append("LOWER(r.neighborhood) = ANY(:neigh_list)")
+            else:
+                neigh_like = [f"%{_strip_accents_lower(n)}%" for n in intent["matched_neighborhoods"]]
+                params["neigh_like_list"] = neigh_like
+                where_clauses.append(
+                    "(LOWER(r.neighborhood) = ANY(:neigh_list) "
+                    "OR unaccent(LOWER(r.name)) LIKE ANY(:neigh_like_list) "
+                    "OR unaccent(LOWER(d.name)) LIKE ANY(:neigh_like_list))"
+                )
 
         where_sql = " AND ".join(where_clauses)
 
@@ -297,10 +306,11 @@ class HybridRAGEngine:
                     )::float AS distance_meters,
                     GREATEST(
                         similarity(
-                            unaccent(lower(d.name || ' ' || COALESCE(d.description, '') || ' ' || COALESCE(d.category, ''))),
+                            unaccent(lower(d.name || ' ' || r.name || ' ' || COALESCE(d.description, '') || ' ' || COALESCE(d.category, ''))),
                             unaccent(lower(:q_lex))
                         ),
-                        similarity(unaccent(lower(d.name)), unaccent(lower(:q_lex)))
+                        similarity(unaccent(lower(d.name)), unaccent(lower(:q_lex))),
+                        similarity(unaccent(lower(d.name || ' ' || r.name)), unaccent(lower(:q_lex)))
                     )::float AS lexical_similarity
                 FROM dishes d
                 JOIN restaurants r ON r.id = d.restaurant_id
@@ -335,6 +345,7 @@ class HybridRAGEngine:
                     + (0.30 / (60.0 + rc.k_geo))
                     + (0.20 / (60.0 + rc.k_lex))
                     + (0.005 * (rc.bayesian_rating / 5.0))
+                    + (CASE WHEN rc.lexical_similarity >= 0.72 THEN 0.025 * rc.lexical_similarity ELSE 0.0 END)
                 )::float AS svl_rrf_score
             FROM ranked_candidates rc
             ORDER BY svl_rrf_score DESC
@@ -347,7 +358,7 @@ class HybridRAGEngine:
         # Se o filtro estrito de bairro mencionado não tinha itens, relaxa apenas o bairro mantendo 100% da dieta e preço!
         if not rows and intent["matched_neighborhoods"] and not neighborhood:
             fallback_clauses = [c for c in where_clauses if "LOWER(r.neighborhood)" not in c]
-            fallback_params = {k: v for k, v in params.items() if k != "neigh_list"}
+            fallback_params = {k: v for k, v in params.items() if k not in ("neigh_list", "neigh_like_list")}
             fallback_sql = text(
                 svl_rrf_sql.text.replace(f"WHERE {where_sql}", f"WHERE {' AND '.join(fallback_clauses)}")
             )
@@ -357,6 +368,10 @@ class HybridRAGEngine:
         for row in rows:
             dist_m = round(float(row["distance_meters"]), 1)
             dist_km = round(dist_m / 1000.0, 2)
+            delta_pct = round(float(row["last_price_delta_pct"]), 2)
+            rating_val = round(float(row["bayesian_rating"]), 2)
+            neigh_name = row["neighborhood"] or "Centro"
+
             diet_badges: List[str] = []
             if row["is_vegan"]:
                 diet_badges.append("Vegano")
@@ -365,7 +380,25 @@ class HybridRAGEngine:
             if row["is_gluten_free"]:
                 diet_badges.append("Sem Glúten")
             if row["is_lactose_free"]:
-                diet_badges.append("Zero Lactose")
+                diet_badges.append("Sem Lactose")
+
+            if delta_pct < 0:
+                friendly_match_label = "Baixou de preço"
+            elif row["is_vegan"]:
+                friendly_match_label = "100% Vegano"
+            elif dist_m <= 950:
+                friendly_match_label = "Pertinho de você"
+            elif rating_val >= 4.70:
+                friendly_match_label = "Super recomendado"
+            else:
+                friendly_match_label = "Combina com você"
+
+            if dist_m < 1000.0:
+                rounded_m = max(50, int(round(dist_m / 10.0) * 10))
+                distance_label = f"A {rounded_m}m de você • {neigh_name}"
+            else:
+                km_fmt = f"{dist_km:.1f}".replace(".", ",")
+                distance_label = f"A {km_fmt} km • {neigh_name}"
 
             recommendations.append(
                 {
@@ -381,13 +414,16 @@ class HybridRAGEngine:
                     "is_lactose_free": bool(row["is_lactose_free"]),
                     "dietary_tags": diet_badges,
                     "smart_defaults": row["smart_defaults"] or [],
-                    "last_price_delta_pct": round(float(row["last_price_delta_pct"]), 2),
+                    "last_price_delta_pct": delta_pct,
+                    "friendly_match_label": friendly_match_label,
+                    "distance_label": distance_label,
                     "restaurant_id": str(row["restaurant_id"]),
                     "restaurant_name": row["restaurant_name"],
                     "restaurant_slug": row["restaurant_slug"],
-                    "neighborhood": row["neighborhood"],
+                    "neighborhood": neigh_name,
                     "restaurant_address": row["restaurant_address"],
-                    "bayesian_rating": round(float(row["bayesian_rating"]), 2),
+                    "rating_score": rating_val,
+                    "bayesian_rating": rating_val,
                     "rating_average": round(float(row["rating_average"]), 2),
                     "review_count": int(row["review_count"]),
                     "distance_meters": dist_m,
@@ -412,62 +448,74 @@ class HybridRAGEngine:
         recommendations: List[Dict[str, Any]],
     ) -> str:
         """
-        Sintetizador determinístico consultivo em Português Brasileiro:
-        100% ancorado nos registros reais recuperados pelo SVL-RRF (zero alucinação
-        de preços, endereços ou segurança alimentar).
+        Gera uma resposta calorosa, natural e apetitosa como um amigo morador de Caraguatatuba
+        (Chef CaráFood), 100% fiel aos pratos, preços e restrições alimentares verificados,
+        sem qualquer jargão técnico de banco de dados ou algoritmos.
         """
+        diet_names_map = {
+            "is_vegan": "vegano",
+            "is_vegetarian": "vegetariano",
+            "is_gluten_free": "sem glúten",
+            "is_lactose_free": "sem lactose",
+        }
+        active_diets = [
+            label for key, label in diet_names_map.items() if intent["dietary_filters"].get(key)
+        ]
+
         if not recommendations:
-            active_diets = [k.replace("is_", "") for k, v in intent["dietary_filters"].items() if v]
-            diet_note = f" com filtro ({', '.join(active_diets)})" if active_diets else ""
-            price_note = f" até R$ {intent['max_price']:.2f}" if intent["max_price"] else ""
+            diet_note = f" ({', '.join(active_diets)})" if active_diets else ""
+            price_note = (
+                f" até R$ {intent['max_price']:.2f}".replace(".", ",")
+                if intent["max_price"]
+                else ""
+            )
             return (
-                f"Consultei o catálogo auditado de Caraguatatuba{diet_note}{price_note}, "
-                f"mas não encontrei pratos aprovados que atendam simultaneamente a todos esses critérios "
-                f"no momento. Tente ampliar a faixa de preço ou explorar todos os 53 bairros."
+                f"Dei uma boa olhada nos cardápios abertos hoje em Caraguá{diet_note}{price_note}, "
+                f"mas não achei nenhum prato que cumpra tudo isso ao mesmo tempo agora. "
+                f"Que tal aumentar um pouquinho a faixa de valor ou olhar também nos bairros vizinhos?"
             )
 
         top = recommendations[0]
-        header_parts: List[str] = [
-            f"Encontrei **{len(recommendations)} opções auditadas** em Caraguatatuba via fusão espacial-vetorial **SVL-RRF**!"
+        top_price_fmt = f"R$ {top['price']:.2f}".replace(".", ",")
+        top_drop_txt = (
+            " — e olha que notícia boa: o preço dele acabou de baixar!"
+            if top["last_price_delta_pct"] < 0
+            else "!"
+        )
+
+        intro_parts: List[str] = [
+            f"Olha só, separei **{len(recommendations)} lugares caprichados** aqui em Caraguá para você!"
         ]
 
-        diet_active: List[str] = []
-        if intent["dietary_filters"].get("is_vegan"):
-            diet_active.append("Vegano")
-        if intent["dietary_filters"].get("is_vegetarian"):
-            diet_active.append("Vegetariano")
-        if intent["dietary_filters"].get("is_gluten_free"):
-            diet_active.append("Sem Glúten")
-        if intent["dietary_filters"].get("is_lactose_free"):
-            diet_active.append("Zero Lactose")
-        if diet_active:
-            op_txt = " ou " if intent["dietary_operator"] == "OR" else " + "
-            header_parts.append(
-                f"Trava SQL de Segurança Alimentar ativa: **{op_txt.join(diet_active)}**."
+        if active_diets:
+            op_txt = " ou " if intent["dietary_operator"] == "OR" else " e "
+            intro_parts.append(
+                f"Já conferi cada cardápio com carinho para te mostrar só opções **{op_txt.join(active_diets)}**, para você pedir sem medo."
             )
-        if intent["max_price"] is not None:
-            header_parts.append(f"Orçamento máximo respeitado: **até R$ {intent['max_price']:.2f}**.")
 
-        lines = [" ".join(header_parts), ""]
+        if intent["max_price"] is not None:
+            max_fmt = f"R$ {intent['max_price']:.2f}".replace(".", ",")
+            intro_parts.append(f"E tudo dentro do seu bolso, custando **até {max_fmt}**.")
+
+        intro_parts.append(
+            f"Minha primeira dica é o **{top['dish_name']}** lá no **{top['restaurant_name']}** ({top['neighborhood']}), "
+            f"que está saindo por **{top_price_fmt}**{top_drop_txt}"
+        )
+
+        lines = [" ".join(intro_parts), ""]
         for idx, item in enumerate(recommendations[:4], start=1):
+            price_fmt = f"R$ {item['price']:.2f}".replace(".", ",")
             delta = item["last_price_delta_pct"]
-            delta_badge = (
-                f" *(queda auditada de {delta:.1f}%)*"
-                if delta < 0
-                else (f" *(ajuste de +{delta:.1f}%)*" if delta > 0 else "")
-            )
-            tags_txt = f" [{', '.join(item['dietary_tags'])}]" if item["dietary_tags"] else ""
+            delta_badge = " *(📉 baixou de preço recentemente!)*" if delta < 0 else ""
+            tags_txt = f" • {', '.join(item['dietary_tags'])}" if item["dietary_tags"] else ""
             lines.append(
-                f"{idx}. **{item['dish_name']}** — **R$ {item['price']:.2f}**{delta_badge}{tags_txt}\n"
-                f"   📍 *{item['restaurant_name']}* ({item['neighborhood']}, {item['distance_km']:.2f} km) • "
-                f"Nota Bayesiana $W_R$: **{item['bayesian_rating']:.2f}★** • "
-                f"Score SVL-RRF: `{item['rrf_breakdown']['svl_rrf_score']:.4f}`."
+                f"{idx}. **{item['dish_name']}** — **{price_fmt}**{delta_badge}\n"
+                f"   📍 *{item['restaurant_name']}* ({item['distance_label']}) • "
+                f"⭐ **{item['rating_score']:.1f}**{tags_txt}"
             )
 
         lines.append(
-            f"\nDestaque imediato: **{top['dish_name']}** no *{top['restaurant_name']}* "
-            f"({top['restaurant_address']}, {top['neighborhood']}), combinando proximidade geodésica "
-            f"({top['distance_meters']:.0f}m) e alta afinidade semântica."
+            "\nTodas as opções acima estão com o cardápio conferido hoje. É só clicar em qualquer um dos pratos abaixo para ver o restaurante completo!"
         )
         return "\n".join(lines)
 
@@ -482,14 +530,15 @@ class HybridRAGEngine:
             return None
 
         context_lines = [
-            f"- {r['dish_name']} | R$ {r['price']:.2f} | {r['restaurant_name']} ({r['neighborhood']}, {r['distance_km']} km) | Tags: {', '.join(r['dietary_tags']) or 'Tradicional'}"
+            f"- {r['dish_name']} | R$ {r['price']:.2f} | {r['restaurant_name']} ({r['distance_label']}) | {', '.join(r['dietary_tags']) or 'Receita da casa'}"
             for r in recommendations[:4]
         ]
         prompt = (
-            "Você é o assistente gastronômico hiperlocal do CaráFood em Caraguatatuba/SP. "
-            "Responda em português de forma concisa citando EXCLUSIVAMENTE os pratos e preços abaixo:\n"
+            "Você é o Chef CaráFood, um amigo morador de Caraguatatuba que conhece todos os quiosques, pizzarias e restaurantes da cidade. "
+            "Fale de forma calorosa, apetitosa e 100% humana, NUNCA use siglas técnicas, banco de dados ou algoritmos. "
+            "Recomende citando APENAS os pratos e preços reais abaixo:\n"
             + "\n".join(context_lines)
-            + f"\nPergunta: {query_text}\nResposta:"
+            + f"\nPedido do cliente: {query_text}\nSua dica calorosa:"
         )
         url = f"{settings.OLLAMA_BASE_URL.rstrip('/')}/api/generate"
         body = json.dumps(

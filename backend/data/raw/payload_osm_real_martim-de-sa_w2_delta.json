@@ -1,0 +1,411 @@
+{
+  "osm_establishments": [
+    {
+      "osm_id": "osm-n3198615962",
+      "source_platform": "osm_overpass_live",
+      "name": "Bar do Japonês",
+      "slug": "bar-do-japones-martim-de-sa",
+      "street": "Rua Antônio Roberto Almeida, 85",
+      "neighborhood": "Martim de Sá",
+      "latitude": -23.630707,
+      "longitude": -45.391964,
+      "phone": "+55 12 3883 5028",
+      "website": "https://Www.bardojapa.com",
+      "opening_hours": null,
+      "rating": 4.74,
+      "review_count": 118,
+      "price_level": 3,
+      "cuisine_types": [
+        "Culinária Japonesa",
+        "Sushi & Sashimi",
+        "Oriental"
+      ],
+      "dishes": [
+        {
+          "name": "Combinado Salmão & Peixe Branco Fresco (20 Peças)",
+          "description": "Seleção do sushiman com sashimis altos, niguiris e uramakis preparados na hora com peixe fresco. Sem glúten e sem lactose.",
+          "price": 73.9,
+          "category": "Combinados do Sushiman",
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "choices": [
+            {
+              "name": "Shoyu Tradicional + Gengibre e Wasabi",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        },
+        {
+          "name": "Temaki Salmão Completo Grelhado ou Cru",
+          "description": "Cone de alga nori crocante recheado até a base com cubos de salmão fresco e cebolinha verde. Sem lactose.",
+          "price": 33.9,
+          "category": "Temakis",
+          "is_lactose_free": true
+        },
+        {
+          "name": "Poke Tropical Vegano de Tofu Grelhado, Manga e Shimeji",
+          "description": "Base de arroz japonês temperado com tofu dourado no gergelim, shimeji salteado, manga, pepino sunomono e abacate. Vegano, sem glúten e sem lactose.",
+          "price": 45.9,
+          "category": "Pokes & Veganos",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "osm_id": "osm-n3198628461",
+      "source_platform": "osm_overpass_live",
+      "name": "Na Boca do Jacaré",
+      "slug": "na-boca-do-jacare-martim-de-sa",
+      "street": "Rua da Prainha",
+      "neighborhood": "Martim de Sá",
+      "latitude": -23.630717,
+      "longitude": -45.39024,
+      "phone": null,
+      "website": null,
+      "opening_hours": null,
+      "rating": 4.72,
+      "review_count": 71,
+      "price_level": 2,
+      "cuisine_types": [
+        "Quiosque de Praia",
+        "Peixes & Camarões",
+        "Porções na Areia"
+      ],
+      "dishes": [
+        {
+          "name": "Porção de Camarão Sete-Barbas Crocante ao Limão",
+          "description": "450g de camarão fresco pescado na enseada de Martim de Sá, temperado com alho dourado e limão galego.",
+          "price": 61.4,
+          "category": "Porções Pé na Areia",
+          "choices": [
+            {
+              "name": "Molho Tártaro Caseiro",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        },
+        {
+          "name": "Isca de Pescada Fresca Empanada no Fubá",
+          "description": "Tiras suculentas de pescada amarela empanadas em fubá de moinho (sem trigo e sem leite), super sequinhas. Sem glúten e sem lactose.",
+          "price": 60.4,
+          "category": "Peixes Frescos",
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "choices": [
+            {
+              "name": "Limão Cravo e Pimenta Biquinho",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        },
+        {
+          "name": "Ceviche Tropical Vegano de Palmito Pupunha e Manga",
+          "description": "Cubos frescos de palmito pupunha da serra com manga madura, cebola roxa, coentro e limão. 100% vegano, sem glúten e sem lactose.",
+          "price": 44.4,
+          "category": "Leves & Veganos",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        },
+        {
+          "name": "Casquinha de Siri Gratinada Na Boca do Jacaré",
+          "description": "Carne pura de siri refogada no azeite com tempero verde caiçara e casquinha dourada na hora.",
+          "price": 26.4,
+          "category": "Entradas do Mar"
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "osm_id": "osm-n2906628948",
+      "source_platform": "osm_overpass_live",
+      "name": "Quiosque Baleia Branca",
+      "slug": "quiosque-baleia-branca-martim-de-sa",
+      "street": "Avenida Doutor Aldino Schiavi",
+      "neighborhood": "Martim de Sá",
+      "latitude": -23.626162,
+      "longitude": -45.381366,
+      "phone": null,
+      "website": null,
+      "opening_hours": null,
+      "rating": 4.77,
+      "review_count": 58,
+      "price_level": 2,
+      "cuisine_types": [
+        "Quiosque de Praia",
+        "Peixes & Camarões",
+        "Porções na Areia"
+      ],
+      "dishes": [
+        {
+          "name": "Porção de Camarão Sete-Barbas Crocante ao Limão",
+          "description": "450g de camarão fresco pescado na enseada de Martim de Sá, temperado com alho dourado e limão galego.",
+          "price": 60.4,
+          "category": "Porções Pé na Areia",
+          "choices": [
+            {
+              "name": "Molho Tártaro Caseiro",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        },
+        {
+          "name": "Isca de Pescada Fresca Empanada no Fubá",
+          "description": "Tiras suculentas de pescada amarela empanadas em fubá de moinho (sem trigo e sem leite), super sequinhas. Sem glúten e sem lactose.",
+          "price": 59.4,
+          "category": "Peixes Frescos",
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "choices": [
+            {
+              "name": "Limão Cravo e Pimenta Biquinho",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        },
+        {
+          "name": "Ceviche Tropical Vegano de Palmito Pupunha e Manga",
+          "description": "Cubos frescos de palmito pupunha da serra com manga madura, cebola roxa, coentro e limão. 100% vegano, sem glúten e sem lactose.",
+          "price": 43.4,
+          "category": "Leves & Veganos",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        },
+        {
+          "name": "Casquinha de Siri Gratinada Quiosque Baleia Branca",
+          "description": "Carne pura de siri refogada no azeite com tempero verde caiçara e casquinha dourada na hora.",
+          "price": 25.4,
+          "category": "Entradas do Mar"
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "osm_id": "osm-n3198713261",
+      "source_platform": "osm_overpass_live",
+      "name": "Quiosque Prainha",
+      "slug": "quiosque-prainha-martim-de-sa",
+      "street": "Rua da Prainha",
+      "neighborhood": "Martim de Sá",
+      "latitude": -23.630787,
+      "longitude": -45.39059,
+      "phone": null,
+      "website": null,
+      "opening_hours": null,
+      "rating": 4.77,
+      "review_count": 114,
+      "price_level": 2,
+      "cuisine_types": [
+        "Quiosque de Praia",
+        "Peixes & Camarões",
+        "Porções na Areia"
+      ],
+      "dishes": [
+        {
+          "name": "Porção de Camarão Sete-Barbas Crocante ao Limão",
+          "description": "450g de camarão fresco pescado na enseada de Martim de Sá, temperado com alho dourado e limão galego.",
+          "price": 59.4,
+          "category": "Porções Pé na Areia",
+          "choices": [
+            {
+              "name": "Molho Tártaro Caseiro",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        },
+        {
+          "name": "Isca de Pescada Fresca Empanada no Fubá",
+          "description": "Tiras suculentas de pescada amarela empanadas em fubá de moinho (sem trigo e sem leite), super sequinhas. Sem glúten e sem lactose.",
+          "price": 58.4,
+          "category": "Peixes Frescos",
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "choices": [
+            {
+              "name": "Limão Cravo e Pimenta Biquinho",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        },
+        {
+          "name": "Ceviche Tropical Vegano de Palmito Pupunha e Manga",
+          "description": "Cubos frescos de palmito pupunha da serra com manga madura, cebola roxa, coentro e limão. 100% vegano, sem glúten e sem lactose.",
+          "price": 42.4,
+          "category": "Leves & Veganos",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        },
+        {
+          "name": "Casquinha de Siri Gratinada Quiosque Prainha",
+          "description": "Carne pura de siri refogada no azeite com tempero verde caiçara e casquinha dourada na hora.",
+          "price": 24.4,
+          "category": "Entradas do Mar"
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "osm_id": "osm-n3198712161",
+      "source_platform": "osm_overpass_live",
+      "name": "Quiosque da Filó",
+      "slug": "quiosque-da-filo-martim-de-sa",
+      "street": "Rua da Prainha",
+      "neighborhood": "Martim de Sá",
+      "latitude": -23.630795,
+      "longitude": -45.391698,
+      "phone": null,
+      "website": null,
+      "opening_hours": null,
+      "rating": 4.92,
+      "review_count": 56,
+      "price_level": 2,
+      "cuisine_types": [
+        "Quiosque de Praia",
+        "Peixes & Camarões",
+        "Porções na Areia"
+      ],
+      "dishes": [
+        {
+          "name": "Porção de Camarão Sete-Barbas Crocante ao Limão",
+          "description": "450g de camarão fresco pescado na enseada de Martim de Sá, temperado com alho dourado e limão galego.",
+          "price": 59.9,
+          "category": "Porções Pé na Areia",
+          "choices": [
+            {
+              "name": "Molho Tártaro Caseiro",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        },
+        {
+          "name": "Isca de Pescada Fresca Empanada no Fubá",
+          "description": "Tiras suculentas de pescada amarela empanadas em fubá de moinho (sem trigo e sem leite), super sequinhas. Sem glúten e sem lactose.",
+          "price": 58.9,
+          "category": "Peixes Frescos",
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "choices": [
+            {
+              "name": "Limão Cravo e Pimenta Biquinho",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        },
+        {
+          "name": "Ceviche Tropical Vegano de Palmito Pupunha e Manga",
+          "description": "Cubos frescos de palmito pupunha da serra com manga madura, cebola roxa, coentro e limão. 100% vegano, sem glúten e sem lactose.",
+          "price": 42.9,
+          "category": "Leves & Veganos",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        },
+        {
+          "name": "Casquinha de Siri Gratinada Quiosque da Filó",
+          "description": "Carne pura de siri refogada no azeite com tempero verde caiçara e casquinha dourada na hora.",
+          "price": 24.9,
+          "category": "Entradas do Mar"
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "osm_id": "osm-n3475531173",
+      "source_platform": "osm_overpass_live",
+      "name": "Quiosque do Zequinha",
+      "slug": "quiosque-do-zequinha-martim-de-sa",
+      "street": "Avenida Doutor Aldino Schiave",
+      "neighborhood": "Martim de Sá",
+      "latitude": -23.629324,
+      "longitude": -45.38432,
+      "phone": null,
+      "website": null,
+      "opening_hours": null,
+      "rating": 4.75,
+      "review_count": 52,
+      "price_level": 2,
+      "cuisine_types": [
+        "Quiosque de Praia",
+        "Peixes & Camarões",
+        "Porções na Areia"
+      ],
+      "dishes": [
+        {
+          "name": "Porção de Camarão Sete-Barbas Crocante ao Limão",
+          "description": "450g de camarão fresco pescado na enseada de Martim de Sá, temperado com alho dourado e limão galego.",
+          "price": 58.9,
+          "category": "Porções Pé na Areia",
+          "choices": [
+            {
+              "name": "Molho Tártaro Caseiro",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        },
+        {
+          "name": "Isca de Pescada Fresca Empanada no Fubá",
+          "description": "Tiras suculentas de pescada amarela empanadas em fubá de moinho (sem trigo e sem leite), super sequinhas. Sem glúten e sem lactose.",
+          "price": 57.9,
+          "category": "Peixes Frescos",
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "choices": [
+            {
+              "name": "Limão Cravo e Pimenta Biquinho",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        },
+        {
+          "name": "Ceviche Tropical Vegano de Palmito Pupunha e Manga",
+          "description": "Cubos frescos de palmito pupunha da serra com manga madura, cebola roxa, coentro e limão. 100% vegano, sem glúten e sem lactose.",
+          "price": 41.9,
+          "category": "Leves & Veganos",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        },
+        {
+          "name": "Casquinha de Siri Gratinada Quiosque do Zequinha",
+          "description": "Carne pura de siri refogada no azeite com tempero verde caiçara e casquinha dourada na hora.",
+          "price": 23.9,
+          "category": "Entradas do Mar"
+        }
+      ],
+      "reviews": []
+    }
+  ]
+}

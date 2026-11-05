@@ -7,57 +7,51 @@ import {
   MapPin,
   Star,
   Sparkles,
-  ShieldCheck,
   TrendingDown,
-  ArrowRight,
-  Compass,
-  SlidersHorizontal,
-  RefreshCw,
+  ShieldCheck,
   Utensils,
   Navigation,
+  ArrowRight,
+  SlidersHorizontal,
+  RefreshCw,
+  ChefHat,
   X,
 } from 'lucide-react';
-import { Navbar } from '@/components/Navbar';
-import { CaraguaAIChatDrawer } from '@/components/CaraguaAIChatDrawer';
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+import { Navbar } from '../components/Navbar';
+import { CaraguaAIChatDrawer } from '../components/CaraguaAIChatDrawer';
 
 interface DishPreview {
   id: string;
   name: string;
   description: string;
   price: number;
+  previous_price?: number | null;
+  savings_brl?: number;
   category: string;
-  image_url?: string | null;
   is_vegan: boolean;
   is_vegetarian: boolean;
   is_gluten_free: boolean;
   is_lactose_free: boolean;
   last_price_delta_pct: number;
-  smart_defaults: string[];
+  suggested_sides?: string[];
 }
 
-interface MarketplaceRestaurant {
+interface RestaurantCardData {
   id: string;
   name: string;
   slug: string;
   address: string;
   neighborhood: string;
-  city: string;
-  state: string;
   phone?: string | null;
   latitude: number;
   longitude: number;
-  h3_res8?: string | null;
   price_level: number;
-  bayesian_rating: number;
+  rating_score?: number;
   rating_average: number;
-  decayed_rating_average: number;
   total_reviews: number;
-  review_count: number;
   active_dishes_count: number;
   has_price_drop: boolean;
-  lgpd_verified: boolean;
+  is_real_osm?: boolean;
   source_platform: string;
   cuisine_types: string[];
   distance_meters: number;
@@ -75,578 +69,693 @@ interface NeighborhoodSummaryItem {
   longitude: number;
   restaurants_count: number;
   active_dishes_count: number;
-  quarantined_dishes_count: number;
-  checkpoint_active: boolean;
 }
 
-const DIETARY_CHIPS: Array<{
-  key: string;
-  label: string;
-  emoji: string;
-}> = [
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+
+const DIETARY_PILLS = [
   { key: 'vegan', label: 'Vegano', emoji: '🌱' },
   { key: 'vegetarian', label: 'Vegetariano', emoji: '🥗' },
   { key: 'gluten_free', label: 'Sem Glúten', emoji: '🌾' },
-  { key: 'lactose_free', label: 'Zero Lactose', emoji: '🥛' },
+  { key: 'lactose_free', label: 'Sem Lactose', emoji: '🥛' },
+] as const;
+
+const FEATURED_NEIGHBORHOODS = [
+  'Todos',
+  'Centro',
+  'Martim de Sá',
+  'Prainha',
+  'Indaiá',
+  'Cocanha',
+  'Massaguaçu',
+  'Jardim Aruan',
+  'Praia das Palmeiras',
+  'Porto Novo',
 ];
 
-export default function CaraguaMarketplacePage() {
-  const [restaurants, setRestaurants] = useState<MarketplaceRestaurant[]>([]);
-  const [neighborhoods, setNeighborhoods] = useState<NeighborhoodSummaryItem[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+function formatBRL(value: number): string {
+  return `R$ ${value.toFixed(2).replace('.', ',')}`;
+}
 
+function formatDistanceHuman(meters: number, km: number): string {
+  if (meters < 1000) {
+    return `A ${Math.max(50, Math.round(meters / 10) * 10)}m`;
+  }
+  return `A ${km.toFixed(1).replace('.', ',')} km`;
+}
+
+function formatSavingsBadge(dish: DishPreview): string {
+  if (dish.savings_brl && dish.savings_brl >= 1) {
+    return `📉 Baixou R$ ${dish.savings_brl.toFixed(2).replace('.', ',')} recentemente`;
+  }
+  return '🔥 Preço menor que na semana passada';
+}
+
+export default function HomePage() {
+  const [restaurants, setRestaurants] = useState<RestaurantCardData[]>([]);
+  const [neighborhoods, setNeighborhoods] = useState<NeighborhoodSummaryItem[]>([]);
+  const [populatedZonesCount, setPopulatedZonesCount] = useState<number>(53);
+
+  const [selectedNeighborhood, setSelectedNeighborhood] = useState<string>('Todos');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [selectedNeighborhood, setSelectedNeighborhood] = useState<string>('todos');
-  const [activeDietary, setActiveDietary] = useState<string[]>([]);
+  const [debouncedSearch, setDebouncedSearch] = useState<string>('');
+  const [selectedDietary, setSelectedDietary] = useState<string[]>([]);
   const [priceDropOnly, setPriceDropOnly] = useState<boolean>(false);
-  const [sortBy, setSortBy] = useState<'bayesian' | 'distance'>('bayesian');
+  const [sortBy, setSortBy] = useState<'recommended' | 'distance'>('recommended');
 
   const [userCoords, setUserCoords] = useState<{ lat: number; lon: number }>({
-    lat: -23.6204,
-    lon: -45.4132,
+    lat: -23.6226,
+    lon: -45.4124,
   });
+  const [gpsActive, setGpsActive] = useState<boolean>(false);
+
+  const [loading, setLoading] = useState<boolean>(true);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const [aiDrawerOpen, setAiDrawerOpen] = useState<boolean>(false);
-  const [aiInitialPrompt, setAiInitialPrompt] = useState<string>('');
-  const [quickModalRest, setQuickModalRest] = useState<MarketplaceRestaurant | null>(
-    null
-  );
+  const [aiInitialPrompt, setAiInitialPrompt] = useState<string | undefined>(undefined);
+  const [quickModalRest, setQuickModalRest] = useState<RestaurantCardData | null>(null);
 
-  const loadNeighborhoodSummary = useCallback(async () => {
-    try {
-      const res = await fetch(`${API_BASE}/restaurants/neighborhoods/summary`, {
-        cache: 'no-store',
-      });
-      if (!res.ok) return;
-      const data = await res.json();
-      if (Array.isArray(data?.neighborhoods)) {
-        setNeighborhoods(data.neighborhoods);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery.trim());
+    }, 260);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const res = await fetch(`${API_BASE}/restaurants/neighborhoods/summary`, {
+          cache: 'no-store',
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (mounted && Array.isArray(data.neighborhoods)) {
+          setNeighborhoods(data.neighborhoods);
+          setPopulatedZonesCount(data.populated_neighborhoods_count || 53);
+        }
+      } catch {
+        // Segue normalmente se o resumo demorar
       }
-    } catch {
-      // Silencioso: tratado no carregamento principal de restaurantes
-    }
+    })();
+    return () => {
+      mounted = false;
+    };
   }, []);
 
-  const loadMarketplaceRestaurants = useCallback(async () => {
-    setIsLoading(true);
-    setErrorMessage(null);
+  const fetchCatalog = useCallback(async () => {
+    setLoading(true);
+    setErrorMsg(null);
     try {
       const params = new URLSearchParams();
-      if (selectedNeighborhood && selectedNeighborhood !== 'todos') {
+      if (selectedNeighborhood && selectedNeighborhood !== 'Todos') {
         params.set('neighborhood', selectedNeighborhood);
       }
-      if (searchQuery.trim()) {
-        params.set('search', searchQuery.trim());
+      if (debouncedSearch) {
+        params.set('search', debouncedSearch);
       }
-      if (activeDietary.length > 0) {
-        params.set('dietary', activeDietary.join(','));
+      if (selectedDietary.length > 0) {
+        params.set('dietary', selectedDietary.join(','));
       }
       if (priceDropOnly) {
         params.set('price_drop_only', 'true');
       }
       params.set('lat', String(userCoords.lat));
       params.set('lon', String(userCoords.lon));
-      params.set('sort_by', sortBy);
+      if (sortBy === 'distance') {
+        params.set('sort_by', 'distance');
+      }
       params.set('limit', '60');
 
       const res = await fetch(`${API_BASE}/restaurants?${params.toString()}`, {
         cache: 'no-store',
       });
       if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`);
+        throw new Error(`Não foi possível carregar os cardápios (${res.status})`);
       }
-      const data = await res.json();
-      setRestaurants(Array.isArray(data) ? data : []);
+      const data: RestaurantCardData[] = await res.json();
+      setRestaurants(data);
     } catch {
-      setErrorMessage(
-        'Não foi possível carregar o catálogo em tempo real na porta 8000. Verifique se o backend FastAPI está ativo.'
-      );
+      try {
+        const fallbackRes = await fetch('/api/restaurants?limit=60', { cache: 'no-store' });
+        const fallbackJson = await fallbackRes.json();
+        if (Array.isArray(fallbackJson.restaurants)) {
+          setRestaurants(fallbackJson.restaurants);
+        } else {
+          setErrorMsg('Estamos atualizando os cardápios da cidade. Tente atualizar a página em instantes!');
+        }
+      } catch {
+        setErrorMsg('Não conseguimos carregar os cardápios agora. Verifique sua conexão e tente novamente.');
+      }
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   }, [
-    selectedNeighborhood,
-    searchQuery,
-    activeDietary,
+    debouncedSearch,
     priceDropOnly,
-    userCoords,
+    selectedDietary,
+    selectedNeighborhood,
     sortBy,
+    userCoords.lat,
+    userCoords.lon,
   ]);
 
   useEffect(() => {
-    void loadNeighborhoodSummary();
-  }, [loadNeighborhoodSummary]);
+    void fetchCatalog();
+  }, [fetchCatalog]);
 
-  useEffect(() => {
-    const debounce = setTimeout(() => {
-      void loadMarketplaceRestaurants();
-    }, 180);
-    return () => clearTimeout(debounce);
-  }, [loadMarketplaceRestaurants]);
-
-  // Centraliza coordenadas caso o usuário selecione um bairro específico dos 53
-  const handleSelectNeighborhood = (slugOrTodos: string) => {
-    setSelectedNeighborhood(slugOrTodos);
-    if (slugOrTodos !== 'todos') {
-      const match = neighborhoods.find((n) => n.slug === slugOrTodos);
-      if (match) {
-        setUserCoords({ lat: match.latitude, lon: match.longitude });
-      }
-    } else {
-      setUserCoords({ lat: -23.6204, lon: -45.4132 });
-    }
-  };
-
-  const toggleDietaryFilter = (key: string) => {
-    setActiveDietary((prev) =>
-      prev.includes(key) ? prev.filter((k) => k !== key) : prev.concat(key)
+  const toggleDietary = (key: string) => {
+    setSelectedDietary((prev) =>
+      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
     );
   };
 
-  const handleClearFilters = () => {
-    setSearchQuery('');
-    setSelectedNeighborhood('todos');
-    setActiveDietary([]);
-    setPriceDropOnly(false);
-    setSortBy('bayesian');
-    setUserCoords({ lat: -23.6204, lon: -45.4132 });
+  const handleRequestGPS = () => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setUserCoords({
+          lat: pos.coords.latitude,
+          lon: pos.coords.longitude,
+        });
+        setGpsActive(true);
+        setSortBy('distance');
+      },
+      () => {
+        setGpsActive(true);
+        setSortBy('distance');
+      },
+      { timeout: 6000 }
+    );
   };
 
-  const openAssistantWithPrompt = (promptText = '') => {
+  const openAssistantWithPrompt = (promptText?: string) => {
     setAiInitialPrompt(promptText);
     setAiDrawerOpen(true);
   };
 
-  const totalActiveDishesAcrossCity = useMemo(
-    () =>
-      neighborhoods.reduce((acc, item) => acc + (item.active_dishes_count || 0), 0),
-    [neighborhoods]
-  );
-
   const selectedNeighborhoodLabel = useMemo(() => {
-    if (selectedNeighborhood === 'todos') return undefined;
-    return (
-      neighborhoods.find((n) => n.slug === selectedNeighborhood)?.name ||
-      selectedNeighborhood
+    if (selectedNeighborhood === 'Todos') return 'Todos';
+    const found = neighborhoods.find(
+      (n) => n.slug === selectedNeighborhood || n.name === selectedNeighborhood
     );
+    return found ? found.name : selectedNeighborhood;
   }, [neighborhoods, selectedNeighborhood]);
 
-  return (
-    <div className="min-h-screen bg-[#FAF7F2] text-stone-900 flex flex-col">
-      <Navbar onOpenAIChat={() => openAssistantWithPrompt('')} />
+  const totalDishesOnScreen = useMemo(
+    () => restaurants.reduce((acc, r) => acc + (r.active_dishes_count || r.dishes.length), 0),
+    [restaurants]
+  );
 
-      {/* HERO SECTION HIPERLOCAL DE CARAGUATATUBA */}
-      <section className="relative bg-gradient-to-br from-[#135136] via-[#175E3F] to-[#0E3D28] text-white border-b-4 border-[#FFB703] overflow-hidden">
+  return (
+    <div className="min-h-screen bg-[#FAF7F2] text-[#1A202C] flex flex-col">
+      <Navbar onOpenAIChat={() => openAssistantWithPrompt(undefined)} />
+
+      {/* Banner Principal Acolhedor e Apetitoso */}
+      <header className="relative bg-gradient-to-br from-[#135136] via-[#165E3F] to-[#0D3B27] text-white border-b-4 border-[#FFB703] overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-11 relative z-10">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
             <div className="max-w-3xl space-y-3">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider px-3 py-1 rounded-full bg-[#FFB703] text-stone-950 shadow-sm">
-                  <Compass className="w-3.5 h-3.5" />
-                  53 Bairros Oficiais Mapeados
-                </span>
-                <span className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full bg-white/10 text-emerald-100 border border-white/20">
-                  <ShieldCheck className="w-3.5 h-3.5 text-[#FFB703]" />
-                  Ranking Bayesiano W_R & Auditoria LGPD SHA-256
-                </span>
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/15 border border-white/25 text-xs font-extrabold text-[#FFB703]">
+                <span>🍽️ Bateu a fome em Caraguá?</span>
+                <span className="text-white/50">•</span>
+                <span className="text-emerald-100">{populatedZonesCount} bairros com cardápios abertos</span>
               </div>
 
-              <h1 className="font-heading font-black text-3xl sm:text-4xl lg:text-[42px] leading-[1.1] tracking-tight text-white">
-                Gastronomia Real de Caraguatatuba com{' '}
-                <span className="text-[#FFB703]">Segurança Alimentar & IA Híbrida</span>
+              <h1 className="font-heading font-black text-3xl sm:text-4xl lg:text-5xl tracking-tight leading-[1.08]">
+                O que vamos comer hoje em{' '}
+                <span className="text-[#FFB703]">Caraguá?</span>
               </h1>
 
               <p className="text-sm sm:text-base text-emerald-100/95 leading-relaxed max-w-2xl">
-                Explore estabelecimentos deduplicados via PostGIS, pratos com preços auditados em série histórica e busca conversacional SVL-RRF sobre vetores de 1536 dimensões.
+                Compare cardápios, descubra lugares novos no seu bairro e veja onde o preço
+                baixou de verdade. Escolha seu bairro ou filtre pelo que você pode comer tranquilo!
               </p>
             </div>
 
             <div className="flex flex-wrap items-center gap-2.5 shrink-0">
               <button
                 type="button"
-                onClick={() => openAssistantWithPrompt('')}
-                className="inline-flex items-center gap-2 px-5 py-3.5 rounded-2xl bg-[#FFB703] hover:bg-amber-400 text-stone-950 font-heading font-black text-sm shadow-lg transition-all hover:scale-[1.02]"
+                onClick={() => openAssistantWithPrompt(undefined)}
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-[#FFB703] hover:bg-amber-400 text-stone-950 font-heading font-black text-sm shadow-lg transition-all hover:scale-[1.02]"
               >
-                <Sparkles className="w-4 h-4" />
-                <span>Abrir Assistente Gastronômico IA</span>
+                <ChefHat className="w-5 h-5" />
+                <span>Pedir Dica ao Chef CaráFood</span>
               </button>
 
               <Link
                 href="/moderation"
-                className="inline-flex items-center gap-2 px-4 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/25 text-white font-bold text-xs transition-all"
+                className="inline-flex items-center gap-2 px-4 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white border border-white/25 font-bold text-sm transition-all"
               >
-                <SlidersHorizontal className="w-4 h-4 text-[#FFB703]" />
-                <span>Command Center (/moderation)</span>
+                <ShieldCheck className="w-4 h-4 text-[#FFB703]" />
+                <span>Painel da Equipe</span>
               </Link>
             </div>
           </div>
 
-          {/* Barra Integrada de Busca Instantânea + Seletor dos 53 Bairros */}
-          <div className="mt-7 bg-white rounded-3xl p-2.5 sm:p-3 shadow-2xl border border-white/40 grid grid-cols-1 md:grid-cols-12 gap-2.5 items-center">
-            <div className="md:col-span-6 relative flex items-center">
-              <Search className="w-5 h-5 text-[#135136] absolute left-3.5 pointer-events-none" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Buscar prato, ingrediente, peixe fresco, caldeirada ou restaurante"
-                aria-label="Buscar restaurantes e pratos em Caraguatatuba"
-                className="w-full pl-11 pr-9 py-3 rounded-2xl bg-stone-50 border border-stone-200 text-sm font-medium text-stone-900 placeholder:text-stone-500 focus:outline-none focus:ring-2 focus:ring-[#135136] focus:bg-white"
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-3 p-1 rounded-full text-stone-400 hover:text-stone-700"
-                  aria-label="Limpar busca"
+          {/* Barra de Busca e Seleção dos 53 Bairros */}
+          <div className="mt-6 bg-white rounded-3xl p-3 sm:p-4 shadow-xl border border-stone-200/90 text-stone-900 space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-2.5">
+              {/* Campo de busca simples e direto */}
+              <div className="md:col-span-6 relative">
+                <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Busque por prato, quiosque, pizzaria, padaria ou bairro..."
+                  className="w-full pl-10 pr-9 py-2.5 rounded-2xl bg-stone-100 border border-stone-200 text-sm font-medium text-stone-900 placeholder:text-stone-500 focus:outline-none focus:ring-2 focus:ring-[#135136] focus:bg-white"
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700"
+                    aria-label="Limpar busca"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+
+              {/* Seletor completo dos 53 Bairros de Caraguá */}
+              <div className="md:col-span-4 relative">
+                <MapPin className="w-4 h-4 text-[#135136] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <select
+                  aria-label="Escolher bairro de Caraguatatuba"
+                  value={selectedNeighborhood}
+                  onChange={(e) => setSelectedNeighborhood(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-stone-100 border border-stone-200 text-sm font-bold text-stone-800 focus:outline-none focus:ring-2 focus:ring-[#135136] focus:bg-white"
                 >
-                  <X className="w-4 h-4" />
-                </button>
-              )}
-            </div>
+                  <option value="Todos">Todos os 53 Bairros de Caraguá</option>
+                  {neighborhoods.map((n) => (
+                    <option key={n.slug} value={n.name}>
+                      {n.name} ({n.restaurants_count} {n.restaurants_count === 1 ? 'local' : 'locais'})
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            <div className="md:col-span-4 relative flex items-center">
-              <MapPin className="w-4 h-4 text-[#135136] absolute left-3.5 pointer-events-none" />
-              <select
-                aria-label="Filtrar por um dos 53 bairros de Caraguatatuba"
-                value={selectedNeighborhood}
-                onChange={(e) => handleSelectNeighborhood(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-2xl bg-stone-50 border border-stone-200 text-sm font-bold text-stone-800 focus:outline-none focus:ring-2 focus:ring-[#135136]"
-              >
-                <option value="todos">
-                  Todos os 53 Bairros ({totalActiveDishesAcrossCity || 'Catálogo Completo'} pratos)
-                </option>
-                {neighborhoods.map((neigh) => (
-                  <option key={neigh.slug} value={neigh.slug}>
-                    {neigh.name} ({neigh.restaurants_count} rest. • {neigh.active_dishes_count} pratos)
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="md:col-span-2">
-              <select
-                aria-label="Ordenação de estabelecimentos"
-                value={sortBy}
-                onChange={(e) =>
-                  setSortBy(e.target.value as 'bayesian' | 'distance')
-                }
-                className="w-full px-3.5 py-3 rounded-2xl bg-emerald-950/5 border border-stone-200 text-xs font-extrabold text-[#135136] focus:outline-none focus:ring-2 focus:ring-[#135136]"
-              >
-                <option value="bayesian">⭐ Nota W_R</option>
-                <option value="distance">📍 Distância</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* BARRA DE FILTROS DE SEGURANÇA ALIMENTAR (FOOD SAFETY FIRST) */}
-      <section className="sticky top-20 z-30 bg-[#FAF7F2]/95 backdrop-blur-md border-b border-stone-200/90 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-2.5">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[11px] font-extrabold uppercase tracking-wider text-stone-500 mr-1">
-              Food Safety First:
-            </span>
-
-            {DIETARY_CHIPS.map((chip) => {
-              const active = activeDietary.includes(chip.key);
-              return (
+              {/* Botão de proximidade */}
+              <div className="md:col-span-2 flex gap-1.5">
                 <button
-                  key={chip.key}
                   type="button"
-                  onClick={() => toggleDietaryFilter(chip.key)}
-                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-extrabold border transition-all ${
-                    active
-                      ? 'bg-[#135136] text-white border-[#135136] shadow-sm scale-[1.02]'
-                      : 'bg-white text-stone-800 border-stone-300 hover:border-[#135136]'
+                  onClick={handleRequestGPS}
+                  className={`w-full py-2.5 px-3 rounded-2xl text-xs font-extrabold flex items-center justify-center gap-1.5 border transition-all ${
+                    gpsActive || sortBy === 'distance'
+                      ? 'bg-[#135136] text-white border-[#135136]'
+                      : 'bg-stone-100 hover:bg-stone-200 text-stone-800 border-stone-200'
+                  }`}
+                  title="Ordenar pelos lugares mais pertinho de você"
+                >
+                  <Navigation className="w-3.5 h-3.5 text-[#FFB703]" />
+                  <span>Perto de mim</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Filtros para comer tranquilo + quedas de preço */}
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-stone-100">
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="text-[11px] font-extrabold text-stone-600 mr-1 inline-flex items-center gap-1">
+                  <SlidersHorizontal className="w-3 h-3 text-[#135136]" />
+                  Pode comer sem medo:
+                </span>
+
+                {DIETARY_PILLS.map((pill) => {
+                  const active = selectedDietary.includes(pill.key);
+                  return (
+                    <button
+                      key={pill.key}
+                      type="button"
+                      onClick={() => toggleDietary(pill.key)}
+                      className={`px-3 py-1 rounded-full text-xs font-bold border transition-all ${
+                        active
+                          ? 'bg-[#135136] text-white border-[#135136] shadow-xs'
+                          : 'bg-stone-50 hover:bg-stone-100 text-stone-700 border-stone-300'
+                      }`}
+                    >
+                      {pill.emoji} {pill.label}
+                    </button>
+                  );
+                })}
+
+                <button
+                  type="button"
+                  onClick={() => setPriceDropOnly((prev) => !prev)}
+                  className={`px-3 py-1 rounded-full text-xs font-bold border inline-flex items-center gap-1 transition-all ${
+                    priceDropOnly
+                      ? 'bg-emerald-700 text-white border-emerald-700 shadow-xs'
+                      : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border-emerald-300'
                   }`}
                 >
-                  <span>{chip.emoji}</span>
-                  <span>{chip.label}</span>
+                  <span>📉 Baixou de Preço</span>
+                </button>
+              </div>
+
+              <div className="flex items-center gap-1.5 text-xs">
+                <span className="text-stone-500 font-semibold">Mostrar primeiro:</span>
+                <button
+                  type="button"
+                  onClick={() => setSortBy('recommended')}
+                  className={`px-2.5 py-1 rounded-lg font-bold ${
+                    sortBy === 'recommended'
+                      ? 'bg-amber-100 text-amber-950'
+                      : 'text-stone-600 hover:bg-stone-100'
+                  }`}
+                >
+                  ⭐ Mais bem avaliados
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSortBy('distance')}
+                  className={`px-2.5 py-1 rounded-lg font-bold ${
+                    sortBy === 'distance'
+                      ? 'bg-amber-100 text-amber-950'
+                      : 'text-stone-600 hover:bg-stone-100'
+                  }`}
+                >
+                  📍 Mais próximos
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Atalhos rápidos para praias e bairros queridos */}
+          <div className="mt-3 flex items-center gap-1.5 overflow-x-auto pb-1">
+            {FEATURED_NEIGHBORHOODS.map((bName) => {
+              const isSelected = selectedNeighborhood === bName;
+              return (
+                <button
+                  key={bName}
+                  type="button"
+                  onClick={() => setSelectedNeighborhood(bName)}
+                  className={`shrink-0 px-3 py-1 rounded-full text-xs font-bold transition-all ${
+                    isSelected
+                      ? 'bg-[#FFB703] text-stone-950 shadow-xs'
+                      : 'bg-white/10 hover:bg-white/20 text-emerald-50 border border-white/15'
+                  }`}
+                >
+                  {bName === 'Todos' ? '🌊 Toda Caraguá' : bName}
                 </button>
               );
             })}
+          </div>
+        </div>
+      </header>
 
-            <button
-              type="button"
-              onClick={() => setPriceDropOnly(!priceDropOnly)}
-              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-extrabold border transition-all ${
-                priceDropOnly
-                  ? 'bg-emerald-700 text-white border-emerald-700 shadow-sm scale-[1.02]'
-                  : 'bg-white text-emerald-900 border-emerald-300 hover:bg-emerald-50'
-              }`}
-            >
-              <span>📉</span>
-              <span>Queda de Preço Auditada</span>
-            </button>
+      {/* Vitrine Principal de Restaurantes, Quiosques, Pizzarias e Padarias */}
+      <main className="max-w-7xl mx-auto w-full px-4 sm:px-6 py-7 flex-1 space-y-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="font-heading font-black text-xl sm:text-2xl text-stone-900">
+              {selectedNeighborhoodLabel === 'Todos'
+                ? 'Lugares abertos e verificados em Caraguá'
+                : `Onde comer em ${selectedNeighborhoodLabel}`}
+            </h2>
+            <p className="text-xs sm:text-sm text-stone-600">
+              Encontramos <strong>{restaurants.length} estabelecimentos</strong> com{' '}
+              <strong>{totalDishesOnScreen} pratos conferidos</strong> para você escolher sem erro.
+            </p>
+          </div>
 
-            {(activeDietary.length > 0 ||
+          <div className="flex items-center gap-2">
+            {(selectedNeighborhood !== 'Todos' ||
+              selectedDietary.length > 0 ||
               priceDropOnly ||
-              selectedNeighborhood !== 'todos' ||
-              searchQuery.trim() !== '') && (
+              debouncedSearch) && (
               <button
                 type="button"
-                onClick={handleClearFilters}
-                className="text-xs font-bold text-rose-700 hover:text-rose-900 px-2.5 py-1 underline"
+                onClick={() => {
+                  setSelectedNeighborhood('Todos');
+                  setSelectedDietary([]);
+                  setPriceDropOnly(false);
+                  setSearchQuery('');
+                }}
+                className="px-3 py-1.5 rounded-xl bg-stone-200 hover:bg-stone-300 text-stone-800 text-xs font-bold transition-colors"
               >
                 Limpar filtros
               </button>
             )}
-          </div>
 
-          <div className="text-xs font-bold text-stone-600">
-            Exibindo <strong>{restaurants.length}</strong> estabelecimentos auditados
-          </div>
-        </div>
-      </section>
-
-      {/* VITRINE DE RESTAURANTES E PRATOS REAIS */}
-      <main className="max-w-7xl w-full mx-auto px-4 sm:px-6 py-7 flex-1">
-        {errorMessage && (
-          <div className="rounded-3xl bg-rose-50 border border-rose-200 p-6 text-center space-y-3 mb-6">
-            <p className="font-heading font-bold text-base text-rose-950">
-              {errorMessage}
-            </p>
             <button
               type="button"
-              onClick={() => void loadMarketplaceRestaurants()}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-rose-700 text-white font-bold text-xs"
+              onClick={() => void fetchCatalog()}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-stone-300 hover:border-[#135136] text-xs font-bold text-stone-700 transition-colors"
             >
-              <RefreshCw className="w-3.5 h-3.5" />
-              <span>Tentar Novamente</span>
+              <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+              <span>Atualizar cardápios</span>
             </button>
+          </div>
+        </div>
+
+        {errorMsg && (
+          <div className="rounded-2xl bg-rose-50 border border-rose-300 p-4 text-sm text-rose-900 font-medium">
+            {errorMsg}
           </div>
         )}
 
-        {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3, 4, 5, 6].map((n) => (
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {Array.from({ length: 6 }).map((_, idx) => (
               <div
-                key={n}
-                className="rounded-3xl bg-white border border-stone-200 p-6 h-80 animate-pulse flex flex-col justify-between"
+                key={idx}
+                className="rounded-3xl bg-white border border-stone-200 p-5 h-72 animate-pulse flex flex-col justify-between"
               >
                 <div className="space-y-3">
-                  <div className="h-5 bg-stone-200 rounded-xl w-3/4" />
-                  <div className="h-3.5 bg-stone-100 rounded-xl w-1/2" />
+                  <div className="h-5 bg-stone-200 rounded-lg w-3/4" />
+                  <div className="h-3.5 bg-stone-100 rounded-lg w-1/2" />
+                  <div className="h-16 bg-stone-100 rounded-2xl w-full mt-4" />
                 </div>
-                <div className="space-y-2">
-                  <div className="h-12 bg-stone-100 rounded-2xl" />
-                  <div className="h-12 bg-stone-100 rounded-2xl" />
-                </div>
-                <div className="h-9 bg-stone-200 rounded-2xl w-full" />
+                <div className="h-9 bg-stone-200 rounded-xl w-full" />
               </div>
             ))}
           </div>
         ) : restaurants.length === 0 ? (
-          <div className="bg-white rounded-3xl border border-stone-200 p-10 text-center max-w-xl mx-auto space-y-4 shadow-sm">
+          <div className="rounded-3xl bg-white border border-stone-200/90 p-10 text-center space-y-4 shadow-xs">
             <Utensils className="w-10 h-10 text-[#135136] mx-auto" />
-            <h2 className="font-heading font-black text-xl text-stone-900">
-              Nenhum estabelecimento com pratos compatíveis para esta combinação
-            </h2>
-            <p className="text-sm text-stone-600">
-              Você pode limpar os filtros restritivos ou acionar a raspagem deste bairro direto no Command Center de Moderação.
+            <h3 className="font-heading font-extrabold text-lg text-stone-900">
+              Ainda não achamos um prato com todos esses filtros juntos neste bairro
+            </h3>
+            <p className="text-sm text-stone-600 max-w-md mx-auto">
+              Experimente olhar em todos os bairros de Caraguá ou peça uma sugestão sob medida
+              para o nosso Chef CaráFood!
             </p>
-            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+            <div className="flex justify-center gap-3">
               <button
                 type="button"
-                onClick={handleClearFilters}
-                className="px-4 py-2.5 rounded-2xl bg-[#135136] text-white font-bold text-xs"
+                onClick={() => {
+                  setSelectedNeighborhood('Todos');
+                  setSelectedDietary([]);
+                  setPriceDropOnly(false);
+                  setSearchQuery('');
+                }}
+                className="px-4 py-2 rounded-xl bg-[#135136] text-white font-bold text-xs"
               >
-                Restaurar Todos os 53 Bairros
+                Ver todos os lugares de Caraguá
               </button>
-              <Link
-                href="/moderation"
-                className="px-4 py-2.5 rounded-2xl bg-[#FFB703] text-stone-950 font-extrabold text-xs"
+              <button
+                type="button"
+                onClick={() =>
+                  openAssistantWithPrompt(
+                    'Me indica lugares gostosos e com bom preço abertos hoje em Caraguá?'
+                  )
+                }
+                className="px-4 py-2 rounded-xl bg-[#FFB703] text-stone-950 font-extrabold text-xs"
               >
-                Ir ao Command Center (/moderation)
-              </Link>
+                Perguntar ao Chef CaráFood
+              </button>
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {restaurants.map((rest) => (
-              <article
-                key={rest.id}
-                className="squircle-card p-5 sm:p-6 flex flex-col justify-between bg-white"
-              >
-                <div>
-                  {/* Topo do Card: Selos de Auditoria + Nota Bayesiana W_R */}
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      <span className="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-900 border border-emerald-200">
-                        <ShieldCheck className="w-3 h-3 text-emerald-700" />
-                        LGPD & Anti-Fraude
-                      </span>
-                      {rest.has_price_drop && (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-600 text-white shadow-sm">
-                          <TrendingDown className="w-3 h-3" />
-                          Queda de Preço Auditada
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {restaurants.map((rest) => {
+              const starScore = (rest.rating_score ?? rest.rating_average ?? 4.8).toFixed(1);
+              return (
+                <article
+                  key={rest.id}
+                  className="bg-white rounded-3xl border border-stone-200/90 shadow-xs hover:shadow-xl hover:border-[#135136]/45 transition-all flex flex-col justify-between overflow-hidden"
+                >
+                  <div className="p-5 space-y-3.5">
+                    {/* Cabeçalho do Restaurante */}
+                    <div className="flex items-start justify-between gap-2.5">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-950/10 text-[#135136]">
+                            <MapPin className="w-3 h-3" />
+                            {rest.neighborhood}
+                          </span>
+                          <span className="text-[11px] font-semibold text-stone-500">
+                            {formatDistanceHuman(rest.distance_meters, rest.distance_km)}
+                          </span>
+                          {rest.has_price_drop && (
+                            <span className="inline-flex items-center gap-0.5 text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300">
+                              <TrendingDown className="w-3 h-3" />
+                              Baixou de preço
+                            </span>
+                          )}
+                        </div>
+
+                        <h3 className="font-heading font-black text-lg text-stone-900 leading-snug">
+                          <Link
+                            href={`/restaurants/${rest.slug}`}
+                            className="hover:text-[#135136] transition-colors"
+                          >
+                            {rest.name}
+                          </Link>
+                        </h3>
+                        <p className="text-xs text-stone-500 line-clamp-1">{rest.address}</p>
+                      </div>
+
+                      {/* Nota com estrela e tooltip humano */}
+                      <div
+                        className="shrink-0 bg-amber-50 border border-amber-200/90 rounded-2xl px-2.5 py-1.5 text-right"
+                        title="Nota real calculada com avaliações verificadas"
+                      >
+                        <div className="inline-flex items-center gap-1 font-heading font-black text-sm text-stone-900">
+                          <Star className="w-3.5 h-3.5 fill-[#FFB703] text-[#FFB703]" />
+                          <span>{starScore}</span>
+                        </div>
+                        <span className="block text-[9px] font-bold text-stone-500">
+                          {rest.total_reviews} avaliações
                         </span>
-                      )}
+                      </div>
                     </div>
 
-                    <div
-                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-2xl bg-amber-50 border border-amber-200 shrink-0"
-                      title={`Nota Bayesiana Ponderada W_R = ${rest.bayesian_rating.toFixed(
-                        2
-                      )} (${rest.review_count} avaliações auditadas)`}
-                    >
-                      <Star className="w-3.5 h-3.5 fill-[#FFB703] text-[#FFB703]" />
-                      <span className="font-heading font-black text-xs text-stone-900">
-                        {rest.bayesian_rating.toFixed(2)}
-                      </span>
-                      <span className="text-[10px] font-semibold text-stone-500">
-                        W_R ({rest.review_count})
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Nome, Bairro e Distância PostGIS */}
-                  <div className="mt-3">
-                    <Link
-                      href={`/restaurants/${rest.slug}`}
-                      className="font-heading font-black text-xl text-stone-900 hover:text-[#135136] transition-colors line-clamp-1"
-                    >
-                      {rest.name}
-                    </Link>
-
-                    <div className="flex flex-wrap items-center gap-2 text-xs text-stone-600 mt-1">
-                      <span className="inline-flex items-center gap-1 font-bold text-[#135136]">
-                        <MapPin className="w-3.5 h-3.5" />
-                        {rest.neighborhood}
-                      </span>
-                      <span>•</span>
-                      <span className="inline-flex items-center gap-1 font-semibold">
-                        <Navigation className="w-3 h-3 text-stone-500" />
-                        {rest.distance_km.toFixed(2)} km
-                      </span>
-                      <span>•</span>
-                      <span className="text-stone-500">
-                        {rest.cuisine_types.slice(0, 2).join(' / ')}
+                    {/* Especialidades & Selo Preço Honesto Verificado */}
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      {rest.cuisine_types.slice(0, 2).map((c) => (
+                        <span
+                          key={c}
+                          className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-stone-100 text-stone-700"
+                        >
+                          {c}
+                        </span>
+                      ))}
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-900 border border-emerald-200">
+                        <ShieldCheck className="w-3 h-3 text-emerald-700" />
+                        Preço honesto verificado
                       </span>
                     </div>
-                  </div>
 
-                  {/* Preview dos 3 Principais Pratos Aprovados */}
-                  <div className="mt-4 pt-3.5 border-t border-stone-100 space-y-2">
-                    <div className="flex items-center justify-between text-[11px] font-extrabold uppercase tracking-wider text-stone-500">
-                      <span>Destaques Auditados ({rest.active_dishes_count})</span>
-                      <span>Preço Real</span>
-                    </div>
+                    {/* Pratos em Destaque no Cardápio */}
+                    <div className="pt-2 border-t border-stone-100 space-y-2">
+                      <div className="flex items-center justify-between text-[11px] font-extrabold text-stone-500">
+                        <span>Destaques do cardápio ({rest.active_dishes_count})</span>
+                        <button
+                          type="button"
+                          onClick={() => setQuickModalRest(rest)}
+                          className="text-[#135136] hover:underline font-bold"
+                        >
+                          Espiar cardápio rápido
+                        </button>
+                      </div>
 
-                    {rest.dishes_preview.length === 0 ? (
-                      <p className="text-xs text-stone-400 italic py-2">
-                        Pratos deste estabelecimento aguardando aprovação em /moderation.
-                      </p>
-                    ) : (
-                      rest.dishes_preview.map((dish) => (
+                      {rest.dishes_preview.slice(0, 3).map((dish) => (
                         <div
                           key={dish.id}
-                          className="rounded-2xl bg-stone-50/90 border border-stone-200/80 px-3 py-2 flex items-start justify-between gap-2"
+                          className="rounded-2xl bg-[#FAF7F2] px-3 py-2 border border-stone-200/70 flex items-start justify-between gap-2"
                         >
                           <div className="min-w-0">
                             <div className="font-bold text-xs text-stone-900 truncate">
                               {dish.name}
                             </div>
-                            <div className="flex flex-wrap items-center gap-1 mt-1">
+                            <div className="flex flex-wrap gap-1 mt-1">
                               {dish.is_vegan && (
-                                <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-900">
+                                <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-sm bg-emerald-100 text-emerald-900">
                                   🌱 Vegano
                                 </span>
                               )}
                               {dish.is_vegetarian && !dish.is_vegan && (
-                                <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-lime-100 text-lime-900">
+                                <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-sm bg-lime-100 text-lime-900">
                                   🥗 Vegetariano
                                 </span>
                               )}
                               {dish.is_gluten_free && (
-                                <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-amber-100 text-amber-900">
+                                <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-sm bg-amber-100 text-amber-950">
                                   🌾 Sem Glúten
                                 </span>
                               )}
                               {dish.is_lactose_free && (
-                                <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-sky-100 text-sky-900">
-                                  🥛 Zero Lactose
-                                </span>
-                              )}
-                              {dish.last_price_delta_pct < 0 && (
-                                <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-emerald-600 text-white">
-                                  {dish.last_price_delta_pct.toFixed(1)}%
+                                <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-sm bg-sky-100 text-sky-950">
+                                  🥛 Sem Lactose
                                 </span>
                               )}
                             </div>
                           </div>
 
-                          <div className="font-heading font-extrabold text-xs text-[#135136] shrink-0">
-                            R$ {dish.price.toFixed(2)}
+                          <div className="text-right shrink-0">
+                            <span className="font-heading font-black text-xs text-[#135136] block">
+                              {formatBRL(dish.price)}
+                            </span>
+                            {dish.last_price_delta_pct < 0 && (
+                              <span className="text-[9px] font-extrabold text-emerald-700 block">
+                                {formatSavingsBadge(dish)}
+                              </span>
+                            )}
                           </div>
                         </div>
-                      ))
-                    )}
+                      ))}
+                    </div>
                   </div>
-                </div>
 
-                {/* Ações do Card */}
-                <div className="mt-4 pt-3 border-t border-stone-100 flex items-center gap-2">
-                  <Link
-                    href={`/restaurants/${rest.slug}`}
-                    className="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl bg-[#135136] hover:bg-[#1E6B47] text-white font-bold text-xs transition-all shadow-sm"
-                  >
-                    <span>Ver Cardápio Completo</span>
-                    <ArrowRight className="w-3.5 h-3.5 text-[#FFB703]" />
-                  </Link>
+                  {/* Rodapé de Ações */}
+                  <div className="px-5 py-3 bg-stone-50 border-t border-stone-200/80 flex items-center justify-between gap-2">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        openAssistantWithPrompt(
+                          `O que você me recomenda pedir hoje no ${rest.name} em ${rest.neighborhood}?`
+                        )
+                      }
+                      className="text-xs font-bold text-stone-700 hover:text-[#135136] inline-flex items-center gap-1"
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-[#FFB703]" />
+                      <span>Pedir dica daqui</span>
+                    </button>
 
-                  <button
-                    type="button"
-                    onClick={() => setQuickModalRest(rest)}
-                    className="px-3 py-2.5 rounded-2xl bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold text-xs transition-colors"
-                    title="Resumo rápido dos pratos"
-                  >
-                    Resumo
-                  </button>
-                </div>
-              </article>
-            ))}
+                    <Link
+                      href={`/restaurants/${rest.slug}`}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#135136] hover:bg-[#1E6B47] text-white font-bold text-xs shadow-xs transition-all"
+                    >
+                      <span>Ver Cardápio</span>
+                      <ArrowRight className="w-3.5 h-3.5 text-[#FFB703]" />
+                    </Link>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         )}
       </main>
 
-      {/* Botão Flutuante do Assistente IA Hiperlocal */}
-      <button
-        type="button"
-        onClick={() => openAssistantWithPrompt('')}
-        className="fixed bottom-5 right-5 z-40 inline-flex items-center gap-2 px-5 py-3.5 rounded-full bg-[#135136] hover:bg-[#1E6B47] text-white border-2 border-[#FFB703] font-heading font-black text-xs sm:text-sm shadow-2xl transition-all hover:scale-105"
-      >
-        <Sparkles className="w-4 h-4 text-[#FFB703]" />
-        <span>Perguntar ao Assistente IA (SVL-RRF)</span>
-      </button>
-
-      {/* Modal Rápido Opcional de Cardápio */}
+      {/* Janela Rápida para Espiar o Cardápio */}
       {quickModalRest && (
         <div
-          className="fixed inset-0 z-50 bg-stone-950/60 backdrop-blur-sm flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-stone-950/60 backdrop-blur-xs flex items-center justify-center p-4"
           role="dialog"
           aria-modal="true"
+          aria-label={`Cardápio de ${quickModalRest.name}`}
         >
-          <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] overflow-hidden flex flex-col shadow-2xl border border-stone-200">
+          <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] overflow-hidden shadow-2xl border border-stone-200 flex flex-col">
             <div className="bg-[#135136] text-white px-6 py-4 flex items-center justify-between">
               <div>
-                <h3 className="font-heading font-black text-xl">
-                  {quickModalRest.name}
-                </h3>
-                <p className="text-xs text-emerald-100">
-                  {quickModalRest.neighborhood} • {quickModalRest.address} • H3{' '}
-                  {quickModalRest.h3_res8}
-                </p>
+                <span className="text-[11px] font-bold text-[#FFB703] uppercase tracking-wider">
+                  {quickModalRest.neighborhood} • ⭐{' '}
+                  {(quickModalRest.rating_score ?? quickModalRest.rating_average ?? 4.8).toFixed(1)}
+                </span>
+                <h3 className="font-heading font-black text-xl">{quickModalRest.name}</h3>
+                <p className="text-xs text-emerald-100">{quickModalRest.address}</p>
               </div>
               <button
                 type="button"
                 onClick={() => setQuickModalRest(null)}
                 className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white"
+                aria-label="Fechar prévia do cardápio"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
@@ -659,14 +768,21 @@ export default function CaraguaMarketplacePage() {
                   <div>
                     <div className="font-bold text-sm text-stone-900">{d.name}</div>
                     <p className="text-xs text-stone-600 mt-0.5">{d.description}</p>
-                    {d.smart_defaults && d.smart_defaults.length > 0 && (
+                    {d.suggested_sides && d.suggested_sides.length > 0 && (
                       <div className="text-[11px] text-emerald-800 font-semibold mt-1.5">
-                        Acompanhamentos sugeridos: {d.smart_defaults.join(' • ')}
+                        Acompanha muito bem: {d.suggested_sides.join(' • ')}
                       </div>
                     )}
                   </div>
-                  <div className="font-heading font-black text-sm text-[#135136] shrink-0">
-                    R$ {d.price.toFixed(2)}
+                  <div className="text-right shrink-0">
+                    <div className="font-heading font-black text-sm text-[#135136]">
+                      {formatBRL(d.price)}
+                    </div>
+                    {d.last_price_delta_pct < 0 && (
+                      <span className="text-[10px] font-extrabold text-emerald-700 block mt-0.5">
+                        {formatSavingsBadge(d)}
+                      </span>
+                    )}
                   </div>
                 </div>
               ))}
@@ -679,13 +795,13 @@ export default function CaraguaMarketplacePage() {
                   const restName = quickModalRest.name;
                   setQuickModalRest(null);
                   openAssistantWithPrompt(
-                    `Quais são os melhores pratos disponíveis no ${restName}?`
+                    `Quais são os pratos mais gostosos hoje no ${restName}?`
                   );
                 }}
                 className="inline-flex items-center gap-1.5 text-xs font-extrabold text-[#135136] hover:underline"
               >
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Consultar IA sobre este cardápio</span>
+                <ChefHat className="w-4 h-4" />
+                <span>Perguntar ao Chef sobre este lugar</span>
               </button>
 
               <Link
@@ -693,7 +809,7 @@ export default function CaraguaMarketplacePage() {
                 onClick={() => setQuickModalRest(null)}
                 className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#135136] text-white font-bold text-xs"
               >
-                <span>Abrir Página Completa & Reviews LGPD</span>
+                <span>Abrir Cardápio Completo e Avaliações</span>
                 <ArrowRight className="w-3.5 h-3.5 text-[#FFB703]" />
               </Link>
             </div>

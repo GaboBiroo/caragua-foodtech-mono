@@ -249,14 +249,22 @@ class AutonomousScrapingEngine:
                 logger.error(f"[AutonomousScraper] Arquivo JSON inválido ignorado ({path.name}): {exc}")
 
     def _discover_raw_files_for_zone(self, zone_slug: str) -> List[Path]:
-        """Localiza payloads XHR pendentes em `backend/data/raw/payload_*.json` em ordem causal (w1 -> w2)."""
+        """Localiza payloads XHR e OSM reais pendentes em `backend/data/raw/payload_*.json` em ordem causal (OSM real -> w1 -> w2)."""
         all_raw = sorted(
             RAW_DATA_DIR.glob("payload_*.json"),
-            key=lambda p: (0 if "martim-de-sa" in p.name else 1, p.name),
+            key=lambda p: (
+                0 if p.name.startswith("payload_osm_real_") else 1,
+                0 if "martim-de-sa" in p.name else 1,
+                p.name,
+            ),
         )
         if zone_slug in ("all", "caraguatatuba", "geral"):
             return all_raw
-        zone_matched = [p for p in all_raw if f"payload_{zone_slug}_" in p.name]
+        zone_matched = [
+            p
+            for p in all_raw
+            if f"payload_osm_real_{zone_slug}_" in p.name or f"payload_{zone_slug}_" in p.name
+        ]
         return zone_matched
 
     def _discover_snapshot_files_for_zone(self, zone_slug: str) -> List[Path]:

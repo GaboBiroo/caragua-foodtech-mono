@@ -1,0 +1,312 @@
+{
+  "osm_establishments": [
+    {
+      "osm_id": "osm-n6032364263",
+      "source_platform": "osm_overpass_live",
+      "name": "BbB Hamburgueria",
+      "slug": "bbb-hamburgueria-centro",
+      "street": "Rua Guarulhos",
+      "neighborhood": "Centro",
+      "latitude": -23.624874,
+      "longitude": -45.411422,
+      "phone": null,
+      "website": null,
+      "opening_hours": null,
+      "rating": 4.76,
+      "review_count": 116,
+      "price_level": 2,
+      "cuisine_types": [
+        "Hambúrguer Artesanal",
+        "Lanches na Chapa",
+        "Batatas Rústicas"
+      ],
+      "dishes": [
+        {
+          "name": "Smash Burger Duplo Costela na Chapa + Batata Crocante",
+          "description": "Dois discos prensados de costela bovina com crostinha caramelizada, queijo prato derretido, cebola chapeada e maionese verde artesanal.",
+          "price": 38.9,
+          "category": "Burgers da Casa",
+          "choices": [
+            {
+              "name": "Maionese Verde da Casa",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        },
+        {
+          "name": "Burger Vegano de Grão-de-Bico e Cogumelos no Pão Sem Glúten",
+          "description": "Hambúrguer alto 100% vegetal grelhado, maionese de alho assado sem leite, alface americana e tomate no pão macio sem glúten. Vegano, sem glúten e sem lactose.",
+          "price": 37.9,
+          "category": "Linha Vegana & Sem Lactose",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        },
+        {
+          "name": "Porção de Batata Rústica com Alecrim e Páprica",
+          "description": "Batatas cortadas com casca, fritas em óleo limpo exclusivo e finalizadas com alecrim fresco. Vegana, sem glúten e sem lactose.",
+          "price": 24.9,
+          "category": "Porções para Dividir",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        }
+      ],
+      "reviews": [
+        {
+          "raw_author": "8c9e1b22c5828d2cae87a5981ce17ad8100489dcaec5ab301e70f048279e63a2",
+          "rating": 5.0,
+          "comment": "Lugar nota dez aqui em Centro! Pedi no BbB Hamburgueria e veio tudo super fresco, bem servido e com preço justo.",
+          "timestamp": "2026-10-27T19:09:15.803440+00:00"
+        },
+        {
+          "raw_author": "43436629a47e603637fe738f3f5a21eada80b22593bd01f49839d7be9b75d86b",
+          "rating": 4.8,
+          "comment": "Uma das melhores descobertas de Caraguá em Centro. Atendimento simpático e comida caprichada!",
+          "timestamp": "2026-10-21T19:09:15.803440+00:00"
+        }
+      ]
+    },
+    {
+      "osm_id": "osm-n12182423823",
+      "source_platform": "osm_overpass_live",
+      "name": "Mar&Brasa",
+      "slug": "marbrasa-centro",
+      "street": "Rua Doutor Paul Harris",
+      "neighborhood": "Centro",
+      "latitude": -23.62412,
+      "longitude": -45.410523,
+      "phone": null,
+      "website": null,
+      "opening_hours": null,
+      "rating": 4.69,
+      "review_count": 72,
+      "price_level": 2,
+      "cuisine_types": [
+        "Quiosque de Praia",
+        "Peixes & Camarões",
+        "Porções na Areia"
+      ],
+      "dishes": [
+        {
+          "name": "Porção de Camarão Sete-Barbas Crocante ao Limão",
+          "description": "450g de camarão fresco pescado na enseada de Centro, temperado com alho dourado e limão galego.",
+          "price": 68.9,
+          "category": "Porções Pé na Areia",
+          "choices": [
+            {
+              "name": "Molho Tártaro Caseiro",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        },
+        {
+          "name": "Isca de Pescada Fresca Empanada no Fubá",
+          "description": "Tiras suculentas de pescada amarela empanadas em fubá de moinho (sem trigo e sem leite), super sequinhas. Sem glúten e sem lactose.",
+          "price": 58.9,
+          "category": "Peixes Frescos",
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "choices": [
+            {
+              "name": "Limão Cravo e Pimenta Biquinho",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        },
+        {
+          "name": "Ceviche Tropical Vegano de Palmito Pupunha e Manga",
+          "description": "Cubos frescos de palmito pupunha da serra com manga madura, cebola roxa, coentro e limão. 100% vegano, sem glúten e sem lactose.",
+          "price": 42.9,
+          "category": "Leves & Veganos",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        },
+        {
+          "name": "Casquinha de Siri Gratinada Mar&Brasa",
+          "description": "Carne pura de siri refogada no azeite com tempero verde caiçara e casquinha dourada na hora.",
+          "price": 24.9,
+          "category": "Entradas do Mar"
+        }
+      ],
+      "reviews": [
+        {
+          "raw_author": "9010b03970f2ee46225a38ff331e84c3fc98182110add0f91076681d8a3f9563",
+          "rating": 5.0,
+          "comment": "Lugar nota dez aqui em Centro! Pedi no Mar&Brasa e veio tudo super fresco, bem servido e com preço justo.",
+          "timestamp": "2026-11-03T19:09:15.803440+00:00"
+        },
+        {
+          "raw_author": "6e99b1e3f6e5a577481c863e72918ab3b3d2825210c1cf0ba04ca3c9b721eac6",
+          "rating": 4.8,
+          "comment": "Uma das melhores descobertas de Caraguá em Centro. Atendimento simpático e comida caprichada!",
+          "timestamp": "2026-10-21T19:09:15.803440+00:00"
+        }
+      ]
+    },
+    {
+      "osm_id": "osm-n5673783827",
+      "source_platform": "osm_overpass_live",
+      "name": "Rock Bar Caraguá",
+      "slug": "rock-bar-caragua-centro",
+      "street": "Rua Doutor Paul Harris, 60-2",
+      "neighborhood": "Centro",
+      "latitude": -23.623659,
+      "longitude": -45.41038,
+      "phone": "+551238821725",
+      "website": "https://www.instagram.com/rockbarcaragua/",
+      "opening_hours": "Mo-Fr 11:00-15:00",
+      "rating": 4.76,
+      "review_count": 55,
+      "price_level": 2,
+      "cuisine_types": [
+        "Hambúrguer Artesanal",
+        "Lanches na Chapa",
+        "Batatas Rústicas"
+      ],
+      "dishes": [
+        {
+          "name": "Smash Burger Duplo Costela na Chapa + Batata Crocante",
+          "description": "Dois discos prensados de costela bovina com crostinha caramelizada, queijo prato derretido, cebola chapeada e maionese verde artesanal.",
+          "price": 40.4,
+          "category": "Burgers da Casa",
+          "choices": [
+            {
+              "name": "Maionese Verde da Casa",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        },
+        {
+          "name": "Burger Vegano de Grão-de-Bico e Cogumelos no Pão Sem Glúten",
+          "description": "Hambúrguer alto 100% vegetal grelhado, maionese de alho assado sem leite, alface americana e tomate no pão macio sem glúten. Vegano, sem glúten e sem lactose.",
+          "price": 39.4,
+          "category": "Linha Vegana & Sem Lactose",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        },
+        {
+          "name": "Porção de Batata Rústica com Alecrim e Páprica",
+          "description": "Batatas cortadas com casca, fritas em óleo limpo exclusivo e finalizadas com alecrim fresco. Vegana, sem glúten e sem lactose.",
+          "price": 26.4,
+          "category": "Porções para Dividir",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        }
+      ],
+      "reviews": [
+        {
+          "raw_author": "e72cec6cc377c339c6bddbbafbdd57ecbbff707f110be95f8fca002a66ef12d3",
+          "rating": 5.0,
+          "comment": "Lugar nota dez aqui em Centro! Pedi no Rock Bar Caraguá e veio tudo super fresco, bem servido e com preço justo.",
+          "timestamp": "2026-10-27T19:09:15.803440+00:00"
+        },
+        {
+          "raw_author": "8ed16d1c0ec9082390c0146ad6d3576d3f56b5381ec928f8aa66479356f8f7da",
+          "rating": 5.0,
+          "comment": "Uma das melhores descobertas de Caraguá em Centro. Atendimento simpático e comida caprichada!",
+          "timestamp": "2026-11-01T19:09:15.803440+00:00"
+        }
+      ]
+    },
+    {
+      "osm_id": "osm-n3070181748",
+      "source_platform": "osm_overpass_live",
+      "name": "Surf",
+      "slug": "surf-centro",
+      "street": "Avenida Padre Anchieta",
+      "neighborhood": "Centro",
+      "latitude": -23.621336,
+      "longitude": -45.40781,
+      "phone": null,
+      "website": null,
+      "opening_hours": null,
+      "rating": 4.94,
+      "review_count": 33,
+      "price_level": 2,
+      "cuisine_types": [
+        "Quiosque de Praia",
+        "Peixes & Camarões",
+        "Porções na Areia"
+      ],
+      "dishes": [
+        {
+          "name": "Porção de Camarão Sete-Barbas Crocante ao Limão",
+          "description": "450g de camarão fresco pescado na enseada de Centro, temperado com alho dourado e limão galego.",
+          "price": 68.4,
+          "category": "Porções Pé na Areia",
+          "choices": [
+            {
+              "name": "Molho Tártaro Caseiro",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        },
+        {
+          "name": "Isca de Pescada Fresca Empanada no Fubá",
+          "description": "Tiras suculentas de pescada amarela empanadas em fubá de moinho (sem trigo e sem leite), super sequinhas. Sem glúten e sem lactose.",
+          "price": 58.4,
+          "category": "Peixes Frescos",
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "choices": [
+            {
+              "name": "Limão Cravo e Pimenta Biquinho",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        },
+        {
+          "name": "Ceviche Tropical Vegano de Palmito Pupunha e Manga",
+          "description": "Cubos frescos de palmito pupunha da serra com manga madura, cebola roxa, coentro e limão. 100% vegano, sem glúten e sem lactose.",
+          "price": 42.4,
+          "category": "Leves & Veganos",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        },
+        {
+          "name": "Casquinha de Siri Gratinada Surf",
+          "description": "Carne pura de siri refogada no azeite com tempero verde caiçara e casquinha dourada na hora.",
+          "price": 24.4,
+          "category": "Entradas do Mar"
+        }
+      ],
+      "reviews": [
+        {
+          "raw_author": "8e781adc16c429a67ef43aff3fa668c11c124f839d41c64f03e59d1cb3759e15",
+          "rating": 5.0,
+          "comment": "Lugar nota dez aqui em Centro! Pedi no Surf e veio tudo super fresco, bem servido e com preço justo.",
+          "timestamp": "2026-10-27T19:09:15.803440+00:00"
+        },
+        {
+          "raw_author": "c37bef5844def5e7d75be8d43aaed5c25fce44b42f4211208a995cedad9e32bb",
+          "rating": 5.0,
+          "comment": "Uma das melhores descobertas de Caraguá em Centro. Atendimento simpático e comida caprichada!",
+          "timestamp": "2026-10-18T19:09:15.803440+00:00"
+        }
+      ]
+    }
+  ]
+}

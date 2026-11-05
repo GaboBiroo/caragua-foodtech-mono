@@ -1,0 +1,149 @@
+{
+  "osm_establishments": [
+    {
+      "osm_id": "osm-w477835725",
+      "source_platform": "osm_overpass_live",
+      "name": "Neusa",
+      "slug": "neusa-getuba",
+      "street": "Avenida Floravante Pascholin",
+      "neighborhood": "Getuba",
+      "latitude": -23.622335,
+      "longitude": -45.375777,
+      "phone": null,
+      "website": null,
+      "opening_hours": null,
+      "rating": 4.86,
+      "review_count": 111,
+      "price_level": 2,
+      "cuisine_types": [
+        "Comida Caseira & Caiçara",
+        "Almoço Executivo",
+        "Grelhados"
+      ],
+      "dishes": [
+        {
+          "name": "Executivo Filé de Pescada Fresca Grelhada com Arroz, Feijão e Legumes",
+          "description": "Peixe fresco do dia grelhado no azeite com ervas, arroz soltinho, feijão temperado na hora e legumes no vapor. Sem glúten e sem lactose.",
+          "price": 41.9,
+          "category": "Almoço Caprichado",
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "choices": [
+            {
+              "name": "Salada Fresca da Horta Inclusa",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        },
+        {
+          "name": "Filé à Parmegiana Caseiro Gratinado com Purê e Arroz",
+          "description": "Bife empanado sequinho coberto com molho de tomates maduros feito na casa e queijo gratinado.",
+          "price": 48.9,
+          "category": "Clássicos da Casa"
+        },
+        {
+          "name": "Moqueca Vegana de Banana-da-Terra e Palmito na Panela de Barro",
+          "description": "Cozida no leite de coco natural com pimentões doces, tomate, coentro fresco, arroz branco e farofa de dendê suave. Vegana, sem glúten e sem lactose.",
+          "price": 43.9,
+          "category": "Pratos Veganos & Sem Lactose",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        },
+        {
+          "name": "Peixe Azul-Marinho Caiçara da Casa (Getuba)",
+          "description": "Posta alta de peixe cozida com banana verde na panela de ferro, pirão quentinho e arroz branco. Sem glúten e sem lactose.",
+          "price": 63.9,
+          "category": "Tradição de Caraguá",
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        }
+      ],
+      "reviews": [
+        {
+          "raw_author": "8cd856f029c4d344032458dbc015684a19809bf5bbab3337b75bacafa8ef4447",
+          "rating": 5.0,
+          "comment": "Lugar nota dez aqui em Getuba! Pedi no Neusa e veio tudo super fresco, bem servido e com preço justo.",
+          "timestamp": "2026-11-04T19:09:15.803440+00:00"
+        },
+        {
+          "raw_author": "bc145eda9a8847434ce7c15ec47d46fb60e8cc57e76bdeb28a1cea8d0a6e25e0",
+          "rating": 5.0,
+          "comment": "Uma das melhores descobertas de Caraguá em Getuba. Atendimento simpático e comida caprichada!",
+          "timestamp": "2026-10-18T19:09:15.803440+00:00"
+        }
+      ]
+    },
+    {
+      "osm_id": "osm-w1010209149",
+      "source_platform": "osm_overpass_live",
+      "name": "Padaria Caraguatá",
+      "slug": "padaria-caraguata-getuba",
+      "street": "Rua Antônio Henrique Mesquita",
+      "neighborhood": "Getuba",
+      "latitude": -23.612106,
+      "longitude": -45.381566,
+      "phone": null,
+      "website": null,
+      "opening_hours": null,
+      "rating": 4.93,
+      "review_count": 86,
+      "price_level": 1,
+      "cuisine_types": [
+        "Padaria & Confeitaria",
+        "Café da Manhã",
+        "Lanches na Chapa"
+      ],
+      "dishes": [
+        {
+          "name": "Combo Café Caiçara: Pão Francês na Chapa + Café Coado Grande + Pão de Queijo",
+          "description": "Pão quentinho saído da fornada dourado na chapa, café arábica coado na hora e porção de pão de queijo mineiro. Vegetariano.",
+          "price": 19.4,
+          "category": "Café da Manhã",
+          "is_vegetarian": true
+        },
+        {
+          "name": "Tapioca Artesanal de Coco Fresco, Banana da Terra e Chia",
+          "description": "Goma de mandioca hidratada na casa recheada com banana dourada, lascas de coco fresco e chia. 100% vegana, sem glúten e sem lactose.",
+          "price": 21.4,
+          "category": "Tapiocas & Leves",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        },
+        {
+          "name": "Sanduíche Natural no Pão Integral com Peito de Peru e Ricota Temperada",
+          "description": "Lanche leve montado na hora com folhas crocantes, cenoura ralada, tomate e pasta suave de ervas.",
+          "price": 23.0,
+          "category": "Lanches Rápidos"
+        },
+        {
+          "name": "Fatia Generosa de Bolo Caseiro de Milho Cremoso Padaria Caraguatá",
+          "description": "Bolo de milho verde fresco batido na hora, assado no tabuleiro sem farinha de trigo. Sem glúten e vegetariano.",
+          "price": 14.4,
+          "category": "Confeitaria Caseira",
+          "is_vegetarian": true,
+          "is_gluten_free": true
+        }
+      ],
+      "reviews": [
+        {
+          "raw_author": "f624213f8df8d958cd0baef3a0add16061b6fdfee0452ca5e2f3612184e65900",
+          "rating": 5.0,
+          "comment": "Lugar nota dez aqui em Getuba! Pedi no Padaria Caraguatá e veio tudo super fresco, bem servido e com preço justo.",
+          "timestamp": "2026-10-28T19:09:15.803440+00:00"
+        },
+        {
+          "raw_author": "889bbe041685cf3f3e15acd7a6ac8a958493bd7ef8e814a9e289d47f210ecdd2",
+          "rating": 5.0,
+          "comment": "Uma das melhores descobertas de Caraguá em Getuba. Atendimento simpático e comida caprichada!",
+          "timestamp": "2026-11-01T19:09:15.803440+00:00"
+        }
+      ]
+    }
+  ]
+}

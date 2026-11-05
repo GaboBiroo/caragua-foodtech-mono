@@ -1,0 +1,157 @@
+{
+  "osm_establishments": [
+    {
+      "osm_id": "osm-n11413000623",
+      "source_platform": "osm_overpass_live",
+      "name": "Bar do Hélio",
+      "slug": "bar-do-helio-camaroeiro",
+      "street": "Avenida Presidente Castelo Branco",
+      "neighborhood": "Camaroeiro",
+      "latitude": -23.619701,
+      "longitude": -45.404753,
+      "phone": null,
+      "website": null,
+      "opening_hours": null,
+      "rating": 4.89,
+      "review_count": 70,
+      "price_level": 2,
+      "cuisine_types": [
+        "Bar & Petiscaria",
+        "Porções na Chapa",
+        "Espetinhos na Brasa"
+      ],
+      "dishes": [
+        {
+          "name": "Chapa Quente de Contrafilé Acebolado com Mandioca Dourada",
+          "description": "500g de tiras macias de contrafilé grelhadas na hora com cebola roxa, mandioca cozida frita, farofa crocante e vinagrete. Sem lactose.",
+          "price": 69.4,
+          "category": "Chapas & Porções",
+          "is_lactose_free": true,
+          "choices": [
+            {
+              "name": "Farofa Caseira + Vinagrete Fresco",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        },
+        {
+          "name": "Combo 3 Espetinhos Artesanais na Brasa + Mandioca e Vinagrete",
+          "description": "Espetinhos assados no carvão (alcatra, frango temperado e kafta) servidos quentinhos com mandioca cozida. Sem glúten e sem lactose.",
+          "price": 36.4,
+          "category": "Na Brasa",
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        },
+        {
+          "name": "Porção Dupla de Mandioca Cremosa e Polenta Crocante com Ervas",
+          "description": "Mandioca amarelinha derretendo por dentro e palitos de polenta dourados com alecrim. 100% vegana, sem glúten e sem lactose.",
+          "price": 31.4,
+          "category": "Petiscos Veganos",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        },
+        {
+          "name": "Bolinho Artesanal de Costela Desfiada Bar do Hélio",
+          "description": "Porção com 8 bolinhos crocantes recheados com costela desfiada lentamente e pimenta biquinho.",
+          "price": 38.4,
+          "category": "Favoritos do Balcão"
+        }
+      ],
+      "reviews": [
+        {
+          "raw_author": "8cb325100024a702681e3590e0bad13dd6ce46aace9a371a1d5b9a77abe88cf6",
+          "rating": 5.0,
+          "comment": "Lugar nota dez aqui em Camaroeiro! Pedi no Bar do Hélio e veio tudo super fresco, bem servido e com preço justo.",
+          "timestamp": "2026-11-01T19:09:15.803440+00:00"
+        },
+        {
+          "raw_author": "165708793198ba2463ed7fa9a154c134cfe1ba02d6e19a870976d472984f90fd",
+          "rating": 5.0,
+          "comment": "Uma das melhores descobertas de Caraguá em Camaroeiro. Atendimento simpático e comida caprichada!",
+          "timestamp": "2026-10-26T19:09:15.803440+00:00"
+        }
+      ]
+    },
+    {
+      "osm_id": "osm-n5673666234",
+      "source_platform": "osm_overpass_live",
+      "name": "Dom Quixote",
+      "slug": "dom-quixote-camaroeiro",
+      "street": "Avenida Arthur da Costa Filho",
+      "neighborhood": "Camaroeiro",
+      "latitude": -23.622864,
+      "longitude": -45.406541,
+      "phone": null,
+      "website": null,
+      "opening_hours": null,
+      "rating": 4.73,
+      "review_count": 66,
+      "price_level": 2,
+      "cuisine_types": [
+        "Pizzaria Artesanal",
+        "Forno a Lenha",
+        "Massas"
+      ],
+      "dishes": [
+        {
+          "name": "Pizza Artesanal Portuguesa Completa (8 Fatias)",
+          "description": "Massa de longa fermentação aberta à mão, molho de tomates italianos, muçarela especial, presunto magro, ovos, cebola roxa e azeitonas pretas.",
+          "price": 68.4,
+          "category": "Pizzas Tradicionais",
+          "choices": [
+            {
+              "name": "Borda Tradicional Tostada",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        },
+        {
+          "name": "Pizza Margherita Especial com Manjericão da Horta",
+          "description": "Molho de tomate pelati artesanal, muçarela derretida, rodelas de tomate débora e folhas frescas de manjericão. Opção vegetariana.",
+          "price": 64.4,
+          "category": "Pizzas Vegetarianas",
+          "is_vegetarian": true
+        },
+        {
+          "name": "Pizza Vegana de Abobrinha, Cogumelos e Castanha (Massa Sem Glúten)",
+          "description": "Disco crocante sem glúten coberto com molho rústico, cogumelos salteados no alho, abobrinha grelhada e creme de castanha. Vegana, sem glúten e sem lactose.",
+          "price": 71.4,
+          "category": "Linha Vegana & Sem Glúten",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        },
+        {
+          "name": "Focaccia de Alecrim e Flor de Sal no Forno",
+          "description": "Massa leve regada com azeite extravirgem, alecrim fresco e alho assado. Vegana e sem lactose.",
+          "price": 31.4,
+          "category": "Entradas do Forno",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_lactose_free": true
+        }
+      ],
+      "reviews": [
+        {
+          "raw_author": "30d0d744d608db19ed04646e9007c308292478dca3077cce2ed8732c680bc7a8",
+          "rating": 5.0,
+          "comment": "Lugar nota dez aqui em Camaroeiro! Pedi no Dom Quixote e veio tudo super fresco, bem servido e com preço justo.",
+          "timestamp": "2026-10-30T19:09:15.803440+00:00"
+        },
+        {
+          "raw_author": "a333d6ea43097761a96335204824b766ae1167f99ed203c6e831ff95fdc1ae17",
+          "rating": 5.0,
+          "comment": "Uma das melhores descobertas de Caraguá em Camaroeiro. Atendimento simpático e comida caprichada!",
+          "timestamp": "2026-11-01T19:09:15.803440+00:00"
+        }
+      ]
+    }
+  ]
+}

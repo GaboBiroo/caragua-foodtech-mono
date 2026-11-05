@@ -9,9 +9,8 @@ import {
   Play,
   OctagonAlert,
   RefreshCw,
-  Database,
-  Server,
-  ShieldAlert,
+  Utensils,
+  ClipboardCheck,
   TrendingDown,
   TrendingUp,
   MapPin,
@@ -27,33 +26,23 @@ import { CaraguaAIChatDrawer } from '@/components/CaraguaAIChatDrawer';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
 
-interface ClusterHealth {
-  postgres_postgis_pgvector: string;
-  redis_7_broker: string;
-  embedding_engine: string;
-}
-
-interface ScraperStatusPayload {
-  backend_mode: string;
+interface TeamStatusData {
   stop_requested: boolean;
   queue_depth: number;
-  queued_neighborhoods_preview: string[];
-  valid_checkpoints_count: number;
-  valid_checkpoints: Record<string, { ttl_seconds: number }>;
-  latest_stats?: Record<string, unknown> | null;
-  cluster_health: ClusterHealth;
+  updated_neighborhoods_count?: number;
   total_official_neighborhoods: number;
-  quarantined_dishes_pending_db: number;
+  pending_approval_dishes_db?: number;
   active_restaurants_db: number;
   approved_dishes_db: number;
-  indexed_vectors_1536_db: number;
+  searchable_dishes_db?: number;
   price_mutations_db: number;
   price_drops_db: number;
-  sanitized_reviews_db: number;
+  verified_reviews_db?: number;
+  system_online?: boolean;
   queried_at: string;
 }
 
-interface QuarantineDishItem {
+interface PendingDishItem {
   id: string;
   restaurant_id: string;
   restaurant_name: string;
@@ -69,7 +58,6 @@ interface QuarantineDishItem {
   is_gluten_free: boolean;
   is_lactose_free: boolean;
   is_available: boolean;
-  requires_moderation: boolean;
   raw_source: string | null;
   created_at: string | null;
 }
@@ -82,7 +70,7 @@ interface PriceHistoryPoint {
   detected_at: string | null;
 }
 
-interface PriceMutationRadarItem {
+interface PriceChangeItem {
   dish_id: string;
   dish_name: string;
   category: string;
@@ -100,7 +88,7 @@ interface PriceMutationRadarItem {
   history: PriceHistoryPoint[];
 }
 
-interface NeighborhoodTopologyItem {
+interface NeighborhoodCoverageItem {
   slug: string;
   name: string;
   region: string;
@@ -109,14 +97,17 @@ interface NeighborhoodTopologyItem {
   longitude: number;
   restaurants_count: number;
   active_dishes_count: number;
-  quarantined_dishes_count: number;
-  checkpoint_active: boolean;
-  checkpoint_ttl_seconds: number;
+  pending_dishes_count?: number;
+  updated_today?: boolean;
 }
 
-type ActiveTab = 'quarantine' | 'prices' | 'topology';
+type ActiveTab = 'pending' | 'prices' | 'neighborhoods';
 
-const NativePriceSparkline: React.FC<{
+function formatBRL(value: number): string {
+  return `R$ ${value.toFixed(2).replace('.', ',')}`;
+}
+
+const NativePriceChart: React.FC<{
   points: number[];
   isDrop: boolean;
   width?: number;
@@ -152,7 +143,7 @@ const NativePriceSparkline: React.FC<{
       height={height}
       viewBox={`0 0 ${width} ${height}`}
       className="overflow-visible shrink-0"
-      aria-label="Curva de evolução histórica do preço em BRL"
+      aria-label="Evolução recente do preço do prato"
     >
       <path d={areaPath} fill={fillColor} />
       <polyline
@@ -175,33 +166,48 @@ const NativePriceSparkline: React.FC<{
   );
 };
 
-function formatSourceBadge(source: string | null): { label: string; classes: string } {
-  const s = (source || 'verified_catalog').toLowerCase();
+function formatFriendlyOriginBadge(source: string | null): { label: string; classes: string } {
+  const s = (source || '').toLowerCase();
+  if (s.includes('osm') || s.includes('openstreetmap')) {
+    return {
+      label: 'Mapa de Caraguá',
+      classes: 'bg-emerald-100 text-emerald-900 border-emerald-200',
+    };
+  }
   if (s.includes('ifood')) {
-    return { label: 'ifood_web', classes: 'bg-rose-100 text-rose-900 border-rose-200' };
+    return {
+      label: 'Delivery Local',
+      classes: 'bg-rose-100 text-rose-900 border-rose-200',
+    };
   }
-  if (s.includes('goomer')) {
-    return { label: 'goomer', classes: 'bg-indigo-100 text-indigo-900 border-indigo-200' };
-  }
-  if (s.includes('menudino') || s.includes('cardapioweb')) {
-    return { label: 'menudino', classes: 'bg-amber-100 text-amber-950 border-amber-200' };
+  if (s.includes('goomer') || s.includes('menudino') || s.includes('cardapioweb')) {
+    return {
+      label: 'Cardápio Digital',
+      classes: 'bg-amber-100 text-amber-950 border-amber-200',
+    };
   }
   if (s.includes('google') || s.includes('gmaps')) {
-    return { label: 'gmaps', classes: 'bg-sky-100 text-sky-900 border-sky-200' };
+    return {
+      label: 'Guia da Cidade',
+      classes: 'bg-sky-100 text-sky-900 border-sky-200',
+    };
   }
-  return { label: s, classes: 'bg-stone-100 text-stone-800 border-stone-200' };
+  return {
+    label: 'Cardápio Verificado',
+    classes: 'bg-stone-100 text-stone-800 border-stone-200',
+  };
 }
 
-export default function ModerationCommandCenterPage() {
-  const [statusData, setStatusData] = useState<ScraperStatusPayload | null>(null);
-  const [quarantineList, setQuarantineList] = useState<QuarantineDishItem[]>([]);
-  const [priceRadarList, setPriceRadarList] = useState<PriceMutationRadarItem[]>([]);
-  const [neighborhoods, setNeighborhoods] = useState<NeighborhoodTopologyItem[]>([]);
+export default function TeamCuratorshipPanelPage() {
+  const [statusData, setStatusData] = useState<TeamStatusData | null>(null);
+  const [pendingList, setPendingList] = useState<PendingDishItem[]>([]);
+  const [priceChangesList, setPriceChangesList] = useState<PriceChangeItem[]>([]);
+  const [neighborhoods, setNeighborhoods] = useState<NeighborhoodCoverageItem[]>([]);
   const [isOnline, setIsOnline] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<ActiveTab>('quarantine');
+  const [activeTab, setActiveTab] = useState<ActiveTab>('pending');
 
   const [selectedNeighborhood, setSelectedNeighborhood] = useState<string>('centro');
-  const [quarantineSearch, setQuarantineSearch] = useState<string>('');
+  const [pendingSearch, setPendingSearch] = useState<string>('');
   const [dropsOnlyFilter, setDropsOnlyFilter] = useState<boolean>(false);
   const [regionFilter, setRegionFilter] = useState<string>('todas');
 
@@ -229,9 +235,9 @@ export default function ModerationCommandCenterPage() {
     []
   );
 
-  const fetchAllTelemetry = useCallback(async () => {
+  const fetchPanelData = useCallback(async () => {
     try {
-      const [statusRes, quarRes, priceRes, neighRes] = await Promise.all([
+      const [statusRes, pendRes, priceRes, neighRes] = await Promise.all([
         fetch(`${API_BASE}/moderation/scraper/status`, { cache: 'no-store' }),
         fetch(`${API_BASE}/moderation/pending-promotions?limit=200`, { cache: 'no-store' }),
         fetch(`${API_BASE}/moderation/price-drops?limit=150`, { cache: 'no-store' }),
@@ -239,19 +245,19 @@ export default function ModerationCommandCenterPage() {
       ]);
 
       if (!statusRes.ok) {
-        throw new Error(`Status HTTP ${statusRes.status}`);
+        throw new Error(`Status ${statusRes.status}`);
       }
 
-      const [statusJson, quarJson, priceJson, neighJson] = await Promise.all([
+      const [statusJson, pendJson, priceJson, neighJson] = await Promise.all([
         statusRes.json(),
-        quarRes.ok ? quarRes.json() : [],
+        pendRes.ok ? pendRes.json() : [],
         priceRes.ok ? priceRes.json() : [],
         neighRes.ok ? neighRes.json() : { neighborhoods: [] },
       ]);
 
       setStatusData(statusJson);
-      setQuarantineList(Array.isArray(quarJson) ? quarJson : []);
-      setPriceRadarList(Array.isArray(priceJson) ? priceJson : []);
+      setPendingList(Array.isArray(pendJson) ? pendJson : []);
+      setPriceChangesList(Array.isArray(priceJson) ? priceJson : []);
       setNeighborhoods(
         Array.isArray(neighJson?.neighborhoods) ? neighJson.neighborhoods : []
       );
@@ -261,19 +267,18 @@ export default function ModerationCommandCenterPage() {
     }
   }, []);
 
-  // Polling de 3 segundos em tempo real (Redis 7 + PostgreSQL 16)
   useEffect(() => {
-    void fetchAllTelemetry();
+    void fetchPanelData();
     const timer = setInterval(() => {
-      void fetchAllTelemetry();
+      void fetchPanelData();
     }, 3000);
     return () => clearInterval(timer);
-  }, [fetchAllTelemetry]);
+  }, [fetchPanelData]);
 
-  const handleTriggerNeighborhood = async (slugOrName: string, forceRun = true) => {
-    setBusyAction(`trigger-${slugOrName}`);
+  const handleFetchNeighborhoodMenus = async (slugOrName: string, forceRun = true) => {
+    setBusyAction(`run-${slugOrName}`);
     try {
-      const res = await fetch(`${API_BASE}/moderation/scraper/trigger`, {
+      const res = await fetch(`${API_BASE}/moderation/scraper/run`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -282,24 +287,23 @@ export default function ModerationCommandCenterPage() {
           batch_count: 1,
         }),
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
+      if (!res.ok) throw new Error(`Status ${res.status}`);
       showToast(
         'success',
-        `Coleta disparada para '${slugOrName}' (Job ${data.job_id}).`
+        `Buscando cardápios atualizados em "${slugOrName}"! A lista será atualizada em instantes.`
       );
-      setTimeout(() => void fetchAllTelemetry(), 900);
+      setTimeout(() => void fetchPanelData(), 900);
     } catch {
-      showToast('error', `Falha ao disparar coleta em '${slugOrName}'.`);
+      showToast('error', `Não foi possível buscar cardápios em "${slugOrName}" agora.`);
     } finally {
       setBusyAction(null);
     }
   };
 
-  const handleTriggerBatchPolos = async () => {
-    setBusyAction('batch-trigger');
+  const handleFetchMainPolos = async () => {
+    setBusyAction('batch-run');
     try {
-      const res = await fetch(`${API_BASE}/moderation/scraper/trigger`, {
+      const res = await fetch(`${API_BASE}/moderation/scraper/run`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -309,75 +313,74 @@ export default function ModerationCommandCenterPage() {
           auto_approve_trusted: true,
         }),
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
+      if (!res.ok) throw new Error(`Status ${res.status}`);
       showToast(
         'success',
-        `Varredura em Lote iniciada em 8 polos (Job ${data.job_id}).`
+        'Busca automática iniciada nos principais bairros de Caraguá!'
       );
-      setTimeout(() => void fetchAllTelemetry(), 1200);
+      setTimeout(() => void fetchPanelData(), 1200);
     } catch {
-      showToast('error', 'Falha ao iniciar varredura em lote.');
+      showToast('error', 'Não foi possível iniciar a busca nos bairros agora.');
     } finally {
       setBusyAction(null);
     }
   };
 
-  const handleEmergencyStop = async () => {
+  const handlePauseSearch = async () => {
     setBusyAction('stop');
     try {
       const res = await fetch(`${API_BASE}/moderation/scraper/stop`, {
         method: 'POST',
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) throw new Error(`Status ${res.status}`);
       showToast(
         'warning',
-        'Sinal de Parada Cooperativa gravado no Redis 7 com sucesso.'
+        'A busca automática de cardápios foi pausada pela equipe.'
       );
-      await fetchAllTelemetry();
+      await fetchPanelData();
     } catch {
-      showToast('error', 'Falha ao enviar sinal de parada ao Redis.');
+      showToast('error', 'Não foi possível pausar a busca neste momento.');
     } finally {
       setBusyAction(null);
     }
   };
 
-  const handleReindexVectors = async () => {
-    setBusyAction('reindex');
+  const handleRefreshAssistantCatalog = async () => {
+    setBusyAction('refresh-assistant');
     try {
       const res = await fetch(`${API_BASE}/chat/reindex`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ batch_size: 400 }),
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) throw new Error(`Status ${res.status}`);
       const data = await res.json();
+      const totalReady = data.searchable_dishes_updated ?? data.approved_dishes ?? 0;
       showToast(
         'success',
-        `Vetores 1536d sincronizados (${data.marketplace_rag_ready_dishes} pratos prontos no pgvector em ${data.elapsed_ms} ms).`
+        `Chef CaráFood atualizado com sucesso! ${totalReady} pratos prontos para recomendar.`
       );
-      await fetchAllTelemetry();
+      await fetchPanelData();
     } catch {
-      showToast('error', 'Falha ao sincronizar vetores 1536d no pgvector.');
+      showToast('error', 'Não foi possível atualizar as sugestões do Chef CaráFood agora.');
     } finally {
       setBusyAction(null);
     }
   };
 
-  // Optimistic UI: Aprovação em 1 clique + Indexação 1536d imediata
-  const handleApproveDish = async (item: QuarantineDishItem) => {
-    const snapshot = quarantineList;
-    setQuarantineList((prev) => prev.filter((d) => d.id !== item.id));
+  const handleApproveDish = async (item: PendingDishItem) => {
+    const snapshot = pendingList;
+    setPendingList((prev) => prev.filter((d) => d.id !== item.id));
     setStatusData((prev) =>
       prev
         ? {
             ...prev,
-            quarantined_dishes_pending_db: Math.max(
+            pending_approval_dishes_db: Math.max(
               0,
-              prev.quarantined_dishes_pending_db - 1
+              (prev.pending_approval_dishes_db ?? snapshot.length) - 1
             ),
             approved_dishes_db: prev.approved_dishes_db + 1,
-            indexed_vectors_1536_db: prev.indexed_vectors_1536_db + 1,
+            searchable_dishes_db: (prev.searchable_dishes_db ?? prev.approved_dishes_db) + 1,
           }
         : prev
     );
@@ -386,28 +389,27 @@ export default function ModerationCommandCenterPage() {
       const res = await fetch(`${API_BASE}/moderation/dishes/${item.id}/approve`, {
         method: 'POST',
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) throw new Error(`Status ${res.status}`);
       showToast(
         'success',
-        `Prato "${item.dish_name}" aprovado e indexado em 1536d no RAG!`
+        `"${item.dish_name}" aprovado e publicado no cardápio de ${item.restaurant_name}!`
       );
     } catch {
-      setQuarantineList(snapshot);
-      showToast('error', `Erro ao aprovar "${item.dish_name}". Estado restaurado.`);
+      setPendingList(snapshot);
+      showToast('error', `Não conseguimos aprovar "${item.dish_name}" agora.`);
     }
   };
 
-  // Optimistic UI: Rejeição auditada em 1 clique
-  const handleRejectDish = async (item: QuarantineDishItem) => {
-    const snapshot = quarantineList;
-    setQuarantineList((prev) => prev.filter((d) => d.id !== item.id));
+  const handleRejectDish = async (item: PendingDishItem) => {
+    const snapshot = pendingList;
+    setPendingList((prev) => prev.filter((d) => d.id !== item.id));
     setStatusData((prev) =>
       prev
         ? {
             ...prev,
-            quarantined_dishes_pending_db: Math.max(
+            pending_approval_dishes_db: Math.max(
               0,
-              prev.quarantined_dishes_pending_db - 1
+              (prev.pending_approval_dishes_db ?? snapshot.length) - 1
             ),
           }
         : prev
@@ -418,25 +420,35 @@ export default function ModerationCommandCenterPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          reason: 'Rejeitado na revisão humana de quarentena via Command Center.',
+          reason: 'Recusado pela curadoria da equipe CaráFood.',
           archive_permanently: false,
         }),
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      showToast('warning', `Prato "${item.dish_name}" rejeitado e arquivado.`);
+      if (!res.ok) throw new Error(`Status ${res.status}`);
+      showToast('warning', `"${item.dish_name}" foi recusado e retirado da lista.`);
     } catch {
-      setQuarantineList(snapshot);
-      showToast('error', `Erro ao rejeitar "${item.dish_name}". Estado restaurado.`);
+      setPendingList(snapshot);
+      showToast('error', `Não conseguimos recusar "${item.dish_name}" agora.`);
     }
   };
 
-  // Batch Approve ACID
+  const filteredPending = useMemo(() => {
+    const q = pendingSearch.trim().toLowerCase();
+    if (!q) return pendingList;
+    return pendingList.filter(
+      (item) =>
+        item.dish_name.toLowerCase().includes(q) ||
+        item.restaurant_name.toLowerCase().includes(q) ||
+        item.neighborhood.toLowerCase().includes(q)
+    );
+  }, [pendingList, pendingSearch]);
+
   const handleBatchApproveAll = async () => {
-    if (quarantineList.length === 0) return;
+    if (filteredPending.length === 0) return;
     setBusyAction('batch-approve');
-    const targetIds = filteredQuarantine.map((d) => d.id);
-    const snapshot = quarantineList;
-    setQuarantineList((prev) => prev.filter((d) => !targetIds.includes(d.id)));
+    const targetIds = filteredPending.map((d) => d.id);
+    const snapshot = pendingList;
+    setPendingList((prev) => prev.filter((d) => !targetIds.includes(d.id)));
 
     try {
       const res = await fetch(`${API_BASE}/moderation/dishes/batch-approve`, {
@@ -444,22 +456,22 @@ export default function ModerationCommandCenterPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ dish_ids: targetIds }),
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) throw new Error(`Status ${res.status}`);
       const data = await res.json();
       showToast(
         'success',
-        `Aprovação em Lote ACID concluída: ${data.approved_count} pratos publicados e indexados em 1536d!`
+        `Pronto! ${data.approved_count} pratos foram aprovados e já aparecem nos cardápios!`
       );
-      await fetchAllTelemetry();
+      await fetchPanelData();
     } catch {
-      setQuarantineList(snapshot);
-      showToast('error', 'Falha na aprovação em lote ACID.');
+      setPendingList(snapshot);
+      showToast('error', 'Não foi possível aprovar todos os pratos de uma vez.');
     } finally {
       setBusyAction(null);
     }
   };
 
-  const handleOpenPriceHistoryModal = async (item: PriceMutationRadarItem) => {
+  const handleOpenPriceHistoryModal = async (item: PriceChangeItem) => {
     try {
       const res = await fetch(
         `${API_BASE}/moderation/dishes/${item.dish_id}/price-history`,
@@ -475,7 +487,7 @@ export default function ModerationCommandCenterPage() {
         return;
       }
     } catch {
-      // Fallback para o histórico já embarcado no item
+      // Usa os dados já carregados na tela
     }
     setHistoryModalItem({
       dishName: item.dish_name,
@@ -484,41 +496,31 @@ export default function ModerationCommandCenterPage() {
     });
   };
 
-  const filteredQuarantine = useMemo(() => {
-    const q = quarantineSearch.trim().toLowerCase();
-    if (!q) return quarantineList;
-    return quarantineList.filter(
-      (item) =>
-        item.dish_name.toLowerCase().includes(q) ||
-        item.restaurant_name.toLowerCase().includes(q) ||
-        item.neighborhood.toLowerCase().includes(q) ||
-        (item.raw_source || '').toLowerCase().includes(q)
-    );
-  }, [quarantineList, quarantineSearch]);
+  const filteredPriceChanges = useMemo(() => {
+    if (!dropsOnlyFilter) return priceChangesList;
+    return priceChangesList.filter((item) => item.delta_percentage < 0);
+  }, [priceChangesList, dropsOnlyFilter]);
 
-  const filteredPriceRadar = useMemo(() => {
-    if (!dropsOnlyFilter) return priceRadarList;
-    return priceRadarList.filter((item) => item.delta_percentage < 0);
-  }, [priceRadarList, dropsOnlyFilter]);
-
-  const filteredTopology = useMemo(() => {
+  const filteredNeighborhoods = useMemo(() => {
     if (regionFilter === 'todas') return neighborhoods;
     return neighborhoods.filter((n) => n.region === regionFilter);
   }, [neighborhoods, regionFilter]);
 
   const totalNeighborhoods = statusData?.total_official_neighborhoods || 53;
-  const activeCheckpoints = statusData?.valid_checkpoints_count || 0;
-  const checkpointPct = Math.min(
+  const updatedNeighborhoods = statusData?.updated_neighborhoods_count || 0;
+  const coveragePct = Math.min(
     100,
-    Math.round((activeCheckpoints / totalNeighborhoods) * 100)
+    Math.round((updatedNeighborhoods / totalNeighborhoods) * 100)
   );
+  const pendingCount = statusData?.pending_approval_dishes_db ?? pendingList.length;
+  const activeMenuCount =
+    statusData?.searchable_dishes_db ?? statusData?.approved_dishes_db ?? 0;
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] text-stone-900 flex flex-col">
       <Navbar onOpenAIChat={() => setAiDrawerOpen(true)} />
 
       <main className="max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6 flex-1">
-        {/* Notificação Operacional */}
         {toastBanner && (
           <div
             className={`rounded-2xl px-4 py-3 text-sm font-bold flex items-center justify-between shadow-md border ${
@@ -534,19 +536,20 @@ export default function ModerationCommandCenterPage() {
               type="button"
               onClick={() => setToastBanner(null)}
               className="p-1 rounded-lg hover:bg-black/10"
+              aria-label="Fechar aviso"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
         )}
 
-        {/* HEADER OPERACIONAL & STATUS DO CLUSTER */}
-        <section className="bg-white rounded-3xl border border-stone-200/90 p-5 sm:p-6 shadow-sm space-y-5">
+        {/* Cabeçalho do Painel da Equipe */}
+        <section className="bg-white rounded-3xl border border-stone-200/90 p-5 sm:p-6 shadow-xs space-y-5">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-[11px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#135136] text-[#FFB703]">
-                  Command Center Executivo
+                  Painel da Equipe • CaráFood
                 </span>
                 <span
                   className={`inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-0.5 rounded-full border ${
@@ -560,28 +563,23 @@ export default function ModerationCommandCenterPage() {
                       isOnline ? 'bg-emerald-500 animate-ping' : 'bg-rose-500'
                     }`}
                   />
-                  PostgreSQL 16 + PostGIS + pgvector:{' '}
                   {isOnline
-                    ? statusData?.cluster_health?.postgres_postgis_pgvector || 'online'
-                    : 'reconectando'}
-                </span>
-                <span className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-0.5 rounded-full bg-sky-50 text-sky-900 border border-sky-200">
-                  <Server className="w-3.5 h-3.5 text-sky-700" />
-                  Redis 7: {statusData?.backend_mode || 'redis_7_distributed'}
+                    ? 'Cardápios conectados ao vivo'
+                    : 'Reconectando ao servidor...'}
                 </span>
                 {statusData?.stop_requested && (
                   <span className="inline-flex items-center gap-1 text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-900 border border-rose-300">
                     <OctagonAlert className="w-3.5 h-3.5" />
-                    Parada Cooperativa Ativa
+                    Busca Automática Pausada
                   </span>
                 )}
               </div>
 
               <h1 className="font-heading font-black text-2xl sm:text-3xl text-stone-900 mt-2">
-                Orquestração de Scraping, Quarentena LGPD & Índices RAG 1536d
+                Curadoria de Cardápios & Acompanhamento de Preços
               </h1>
               <p className="text-sm text-stone-600 mt-0.5">
-                Monitoramento em tempo real (polling 3s) dos 53 bairros oficiais de Caraguatatuba, resolução de entidades H(R,C) e auditoria de preços.
+                Confira os pratos recém-chegados dos restaurantes de Caraguá, publique no cardápio com um clique e veja onde o preço baixou.
               </p>
             </div>
 
@@ -591,16 +589,16 @@ export default function ModerationCommandCenterPage() {
                 className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold text-xs transition-colors"
               >
                 <ExternalLink className="w-3.5 h-3.5" />
-                <span>Abrir Vitrine Marketplace</span>
+                <span>Ver Cardápios como Cliente</span>
               </Link>
             </div>
           </div>
 
-          {/* Barra de Ação Rápida */}
+          {/* Botões de Ação Simples e Diretos */}
           <div className="pt-4 border-t border-stone-200/80 flex flex-wrap items-center gap-2.5">
             <div className="flex items-center gap-2 flex-1 min-w-[260px]">
               <select
-                aria-label="Selecionar bairro para disparo de coleta"
+                aria-label="Escolher bairro para atualizar cardápios"
                 value={selectedNeighborhood}
                 onChange={(e) => setSelectedNeighborhood(e.target.value)}
                 className="flex-1 px-3.5 py-2.5 rounded-2xl bg-stone-50 border border-stone-300 text-xs font-bold text-stone-800 focus:outline-none focus:ring-2 focus:ring-[#135136]"
@@ -610,7 +608,8 @@ export default function ModerationCommandCenterPage() {
                   : [{ slug: 'centro', name: 'Centro', restaurants_count: 4 }]
                 ).map((n) => (
                   <option key={n.slug} value={n.slug}>
-                    {n.name} ({n.restaurants_count} rest.)
+                    {n.name} ({n.restaurants_count}{' '}
+                    {n.restaurants_count === 1 ? 'local' : 'locais'})
                   </option>
                 ))}
               </select>
@@ -618,208 +617,208 @@ export default function ModerationCommandCenterPage() {
               <button
                 type="button"
                 disabled={busyAction !== null}
-                onClick={() => void handleTriggerNeighborhood(selectedNeighborhood, true)}
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-[#135136] hover:bg-[#1E6B47] text-white font-bold text-xs shadow-sm transition-all disabled:opacity-50 shrink-0"
+                onClick={() => void handleFetchNeighborhoodMenus(selectedNeighborhood, true)}
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-[#135136] hover:bg-[#1E6B47] text-white font-bold text-xs shadow-xs transition-all disabled:opacity-50 shrink-0"
               >
                 <Play className="w-3.5 h-3.5 text-[#FFB703]" />
-                <span>Disparar Coleta no Bairro</span>
+                <span>Buscar Cardápios do Bairro</span>
               </button>
             </div>
 
             <button
               type="button"
               disabled={busyAction !== null}
-              onClick={() => void handleTriggerBatchPolos()}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-[#FFB703] hover:bg-amber-400 text-stone-950 font-extrabold text-xs shadow-sm transition-all disabled:opacity-50"
+              onClick={() => void handleFetchMainPolos()}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-[#FFB703] hover:bg-amber-400 text-stone-950 font-extrabold text-xs shadow-xs transition-all disabled:opacity-50"
             >
               <Layers className="w-3.5 h-3.5" />
-              <span>Varredura em Lote (Top Polos)</span>
+              <span>Buscar Novos Cardápios (Principais Bairros)</span>
             </button>
 
             <button
               type="button"
               disabled={busyAction !== null}
-              onClick={() => void handleReindexVectors()}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-sky-700 hover:bg-sky-800 text-white font-bold text-xs shadow-sm transition-all disabled:opacity-50"
+              onClick={() => void handleRefreshAssistantCatalog()}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-sky-700 hover:bg-sky-800 text-white font-bold text-xs shadow-xs transition-all disabled:opacity-50"
             >
               <RefreshCw
                 className={`w-3.5 h-3.5 ${
-                  busyAction === 'reindex' ? 'animate-spin' : ''
+                  busyAction === 'refresh-assistant' ? 'animate-spin' : ''
                 }`}
               />
-              <span>Sincronizar Vetores RAG</span>
+              <span>Atualizar Sugestões do Chef</span>
             </button>
 
             <button
               type="button"
               disabled={busyAction !== null}
-              onClick={() => void handleEmergencyStop()}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-rose-700 hover:bg-rose-800 text-white font-bold text-xs shadow-sm transition-all disabled:opacity-50"
+              onClick={() => void handlePauseSearch()}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-rose-700 hover:bg-rose-800 text-white font-bold text-xs shadow-xs transition-all disabled:opacity-50"
             >
               <OctagonAlert className="w-3.5 h-3.5" />
-              <span>Parada de Emergência (Stop)</span>
+              <span>Pausar Busca</span>
             </button>
           </div>
         </section>
 
-        {/* GRID DE TELEMETRIA EM TEMPO REAL (4 CARDS ANALÍTICOS) */}
+        {/* 4 Cartões de Resumo Rápido */}
         <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-          {/* Card 1: Bairros Mapeados / Checkpoints 24h */}
-          <div className="bg-white rounded-3xl border border-stone-200 p-5 shadow-sm flex flex-col justify-between">
+          {/* Card 1: Bairros Atualizados Hoje */}
+          <div className="bg-white rounded-3xl border border-stone-200 p-5 shadow-xs flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <span className="text-xs font-extrabold uppercase tracking-wider text-stone-500">
-                Checkpoints 24h (Redis)
+                Bairros Atualizados Hoje
               </span>
               <MapPin className="w-5 h-5 text-[#135136]" />
             </div>
             <div className="mt-3">
               <div className="flex items-baseline gap-2">
                 <span className="font-heading font-black text-3xl text-stone-900">
-                  {activeCheckpoints} / {totalNeighborhoods}
+                  {updatedNeighborhoods} de {totalNeighborhoods}
                 </span>
                 <span className="text-xs font-bold text-emerald-700">
-                  ({checkpointPct}% ativos)
+                  ({coveragePct}%)
                 </span>
               </div>
               <div className="w-full h-2.5 bg-stone-100 rounded-full overflow-hidden mt-2.5 border border-stone-200">
                 <div
                   className="h-full bg-[#135136] transition-all duration-500"
-                  style={{ width: `${checkpointPct}%` }}
+                  style={{ width: `${coveragePct}%` }}
                 />
               </div>
               <p className="text-[11px] text-stone-500 mt-2">
-                Fila Redis pendente: <strong>{statusData?.queue_depth ?? 53}</strong> bairros oficiais
+                Cobertura completa nos <strong>53 bairros oficiais</strong> de Caraguatatuba
               </p>
             </div>
           </div>
 
-          {/* Card 2: Fila de Quarentena */}
-          <div className="bg-white rounded-3xl border border-amber-200 p-5 shadow-sm flex flex-col justify-between">
+          {/* Card 2: Pratos Aguardando Aprovação */}
+          <div className="bg-white rounded-3xl border border-amber-200 p-5 shadow-xs flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <span className="text-xs font-extrabold uppercase tracking-wider text-amber-900">
-                Fila de Quarentena
+                Pratos para Aprovar
               </span>
-              <ShieldAlert className="w-5 h-5 text-amber-600" />
+              <ClipboardCheck className="w-5 h-5 text-amber-600" />
             </div>
             <div className="mt-3">
               <div className="flex items-baseline gap-2">
                 <span className="font-heading font-black text-3xl text-stone-900">
-                  {statusData?.quarantined_dishes_pending_db ?? quarantineList.length}
+                  {pendingCount}
                 </span>
                 <span className="text-xs font-semibold text-stone-600">
-                  pratos aguardando revisão
+                  aguardando sua revisão
                 </span>
               </div>
               <button
                 type="button"
-                disabled={busyAction !== null || filteredQuarantine.length === 0}
+                disabled={busyAction !== null || filteredPending.length === 0}
                 onClick={() => void handleBatchApproveAll()}
                 className="mt-3 w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs transition-all disabled:opacity-40"
               >
                 <CheckCheck className="w-4 h-4" />
-                <span>Aprovar Todos da Fila (Batch Approve)</span>
+                <span>Aprovar Todos da Lista</span>
               </button>
             </div>
           </div>
 
-          {/* Card 3: Catálogo Ativo & Indexado no RAG */}
-          <div className="bg-white rounded-3xl border border-emerald-200 p-5 shadow-sm flex flex-col justify-between">
+          {/* Card 3: Pratos no Cardápio Ativo */}
+          <div className="bg-white rounded-3xl border border-emerald-200 p-5 shadow-xs flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-900">
-                Catálogo Ativo & RAG 1536d
+                Pratos no Cardápio Ativo
               </span>
-              <Database className="w-5 h-5 text-emerald-700" />
+              <Utensils className="w-5 h-5 text-emerald-700" />
             </div>
             <div className="mt-3">
               <div className="flex items-baseline gap-2">
                 <span className="font-heading font-black text-3xl text-[#135136]">
-                  {statusData?.indexed_vectors_1536_db ?? 0}
+                  {activeMenuCount}
                 </span>
                 <span className="text-xs font-semibold text-stone-600">
-                  vetores 1536d HNSW prontos
+                  pratos abertos para clientes
                 </span>
               </div>
               <p className="text-xs text-stone-600 mt-2">
-                <strong>{statusData?.active_restaurants_db ?? 0}</strong> restaurantes deduplicados •{' '}
-                <strong>{statusData?.sanitized_reviews_db ?? 0}</strong> reviews LGPD
+                <strong>{statusData?.active_restaurants_db ?? 0}</strong> locais abertos •{' '}
+                <strong>{statusData?.verified_reviews_db ?? 0}</strong> opiniões de clientes
               </p>
             </div>
           </div>
 
-          {/* Card 4: Mutações de Preço Detectadas */}
-          <div className="bg-white rounded-3xl border border-sky-200 p-5 shadow-sm flex flex-col justify-between">
+          {/* Card 4: Mudanças de Preço nos Cardápios */}
+          <div className="bg-white rounded-3xl border border-sky-200 p-5 shadow-xs flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <span className="text-xs font-extrabold uppercase tracking-wider text-sky-900">
-                Radar de Preços Auditados
+                Mudanças de Preço
               </span>
               <Activity className="w-5 h-5 text-sky-700" />
             </div>
             <div className="mt-3">
               <div className="flex items-baseline gap-2">
                 <span className="font-heading font-black text-3xl text-stone-900">
-                  {statusData?.price_mutations_db ?? priceRadarList.length}
+                  {statusData?.price_mutations_db ?? priceChangesList.length}
                 </span>
                 <span className="text-xs font-semibold text-stone-600">
-                  registros em dish_price_history
+                  alterações conferidas
                 </span>
               </div>
               <div className="mt-2 flex items-center gap-2">
                 <span className="inline-flex items-center gap-1 text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900">
                   <TrendingDown className="w-3.5 h-3.5" />
-                  {statusData?.price_drops_db ?? 0} quedas reais detectadas
+                  {statusData?.price_drops_db ?? 0} pratos baixaram de preço
                 </span>
               </div>
             </div>
           </div>
         </section>
 
-        {/* ABAS DE TRABALHO */}
-        <section className="bg-white rounded-3xl border border-stone-200 shadow-sm overflow-hidden">
+        {/* Abas de Curadoria */}
+        <section className="bg-white rounded-3xl border border-stone-200 shadow-xs overflow-hidden">
           <div className="border-b border-stone-200 px-4 sm:px-6 pt-4 flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap gap-2 pb-3">
               <button
                 type="button"
-                onClick={() => setActiveTab('quarantine')}
+                onClick={() => setActiveTab('pending')}
                 className={`px-4 py-2 rounded-2xl text-xs font-extrabold transition-all ${
-                  activeTab === 'quarantine'
-                    ? 'bg-[#135136] text-white shadow-sm'
+                  activeTab === 'pending'
+                    ? 'bg-[#135136] text-white shadow-xs'
                     : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
                 }`}
               >
-                Fila de Quarentena ({quarantineList.length})
+                Pratos para Aprovar ({pendingList.length})
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab('prices')}
                 className={`px-4 py-2 rounded-2xl text-xs font-extrabold transition-all ${
                   activeTab === 'prices'
-                    ? 'bg-[#135136] text-white shadow-sm'
+                    ? 'bg-[#135136] text-white shadow-xs'
                     : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
                 }`}
               >
-                Radar de Preços & Inflação ({priceRadarList.length})
+                Onde o Preço Mudou ({priceChangesList.length})
               </button>
               <button
                 type="button"
-                onClick={() => setActiveTab('topology')}
+                onClick={() => setActiveTab('neighborhoods')}
                 className={`px-4 py-2 rounded-2xl text-xs font-extrabold transition-all ${
-                  activeTab === 'topology'
-                    ? 'bg-[#135136] text-white shadow-sm'
+                  activeTab === 'neighborhoods'
+                    ? 'bg-[#135136] text-white shadow-xs'
                     : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
                 }`}
               >
-                Topologia dos 53 Bairros ({neighborhoods.length || 53})
+                Cobertura nos 53 Bairros ({neighborhoods.length || 53})
               </button>
             </div>
 
-            {activeTab === 'quarantine' && (
+            {activeTab === 'pending' && (
               <div className="relative pb-3 w-full sm:w-72">
                 <Search className="w-4 h-4 text-stone-400 absolute left-3 top-2.5" />
                 <input
                   type="text"
-                  value={quarantineSearch}
-                  onChange={(e) => setQuarantineSearch(e.target.value)}
-                  placeholder="Filtrar prato, restaurante ou bairro"
+                  value={pendingSearch}
+                  onChange={(e) => setPendingSearch(e.target.value)}
+                  placeholder="Buscar prato, restaurante ou bairro..."
                   className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-stone-50 border border-stone-300 text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-[#135136]"
                 />
               </div>
@@ -836,18 +835,18 @@ export default function ModerationCommandCenterPage() {
                       : 'bg-stone-50 text-stone-700 border-stone-300'
                   }`}
                 >
-                  📉 Mostrar Apenas Quedas de Preço
+                  📉 Mostrar Apenas Onde Baixou
                 </button>
               </div>
             )}
 
-            {activeTab === 'topology' && (
+            {activeTab === 'neighborhoods' && (
               <div className="pb-3 flex flex-wrap gap-1.5">
                 {[
-                  { id: 'todas', label: 'Todas (53)' },
-                  { id: 'central_comercial', label: 'Central & Comercial (16)' },
-                  { id: 'norte_orla_turistica', label: 'Norte / Orla (16)' },
-                  { id: 'sul_expansao_familiar', label: 'Sul / Familiar (21)' },
+                  { id: 'todas', label: 'Todos (53)' },
+                  { id: 'central_comercial', label: 'Centro & Comércio (16)' },
+                  { id: 'norte_orla_turistica', label: 'Norte & Praias (16)' },
+                  { id: 'sul_expansao_familiar', label: 'Sul & Residencial (21)' },
                 ].map((r) => (
                   <button
                     key={r.id}
@@ -866,17 +865,17 @@ export default function ModerationCommandCenterPage() {
             )}
           </div>
 
-          {/* ABA 1: FILA DE QUARENTENA */}
-          {activeTab === 'quarantine' && (
+          {/* ABA 1: Pratos para Aprovar */}
+          {activeTab === 'pending' && (
             <div className="overflow-x-auto">
-              {filteredQuarantine.length === 0 ? (
+              {filteredPending.length === 0 ? (
                 <div className="p-10 text-center text-stone-600 space-y-2">
                   <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto" />
                   <p className="font-heading font-bold text-base text-stone-900">
-                    Nenhum prato retido na fila de quarentena para este filtro.
+                    Tudo em dia! Nenhum prato pendente de aprovação neste momento.
                   </p>
                   <p className="text-xs text-stone-500">
-                    Dispare uma nova raspagem por bairro acima para capturar novos itens em staging.
+                    Escolha um bairro lá em cima e clique em &ldquo;Buscar Cardápios do Bairro&rdquo; sempre que quiser conferir novidades.
                   </p>
                 </div>
               ) : (
@@ -884,16 +883,16 @@ export default function ModerationCommandCenterPage() {
                   <thead>
                     <tr className="bg-stone-50 border-b border-stone-200 text-[11px] font-extrabold uppercase tracking-wider text-stone-600">
                       <th className="py-3 px-4">Prato & Descrição</th>
-                      <th className="py-3 px-4">Estabelecimento & Bairro</th>
-                      <th className="py-3 px-4">Origem</th>
-                      <th className="py-3 px-4">Segurança Alimentar Inferida</th>
-                      <th className="py-3 px-4 text-right">Preço (BRL)</th>
-                      <th className="py-3 px-4 text-right">Curadoria 1-Click</th>
+                      <th className="py-3 px-4">Restaurante & Bairro</th>
+                      <th className="py-3 px-4">Onde Encontramos</th>
+                      <th className="py-3 px-4">Restrições Alimentares</th>
+                      <th className="py-3 px-4 text-right">Preço</th>
+                      <th className="py-3 px-4 text-right">Sua Decisão</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-stone-200 text-xs">
-                    {filteredQuarantine.map((item) => {
-                      const srcBadge = formatSourceBadge(item.raw_source);
+                    {filteredPending.map((item) => {
+                      const srcBadge = formatFriendlyOriginBadge(item.raw_source);
                       return (
                         <tr
                           key={item.id}
@@ -918,7 +917,7 @@ export default function ModerationCommandCenterPage() {
                           </td>
                           <td className="py-3.5 px-4">
                             <span
-                              className={`inline-block font-mono text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${srcBadge.classes}`}
+                              className={`inline-block text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${srcBadge.classes}`}
                             >
                               {srcBadge.label}
                             </span>
@@ -942,7 +941,7 @@ export default function ModerationCommandCenterPage() {
                               )}
                               {item.is_lactose_free && (
                                 <span className="px-2 py-0.5 rounded-full bg-sky-100 text-sky-900 font-bold text-[10px]">
-                                  🥛 Zero Lactose
+                                  🥛 Sem Lactose
                                 </span>
                               )}
                               {!item.is_vegan &&
@@ -950,31 +949,31 @@ export default function ModerationCommandCenterPage() {
                                 !item.is_gluten_free &&
                                 !item.is_lactose_free && (
                                   <span className="text-stone-400 text-[11px]">
-                                    Convencional
+                                    Tradicional
                                   </span>
                                 )}
                             </div>
                           </td>
                           <td className="py-3.5 px-4 text-right font-heading font-extrabold text-sm text-stone-900">
-                            R$ {item.price.toFixed(2)}
+                            {formatBRL(item.price)}
                           </td>
                           <td className="py-3.5 px-4 text-right">
                             <div className="inline-flex items-center gap-1.5">
                               <button
                                 type="button"
                                 onClick={() => void handleApproveDish(item)}
-                                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm transition-all"
+                                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition-all"
                               >
                                 <CheckCircle2 className="w-3.5 h-3.5" />
-                                <span>✓ Aprovar e Indexar</span>
+                                <span>Aprovar no Cardápio</span>
                               </button>
                               <button
                                 type="button"
                                 onClick={() => void handleRejectDish(item)}
-                                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-sm transition-all"
+                                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-xs transition-all"
                               >
                                 <XCircle className="w-3.5 h-3.5" />
-                                <span>✕ Rejeitar</span>
+                                <span>Recusar</span>
                               </button>
                             </div>
                           </td>
@@ -987,100 +986,102 @@ export default function ModerationCommandCenterPage() {
             </div>
           )}
 
-          {/* ABA 2: RADAR DE PREÇOS & INFLAÇÃO (SPARKLINE SVG NATIVO) */}
+          {/* ABA 2: Onde o Preço Mudou */}
           {activeTab === 'prices' && (
             <div className="overflow-x-auto">
-              {filteredPriceRadar.length === 0 ? (
+              {filteredPriceChanges.length === 0 ? (
                 <div className="p-10 text-center text-stone-600">
-                  Nenhuma mutação histórica de preço registrada para este filtro.
+                  Nenhuma mudança de preço encontrada para este filtro ainda.
                 </div>
               ) : (
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="bg-stone-50 border-b border-stone-200 text-[11px] font-extrabold uppercase tracking-wider text-stone-600">
-                      <th className="py-3 px-4">Prato & Estabelecimento</th>
+                      <th className="py-3 px-4">Prato & Restaurante</th>
                       <th className="py-3 px-4 text-right">Preço Anterior</th>
-                      <th className="py-3 px-4 text-right">Preço Novo</th>
-                      <th className="py-3 px-4 text-center">Variação (Δ%)</th>
-                      <th className="py-3 px-4 text-center">Curva Sparkline SVG</th>
-                      <th className="py-3 px-4 text-right">Série Temporal</th>
+                      <th className="py-3 px-4 text-right">Preço Atual</th>
+                      <th className="py-3 px-4 text-center">Diferença</th>
+                      <th className="py-3 px-4 text-center">Evolução do Preço</th>
+                      <th className="py-3 px-4 text-right">Detalhes</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-stone-200 text-xs">
-                    {filteredPriceRadar.map((item) => (
-                      <tr
-                        key={item.dish_id}
-                        className="hover:bg-stone-50/90 transition-colors"
-                      >
-                        <td className="py-3.5 px-4">
-                          <div className="font-bold text-stone-900 text-sm">
-                            {item.dish_name}
-                          </div>
-                          <div className="text-stone-500 mt-0.5">
-                            {item.restaurant_name} • {item.neighborhood}
-                          </div>
-                        </td>
-                        <td className="py-3.5 px-4 text-right font-mono text-stone-500 line-through">
-                          R$ {item.previous_price.toFixed(2)}
-                        </td>
-                        <td className="py-3.5 px-4 text-right font-heading font-extrabold text-sm text-stone-900">
-                          R$ {item.new_price.toFixed(2)}
-                        </td>
-                        <td className="py-3.5 px-4 text-center">
-                          <span
-                            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-extrabold text-xs border ${
-                              item.is_price_drop
-                                ? 'bg-emerald-100 text-emerald-900 border-emerald-300'
-                                : 'bg-amber-100 text-amber-950 border-amber-300'
-                            }`}
-                          >
-                            {item.is_price_drop ? (
-                              <TrendingDown className="w-3.5 h-3.5" />
-                            ) : (
-                              <TrendingUp className="w-3.5 h-3.5" />
-                            )}
-                            {item.delta_percentage > 0 ? '+' : ''}
-                            {item.delta_percentage.toFixed(2)}%
-                          </span>
-                        </td>
-                        <td className="py-2 px-4">
-                          <div className="flex justify-center">
-                            <NativePriceSparkline
-                              points={item.sparkline_points}
-                              isDrop={item.is_price_drop}
-                            />
-                          </div>
-                        </td>
-                        <td className="py-3.5 px-4 text-right">
-                          <button
-                            type="button"
-                            onClick={() => void handleOpenPriceHistoryModal(item)}
-                            className="px-3 py-1.5 rounded-xl bg-stone-100 hover:bg-[#135136] text-stone-800 hover:text-white font-bold text-xs transition-colors"
-                          >
-                            Auditar Série ({item.history.length})
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
+                    {filteredPriceChanges.map((item) => {
+                      const diffBRL = Math.abs(item.previous_price - item.new_price);
+                      return (
+                        <tr
+                          key={item.dish_id}
+                          className="hover:bg-stone-50/90 transition-colors"
+                        >
+                          <td className="py-3.5 px-4">
+                            <div className="font-bold text-stone-900 text-sm">
+                              {item.dish_name}
+                            </div>
+                            <div className="text-stone-500 mt-0.5">
+                              {item.restaurant_name} • {item.neighborhood}
+                            </div>
+                          </td>
+                          <td className="py-3.5 px-4 text-right text-stone-500 line-through">
+                            {formatBRL(item.previous_price)}
+                          </td>
+                          <td className="py-3.5 px-4 text-right font-heading font-extrabold text-sm text-stone-900">
+                            {formatBRL(item.new_price)}
+                          </td>
+                          <td className="py-3.5 px-4 text-center">
+                            <span
+                              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-extrabold text-xs border ${
+                                item.is_price_drop
+                                  ? 'bg-emerald-100 text-emerald-900 border-emerald-300'
+                                  : 'bg-amber-100 text-amber-950 border-amber-300'
+                              }`}
+                            >
+                              {item.is_price_drop ? (
+                                <TrendingDown className="w-3.5 h-3.5" />
+                              ) : (
+                                <TrendingUp className="w-3.5 h-3.5" />
+                              )}
+                              {item.is_price_drop
+                                ? `Baixou ${formatBRL(diffBRL)}`
+                                : `Subiu ${formatBRL(diffBRL)}`}
+                            </span>
+                          </td>
+                          <td className="py-2 px-4">
+                            <div className="flex justify-center">
+                              <NativePriceChart
+                                points={item.sparkline_points}
+                                isDrop={item.is_price_drop}
+                              />
+                            </div>
+                          </td>
+                          <td className="py-3.5 px-4 text-right">
+                            <button
+                              type="button"
+                              onClick={() => void handleOpenPriceHistoryModal(item)}
+                              className="px-3 py-1.5 rounded-xl bg-stone-100 hover:bg-[#135136] text-stone-800 hover:text-white font-bold text-xs transition-colors"
+                            >
+                              Ver Histórico ({item.history.length})
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               )}
             </div>
           )}
 
-          {/* ABA 3: TOPOLOGIA DOS 53 BAIRROS DE CARAGUATATUBA */}
-          {activeTab === 'topology' && (
+          {/* ABA 3: Cobertura nos 53 Bairros */}
+          {activeTab === 'neighborhoods' && (
             <div className="p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">
-              {filteredTopology.map((neigh) => {
-                const ttlHours = Math.max(
-                  0,
-                  Math.round(neigh.checkpoint_ttl_seconds / 3600)
-                );
+              {filteredNeighborhoods.map((neigh) => {
+                const updated = Boolean(neigh.updated_today);
+                const pendingInNeigh = neigh.pending_dishes_count ?? 0;
                 return (
                   <div
                     key={neigh.slug}
                     className={`rounded-2xl border p-4 flex flex-col justify-between transition-all ${
-                      neigh.checkpoint_active
+                      updated
                         ? 'bg-emerald-50/40 border-emerald-300'
                         : 'bg-stone-50/70 border-stone-200'
                     }`}
@@ -1088,21 +1089,21 @@ export default function ModerationCommandCenterPage() {
                     <div>
                       <div className="flex items-start justify-between gap-2">
                         <div>
-                          <h3 className="font-heading font-extrabold text-sm text-stone-900">
+                          <div className="font-heading font-extrabold text-sm text-stone-900">
                             {neigh.name}
-                          </h3>
+                          </div>
                           <span className="text-[10px] font-semibold text-stone-500 uppercase">
                             {neigh.macro}
                           </span>
                         </div>
-                        {neigh.checkpoint_active ? (
+                        {updated ? (
                           <span className="inline-flex items-center gap-1 text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300">
                             <Clock className="w-3 h-3" />
-                            TTL {ttlHours}h
+                            Atualizado hoje
                           </span>
                         ) : (
                           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-stone-200 text-stone-700">
-                            Pendente
+                            Aguardando busca
                           </span>
                         )}
                       </div>
@@ -1112,19 +1113,19 @@ export default function ModerationCommandCenterPage() {
                           <div className="font-heading font-black text-sm text-stone-900">
                             {neigh.restaurants_count}
                           </div>
-                          <div className="text-[10px] text-stone-500">Rest.</div>
+                          <div className="text-[10px] text-stone-500">Locais</div>
                         </div>
                         <div>
                           <div className="font-heading font-black text-sm text-[#135136]">
                             {neigh.active_dishes_count}
                           </div>
-                          <div className="text-[10px] text-stone-500">Ativos</div>
+                          <div className="text-[10px] text-stone-500">No Cardápio</div>
                         </div>
                         <div>
                           <div className="font-heading font-black text-sm text-amber-700">
-                            {neigh.quarantined_dishes_count}
+                            {pendingInNeigh}
                           </div>
-                          <div className="text-[10px] text-stone-500">Quarent.</div>
+                          <div className="text-[10px] text-stone-500">Pendentes</div>
                         </div>
                       </div>
                     </div>
@@ -1132,11 +1133,11 @@ export default function ModerationCommandCenterPage() {
                     <button
                       type="button"
                       disabled={busyAction !== null}
-                      onClick={() => void handleTriggerNeighborhood(neigh.slug, true)}
+                      onClick={() => void handleFetchNeighborhoodMenus(neigh.slug, true)}
                       className="mt-3 w-full inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-[#135136] text-[#135136] hover:text-white border border-[#135136]/40 font-bold text-xs transition-all disabled:opacity-50"
                     >
                       <Play className="w-3 h-3" />
-                      <span>Forçar Raspagem</span>
+                      <span>Atualizar este bairro</span>
                     </button>
                   </div>
                 );
@@ -1146,10 +1147,10 @@ export default function ModerationCommandCenterPage() {
         </section>
       </main>
 
-      {/* Modal de Série Temporal de Preços (`dish_price_history`) */}
+      {/* Janela de Histórico de Preço do Prato */}
       {historyModalItem && (
         <div
-          className="fixed inset-0 z-50 bg-stone-950/60 backdrop-blur-sm flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-stone-950/60 backdrop-blur-xs flex items-center justify-center p-4"
           role="dialog"
           aria-modal="true"
         >
@@ -1157,11 +1158,11 @@ export default function ModerationCommandCenterPage() {
             <div className="flex items-start justify-between gap-3">
               <div>
                 <span className="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900">
-                  Auditoria Imutável • dish_price_history
+                  Histórico de Preço deste Prato
                 </span>
-                <h3 className="font-heading font-black text-lg text-stone-900 mt-1">
+                <div className="font-heading font-black text-lg text-stone-900 mt-1">
                   {historyModalItem.dishName}
-                </h3>
+                </div>
                 <p className="text-xs text-stone-500">
                   {historyModalItem.restaurantName}
                 </p>
@@ -1170,13 +1171,14 @@ export default function ModerationCommandCenterPage() {
                 type="button"
                 onClick={() => setHistoryModalItem(null)}
                 className="p-1.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700"
+                aria-label="Fechar histórico de preço"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             <div className="bg-stone-50 rounded-2xl p-4 border border-stone-200 flex items-center justify-center">
-              <NativePriceSparkline
+              <NativePriceChart
                 points={
                   historyModalItem.points.length > 0
                     ? [
@@ -1195,33 +1197,37 @@ export default function ModerationCommandCenterPage() {
             </div>
 
             <div className="max-h-60 overflow-y-auto divide-y divide-stone-200 border border-stone-200 rounded-2xl">
-              {historyModalItem.points.map((pt, idx) => (
-                <div
-                  key={`${pt.detected_at}-${idx}`}
-                  className="px-4 py-2.5 flex items-center justify-between text-xs"
-                >
-                  <div>
-                    <span className="font-mono text-stone-500 line-through mr-2">
-                      R$ {pt.previous_price.toFixed(2)}
-                    </span>
-                    <span className="font-bold text-stone-900">
-                      → R$ {pt.new_price.toFixed(2)}
-                    </span>
+              {historyModalItem.points.map((pt, idx) => {
+                const diff = Math.abs(pt.previous_price - pt.new_price);
+                return (
+                  <div
+                    key={`${pt.detected_at}-${idx}`}
+                    className="px-4 py-2.5 flex items-center justify-between text-xs"
+                  >
+                    <div>
+                      <span className="text-stone-500 line-through mr-2">
+                        {formatBRL(pt.previous_price)}
+                      </span>
+                      <span className="font-bold text-stone-900">
+                        → {formatBRL(pt.new_price)}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`font-extrabold px-2 py-0.5 rounded-full ${
+                          pt.delta_percentage < 0
+                            ? 'bg-emerald-100 text-emerald-900'
+                            : 'bg-amber-100 text-amber-900'
+                        }`}
+                      >
+                        {pt.delta_percentage < 0
+                          ? `Baixou ${formatBRL(diff)}`
+                          : `Subiu ${formatBRL(diff)}`}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={`font-extrabold px-2 py-0.5 rounded-full ${
-                        pt.delta_percentage < 0
-                          ? 'bg-emerald-100 text-emerald-900'
-                          : 'bg-amber-100 text-amber-900'
-                      }`}
-                    >
-                      {pt.delta_percentage > 0 ? '+' : ''}
-                      {pt.delta_percentage.toFixed(2)}%
-                    </span>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>

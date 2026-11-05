@@ -46,6 +46,7 @@ from app.workers.scraper_engine import (
 from app.workers.scraper_adapters import CanonicalRestaurant
 from app.workers.scraper_redis import ScraperRedisCoordinator, scraper_redis_coordinator
 from app.workers.seed_discovery import SeedDiscoveryEngine, seed_discovery_engine
+from app.workers.real_web_harvester import real_web_harvester
 
 logger = logging.getLogger("nightly_batch")
 logger.setLevel(logging.INFO)
@@ -277,6 +278,14 @@ class NightlyBatchOrchestrator:
         """
         job_id = f"nightly-{uuid.uuid4().hex[:10]}"
         await self.redis_coordinator.initialize_telemetry(job_id=job_id, reset_counters=False)
+
+        # Etapa 0: Garante que a coleta real Dual-Mode (OpenStreetMap + Playwright) esteja sincronizada
+        try:
+            osm_places = await real_web_harvester.fetch_real_osm_establishments_caragua()
+            if osm_places:
+                await real_web_harvester.scrape_live_public_menus_playwright(osm_places)
+        except Exception as osm_err:
+            logger.warning(f"[NightlyBatch] Coleta OSM live em modo resiliente: {osm_err}")
 
         all_53_slugs = list(CARAGUA_53_NEIGHBORHOODS.keys())
         await self.redis_coordinator.ensure_queue_populated(all_53_slugs, force_reset=force_reharvest)

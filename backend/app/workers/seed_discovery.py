@@ -1377,20 +1377,45 @@ class SeedDiscoveryEngine:
         )
         return written_paths
 
+    async def sync_real_osm_and_playwright_catalog(self) -> List[Path]:
+        """
+        Aciona o `DualModeRealHarvester` (OpenStreetMap Overpass/Nominatim + Playwright Live)
+        para extrair estabelecimentos reais de Caraguatatuba e persistir `payload_osm_real_*.json`.
+        """
+        from app.workers.real_web_harvester import real_web_harvester
+
+        osm_places = await real_web_harvester.fetch_real_osm_establishments_caragua()
+        if not osm_places:
+            return []
+        return await real_web_harvester.scrape_live_public_menus_playwright(osm_places)
+
     async def generate_or_capture_zone_payloads(
         self,
         neighborhood_slug: str,
         allow_live_network: bool = False,
     ) -> List[Path]:
         """
-        Fluxo Autônomo de Descoberta da Zona:
-        1. Consulta `caragua:scraper:seeds:{neighborhood_slug}` no Redis.
-        2. Se `allow_live_network=True`, tenta interceptar respostas JSON/XHR via Playwright.
-        3. Caso não haja sessão autenticada, tome rate-limit de CDN ou esteja em modo local,
-           aciona `synthesize_verified_regional_catalog(neighborhood_slug)`.
+        Fluxo Autônomo de Descoberta da Zona (Prioridade para Dados Reais OSM + Playwright):
+        1. Prioriza arquivos reais `payload_osm_real_{canonical_slug}_*.json` extraídos do OpenStreetMap.
+        2. Se `allow_live_network=True` e ainda não houver snapshot real, dispara `DualModeRealHarvester`.
+        3. Caso o bairro específico não possua estabelecimentos cadastrados no OpenStreetMap,
+           complementa com `synthesize_verified_regional_catalog(neighborhood_slug)`.
         """
         canonical_slug, _ = resolve_official_neighborhood(neighborhood_slug)
         seed_urls = await self.get_seed_urls(canonical_slug)
+
+        real_osm_files = sorted(RAW_DATA_DIR.glob(f"payload_osm_real_{canonical_slug}_*.json"))
+        if real_osm_files and not allow_live_network:
+            return real_osm_files
+
+        if allow_live_network and not real_osm_files:
+            try:
+                await self.sync_real_osm_and_playwright_catalog()
+                real_osm_files = sorted(RAW_DATA_DIR.glob(f"payload_osm_real_{canonical_slug}_*.json"))
+                if real_osm_files:
+                    return real_osm_files
+            except Exception as osm_exc:
+                logger.warning(f"[SeedDiscovery] Aviso ao sincronizar OSM real ({osm_exc}).")
 
         existing = sorted(RAW_DATA_DIR.glob(f"payload_{canonical_slug}_*.json"))
         if existing and not allow_live_network:

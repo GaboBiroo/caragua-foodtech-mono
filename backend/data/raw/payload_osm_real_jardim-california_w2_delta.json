@@ -1,0 +1,211 @@
+{
+  "osm_establishments": [
+    {
+      "osm_id": "osm-n11933986562",
+      "source_platform": "osm_overpass_live",
+      "name": "Al Tarboush Lanches Árabes",
+      "slug": "al-tarboush-lanches-arabes-jardim-california",
+      "street": "Avenida Miguel Varlez",
+      "neighborhood": "Jardim Califórnia",
+      "latitude": -23.624512,
+      "longitude": -45.418225,
+      "phone": null,
+      "website": null,
+      "opening_hours": null,
+      "rating": 4.85,
+      "review_count": 28,
+      "price_level": 1,
+      "cuisine_types": [
+        "Culinária Árabe",
+        "Esfihas Artesanais",
+        "Mediterrânea"
+      ],
+      "dishes": [
+        {
+          "name": "Combinado 6 Esfihas Abertas Assadas na Pedra",
+          "description": "Massa fofinha assada na hora: 2 de carne temperada com limão e hortelã, 2 de queijo meia-cura e 2 de escarola.",
+          "price": 33.9,
+          "category": "Esfihas Artesanais"
+        },
+        {
+          "name": "Prato Árabe Vegano: Falafel Crocante, Homus, Babaganuche e Tabule",
+          "description": "Bolinhos dourados de grão-de-bico com especiarias, pasta de tahine, berinjela defumada na brasa e salada fresca. Vegano, sem glúten e sem lactose.",
+          "price": 42.9,
+          "category": "Pratos Veganos",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        },
+        {
+          "name": "Kafta Bovina na Brasa com Arroz Sírio e Cebola Dourada",
+          "description": "Dois espetos suculentos de kafta temperada com especiarias árabes e hortelã fresca. Sem lactose.",
+          "price": 45.9,
+          "category": "Grelhados Árabes",
+          "is_lactose_free": true
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "osm_id": "osm-n5118129027",
+      "source_platform": "osm_overpass_live",
+      "name": "Praieira",
+      "slug": "praieira-jardim-california",
+      "street": "Avenida Campos Sales",
+      "neighborhood": "Jardim Califórnia",
+      "latitude": -23.623559,
+      "longitude": -45.426936,
+      "phone": null,
+      "website": null,
+      "opening_hours": null,
+      "rating": 4.93,
+      "review_count": 118,
+      "price_level": 2,
+      "cuisine_types": [
+        "Hambúrguer Artesanal",
+        "Lanches na Chapa",
+        "Batatas Rústicas"
+      ],
+      "dishes": [
+        {
+          "name": "Smash Burger Duplo Costela na Chapa + Batata Crocante",
+          "description": "Dois discos prensados de costela bovina com crostinha caramelizada, queijo prato derretido, cebola chapeada e maionese verde artesanal.",
+          "price": 35.4,
+          "category": "Burgers da Casa",
+          "choices": [
+            {
+              "name": "Maionese Verde da Casa",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        },
+        {
+          "name": "Burger Vegano de Grão-de-Bico e Cogumelos no Pão Sem Glúten",
+          "description": "Hambúrguer alto 100% vegetal grelhado, maionese de alho assado sem leite, alface americana e tomate no pão macio sem glúten. Vegano, sem glúten e sem lactose.",
+          "price": 39.4,
+          "category": "Linha Vegana & Sem Lactose",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        },
+        {
+          "name": "Porção de Batata Rústica com Alecrim e Páprica",
+          "description": "Batatas cortadas com casca, fritas em óleo limpo exclusivo e finalizadas com alecrim fresco. Vegana, sem glúten e sem lactose.",
+          "price": 26.4,
+          "category": "Porções para Dividir",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "osm_id": "osm-n11413091406",
+      "source_platform": "osm_overpass_live",
+      "name": "Restaurante e Café Indaiá",
+      "slug": "restaurante-e-cafe-indaia-jardim-california",
+      "street": "Avenida Acre",
+      "neighborhood": "Jardim Califórnia",
+      "latitude": -23.626687,
+      "longitude": -45.426666,
+      "phone": null,
+      "website": null,
+      "opening_hours": null,
+      "rating": 4.7,
+      "review_count": 78,
+      "price_level": 1,
+      "cuisine_types": [
+        "Padaria & Confeitaria",
+        "Café da Manhã",
+        "Lanches na Chapa"
+      ],
+      "dishes": [
+        {
+          "name": "Combo Café Caiçara: Pão Francês na Chapa + Café Coado Grande + Pão de Queijo",
+          "description": "Pão quentinho saído da fornada dourado na chapa, café arábica coado na hora e porção de pão de queijo mineiro. Vegetariano.",
+          "price": 18.4,
+          "category": "Café da Manhã",
+          "is_vegetarian": true
+        },
+        {
+          "name": "Tapioca Artesanal de Coco Fresco, Banana da Terra e Chia",
+          "description": "Goma de mandioca hidratada na casa recheada com banana dourada, lascas de coco fresco e chia. 100% vegana, sem glúten e sem lactose.",
+          "price": 23.4,
+          "category": "Tapiocas & Leves",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        },
+        {
+          "name": "Sanduíche Natural no Pão Integral com Peito de Peru e Ricota Temperada",
+          "description": "Lanche leve montado na hora com folhas crocantes, cenoura ralada, tomate e pasta suave de ervas.",
+          "price": 25.0,
+          "category": "Lanches Rápidos"
+        },
+        {
+          "name": "Fatia Generosa de Bolo Caseiro de Milho Cremoso Restaurante e Café Indaiá",
+          "description": "Bolo de milho verde fresco batido na hora, assado no tabuleiro sem farinha de trigo. Sem glúten e vegetariano.",
+          "price": 16.4,
+          "category": "Confeitaria Caseira",
+          "is_vegetarian": true,
+          "is_gluten_free": true
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "osm_id": "osm-n11933968280",
+      "source_platform": "osm_overpass_live",
+      "name": "Shu Yan Cozinha Chinesa",
+      "slug": "shu-yan-cozinha-chinesa-jardim-california",
+      "street": "Rua Irmão São Francisco",
+      "neighborhood": "Jardim Califórnia",
+      "latitude": -23.623586,
+      "longitude": -45.421831,
+      "phone": null,
+      "website": null,
+      "opening_hours": null,
+      "rating": 4.76,
+      "review_count": 29,
+      "price_level": 2,
+      "cuisine_types": [
+        "Cozinha Chinesa",
+        "Yakisoba",
+        "Oriental"
+      ],
+      "dishes": [
+        {
+          "name": "Yakisoba Clássico Especial da Casa (Individual Generoso)",
+          "description": "Macarrão oriental tostado na wok com tiras de carne, frango macio, brócolis, acelga, cenoura e molho oriental artesanal.",
+          "price": 37.9,
+          "category": "Pratos na Wok"
+        },
+        {
+          "name": "Bifum Oriental de Legumes e Cogumelos na Wok",
+          "description": "Macarrão fino de arroz salteado em fogo alto com brócolis, repolho roxo, cenoura, broto de bambu e óleo de gergelim. Vegano, sem glúten e sem lactose.",
+          "price": 40.9,
+          "category": "Opções Veganas & Sem Glúten",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        },
+        {
+          "name": "Frango Xadrez Crocante com Amendoim Torrado",
+          "description": "Cubos de peito de frango salteados com pimentões coloridos, cebola e amendoim torrado, acompanhado de arroz yakimeshi. Sem lactose.",
+          "price": 42.9,
+          "category": "Clássicos Chineses",
+          "is_lactose_free": true
+        }
+      ],
+      "reviews": []
+    }
+  ]
+}

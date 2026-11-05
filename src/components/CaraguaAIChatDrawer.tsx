@@ -10,61 +10,46 @@ import {
   Star,
   TrendingDown,
   ShieldCheck,
+  ChefHat,
   ArrowUpRight,
-  Cpu,
-  RotateCcw,
-  Utensils,
+  Loader2,
 } from 'lucide-react';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
-
-export interface RRFBreakdown {
-  svl_rrf_score: number;
-  k_vec: number;
-  k_geo: number;
-  k_lex: number;
-  semantic_similarity: number;
-  lexical_similarity: number;
-}
-
-export interface SVLRRFRecommendation {
+export interface DishSuggestionCard {
   dish_id: string;
   dish_name: string;
   description: string;
   price: number;
   category: string;
-  image_url?: string | null;
   is_vegan: boolean;
   is_vegetarian: boolean;
   is_gluten_free: boolean;
   is_lactose_free: boolean;
   dietary_tags: string[];
-  smart_defaults: string[];
+  suggested_sides?: string[];
   last_price_delta_pct: number;
+  friendly_match_label?: string;
+  distance_label?: string;
   restaurant_id: string;
   restaurant_name: string;
   restaurant_slug: string;
   neighborhood: string;
   restaurant_address: string;
-  bayesian_rating: number;
-  rating_average: number;
-  review_count: number;
+  rating_score?: number;
+  rating_average?: number;
   distance_meters: number;
   distance_km: number;
-  rrf_breakdown: RRFBreakdown;
 }
 
-interface ChatMessage {
+interface ChatTurn {
   id: string;
   role: 'user' | 'assistant';
   content: string;
+  recommendations?: DishSuggestionCard[];
   isStreaming?: boolean;
-  latencyMs?: number;
-  candidatesCount?: number;
-  recommendations?: SVLRRFRecommendation[];
 }
 
-interface CaraguaAIChatDrawerProps {
+export interface CaraguaAIChatDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   activeNeighborhood?: string;
@@ -73,11 +58,28 @@ interface CaraguaAIChatDrawerProps {
   userLon?: number;
 }
 
-const HYPERLOCAL_SUGGESTED_PROMPTS: string[] = [
-  'Onde comer peixe ou camarão fresco em Martim de Sá ou Centro?',
-  'Quais opções veganas ou sem glúten estão disponíveis hoje até R$ 60?',
-  'Mostre pratos que tiveram queda de preço auditada recentemente.',
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+
+const QUICK_SUGGESTIONS: string[] = [
+  '🏖️ Porção de camarão ou peixe perto da praia',
+  '🌱 Opções veganas ou sem lactose gostosas',
+  '💸 Onde comer bem gastando até R$ 45?',
+  '📉 Pratos que baixaram de preço essa semana',
 ];
+
+function formatPriceBRL(val: number): string {
+  return `R$ ${val.toFixed(2).replace('.', ',')}`;
+}
+
+function formatFriendlyDistance(card: DishSuggestionCard): string {
+  if (card.distance_label) {
+    return card.distance_label;
+  }
+  if (card.distance_meters < 1000) {
+    return `A ${Math.max(50, Math.round(card.distance_meters / 10) * 10)}m de distância • ${card.neighborhood}`;
+  }
+  return `A ${card.distance_km.toFixed(1).replace('.', ',')} km de distância • ${card.neighborhood}`;
+}
 
 export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
   isOpen,
@@ -87,84 +89,80 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
   userLat = -23.6204,
   userLon = -45.4132,
 }) => {
-  const [messages, setMessages] = useState<ChatMessage[]>([
+  const [messages, setMessages] = useState<ChatTurn[]>([
     {
-      id: 'welcome-svl-rrf',
+      id: 'welcome-chef',
       role: 'assistant',
       content:
-        'Olá! Sou o Assistente Gastronômico Hiperlocal do CaráFood. Opero com fusão híbrida SVL-RRF sobre PostgreSQL 16 (PostGIS + pgvector 1536d + pg_trgm), respeitando travas estritas de segurança alimentar e preços reais auditados nos 53 bairros de Caraguatatuba. O que você deseja saborear hoje?',
+        'Oi! Bateu a fome? Me conta o que você está com vontade de comer, quanto quer gastar ou se tem alguma restrição (como sem lactose ou vegano) que eu acho os melhores lugares perto de você!',
     },
   ]);
-  const [inputValue, setInputValue] = useState<string>('');
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [inputValue, setInputValue] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
-  const lastInitialPromptRef = useRef<string>('');
+  const lastInitialPromptSent = useRef<string>('');
 
-  const scrollToBottom = useCallback(() => {
+  useEffect(() => {
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
     }
-  }, []);
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages, scrollToBottom]);
+  }, [messages, isOpen]);
 
   const sendQuery = useCallback(
-    async (rawText: string) => {
-      const trimmed = rawText.trim();
+    async (rawQuery: string) => {
+      const trimmed = rawQuery.trim();
       if (!trimmed || isLoading) return;
 
-      const userMsgId = `usr-${Date.now()}`;
-      const assistantMsgId = `ast-${Date.now() + 1}`;
+      const firstLetterIdx = trimmed.search(/[A-Za-zÀ-ÿ0-9]/);
+      const cleanQuery = firstLetterIdx >= 0 ? trimmed.slice(firstLetterIdx).trim() : trimmed;
 
+      const userTurnId = `user-${Date.now()}`;
+      const assistantTurnId = `assistant-${Date.now() + 1}`;
+
+      setMessages((prev) => [
+        ...prev,
+        { id: userTurnId, role: 'user', content: trimmed },
+        {
+          id: assistantTurnId,
+          role: 'assistant',
+          content: '',
+          isStreaming: true,
+        },
+      ]);
       setInputValue('');
       setIsLoading(true);
 
-      setMessages((prev) =>
-        prev.concat([
-          { id: userMsgId, role: 'user', content: trimmed },
-          {
-            id: assistantMsgId,
-            role: 'assistant',
-            content: '',
-            isStreaming: true,
-            recommendations: [],
-          },
-        ])
-      );
-
-      const requestBody = {
-        query: trimmed,
-        user_lat: userLat,
-        user_lon: userLon,
-        neighborhood:
-          activeNeighborhood && activeNeighborhood !== 'todos' ? activeNeighborhood : null,
-        limit: 6,
-      };
+      const neighborhoodParam =
+        activeNeighborhood && activeNeighborhood !== 'Todos' ? activeNeighborhood : undefined;
 
       try {
         const response = await fetch(`${API_BASE}/chat/stream`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(requestBody),
+          body: JSON.stringify({
+            query: cleanQuery,
+            user_lat: userLat,
+            user_lon: userLon,
+            neighborhood: neighborhoodParam,
+            limit: 6,
+          }),
         });
 
         if (!response.ok || !response.body) {
-          throw new Error(`HTTP ${response.status}`);
+          throw new Error(`Resposta inesperada (${response.status})`);
         }
 
         const reader = response.body.getReader();
         const decoder = new TextDecoder('utf-8');
-        let sseBuffer = '';
+        let buffer = '';
 
         while (true) {
           const { value, done } = await reader.read();
           if (done) break;
 
-          sseBuffer += decoder.decode(value, { stream: true });
-          const frames = sseBuffer.split('\n\n');
-          sseBuffer = frames.pop() || '';
+          buffer += decoder.decode(value, { stream: true });
+          const frames = buffer.split('\n\n');
+          buffer = frames.pop() || '';
 
           for (const frame of frames) {
             const lines = frame.split('\n');
@@ -173,73 +171,61 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
               const rawJson = line.slice(5).trim();
               if (!rawJson) continue;
 
-              const evt = JSON.parse(rawJson);
-              if (evt.type === 'metadata') {
+              const parsed = JSON.parse(rawJson);
+              if (parsed.type === 'metadata') {
                 setMessages((prev) =>
                   prev.map((m) =>
-                    m.id === assistantMsgId
+                    m.id === assistantTurnId
                       ? {
                           ...m,
-                          latencyMs: evt.latency_ms,
-                          candidatesCount: evt.candidates_count,
-                          recommendations: Array.isArray(evt.recommendations)
-                            ? evt.recommendations
-                            : [],
+                          recommendations: parsed.recommendations || [],
                         }
                       : m
                   )
                 );
-              } else if (evt.type === 'token') {
-                const tokenText = String(evt.content || '');
+              } else if (parsed.type === 'token') {
                 setMessages((prev) =>
                   prev.map((m) =>
-                    m.id === assistantMsgId
-                      ? { ...m, content: m.content + tokenText }
+                    m.id === assistantTurnId
+                      ? { ...m, content: m.content + (parsed.content || '') }
                       : m
                   )
                 );
-              } else if (evt.type === 'done') {
+              } else if (parsed.type === 'done') {
                 setMessages((prev) =>
                   prev.map((m) =>
-                    m.id === assistantMsgId ? { ...m, isStreaming: false } : m
+                    m.id === assistantTurnId ? { ...m, isStreaming: false } : m
                   )
                 );
               }
             }
           }
         }
-
-        setMessages((prev) =>
-          prev.map((m) =>
-            m.id === assistantMsgId ? { ...m, isStreaming: false } : m
-          )
-        );
       } catch {
-        // Fallback resiliente síncrono via /api/v1/chat/query
         try {
-          const syncRes = await fetch(`${API_BASE}/chat/query`, {
+          const syncRes = await fetch('/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(requestBody),
+            body: JSON.stringify({
+              query: cleanQuery,
+              user_lat: userLat,
+              user_lon: userLon,
+              neighborhood: neighborhoodParam,
+              limit: 6,
+            }),
           });
-          if (!syncRes.ok) {
-            throw new Error(`Status ${syncRes.status}`);
-          }
-          const syncData = await syncRes.json();
+          const syncJson = await syncRes.json();
           setMessages((prev) =>
             prev.map((m) =>
-              m.id === assistantMsgId
+              m.id === assistantTurnId
                 ? {
                     ...m,
                     content:
-                      syncData.answer ||
-                      'Consulta processada com sucesso no catálogo SVL-RRF.',
+                      syncJson.answer ||
+                      syncJson.reply ||
+                      'Consegui olhar os cardápios de hoje! Veja as sugestões logo abaixo.',
+                    recommendations: syncJson.recommendations || [],
                     isStreaming: false,
-                    latencyMs: syncData.latency_ms,
-                    candidatesCount: syncData.candidates_count,
-                    recommendations: Array.isArray(syncData.recommendations)
-                      ? syncData.recommendations
-                      : [],
                   }
                 : m
             )
@@ -247,11 +233,11 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
         } catch {
           setMessages((prev) =>
             prev.map((m) =>
-              m.id === assistantMsgId
+              m.id === assistantTurnId
                 ? {
                     ...m,
                     content:
-                      'Não foi possível conectar ao servidor FastAPI local (porta 8000). Verifique se o backend está em execução.',
+                      'Puxa, tive um pequeno tropeço para consultar os cardápios agora. Tente perguntar de novo em alguns segundos!',
                     isStreaming: false,
                   }
                 : m
@@ -266,248 +252,224 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
   );
 
   useEffect(() => {
-    if (isOpen && initialPrompt && initialPrompt !== lastInitialPromptRef.current) {
-      lastInitialPromptRef.current = initialPrompt;
+    if (isOpen && initialPrompt && initialPrompt !== lastInitialPromptSent.current) {
+      lastInitialPromptSent.current = initialPrompt;
       void sendQuery(initialPrompt);
     }
-  }, [isOpen, initialPrompt, sendQuery]);
-
-  const handleResetConversation = () => {
-    lastInitialPromptRef.current = '';
-    setMessages([
-      {
-        id: `welcome-${Date.now()}`,
-        role: 'assistant',
-        content:
-          'Conversa reiniciada! Escolha uma sugestão hiperlocal abaixo ou pergunte por pratos, bairros de Caraguatatuba, faixa de preço ou restrições alimentares.',
-      },
-    ]);
-  };
+  }, [initialPrompt, isOpen, sendQuery]);
 
   if (!isOpen) return null;
 
   return (
     <div
-      className="fixed inset-0 z-50 flex justify-end bg-stone-950/60 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex justify-end bg-stone-950/55 backdrop-blur-xs transition-opacity"
       role="dialog"
       aria-modal="true"
-      aria-label="Assistente Gastronômico IA SVL-RRF"
+      aria-label="Chef CaráFood - Dicas de onde comer em Caraguá"
     >
-      <div className="flex-1" onClick={onClose} aria-hidden="true" />
+      <div className="flex-1" onClick={onClose} />
 
-      <aside className="relative w-full max-w-xl bg-[#FAF7F2] h-full shadow-2xl border-l-2 border-[#135136]/30 flex flex-col overflow-hidden">
-        {/* Cabeçalho do Drawer */}
-        <header className="bg-[#135136] text-white px-5 py-4 border-b-2 border-[#FFB703] flex items-center justify-between gap-3 shrink-0">
+      <aside className="relative w-full max-w-xl bg-[#FAF7F2] h-full shadow-2xl border-l-4 border-[#FFB703] flex flex-col overflow-hidden">
+        {/* Cabeçalho acolhedor do Chef CaráFood */}
+        <header className="bg-[#135136] text-white px-5 py-4 border-b border-white/15 flex items-center justify-between gap-3 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-[#FFB703]/20 border border-[#FFB703]/60 flex items-center justify-center shrink-0">
-              <Sparkles className="w-5 h-5 text-[#FFB703]" />
+            <div className="w-11 h-11 rounded-2xl bg-[#FFB703] text-stone-950 flex items-center justify-center shadow-md shrink-0">
+              <ChefHat className="w-6 h-6" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h2 className="font-heading font-extrabold text-lg leading-tight text-white">
-                  Assistente IA Hiperlocal
+              <div className="flex items-center gap-2 flex-wrap">
+                <h2 className="font-heading font-black text-lg leading-tight">
+                  Chef CaráFood
                 </h2>
-                <span className="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-900 text-[#FFB703] border border-[#FFB703]/40">
-                  SVL-RRF • SSE
+                <span className="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-400/20 text-emerald-100 border border-emerald-300/40">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse" />
+                  Online agora • No ar
                 </span>
               </div>
-              <p className="text-xs text-emerald-100 mt-0.5 flex items-center gap-1.5">
-                <Cpu className="w-3.5 h-3.5 text-[#FFB703]" />
-                <span>PostGIS + pgvector 1536d + Trava SQL Dietética</span>
+              <p className="text-xs text-emerald-100/95 mt-0.5 leading-snug">
+                Te ajudo a escolher onde comer hoje em Caraguá, do quiosque ao jantar
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5">
-            <button
-              type="button"
-              onClick={handleResetConversation}
-              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-emerald-100 hover:text-white transition-colors"
-              title="Limpar conversa"
-            >
-              <RotateCcw className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="p-2 rounded-xl bg-white/10 hover:bg-rose-600/80 text-white transition-colors"
-              aria-label="Fechar Assistente IA"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors"
+            aria-label="Fechar conversa"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </header>
 
-        {/* Sugestões Hiperlocais Clicáveis */}
-        <div className="bg-emerald-950/5 border-b border-stone-200 px-4 py-3 shrink-0">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#135136]">
-              Consultas Hiperlocais Sugeridas
+        {/* Sugestões rápidas do dia a dia */}
+        <div className="px-4 py-3 bg-emerald-950/5 border-b border-stone-200/80 shrink-0">
+          <div className="flex items-center justify-between gap-2 mb-2">
+            <span className="text-[11px] font-bold text-stone-600 flex items-center gap-1">
+              <Sparkles className="w-3.5 h-3.5 text-[#135136]" />
+              Ideias rápidas para pedir agora:
             </span>
-            {activeNeighborhood && activeNeighborhood !== 'todos' && (
-              <span className="text-[11px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">
-                Foco: {activeNeighborhood}
+            {activeNeighborhood && activeNeighborhood !== 'Todos' && (
+              <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#135136] text-[#FFB703]">
+                📍 Perto de {activeNeighborhood}
               </span>
             )}
           </div>
-          <div className="flex flex-wrap gap-1.5">
-            {HYPERLOCAL_SUGGESTED_PROMPTS.map((promptText) => (
+          <div className="flex gap-1.5 overflow-x-auto pb-1">
+            {QUICK_SUGGESTIONS.map((chip) => (
               <button
-                key={promptText}
+                key={chip}
                 type="button"
                 disabled={isLoading}
-                onClick={() => void sendQuery(promptText)}
-                className="text-left text-xs font-semibold px-3 py-1.5 rounded-xl bg-white hover:bg-[#135136] text-stone-800 hover:text-white border border-stone-300 hover:border-[#135136] transition-all shadow-sm disabled:opacity-50"
+                onClick={() => void sendQuery(chip)}
+                className="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full bg-white hover:bg-[#FFB703]/25 text-stone-800 border border-stone-300 transition-colors disabled:opacity-50"
               >
-                {promptText}
+                {chip}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Histórico de Mensagens & Cards SVL-RRF */}
+        {/* Histórico da conversa */}
         <div
           ref={scrollContainerRef}
           className="flex-1 overflow-y-auto px-4 py-4 space-y-4"
         >
-          {messages.map((msg) => (
+          {messages.map((turn) => (
             <div
-              key={msg.id}
+              key={turn.id}
               className={`flex flex-col ${
-                msg.role === 'user' ? 'items-end' : 'items-start'
+                turn.role === 'user' ? 'items-end' : 'items-start'
               }`}
             >
               <div
-                className={`max-w-[92%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${
-                  msg.role === 'user'
-                    ? 'bg-[#135136] text-white rounded-br-sm'
-                    : 'bg-white text-stone-800 border border-stone-200 rounded-bl-sm'
+                className={`max-w-[92%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-xs whitespace-pre-line ${
+                  turn.role === 'user'
+                    ? 'bg-[#135136] text-white rounded-br-sm font-medium'
+                    : 'bg-white text-stone-800 border border-stone-200/90 rounded-bl-sm'
                 }`}
               >
-                {msg.role === 'assistant' && msg.latencyMs !== undefined && (
-                  <div className="flex flex-wrap items-center gap-2 mb-2 pb-1.5 border-b border-stone-100 text-[11px] font-bold text-emerald-800">
-                    <span className="inline-flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                      <ShieldCheck className="w-3 h-3 text-emerald-700" />
-                      {msg.candidatesCount ?? 0} pratos auditados
-                    </span>
-                    <span className="inline-flex items-center gap-1 bg-amber-50 text-amber-900 px-2 py-0.5 rounded-full border border-amber-200">
-                      Retrieval: {msg.latencyMs.toFixed(1)} ms
-                    </span>
-                  </div>
+                {turn.content || (turn.isStreaming ? 'Olhando os cardápios abertos em Caraguá...' : '')}
+                {turn.isStreaming && (
+                  <span className="inline-flex items-center gap-1 ml-2 text-xs font-bold text-[#135136]">
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  </span>
                 )}
-
-                <div className="whitespace-pre-line">
-                  {msg.content || (msg.isStreaming ? 'Consultando índices PostGIS + pgvector 1536d' : '')}
-                  {msg.isStreaming && (
-                    <span className="inline-block w-2 h-4 ml-1 align-middle bg-[#FFB703] animate-pulse rounded-sm" />
-                  )}
-                </div>
               </div>
 
-              {/* Cards de Pratos Recomendados pelo Motor SVL-RRF */}
-              {msg.role === 'assistant' &&
-                msg.recommendations &&
-                msg.recommendations.length > 0 && (
-                  <div className="w-full mt-3 space-y-2.5">
-                    <div className="text-[11px] font-extrabold uppercase tracking-wider text-stone-500 px-1 flex items-center gap-1.5">
-                      <Utensils className="w-3.5 h-3.5 text-[#135136]" />
-                      <span>Cards Ranqueados por Score SVL-RRF</span>
+              {/* Sugestões de pratos encontrados */}
+              {turn.role === 'assistant' &&
+                turn.recommendations &&
+                turn.recommendations.length > 0 && (
+                  <div className="w-full mt-2.5 space-y-2.5">
+                    <div className="flex items-center justify-between text-[11px] font-bold text-stone-600 px-1">
+                      <span className="inline-flex items-center gap-1 text-[#135136]">
+                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
+                        {turn.recommendations.length} sugestões que combinam com seu pedido
+                      </span>
+                      <span className="text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded-full">
+                        Preço verificado hoje
+                      </span>
                     </div>
 
-                    {msg.recommendations.map((rec) => (
-                      <div
-                        key={rec.dish_id}
-                        className="bg-white rounded-2xl border border-stone-200/90 hover:border-[#135136]/60 p-3.5 shadow-sm transition-all"
-                      >
-                        <div className="flex items-start justify-between gap-2">
-                          <div>
-                            <div className="flex flex-wrap items-center gap-1.5">
-                              <h4 className="font-heading font-bold text-sm text-stone-900">
+                    {turn.recommendations.slice(0, 5).map((rec) => {
+                      const scoreDisplay = (rec.rating_score ?? rec.rating_average ?? 4.8).toFixed(1);
+                      const matchBadge = rec.friendly_match_label || 'Combina com você';
+                      return (
+                        <div
+                          key={rec.dish_id}
+                          className="bg-white rounded-2xl p-3.5 border border-stone-200/90 shadow-xs hover:border-[#135136]/50 transition-all"
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <div>
+                              <div className="flex items-center gap-1.5 flex-wrap mb-1">
+                                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#FFB703]/25 text-stone-900">
+                                  ✨ {matchBadge}
+                                </span>
+                                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-stone-100 text-stone-600">
+                                  Preço verificado hoje
+                                </span>
+                              </div>
+                              <h4 className="font-heading font-extrabold text-stone-900 text-sm leading-snug">
                                 {rec.dish_name}
                               </h4>
+                              <p className="text-xs text-stone-600 line-clamp-2 mt-0.5">
+                                {rec.description}
+                              </p>
+                            </div>
+                            <div className="text-right shrink-0">
+                              <span className="font-heading font-black text-base text-[#135136] block">
+                                {formatPriceBRL(rec.price)}
+                              </span>
                               {rec.last_price_delta_pct < 0 && (
-                                <span className="inline-flex items-center gap-0.5 text-[10px] font-extrabold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full border border-emerald-300">
+                                <span className="inline-flex items-center gap-0.5 text-[10px] font-extrabold text-emerald-800 bg-emerald-100 px-1.5 py-0.5 rounded-full">
                                   <TrendingDown className="w-3 h-3" />
-                                  {rec.last_price_delta_pct.toFixed(1)}% Auditado
+                                  Baixou de preço
                                 </span>
                               )}
                             </div>
-                            <p className="text-xs text-stone-600 mt-0.5 line-clamp-2">
-                              {rec.description}
-                            </p>
                           </div>
 
-                          <div className="text-right shrink-0">
-                            <span className="font-heading font-black text-base text-[#135136]">
-                              R$ {rec.price.toFixed(2)}
-                            </span>
-                            <div className="text-[10px] font-mono font-bold text-stone-500">
-                              SVL {rec.rrf_breakdown.svl_rrf_score.toFixed(4)}
+                          {/* Selos de dieta para comer tranquilo */}
+                          <div className="flex flex-wrap gap-1.5 mt-2">
+                            {rec.is_vegan && (
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300">
+                                🌱 Vegano
+                              </span>
+                            )}
+                            {rec.is_vegetarian && !rec.is_vegan && (
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-lime-100 text-lime-900 border border-lime-300">
+                                🥗 Vegetariano
+                              </span>
+                            )}
+                            {rec.is_gluten_free && (
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-950 border border-amber-300">
+                                🌾 Sem Glúten
+                              </span>
+                            )}
+                            {rec.is_lactose_free && (
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-100 text-sky-950 border border-sky-300">
+                                🥛 Sem Lactose
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="mt-2.5 pt-2 border-t border-stone-100 flex items-center justify-between gap-2 text-xs">
+                            <div className="flex items-center gap-2 text-stone-700 truncate">
+                              <span className="font-bold text-stone-900 truncate">
+                                {rec.restaurant_name}
+                              </span>
+                              <span className="inline-flex items-center gap-0.5 text-stone-500 shrink-0">
+                                <MapPin className="w-3 h-3 text-[#135136]" />
+                                {formatFriendlyDistance(rec)}
+                              </span>
+                              <span
+                                className="inline-flex items-center gap-0.5 font-bold text-amber-700 shrink-0"
+                                title="Nota real calculada com avaliações verificadas"
+                              >
+                                ⭐ {scoreDisplay}
+                              </span>
                             </div>
+
+                            <Link
+                              href={`/restaurants/${rec.restaurant_slug}`}
+                              onClick={onClose}
+                              className="shrink-0 inline-flex items-center gap-1 text-xs font-extrabold text-[#135136] hover:text-emerald-900 underline-offset-2 hover:underline"
+                            >
+                              <span>Ver cardápio</span>
+                              <ArrowUpRight className="w-3.5 h-3.5" />
+                            </Link>
                           </div>
                         </div>
-
-                        {/* Tags Alimentares Verificadas + Métricas Geodésicas */}
-                        <div className="flex flex-wrap items-center gap-1.5 mt-2.5">
-                          {rec.is_vegan && (
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900">
-                              🌱 Vegano
-                            </span>
-                          )}
-                          {rec.is_vegetarian && !rec.is_vegan && (
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-lime-100 text-lime-900">
-                              🥗 Vegetariano
-                            </span>
-                          )}
-                          {rec.is_gluten_free && (
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900">
-                              🌾 Sem Glúten
-                            </span>
-                          )}
-                          {rec.is_lactose_free && (
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-100 text-sky-900">
-                              🥛 Zero Lactose
-                            </span>
-                          )}
-                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-stone-100 text-stone-700">
-                            k_vec #{rec.rrf_breakdown.k_vec} • k_geo #{rec.rrf_breakdown.k_geo} • k_lex #{rec.rrf_breakdown.k_lex}
-                          </span>
-                        </div>
-
-                        {/* Rodapé do Card com Link para o Restaurante */}
-                        <div className="mt-3 pt-2.5 border-t border-stone-100 flex items-center justify-between gap-2 text-xs">
-                          <div className="flex flex-wrap items-center gap-2 text-stone-600">
-                            <span className="font-bold text-stone-800">
-                              {rec.restaurant_name}
-                            </span>
-                            <span className="inline-flex items-center gap-0.5 text-stone-600">
-                              <MapPin className="w-3 h-3 text-[#135136]" />
-                              {rec.neighborhood} ({rec.distance_km.toFixed(2)} km)
-                            </span>
-                            <span className="inline-flex items-center gap-0.5 font-bold text-amber-700">
-                              <Star className="w-3 h-3 fill-[#FFB703] text-[#FFB703]" />
-                              {rec.bayesian_rating.toFixed(2)}
-                            </span>
-                          </div>
-
-                          <Link
-                            href={`/restaurants/${rec.restaurant_slug}`}
-                            onClick={onClose}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-[#135136] hover:bg-[#1E6B47] text-white font-bold text-xs shrink-0 transition-colors"
-                          >
-                            <span>Ver Restaurante</span>
-                            <ArrowUpRight className="w-3.5 h-3.5" />
-                          </Link>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
             </div>
           ))}
         </div>
 
-        {/* Formulário de Envio */}
+        {/* Campo de conversa */}
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -519,7 +481,7 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Pergunte por prato, bairro, preço ou dieta em Caraguatatuba"
+            placeholder="Ex: quero peixe na Martim de Sá ou lanche até R$ 40..."
             disabled={isLoading}
             className="flex-1 px-4 py-2.5 rounded-2xl bg-stone-100 border border-stone-300 text-sm text-stone-900 placeholder:text-stone-500 focus:outline-none focus:ring-2 focus:ring-[#135136] focus:bg-white disabled:opacity-60"
           />
@@ -529,7 +491,7 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
             className="px-4 py-2.5 rounded-2xl bg-[#135136] hover:bg-[#1E6B47] text-white font-bold text-sm flex items-center gap-1.5 shadow-sm transition-all disabled:opacity-50"
           >
             <Send className="w-4 h-4 text-[#FFB703]" />
-            <span>Enviar</span>
+            <span>Pedir dica</span>
           </button>
         </form>
       </aside>

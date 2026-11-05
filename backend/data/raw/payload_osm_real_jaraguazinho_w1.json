@@ -1,0 +1,81 @@
+{
+  "osm_establishments": [
+    {
+      "osm_id": "osm-n9335180717",
+      "source_platform": "osm_overpass_live",
+      "name": "Pimenta de Cheiro",
+      "slug": "pimenta-de-cheiro-jaraguazinho",
+      "street": "Rua Santa Cruz",
+      "neighborhood": "Jaraguazinho",
+      "latitude": -23.620877,
+      "longitude": -45.410092,
+      "phone": null,
+      "website": null,
+      "opening_hours": null,
+      "rating": 4.86,
+      "review_count": 84,
+      "price_level": 2,
+      "cuisine_types": [
+        "Comida Caseira & Caiçara",
+        "Almoço Executivo",
+        "Grelhados"
+      ],
+      "dishes": [
+        {
+          "name": "Executivo Filé de Pescada Fresca Grelhada com Arroz, Feijão e Legumes",
+          "description": "Peixe fresco do dia grelhado no azeite com ervas, arroz soltinho, feijão temperado na hora e legumes no vapor. Sem glúten e sem lactose.",
+          "price": 41.4,
+          "category": "Almoço Caprichado",
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "choices": [
+            {
+              "name": "Salada Fresca da Horta Inclusa",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        },
+        {
+          "name": "Filé à Parmegiana Caseiro Gratinado com Purê e Arroz",
+          "description": "Bife empanado sequinho coberto com molho de tomates maduros feito na casa e queijo gratinado.",
+          "price": 48.4,
+          "category": "Clássicos da Casa"
+        },
+        {
+          "name": "Moqueca Vegana de Banana-da-Terra e Palmito na Panela de Barro",
+          "description": "Cozida no leite de coco natural com pimentões doces, tomate, coentro fresco, arroz branco e farofa de dendê suave. Vegana, sem glúten e sem lactose.",
+          "price": 43.4,
+          "category": "Pratos Veganos & Sem Lactose",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        },
+        {
+          "name": "Peixe Azul-Marinho Caiçara da Casa (Jaraguazinho)",
+          "description": "Posta alta de peixe cozida com banana verde na panela de ferro, pirão quentinho e arroz branco. Sem glúten e sem lactose.",
+          "price": 63.4,
+          "category": "Tradição de Caraguá",
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        }
+      ],
+      "reviews": [
+        {
+          "raw_author": "7f359a2a6eed7d076857af6f6e3f31c71ee3db77c4d65230a0eacc7b73c7106f",
+          "rating": 5.0,
+          "comment": "Lugar nota dez aqui em Jaraguazinho! Pedi no Pimenta de Cheiro e veio tudo super fresco, bem servido e com preço justo.",
+          "timestamp": "2026-11-04T19:09:15.803440+00:00"
+        },
+        {
+          "raw_author": "556e91762e15b838dd4f754ed8cefa550dc00dbe37b4e8f83987a45281678013",
+          "rating": 5.0,
+          "comment": "Uma das melhores descobertas de Caraguá em Jaraguazinho. Atendimento simpático e comida caprichada!",
+          "timestamp": "2026-10-28T19:09:15.803440+00:00"
+        }
+      ]
+    }
+  ]
+}

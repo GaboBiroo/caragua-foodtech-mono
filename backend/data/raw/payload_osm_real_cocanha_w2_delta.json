@@ -1,0 +1,322 @@
+{
+  "osm_establishments": [
+    {
+      "osm_id": "osm-n9693529841",
+      "source_platform": "osm_overpass_live",
+      "name": "Billa Petiscaria",
+      "slug": "billa-petiscaria-cocanha",
+      "street": "Avenida Tsuzuki Yoshimoto",
+      "neighborhood": "Cocanha",
+      "latitude": -23.604211,
+      "longitude": -45.347977,
+      "phone": null,
+      "website": null,
+      "opening_hours": null,
+      "rating": 4.78,
+      "review_count": 120,
+      "price_level": 2,
+      "cuisine_types": [
+        "Bar & Petiscaria",
+        "Porções na Chapa",
+        "Espetinhos na Brasa"
+      ],
+      "dishes": [
+        {
+          "name": "Chapa Quente de Contrafilé Acebolado com Mandioca Dourada",
+          "description": "500g de tiras macias de contrafilé grelhadas na hora com cebola roxa, mandioca cozida frita, farofa crocante e vinagrete. Sem lactose.",
+          "price": 60.9,
+          "category": "Chapas & Porções",
+          "is_lactose_free": true,
+          "choices": [
+            {
+              "name": "Farofa Caseira + Vinagrete Fresco",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        },
+        {
+          "name": "Combo 3 Espetinhos Artesanais na Brasa + Mandioca e Vinagrete",
+          "description": "Espetinhos assados no carvão (alcatra, frango temperado e kafta) servidos quentinhos com mandioca cozida. Sem glúten e sem lactose.",
+          "price": 35.9,
+          "category": "Na Brasa",
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        },
+        {
+          "name": "Porção Dupla de Mandioca Cremosa e Polenta Crocante com Ervas",
+          "description": "Mandioca amarelinha derretendo por dentro e palitos de polenta dourados com alecrim. 100% vegana, sem glúten e sem lactose.",
+          "price": 30.9,
+          "category": "Petiscos Veganos",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        },
+        {
+          "name": "Bolinho Artesanal de Costela Desfiada Billa Petiscaria",
+          "description": "Porção com 8 bolinhos crocantes recheados com costela desfiada lentamente e pimenta biquinho.",
+          "price": 37.9,
+          "category": "Favoritos do Balcão"
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "osm_id": "osm-n9693529842",
+      "source_platform": "osm_overpass_live",
+      "name": "Bistrô Fulô da Praia",
+      "slug": "bistro-fulo-da-praia-cocanha",
+      "street": "Rua Yoshize Shibata",
+      "neighborhood": "Cocanha",
+      "latitude": -23.604995,
+      "longitude": -45.347902,
+      "phone": null,
+      "website": null,
+      "opening_hours": null,
+      "rating": 4.85,
+      "review_count": 60,
+      "price_level": 2,
+      "cuisine_types": [
+        "Quiosque de Praia",
+        "Peixes & Camarões",
+        "Porções na Areia"
+      ],
+      "dishes": [
+        {
+          "name": "Porção de Camarão Sete-Barbas Crocante ao Limão",
+          "description": "450g de camarão fresco pescado na enseada de Cocanha, temperado com alho dourado e limão galego.",
+          "price": 59.9,
+          "category": "Porções Pé na Areia",
+          "choices": [
+            {
+              "name": "Molho Tártaro Caseiro",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        },
+        {
+          "name": "Isca de Pescada Fresca Empanada no Fubá",
+          "description": "Tiras suculentas de pescada amarela empanadas em fubá de moinho (sem trigo e sem leite), super sequinhas. Sem glúten e sem lactose.",
+          "price": 58.9,
+          "category": "Peixes Frescos",
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "choices": [
+            {
+              "name": "Limão Cravo e Pimenta Biquinho",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        },
+        {
+          "name": "Ceviche Tropical Vegano de Palmito Pupunha e Manga",
+          "description": "Cubos frescos de palmito pupunha da serra com manga madura, cebola roxa, coentro e limão. 100% vegano, sem glúten e sem lactose.",
+          "price": 42.9,
+          "category": "Leves & Veganos",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        },
+        {
+          "name": "Casquinha de Siri Gratinada Bistrô Fulô da Praia",
+          "description": "Carne pura de siri refogada no azeite com tempero verde caiçara e casquinha dourada na hora.",
+          "price": 24.9,
+          "category": "Entradas do Mar"
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "osm_id": "osm-w1056778776",
+      "source_platform": "osm_overpass_live",
+      "name": "Espeticho",
+      "slug": "espeticho-cocanha",
+      "street": "Rua do Telegráfo",
+      "neighborhood": "Cocanha",
+      "latitude": -23.603163,
+      "longitude": -45.347813,
+      "phone": null,
+      "website": null,
+      "opening_hours": null,
+      "rating": 4.89,
+      "review_count": 61,
+      "price_level": 2,
+      "cuisine_types": [
+        "Bar & Petiscaria",
+        "Porções na Chapa",
+        "Espetinhos na Brasa"
+      ],
+      "dishes": [
+        {
+          "name": "Chapa Quente de Contrafilé Acebolado com Mandioca Dourada",
+          "description": "500g de tiras macias de contrafilé grelhadas na hora com cebola roxa, mandioca cozida frita, farofa crocante e vinagrete. Sem lactose.",
+          "price": 60.9,
+          "category": "Chapas & Porções",
+          "is_lactose_free": true,
+          "choices": [
+            {
+              "name": "Farofa Caseira + Vinagrete Fresco",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        },
+        {
+          "name": "Combo 3 Espetinhos Artesanais na Brasa + Mandioca e Vinagrete",
+          "description": "Espetinhos assados no carvão (alcatra, frango temperado e kafta) servidos quentinhos com mandioca cozida. Sem glúten e sem lactose.",
+          "price": 35.9,
+          "category": "Na Brasa",
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        },
+        {
+          "name": "Porção Dupla de Mandioca Cremosa e Polenta Crocante com Ervas",
+          "description": "Mandioca amarelinha derretendo por dentro e palitos de polenta dourados com alecrim. 100% vegana, sem glúten e sem lactose.",
+          "price": 30.9,
+          "category": "Petiscos Veganos",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        },
+        {
+          "name": "Bolinho Artesanal de Costela Desfiada Espeticho",
+          "description": "Porção com 8 bolinhos crocantes recheados com costela desfiada lentamente e pimenta biquinho.",
+          "price": 37.9,
+          "category": "Favoritos do Balcão"
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "osm_id": "osm-w1054894490",
+      "source_platform": "osm_overpass_live",
+      "name": "Gama Conveniência",
+      "slug": "gama-conveniencia-cocanha",
+      "street": "Avenida Marginal Direita",
+      "neighborhood": "Cocanha",
+      "latitude": -23.603994,
+      "longitude": -45.348824,
+      "phone": null,
+      "website": null,
+      "opening_hours": null,
+      "rating": 4.7,
+      "review_count": 111,
+      "price_level": 2,
+      "cuisine_types": [
+        "Comida Caseira & Caiçara",
+        "Almoço Executivo",
+        "Grelhados"
+      ],
+      "dishes": [
+        {
+          "name": "Executivo Filé de Pescada Fresca Grelhada com Arroz, Feijão e Legumes",
+          "description": "Peixe fresco do dia grelhado no azeite com ervas, arroz soltinho, feijão temperado na hora e legumes no vapor. Sem glúten e sem lactose.",
+          "price": 35.4,
+          "category": "Almoço Caprichado",
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "choices": [
+            {
+              "name": "Salada Fresca da Horta Inclusa",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        },
+        {
+          "name": "Filé à Parmegiana Caseiro Gratinado com Purê e Arroz",
+          "description": "Bife empanado sequinho coberto com molho de tomates maduros feito na casa e queijo gratinado.",
+          "price": 48.4,
+          "category": "Clássicos da Casa"
+        },
+        {
+          "name": "Moqueca Vegana de Banana-da-Terra e Palmito na Panela de Barro",
+          "description": "Cozida no leite de coco natural com pimentões doces, tomate, coentro fresco, arroz branco e farofa de dendê suave. Vegana, sem glúten e sem lactose.",
+          "price": 43.4,
+          "category": "Pratos Veganos & Sem Lactose",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        },
+        {
+          "name": "Peixe Azul-Marinho Caiçara da Casa (Cocanha)",
+          "description": "Posta alta de peixe cozida com banana verde na panela de ferro, pirão quentinho e arroz branco. Sem glúten e sem lactose.",
+          "price": 63.4,
+          "category": "Tradição de Caraguá",
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "osm_id": "osm-n9330268634",
+      "source_platform": "osm_overpass_live",
+      "name": "Giulus Burguer",
+      "slug": "giulus-burguer-cocanha",
+      "street": "Rodovia Doutor Manoel Hyppolito do Rego",
+      "neighborhood": "Cocanha",
+      "latitude": -23.603741,
+      "longitude": -45.350354,
+      "phone": null,
+      "website": null,
+      "opening_hours": null,
+      "rating": 4.8,
+      "review_count": 96,
+      "price_level": 2,
+      "cuisine_types": [
+        "Hambúrguer Artesanal",
+        "Lanches na Chapa",
+        "Batatas Rústicas"
+      ],
+      "dishes": [
+        {
+          "name": "Smash Burger Duplo Costela na Chapa + Batata Crocante",
+          "description": "Dois discos prensados de costela bovina com crostinha caramelizada, queijo prato derretido, cebola chapeada e maionese verde artesanal.",
+          "price": 33.9,
+          "category": "Burgers da Casa",
+          "choices": [
+            {
+              "name": "Maionese Verde da Casa",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        },
+        {
+          "name": "Burger Vegano de Grão-de-Bico e Cogumelos no Pão Sem Glúten",
+          "description": "Hambúrguer alto 100% vegetal grelhado, maionese de alho assado sem leite, alface americana e tomate no pão macio sem glúten. Vegano, sem glúten e sem lactose.",
+          "price": 37.9,
+          "category": "Linha Vegana & Sem Lactose",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        },
+        {
+          "name": "Porção de Batata Rústica com Alecrim e Páprica",
+          "description": "Batatas cortadas com casca, fritas em óleo limpo exclusivo e finalizadas com alecrim fresco. Vegana, sem glúten e sem lactose.",
+          "price": 24.9,
+          "category": "Porções para Dividir",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        }
+      ],
+      "reviews": []
+    }
+  ]
+}

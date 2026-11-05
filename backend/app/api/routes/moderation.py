@@ -143,6 +143,12 @@ async def _execute_trigger_workflow(
     response_model=ScraperTriggerResponse,
     summary="Disparar Varredura Autônoma por Bairro ou em Lote",
 )
+@router.post(
+    "/scraper/run",
+    status_code=status.HTTP_202_ACCEPTED,
+    response_model=ScraperTriggerResponse,
+    summary="Executar Busca de Cardápios Atualizados por Bairro ou em Lote",
+)
 async def trigger_scraper_job(
     background_tasks: BackgroundTasks,
     payload: Optional[ScraperTriggerRequest] = Body(default=None),
@@ -244,13 +250,18 @@ async def get_scraper_status(
             "embedding_engine": vector_indexing_service.active_provider,
         },
         "total_official_neighborhoods": len(CARAGUA_53_NEIGHBORHOODS),
+        "updated_neighborhoods_count": int(redis_status.get("valid_checkpoints_count", 0)),
+        "pending_approval_dishes_db": quarantined_pending,
         "quarantined_dishes_pending_db": quarantined_pending,
         "active_restaurants_db": active_restaurants,
         "approved_dishes_db": approved_dishes,
+        "searchable_dishes_db": indexed_vectors,
         "indexed_vectors_1536_db": indexed_vectors,
         "price_mutations_db": price_mutations_db,
         "price_drops_db": price_drops_db,
+        "verified_reviews_db": sanitized_reviews_db,
         "sanitized_reviews_db": sanitized_reviews_db,
+        "system_online": True,
         "queried_at": datetime.now(timezone.utc).isoformat(),
     }
 
@@ -449,6 +460,7 @@ async def batch_approve_dishes(
         return {
             "status": "batch_approved",
             "approved_count": 0,
+            "searchable_dishes_updated": 0,
             "indexed_vectors_1536": 0,
             "dish_ids": [],
         }
@@ -470,6 +482,7 @@ async def batch_approve_dishes(
     return {
         "status": "batch_approved",
         "approved_count": len(target_ids),
+        "searchable_dishes_updated": indexed_count,
         "indexed_vectors_1536": indexed_count,
         "dish_ids": [str(x) for x in target_ids],
         "approved_at": now_utc.isoformat(),

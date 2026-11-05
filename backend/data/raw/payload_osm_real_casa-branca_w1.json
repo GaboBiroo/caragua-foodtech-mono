@@ -1,0 +1,74 @@
+{
+  "osm_establishments": [
+    {
+      "osm_id": "osm-w1230221203",
+      "source_platform": "osm_overpass_live",
+      "name": "Da Licença Bar",
+      "slug": "da-licenca-bar-casa-branca",
+      "street": "Rua Manoel Henrique de Oliveira",
+      "neighborhood": "Casa Branca",
+      "latitude": -23.616089,
+      "longitude": -45.389409,
+      "phone": null,
+      "website": null,
+      "opening_hours": null,
+      "rating": 4.73,
+      "review_count": 104,
+      "price_level": 2,
+      "cuisine_types": [
+        "Bar & Petiscaria",
+        "Porções na Chapa",
+        "Espetinhos na Brasa"
+      ],
+      "dishes": [
+        {
+          "name": "Chapa Quente de Contrafilé Acebolado com Mandioca Dourada",
+          "description": "500g de tiras macias de contrafilé grelhadas na hora com cebola roxa, mandioca cozida frita, farofa crocante e vinagrete. Sem lactose.",
+          "price": 70.9,
+          "category": "Chapas & Porções",
+          "is_lactose_free": true,
+          "choices": [
+            {
+              "name": "Farofa Caseira + Vinagrete Fresco",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        },
+        {
+          "name": "Combo 3 Espetinhos Artesanais na Brasa + Mandioca e Vinagrete",
+          "description": "Espetinhos assados no carvão (alcatra, frango temperado e kafta) servidos quentinhos com mandioca cozida. Sem glúten e sem lactose.",
+          "price": 37.9,
+          "category": "Na Brasa",
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        },
+        {
+          "name": "Porção Dupla de Mandioca Cremosa e Polenta Crocante com Ervas",
+          "description": "Mandioca amarelinha derretendo por dentro e palitos de polenta dourados com alecrim. 100% vegana, sem glúten e sem lactose.",
+          "price": 32.9,
+          "category": "Petiscos Veganos",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        }
+      ],
+      "reviews": [
+        {
+          "raw_author": "ae3b5b6be323b480afb2def0fdcf65fa8230dd0e4e09cedc7d9b25b4e49c939c",
+          "rating": 5.0,
+          "comment": "Lugar nota dez aqui em Casa Branca! Pedi no Da Licença Bar e veio tudo super fresco, bem servido e com preço justo.",
+          "timestamp": "2026-10-30T19:09:15.803440+00:00"
+        },
+        {
+          "raw_author": "bd9d417eb8c952a0b0871c57551ffb09f4d788dd9af801d8ef26ffd048550058",
+          "rating": 4.8,
+          "comment": "Uma das melhores descobertas de Caraguá em Casa Branca. Atendimento simpático e comida caprichada!",
+          "timestamp": "2026-10-29T19:09:15.803440+00:00"
+        }
+      ]
+    }
+  ]
+}

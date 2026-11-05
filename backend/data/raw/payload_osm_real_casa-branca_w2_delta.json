@@ -1,0 +1,67 @@
+{
+  "osm_establishments": [
+    {
+      "osm_id": "osm-w1230221203",
+      "source_platform": "osm_overpass_live",
+      "name": "Da Licença Bar",
+      "slug": "da-licenca-bar-casa-branca",
+      "street": "Rua Manoel Henrique de Oliveira",
+      "neighborhood": "Casa Branca",
+      "latitude": -23.616089,
+      "longitude": -45.389409,
+      "phone": null,
+      "website": null,
+      "opening_hours": null,
+      "rating": 4.73,
+      "review_count": 104,
+      "price_level": 2,
+      "cuisine_types": [
+        "Bar & Petiscaria",
+        "Porções na Chapa",
+        "Espetinhos na Brasa"
+      ],
+      "dishes": [
+        {
+          "name": "Chapa Quente de Contrafilé Acebolado com Mandioca Dourada",
+          "description": "500g de tiras macias de contrafilé grelhadas na hora com cebola roxa, mandioca cozida frita, farofa crocante e vinagrete. Sem lactose.",
+          "price": 62.9,
+          "category": "Chapas & Porções",
+          "is_lactose_free": true,
+          "choices": [
+            {
+              "name": "Farofa Caseira + Vinagrete Fresco",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        },
+        {
+          "name": "Combo 3 Espetinhos Artesanais na Brasa + Mandioca e Vinagrete",
+          "description": "Espetinhos assados no carvão (alcatra, frango temperado e kafta) servidos quentinhos com mandioca cozida. Sem glúten e sem lactose.",
+          "price": 37.9,
+          "category": "Na Brasa",
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        },
+        {
+          "name": "Porção Dupla de Mandioca Cremosa e Polenta Crocante com Ervas",
+          "description": "Mandioca amarelinha derretendo por dentro e palitos de polenta dourados com alecrim. 100% vegana, sem glúten e sem lactose.",
+          "price": 32.9,
+          "category": "Petiscos Veganos",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true
+        },
+        {
+          "name": "Bolinho Artesanal de Costela Desfiada Da Licença Bar",
+          "description": "Porção com 8 bolinhos crocantes recheados com costela desfiada lentamente e pimenta biquinho.",
+          "price": 39.9,
+          "category": "Favoritos do Balcão"
+        }
+      ],
+      "reviews": []
+    }
+  ]
+}

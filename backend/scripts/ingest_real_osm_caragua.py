@@ -157,13 +157,13 @@ async def run_real_ingestion() -> None:
                     d.is_available = False
                     d.requires_moderation = True
 
-        # Desativa estabelecimentos genéricos sintéticos nos bairros que já possuem comércio real do OpenStreetMap
+        # Desativa quaisquer registros sintéticos nos bairros que já possuem comércio real do OpenStreetMap
         all_synthetic = (
             await session.execute(
                 select(Restaurant).where(
                     and_(
                         Restaurant.is_active.is_(True),
-                        ~Restaurant.source_platform.like("osm_%"),
+                        func.coalesce(Restaurant.source_platform, "").not_ilike("osm_%"),
                     )
                 )
             )
@@ -171,7 +171,7 @@ async def run_real_ingestion() -> None:
 
         deactivated_synthetic = 0
         for syn in all_synthetic:
-            if syn.neighborhood in real_neighborhoods and syn.name.startswith(SYNTHETIC_PREFIXES):
+            if syn.neighborhood in real_neighborhoods:
                 syn.is_active = False
                 deactivated_synthetic += 1
 

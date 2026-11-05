@@ -184,9 +184,7 @@ export default function HomePage() {
       }
       params.set('lat', String(userCoords.lat));
       params.set('lon', String(userCoords.lon));
-      if (sortBy === 'distance') {
-        params.set('sort_by', 'distance');
-      }
+      params.set('sort_by', sortBy === 'distance' ? 'distance' : 'recommended');
       params.set('limit', '60');
 
       const res = await fetch(`${API_BASE}/restaurants?${params.toString()}`, {

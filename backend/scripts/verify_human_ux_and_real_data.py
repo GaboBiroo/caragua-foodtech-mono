@@ -250,29 +250,50 @@ async def gate_3_verify_live_api_and_chef_chat() -> Dict[str, object]:
             assert "distance_label" in recs[0], "distance_label ausente na recomendação"
             assistant_replies.append(answer.splitlines()[0])
 
-        # 4. Streaming /chat/stream também livre de jargão na narrativa
+        # 4. Verifica status do LLM local Ollama e streaming real token-a-token por restaurante específico
+        llm_status_res = await client.get("/api/v1/chat/llm-status")
+        assert llm_status_res.status_code == 200
+        llm_status = llm_status_res.json()
+        assert llm_status.get("ollama_online") is True, (
+            f"Ollama local não está online em 127.0.0.1:11434: {llm_status}"
+        )
+
         stream_res = await client.post(
             "/api/v1/chat/stream",
             json={
-                "query": "Me indica um lugar com preço bom hoje no Centro",
+                "query": "O que você me recomenda pedir hoje no Quiosque Baleia Branca em Martim de Sá?",
                 "user_lat": -23.6226,
                 "user_lon": -45.4124,
-                "limit": 4,
+                "limit": 5,
             },
         )
         assert stream_res.status_code == 200
         tokens_joined = ""
+        stream_recs = []
+        done_mode = ""
         for raw_line in stream_res.text.splitlines():
             if raw_line.startswith("data:"):
                 evt = json.loads(raw_line[5:].strip())
-                if evt.get("type") == "token":
+                if evt.get("type") == "metadata":
+                    stream_recs = evt.get("recommendations", [])
+                elif evt.get("type") == "token":
                     tokens_joined += evt.get("content", "")
+                elif evt.get("type") == "done":
+                    done_mode = evt.get("llm_mode", "")
+
+        assert done_mode == "local_pc", f"Stream não rodou no LLM local Ollama (done_mode={done_mode})"
+        assert len(stream_recs) >= 2, "Restaurante específico não retornou pratos do cardápio"
+        assert all(
+            "baleia branca" in r["restaurant_name"].lower() for r in stream_recs
+        ), f"Escopo vazou pratos de outros lugares: {[r['restaurant_name'] for r in stream_recs]}"
         stream_jargon = scan_text_for_jargon(tokens_joined)
         assert not stream_jargon, f"Jargão detectado no streaming do Chef: {stream_jargon}"
 
     return {
         "api_real_osm_visible_top50": len(real_osm_in_api),
         "public_reviews_verified_clean": checked_reviews,
+        "local_ollama_model": llm_status.get("active_model"),
+        "single_place_ollama_reply": tokens_joined,
         "chef_sample_openings": assistant_replies,
     }
 

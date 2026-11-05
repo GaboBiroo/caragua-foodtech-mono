@@ -34,9 +34,9 @@ class Settings(BaseSettings):
     # Modelos de IA e Embeddings (Local Ollama + Fallback Determinístico 1536d)
     ANTHROPIC_API_KEY: str = Field(default="", description="Chave da Anthropic Claude")
     OPENAI_API_KEY: str = Field(default="", description="Chave da OpenAI para embeddings e RAG")
-    OLLAMA_BASE_URL: str = "http://localhost:11434"
+    OLLAMA_BASE_URL: str = "http://127.0.0.1:11434"
     OLLAMA_EMBED_MODEL: str = "nomic-embed-text"
-    OLLAMA_CHAT_MODEL: str = "llama3.2"
+    OLLAMA_CHAT_MODEL: str = "qwen2.5:3b"
     EMBEDDING_MODEL_NAME: str = "text-embedding-3-small"
     EMBEDDING_DIMENSION: int = 1536
 

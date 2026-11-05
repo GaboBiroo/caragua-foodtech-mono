@@ -39,10 +39,27 @@ class ChatQueryRequest(BaseModel):
     max_price: Optional[float] = Field(default=None, gt=0)
     dietary_filters: Optional[Dict[str, bool]] = Field(default=None)
     limit: int = Field(default=8, ge=1, le=20)
+    use_llm: bool = Field(
+        default=False,
+        description="Se True, sintetiza resposta via Ollama local também no endpoint síncrono.",
+    )
 
 
 class ReindexRequest(BaseModel):
     batch_size: int = Field(default=200, ge=1, le=1000)
+
+
+@router.get(
+    "/llm-status",
+    summary="Verificar Status do Motor LLM Local (Ollama) na Máquina do Usuário",
+)
+async def get_local_llm_status() -> Dict[str, Any]:
+    model_name = await hybrid_rag_engine.ensure_ollama_ready(warmup=False)
+    info = hybrid_rag_engine.active_llm_info
+    return {
+        "status": "online" if model_name else "fallback",
+        **info,
+    }
 
 
 @router.post(
@@ -72,7 +89,12 @@ async def chat_query_sync(
         dietary_filters=payload.dietary_filters,
         limit=payload.limit,
     )
-    answer = hybrid_rag_engine.synthesize_grounded_narrative(
+    llm_answer = (
+        await hybrid_rag_engine.generate_ollama_sync(payload.query, intent, recommendations)
+        if payload.use_llm
+        else None
+    )
+    answer = llm_answer or hybrid_rag_engine.synthesize_grounded_narrative(
         query_text=payload.query,
         intent=intent,
         recommendations=recommendations,

@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
@@ -7,6 +8,7 @@ from app.core.config import settings
 from app.db.session import async_engine
 from app.db.models import Base
 from app.api.routes import health, search, restaurants, moderation, chat, dishes
+from app.services.rag_engine import hybrid_rag_engine
 from app.workers.scraper_redis import scraper_redis_coordinator
 from scripts.migrate_scraper_schema import MIGRATION_STATEMENTS
 
@@ -23,7 +25,12 @@ async def lifespan(app: FastAPI):
         logger.info("Schema V2 PostGIS + pg_trgm + pgvector 1536d HNSW + Triggers sincronizado.")
     except Exception as exc:
         logger.warning(f"Banco PostgreSQL inacessível no startup (modo resiliente ativo): {exc}")
+
+    # Inicia / conecta ao servidor local Ollama (127.0.0.1:11434) e aquece o modelo em RAM
+    warmup_task = asyncio.create_task(hybrid_rag_engine.ensure_ollama_ready(warmup=True))
     yield
+    if not warmup_task.done():
+        warmup_task.cancel()
     await scraper_redis_coordinator.close()
     await async_engine.dispose()
 

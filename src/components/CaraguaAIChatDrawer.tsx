@@ -7,7 +7,6 @@ import {
   Send,
   Sparkles,
   MapPin,
-  Star,
   TrendingDown,
   ShieldCheck,
   ChefHat,
@@ -76,9 +75,36 @@ function formatFriendlyDistance(card: DishSuggestionCard): string {
     return card.distance_label;
   }
   if (card.distance_meters < 1000) {
-    return `A ${Math.max(50, Math.round(card.distance_meters / 10) * 10)}m de distância • ${card.neighborhood}`;
+    return `A ${Math.max(50, Math.round(card.distance_meters / 10) * 10)}m de você • ${card.neighborhood}`;
   }
-  return `A ${card.distance_km.toFixed(1).replace('.', ',')} km de distância • ${card.neighborhood}`;
+  return `A ${card.distance_km.toFixed(1).replace('.', ',')} km • ${card.neighborhood}`;
+}
+
+/**
+ * Converte marcações simples (**negrito** e *itálico*) em tipografia limpa,
+ * impedindo que asteriscos crus apareçam na conversa.
+ */
+function renderCleanChatMessage(rawText: string): React.ReactNode {
+  if (!rawText) return null;
+  const paragraphs = rawText.split(/\n{2,}/);
+  return paragraphs.map((para, pIdx) => {
+    const cleanPara = para.replace(/^\s*[-*]\s+/gm, '• ');
+    const segments = cleanPara.split(/(\*\*[^*]+\*\*)/g);
+    return (
+      <p key={pIdx} className={pIdx > 0 ? 'mt-2.5' : ''}>
+        {segments.map((seg, sIdx) => {
+          if (seg.startsWith('**') && seg.endsWith('**') && seg.length > 4) {
+            return (
+              <strong key={sIdx} className="font-extrabold text-stone-950">
+                {seg.slice(2, -2)}
+              </strong>
+            );
+          }
+          return <React.Fragment key={sIdx}>{seg.replace(/\*/g, '')}</React.Fragment>;
+        })}
+      </p>
+    );
+  });
 }
 
 export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
@@ -94,11 +120,12 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
       id: 'welcome-chef',
       role: 'assistant',
       content:
-        'Oi! Bateu a fome? Me conta o que você está com vontade de comer, quanto quer gastar ou se tem alguma restrição (como sem lactose ou vegano) que eu acho os melhores lugares perto de você!',
+        'Oi! Bateu a fome? Me conta o que você está com vontade de comer, quanto quer gastar ou se tem alguma restrição alimentar que eu garimpo os melhores pratos perto de você!',
     },
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [localPcActive, setLocalPcActive] = useState<boolean>(false);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const lastInitialPromptSent = useRef<string>('');
 
@@ -107,6 +134,26 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
       scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
     }
   }, [messages, isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    let active = true;
+    (async () => {
+      try {
+        const res = await fetch(`${API_BASE}/chat/llm-status`, { cache: 'no-store' });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (active && data.ollama_online) {
+          setLocalPcActive(true);
+        }
+      } catch {
+        // Segue normalmente se o check demorar
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, [isOpen]);
 
   const sendQuery = useCallback(
     async (rawQuery: string) => {
@@ -173,6 +220,9 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
 
               const parsed = JSON.parse(rawJson);
               if (parsed.type === 'metadata') {
+                if (parsed.llm_mode === 'local_pc') {
+                  setLocalPcActive(true);
+                }
                 setMessages((prev) =>
                   prev.map((m) =>
                     m.id === assistantTurnId
@@ -192,6 +242,9 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
                   )
                 );
               } else if (parsed.type === 'done') {
+                if (parsed.llm_mode === 'local_pc') {
+                  setLocalPcActive(true);
+                }
                 setMessages((prev) =>
                   prev.map((m) =>
                     m.id === assistantTurnId ? { ...m, isStreaming: false } : m
@@ -223,7 +276,7 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
                     content:
                       syncJson.answer ||
                       syncJson.reply ||
-                      'Consegui olhar os cardápios de hoje! Veja as sugestões logo abaixo.',
+                      'Dei uma olhada nos cardápios de hoje! Veja as sugestões logo abaixo.',
                     recommendations: syncJson.recommendations || [],
                     isStreaming: false,
                   }
@@ -252,7 +305,11 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
   );
 
   useEffect(() => {
-    if (isOpen && initialPrompt && initialPrompt !== lastInitialPromptSent.current) {
+    if (!isOpen) {
+      lastInitialPromptSent.current = '';
+      return;
+    }
+    if (initialPrompt && initialPrompt !== lastInitialPromptSent.current) {
       lastInitialPromptSent.current = initialPrompt;
       void sendQuery(initialPrompt);
     }
@@ -283,11 +340,11 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
                 </h2>
                 <span className="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-400/20 text-emerald-100 border border-emerald-300/40">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse" />
-                  Online agora • No ar
+                  {localPcActive ? 'Online • IA rodando no seu PC' : 'Online agora • No ar'}
                 </span>
               </div>
               <p className="text-xs text-emerald-100/95 mt-0.5 leading-snug">
-                Te ajudo a escolher onde comer hoje em Caraguá, do quiosque ao jantar
+                Dicas sinceras de cardápios reais abertos hoje em Caraguá
               </p>
             </div>
           </div>
@@ -343,21 +400,31 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
               }`}
             >
               <div
-                className={`max-w-[92%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-xs whitespace-pre-line ${
+                className={`max-w-[92%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-xs ${
                   turn.role === 'user'
                     ? 'bg-[#135136] text-white rounded-br-sm font-medium'
                     : 'bg-white text-stone-800 border border-stone-200/90 rounded-bl-sm'
                 }`}
               >
-                {turn.content || (turn.isStreaming ? 'Olhando os cardápios abertos em Caraguá...' : '')}
+                {turn.role === 'assistant' ? (
+                  turn.content ? (
+                    renderCleanChatMessage(turn.content)
+                  ) : turn.isStreaming ? (
+                    <span className="text-stone-500">
+                      Pensando na melhor sugestão para você...
+                    </span>
+                  ) : null
+                ) : (
+                  turn.content
+                )}
                 {turn.isStreaming && (
-                  <span className="inline-flex items-center gap-1 ml-2 text-xs font-bold text-[#135136]">
+                  <span className="inline-flex items-center gap-1 ml-1.5 align-middle text-xs font-bold text-[#135136]">
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
                   </span>
                 )}
               </div>
 
-              {/* Sugestões de pratos encontrados */}
+              {/* Cartões clicáveis dos pratos encontrados */}
               {turn.role === 'assistant' &&
                 turn.recommendations &&
                 turn.recommendations.length > 0 && (
@@ -365,10 +432,13 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
                     <div className="flex items-center justify-between text-[11px] font-bold text-stone-600 px-1">
                       <span className="inline-flex items-center gap-1 text-[#135136]">
                         <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
-                        {turn.recommendations.length} sugestões que combinam com seu pedido
+                        {turn.recommendations.length}{' '}
+                        {turn.recommendations.length === 1
+                          ? 'prato separado para você'
+                          : 'pratos separados para você'}
                       </span>
                       <span className="text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded-full">
-                        Preço verificado hoje
+                        Cardápio verificado hoje
                       </span>
                     </div>
 
@@ -386,13 +456,10 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
                                 <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#FFB703]/25 text-stone-900">
                                   ✨ {matchBadge}
                                 </span>
-                                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-stone-100 text-stone-600">
-                                  Preço verificado hoje
-                                </span>
                               </div>
-                              <h4 className="font-heading font-extrabold text-stone-900 text-sm leading-snug">
+                              <div className="font-heading font-extrabold text-stone-900 text-sm leading-snug">
                                 {rec.dish_name}
-                              </h4>
+                              </div>
                               <p className="text-xs text-stone-600 line-clamp-2 mt-0.5">
                                 {rec.description}
                               </p>
@@ -428,7 +495,7 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
                               </span>
                             )}
                             {rec.is_lactose_free && (
-                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-100 text-sky-950 border border-sky-300">
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-100 text-sky-900 border border-sky-300">
                                 🥛 Sem Lactose
                               </span>
                             )}
@@ -481,7 +548,7 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Ex: quero peixe na Martim de Sá ou lanche até R$ 40..."
+            placeholder="Ex: o que pedir hoje no Quiosque Baleia Branca ou lanche até R$ 40..."
             disabled={isLoading}
             className="flex-1 px-4 py-2.5 rounded-2xl bg-stone-100 border border-stone-300 text-sm text-stone-900 placeholder:text-stone-500 focus:outline-none focus:ring-2 focus:ring-[#135136] focus:bg-white disabled:opacity-60"
           />

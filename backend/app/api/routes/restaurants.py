@@ -28,7 +28,7 @@ from geoalchemy2 import Geography
 from geoalchemy2.shape import from_shape
 from pydantic import BaseModel, Field
 from shapely.geometry import Point
-from sqlalchemy import and_, func, select
+from sqlalchemy import and_, case, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies import get_async_session
@@ -45,6 +45,20 @@ router = APIRouter(prefix="/restaurants", tags=["Restaurantes & Marketplace Hipe
 def _norm_ascii(txt: str) -> str:
     nfkd = unicodedata.normalize("NFKD", txt or "")
     return nfkd.encode("ascii", "ignore").decode("ascii").lower().strip()
+
+
+def _normalize_sides_list(raw_sides: Any) -> List[str]:
+    if not raw_sides or not isinstance(raw_sides, list):
+        return []
+    out: List[str] = []
+    for item in raw_sides:
+        if isinstance(item, str) and item.strip():
+            out.append(item.strip())
+        elif isinstance(item, dict):
+            label = item.get("name") or item.get("label") or item.get("item")
+            if isinstance(label, str) and label.strip():
+                out.append(label.strip())
+    return out
 
 
 def clean_public_review_comment(raw_text: str) -> str:
@@ -251,6 +265,12 @@ async def list_restaurants(
 
     if sort_by == "distance" and lat is not None and lon is not None:
         stmt = stmt.order_by(dist_col.asc(), Restaurant.bayesian_rating.desc())
+    elif sort_by == "recommended":
+        stmt = stmt.order_by(
+            case((Restaurant.source_platform.ilike("osm%"), 0), else_=1).asc(),
+            Restaurant.bayesian_rating.desc(),
+            dist_col.asc(),
+        )
     else:
         stmt = stmt.order_by(Restaurant.bayesian_rating.desc(), dist_col.asc())
 
@@ -346,8 +366,8 @@ async def list_restaurants(
                     "is_gluten_free": bool(d.is_gluten_free),
                     "is_lactose_free": bool(d.is_lactose_free),
                     "last_price_delta_pct": delta_pct,
-                    "smart_defaults": d.smart_defaults or [],
-                    "suggested_sides": d.smart_defaults or [],
+                    "smart_defaults": _normalize_sides_list(d.smart_defaults),
+                    "suggested_sides": _normalize_sides_list(d.smart_defaults),
                 }
             )
 
@@ -474,8 +494,8 @@ async def get_restaurant_detail(
             "is_gluten_free": bool(d.is_gluten_free),
             "is_lactose_free": bool(d.is_lactose_free),
             "last_price_delta_pct": delta_pct,
-            "smart_defaults": d.smart_defaults or [],
-            "suggested_sides": d.smart_defaults or [],
+            "smart_defaults": _normalize_sides_list(d.smart_defaults),
+            "suggested_sides": _normalize_sides_list(d.smart_defaults),
             "price_history": d_hist,
         }
         categories_map.setdefault(cat_name, []).append(d_payload)

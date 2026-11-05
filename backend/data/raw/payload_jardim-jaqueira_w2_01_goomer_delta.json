@@ -1,0 +1,41 @@
+{
+  "source_platform": "goomer",
+  "store": {
+    "id": "goom-restaurante-grelhados-sa",
+    "name": "Restaurante & Grelhados Sabor de Jardim Jaqueira",
+    "slug": "restaurante-grelhados-sabor-de-jardim-jaqueira",
+    "phone": "(12) 3881-8435",
+    "rating": 4.79,
+    "price_level": 2,
+    "cuisine_types": [
+      "Almoço Executivo",
+      "Carnes & Massas",
+      "Opções Veganas"
+    ],
+    "address": {
+      "street": "Via Principal de Jardim Jaqueira, 564",
+      "neighborhood": "Jardim Jaqueira",
+      "lat": -23.61827,
+      "lng": -45.41822
+    }
+  },
+  "categories": [
+    {
+      "name": "Pratos Executivos",
+      "products": [
+        {
+          "id": "goom-restaurante-grelhados-sa-g-1",
+          "name": "Executivo Pescada Grelhada com Pirão (Jardim Jaqueira)",
+          "description": "Filé de pescada fresca grelhada no azeite com arroz, pirão caiçara e salada orgânica em Jardim Jaqueira. Sem glúten e zero lactose.",
+          "price": "R$ 35,90",
+          "is_vegan": false,
+          "is_vegetarian": false,
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "complement_groups": []
+        }
+      ]
+    }
+  ],
+  "reviews": []
+}

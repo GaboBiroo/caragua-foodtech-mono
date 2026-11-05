@@ -1,0 +1,76 @@
+{
+  "source_platform": "goomer",
+  "store": {
+    "id": "goom-raiz-verde-cozinha-natur",
+    "name": "Raiz Verde Cozinha Natural & Poke Indaiá",
+    "slug": "raiz-verde-cozinha-natural-poke-indaia",
+    "phone": "(12) 3887-9012",
+    "rating": 4.82,
+    "price_level": 2,
+    "cuisine_types": [
+      "Vegana",
+      "Saudável",
+      "Sem Glúten"
+    ],
+    "address": {
+      "street": "Rua Antônio Carlos, 310",
+      "neighborhood": "Indaiá",
+      "lat": -23.6398,
+      "lng": -45.4205
+    }
+  },
+  "categories": [
+    {
+      "name": "Pokes & Bowls",
+      "products": [
+        {
+          "id": "goom-raiz-verde-cozinha-natur-g-1",
+          "name": "Bowl Poke Vegano de Tofu Defumado e Manga",
+          "description": "Base de arroz japonês temperado, tofu orgânico grelhado no gergelim, manga, pepino sunomono, edamame e nori. Vegano, sem glúten e zero lactose.",
+          "price": "R$ 47,90",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "complement_groups": []
+        }
+      ]
+    },
+    {
+      "name": "Pratos Quentes Veganos",
+      "products": [
+        {
+          "id": "goom-raiz-verde-cozinha-natur-g-2",
+          "name": "Moqueca Vegana de Banana-da-Terra e Palmito Pupunha",
+          "description": "Cozido aromático em leite de coco natural com palmito pupunha em rodelas, banana-da-terra, pimentões doces e arroz de coco. 100% vegano, sem glúten e sem lactose.",
+          "price": "R$ 54,90",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "complement_groups": []
+        }
+      ]
+    }
+  ],
+  "reviews": [
+    {
+      "author_name": "Mariana Alves (353)",
+      "rating": 5.0,
+      "comment": "Excelente experiência no Raiz Verde Cozinha Natural & Poke Indaiá em Indaiá! Peixe muito fresco e tempero impecável. Moro na Rua das Palmeiras, nº 240, apto 14, meu cel é (12) 99741-8822 e email mariana.alves@provedor.com.br.",
+      "timestamp": "2026-10-28T00:27:22.295847+00:00"
+    },
+    {
+      "author_name": "Carlos Eduardo Ribeiro (753)",
+      "rating": 4.5,
+      "comment": "Porção generosa, preço justo e opções sem lactose bem sinalizadas em Indaiá. Nota fiscal emitida no CPF 321.654.987-10 sem demora.",
+      "timestamp": "2026-10-21T00:27:22.295847+00:00"
+    },
+    {
+      "author_name": "Fernanda Caiçara (353)",
+      "rating": 4.9,
+      "comment": "Atendimento cordial e ingredientes frescos de verdade no coração de Indaiá. Voltaremos com toda a família no próximo fim de semana!",
+      "timestamp": "2026-10-14T00:27:22.295847+00:00"
+    }
+  ]
+}

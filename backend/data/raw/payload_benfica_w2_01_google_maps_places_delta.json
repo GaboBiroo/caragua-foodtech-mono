@@ -1,0 +1,34 @@
+{
+  "source_platform": "google_maps_places",
+  "result": {
+    "place_id": "goog-restaurante-grelhados-sa",
+    "name": "Restaurante & Grelhados Sabor de Benfica",
+    "slug": "restaurante-grelhados-sabor-de-benfica",
+    "formatted_address": "Via Principal de Benfica, 274 - Benfica, Caraguatatuba - SP",
+    "neighborhood": "Benfica",
+    "formatted_phone_number": "(12) 3887-8049",
+    "rating": 4.89,
+    "user_ratings_total": 24,
+    "price_level": 2,
+    "cuisine_types": [
+      "Almoço Executivo",
+      "Carnes & Massas",
+      "Opções Veganas"
+    ],
+    "geometry": {
+      "location": {
+        "lat": -23.62577,
+        "lng": -45.41722
+      }
+    },
+    "menu_items": [
+      {
+        "name": "Executivo Pescada Grelhada com Pirão (Benfica)",
+        "description": "Filé de pescada fresca grelhada no azeite com arroz, pirão caiçara e salada orgânica em Benfica. Sem glúten e zero lactose.",
+        "price": 35.9,
+        "category": "Pratos Executivos"
+      }
+    ],
+    "reviews": []
+  }
+}

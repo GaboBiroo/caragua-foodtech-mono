@@ -1,0 +1,35 @@
+{
+  "source_platform": "menudino_cardapioweb",
+  "tenant": {
+    "tenant_id": "menu-trattoria-forno-a-lenha-",
+    "name": "Trattoria & Forno a Lenha Mirante do Sumaré",
+    "slug": "trattoria-forno-a-lenha-mirante-do-sumare",
+    "street": "Rua Ceará, 275",
+    "neighborhood": "Sumaré",
+    "latitude": -23.62867,
+    "longitude": -45.40462,
+    "phone": "(12) 3882-6615",
+    "rating": 4.84,
+    "price_level": 3,
+    "cuisines": [
+      "Italiana",
+      "Massas Frescas",
+      "Vinhos & Pizzas"
+    ]
+  },
+  "catalog_sections": [
+    {
+      "section_name": "Massas do Mar",
+      "items": [
+        {
+          "sku": "menu-trattoria-forno-a-lenha--md-1",
+          "title": "Fettuccine Artesanal aos Frutos do Mar",
+          "subtitle": "Massa fresca puxada no vinho branco com camarões, anéis de lula, mexilhões e tomates cereja confitados.",
+          "price": 69.9,
+          "modifiers": []
+        }
+      ]
+    }
+  ],
+  "reviews": []
+}

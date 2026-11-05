@@ -1,0 +1,92 @@
+{
+  "source_platform": "goomer",
+  "store": {
+    "id": "goom-acai-tapiocaria-mirante-",
+    "name": "Açaí & Tapiocaria Mirante da Prainha",
+    "slug": "acai-tapiocaria-mirante-da-prainha",
+    "phone": "(12) 3883-1180",
+    "rating": 4.79,
+    "price_level": 1,
+    "cuisine_types": [
+      "Açaí",
+      "Tapiocas Sem Glúten",
+      "Lanches Naturais"
+    ],
+    "address": {
+      "street": "Av. Beira-Mar da Prainha, 220",
+      "neighborhood": "Prainha",
+      "lat": -23.6176,
+      "lng": -45.3987
+    }
+  },
+  "categories": [
+    {
+      "name": "Açaí & Tigelas",
+      "products": [
+        {
+          "id": "goom-acai-tapiocaria-mirante--g-1",
+          "name": "Açaí na Tigela Puro Orgânico 500ml Zero Lactose",
+          "description": "Polpa pura de açaí batida sem xarope artificial, acompanhada de banana prata, morango fresco e sementes de chia. Vegano, sem glúten e zero lactose.",
+          "price": "R$ 29,90",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "complement_groups": []
+        }
+      ]
+    },
+    {
+      "name": "Tapiocas Artesanais",
+      "products": [
+        {
+          "id": "goom-acai-tapiocaria-mirante--g-2",
+          "name": "Tapioca Goma Fresca de Cogumelos e Tomate Seco",
+          "description": "Goma de mandioca hidratada peneirada na hora, recheada com cogumelos paris no azeite, tomate seco e rúcula. Vegana, sem glúten e sem lactose.",
+          "price": "R$ 31,00",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "complement_groups": []
+        }
+      ]
+    },
+    {
+      "name": "Petiscos de Praia",
+      "products": [
+        {
+          "id": "goom-acai-tapiocaria-mirante--g-3",
+          "name": "Isca de Tilápia Crocante com Mandioca Dourada",
+          "description": "Tiras de tilápia fresca empanadas em farinha de milho crocante com mandioca frita. Sem glúten e zero lactose.",
+          "price": "R$ 54,00",
+          "is_vegan": false,
+          "is_vegetarian": false,
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "complement_groups": []
+        }
+      ]
+    }
+  ],
+  "reviews": [
+    {
+      "author_name": "Mariana Alves (919)",
+      "rating": 5.0,
+      "comment": "Excelente experiência no Açaí & Tapiocaria Mirante da Prainha em Prainha! Peixe muito fresco e tempero impecável. Moro na Rua das Palmeiras, nº 240, apto 14, meu cel é (12) 99741-8822 e email mariana.alves@provedor.com.br.",
+      "timestamp": "2026-10-28T00:27:22.361303+00:00"
+    },
+    {
+      "author_name": "Carlos Eduardo Ribeiro (819)",
+      "rating": 4.5,
+      "comment": "Porção generosa, preço justo e opções sem lactose bem sinalizadas em Prainha. Nota fiscal emitida no CPF 321.654.987-10 sem demora.",
+      "timestamp": "2026-10-21T00:27:22.361303+00:00"
+    },
+    {
+      "author_name": "Fernanda Caiçara (519)",
+      "rating": 4.9,
+      "comment": "Atendimento cordial e ingredientes frescos de verdade no coração de Prainha. Voltaremos com toda a família no próximo fim de semana!",
+      "timestamp": "2026-10-14T00:27:22.361303+00:00"
+    }
+  ]
+}

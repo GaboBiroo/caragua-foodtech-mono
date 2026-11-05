@@ -1,0 +1,47 @@
+[
+  {
+    "url": "https://maps.googleapis.com/maps/api/place/details/json?place_id=ChIJPortoNovoCaragua04",
+    "status": 200,
+    "data": {
+      "result": {
+        "place_id": "ChIJPortoNovoCaragua04",
+        "name": "Mirante do Rio Juqueriquerê",
+        "formatted_address": "Av. José Herculano, 4520 - Porto Novo, Caraguatatuba - SP",
+        "formatted_phone_number": "(12) 3887-3310",
+        "website": "https://miranterio.com.br",
+        "rating": 4.8,
+        "user_ratings_total": 118,
+        "price_level": 2,
+        "cuisine_types": ["Peixes Ribeirinhos", "Culinária Caiçara"],
+        "geometry": {
+          "location": {
+            "lat": -23.6820,
+            "lng": -45.4410
+          }
+        },
+        "menu_items": [
+          {
+            "name": "Robalo Grelhado com Purê de Mandioquinha Sem Lactose",
+            "description": "Filé de robalo fresco grelhado no azeite extravirgem, isento de glúten e sem lactose.",
+            "price": "R$ 89,90",
+            "category": "Especialidades do Rio"
+          },
+          {
+            "name": "Bolinho de Taioba Vegano Artesanal",
+            "description": "Porção com 8 unidades veganas empanadas em farinha de mandioca, zero lactose e sem glúten.",
+            "price": "R$ 38,00",
+            "category": "Entradas Caiçaras"
+          }
+        ],
+        "reviews": [
+          {
+            "author_name": "7a6b5c4d3e2f10987654321fedcba09876543210abcdef1234567890abcdef12",
+            "rating": 5.0,
+            "text": "Robalo fresquíssimo às margens do Juqueriquerê no Porto Novo, tempero autêntico!",
+            "time": 1793044800
+          }
+        ]
+      }
+    }
+  }
+]

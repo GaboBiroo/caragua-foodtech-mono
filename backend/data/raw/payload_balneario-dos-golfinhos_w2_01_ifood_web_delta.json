@@ -1,0 +1,53 @@
+{
+  "url": "https://marketplace.ifood.com.br/v1/merchants/ifoo-cantina-familiar-brasa-b/catalog",
+  "status": 200,
+  "data": {
+    "data": {
+      "merchant": {
+        "id": "ifoo-cantina-familiar-brasa-b",
+        "name": "Cantina Familiar & Brasa Balneário dos Golfinhos",
+        "slug": "cantina-familiar-brasa-balneario-dos-golfinhos",
+        "userRating": 4.72,
+        "userRatingCount": 18,
+        "priceRange": 2,
+        "phone": "(12) 3884-2445",
+        "mainCategory": {
+          "name": "Gastronomia Familiar"
+        },
+        "tags": [
+          "Pizzas & Assados",
+          "Cozinha Inclusiva"
+        ],
+        "address": {
+          "streetName": "Via Principal de Balneário dos Golfinhos",
+          "streetNumber": "807",
+          "neighborhood": "Balneário dos Golfinhos",
+          "latitude": -23.66027,
+          "longitude": -45.43322
+        }
+      },
+      "catalog": {
+        "categories": [
+          {
+            "name": "Para Compartilhar",
+            "items": [
+              {
+                "id": "ifoo-cantina-familiar-brasa-b-item-1",
+                "name": "Caldeirada Caiçara Familiar de Balneário dos Golfinhos",
+                "details": "Peixe branco em postas com camarão, batatas e ervas frescas cozidos na panela de barro em Balneário dos Golfinhos. Sem glúten e zero lactose.",
+                "unitMinPrice": 8600,
+                "priceInCents": true,
+                "dietaryRestrictions": [
+                  "GLUTEN_FREE",
+                  "LAC_FREE"
+                ],
+                "garnishGroups": []
+              }
+            ]
+          }
+        ]
+      },
+      "reviews": []
+    }
+  }
+}

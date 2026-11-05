@@ -1,0 +1,92 @@
+{
+  "url": "https://marketplace.ifood.com.br/v1/merchants/ifoo-cantina-familiar-brasa-m/catalog",
+  "status": 200,
+  "data": {
+    "data": {
+      "merchant": {
+        "id": "ifoo-cantina-familiar-brasa-m",
+        "name": "Cantina Familiar & Brasa Morro do Algodão",
+        "slug": "cantina-familiar-brasa-morro-do-algodao",
+        "userRating": 4.67,
+        "userRatingCount": 48,
+        "priceRange": 2,
+        "phone": "(12) 3884-7908",
+        "mainCategory": {
+          "name": "Gastronomia Familiar"
+        },
+        "tags": [
+          "Pizzas & Assados",
+          "Cozinha Inclusiva"
+        ],
+        "address": {
+          "streetName": "Via Principal de Morro do Algodão",
+          "streetNumber": "727",
+          "neighborhood": "Morro do Algodão",
+          "latitude": -23.6748,
+          "longitude": -45.4392
+        }
+      },
+      "catalog": {
+        "categories": [
+          {
+            "name": "Para Compartilhar",
+            "items": [
+              {
+                "id": "ifoo-cantina-familiar-brasa-m-item-1",
+                "name": "Caldeirada Caiçara Familiar de Morro do Algodão",
+                "details": "Peixe branco em postas com camarão, batatas e ervas frescas cozidos na panela de barro em Morro do Algodão. Sem glúten e zero lactose.",
+                "unitMinPrice": 9400,
+                "priceInCents": true,
+                "dietaryRestrictions": [
+                  "GLUTEN_FREE",
+                  "LAC_FREE"
+                ],
+                "garnishGroups": []
+              },
+              {
+                "id": "ifoo-cantina-familiar-brasa-m-item-2",
+                "name": "Nhoque Vegano de Batata-Doce Sem Glúten (Morro do Algodão)",
+                "details": "Nhoque artesanal preparado sem trigo e sem laticínios ao molho de tomates frescos e manjericão.",
+                "unitMinPrice": 4390,
+                "priceInCents": true,
+                "dietaryRestrictions": [
+                  "VEGAN",
+                  "VEGETARIAN",
+                  "GLUTEN_FREE",
+                  "LAC_FREE"
+                ],
+                "garnishGroups": []
+              }
+            ]
+          }
+        ]
+      },
+      "reviews": [
+        {
+          "userName": "Mariana Alves (452)",
+          "score": 5.0,
+          "comment": "Excelente experiência no Cantina Familiar & Brasa Morro do Algodão em Morro do Algodão! Peixe muito fresco e tempero impecável. Moro na Rua das Palmeiras, nº 240, apto 14, meu cel é (12) 99741-8822 e email mariana.alves@provedor.com.br.",
+          "createdAt": "2026-11-03T17:42:50.793354+00:00"
+        },
+        {
+          "userName": "Carlos Eduardo Ribeiro (452)",
+          "score": 4.8,
+          "comment": "Porção generosa, preço justo e opções sem lactose bem sinalizadas em Morro do Algodão. Nota fiscal emitida no CPF 321.654.987-10 sem demora.",
+          "createdAt": "2026-10-27T17:42:50.793354+00:00"
+        },
+        {
+          "userName": "Fernanda Caiçara (752)",
+          "score": 4.9,
+          "comment": "Atendimento cordial e ingredientes frescos de verdade no coração de Morro do Algodão. Voltaremos com toda a família no próximo fim de semana!",
+          "createdAt": "2026-10-20T17:42:50.793354+00:00"
+        },
+        {
+          "userName": "Bot Marketing Digital",
+          "score": 5.0,
+          "comment": "GANHE DINHEIRO RAPIDO NO PIX COMPRE SEGUIDORES CHAMA AGORA!!!!!",
+          "createdAt": "2026-11-04T17:42:50.793354+00:00"
+        }
+      ]
+    }
+  }
+}

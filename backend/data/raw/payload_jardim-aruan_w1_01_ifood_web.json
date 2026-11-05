@@ -1,0 +1,92 @@
+{
+  "url": "https://marketplace.ifood.com.br/v1/merchants/ifoo-cantina-familiar-brasa-j/catalog",
+  "status": 200,
+  "data": {
+    "data": {
+      "merchant": {
+        "id": "ifoo-cantina-familiar-brasa-j",
+        "name": "Cantina Familiar & Brasa Jardim Aruan",
+        "slug": "cantina-familiar-brasa-jardim-aruan",
+        "userRating": 4.83,
+        "userRatingCount": 48,
+        "priceRange": 2,
+        "phone": "(12) 3884-1367",
+        "mainCategory": {
+          "name": "Gastronomia Familiar"
+        },
+        "tags": [
+          "Pizzas & Assados",
+          "Cozinha Inclusiva"
+        ],
+        "address": {
+          "streetName": "Via Principal de Jardim Aruan",
+          "streetNumber": "143",
+          "neighborhood": "Jardim Aruan",
+          "latitude": -23.6448,
+          "longitude": -45.4282
+        }
+      },
+      "catalog": {
+        "categories": [
+          {
+            "name": "Para Compartilhar",
+            "items": [
+              {
+                "id": "ifoo-cantina-familiar-brasa-j-item-1",
+                "name": "Caldeirada Caiçara Familiar de Jardim Aruan",
+                "details": "Peixe branco em postas com camarão, batatas e ervas frescas cozidos na panela de barro em Jardim Aruan. Sem glúten e zero lactose.",
+                "unitMinPrice": 9400,
+                "priceInCents": true,
+                "dietaryRestrictions": [
+                  "GLUTEN_FREE",
+                  "LAC_FREE"
+                ],
+                "garnishGroups": []
+              },
+              {
+                "id": "ifoo-cantina-familiar-brasa-j-item-2",
+                "name": "Nhoque Vegano de Batata-Doce Sem Glúten (Jardim Aruan)",
+                "details": "Nhoque artesanal preparado sem trigo e sem laticínios ao molho de tomates frescos e manjericão.",
+                "unitMinPrice": 4390,
+                "priceInCents": true,
+                "dietaryRestrictions": [
+                  "VEGAN",
+                  "VEGETARIAN",
+                  "GLUTEN_FREE",
+                  "LAC_FREE"
+                ],
+                "garnishGroups": []
+              }
+            ]
+          }
+        ]
+      },
+      "reviews": [
+        {
+          "userName": "Mariana Alves (731)",
+          "score": 5.0,
+          "comment": "Excelente experiência no Cantina Familiar & Brasa Jardim Aruan em Jardim Aruan! Peixe muito fresco e tempero impecável. Moro na Rua das Palmeiras, nº 240, apto 14, meu cel é (12) 99741-8822 e email mariana.alves@provedor.com.br.",
+          "createdAt": "2026-11-03T17:42:50.785869+00:00"
+        },
+        {
+          "userName": "Carlos Eduardo Ribeiro (631)",
+          "score": 4.5,
+          "comment": "Porção generosa, preço justo e opções sem lactose bem sinalizadas em Jardim Aruan. Nota fiscal emitida no CPF 321.654.987-10 sem demora.",
+          "createdAt": "2026-10-27T17:42:50.785869+00:00"
+        },
+        {
+          "userName": "Fernanda Caiçara (331)",
+          "score": 4.9,
+          "comment": "Atendimento cordial e ingredientes frescos de verdade no coração de Jardim Aruan. Voltaremos com toda a família no próximo fim de semana!",
+          "createdAt": "2026-10-20T17:42:50.785869+00:00"
+        },
+        {
+          "userName": "Bot Marketing Digital",
+          "score": 5.0,
+          "comment": "GANHE DINHEIRO RAPIDO NO PIX COMPRE SEGUIDORES CHAMA AGORA!!!!!",
+          "createdAt": "2026-11-04T17:42:50.785869+00:00"
+        }
+      ]
+    }
+  }
+}

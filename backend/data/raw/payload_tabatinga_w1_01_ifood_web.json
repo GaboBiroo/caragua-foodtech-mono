@@ -1,0 +1,92 @@
+{
+  "url": "https://marketplace.ifood.com.br/v1/merchants/ifoo-deck-marina-gourmet-taba/catalog",
+  "status": 200,
+  "data": {
+    "data": {
+      "merchant": {
+        "id": "ifoo-deck-marina-gourmet-taba",
+        "name": "Deck Marina Gourmet Tabatinga",
+        "slug": "deck-marina-gourmet-tabatinga",
+        "userRating": 4.88,
+        "userRatingCount": 48,
+        "priceRange": 3,
+        "phone": "(12) 3884-8890",
+        "mainCategory": {
+          "name": "Mediterrânea"
+        },
+        "tags": [
+          "Polvo & Frutos do Mar",
+          "Contemporânea"
+        ],
+        "address": {
+          "streetName": "Alameda das Garças",
+          "streetNumber": "340",
+          "neighborhood": "Tabatinga",
+          "latitude": -23.5777,
+          "longitude": -45.3284
+        }
+      },
+      "catalog": {
+        "categories": [
+          {
+            "name": "Alta Gastronomia do Mar",
+            "items": [
+              {
+                "id": "ifoo-deck-marina-gourmet-taba-item-1",
+                "name": "Polvo Grelhado ao Azeite de Páprica e Batatas ao Murro",
+                "details": "Tentáculos de polvo macios selados na chapa de ferro com batatas bolinha ao murro, alho assado e páprica espanhola. Sem glúten e sem lactose.",
+                "unitMinPrice": 12400,
+                "priceInCents": true,
+                "dietaryRestrictions": [
+                  "GLUTEN_FREE",
+                  "LAC_FREE"
+                ],
+                "garnishGroups": []
+              },
+              {
+                "id": "ifoo-deck-marina-gourmet-taba-item-2",
+                "name": "Risoto Vegano de Cogumelos Selvagens e Azeite Trufado",
+                "details": "Arroz carnaroli cozido em caldo de vegetais assados com mix de shiitake e shimeji, finalizado com azeite trufado. Vegano, sem glúten e zero lactose.",
+                "unitMinPrice": 5900,
+                "priceInCents": true,
+                "dietaryRestrictions": [
+                  "VEGAN",
+                  "VEGETARIAN",
+                  "GLUTEN_FREE",
+                  "LAC_FREE"
+                ],
+                "garnishGroups": []
+              }
+            ]
+          }
+        ]
+      },
+      "reviews": [
+        {
+          "userName": "Mariana Alves (128)",
+          "score": 5.0,
+          "comment": "Excelente experiência no Deck Marina Gourmet Tabatinga em Tabatinga! Peixe muito fresco e tempero impecável. Moro na Rua das Palmeiras, nº 240, apto 14, meu cel é (12) 99741-8822 e email mariana.alves@provedor.com.br.",
+          "createdAt": "2026-10-28T00:27:22.380173+00:00"
+        },
+        {
+          "userName": "Carlos Eduardo Ribeiro (528)",
+          "score": 4.8,
+          "comment": "Porção generosa, preço justo e opções sem lactose bem sinalizadas em Tabatinga. Nota fiscal emitida no CPF 321.654.987-10 sem demora.",
+          "createdAt": "2026-10-21T00:27:22.380173+00:00"
+        },
+        {
+          "userName": "Fernanda Caiçara (628)",
+          "score": 4.9,
+          "comment": "Atendimento cordial e ingredientes frescos de verdade no coração de Tabatinga. Voltaremos com toda a família no próximo fim de semana!",
+          "createdAt": "2026-10-14T00:27:22.380173+00:00"
+        },
+        {
+          "userName": "Bot Marketing Digital",
+          "score": 5.0,
+          "comment": "GANHE DINHEIRO RAPIDO NO PIX COMPRE SEGUIDORES CHAMA AGORA!!!!!",
+          "createdAt": "2026-10-29T00:27:22.380173+00:00"
+        }
+      ]
+    }
+  }
+}

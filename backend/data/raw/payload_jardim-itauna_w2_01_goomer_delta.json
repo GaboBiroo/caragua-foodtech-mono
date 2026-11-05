@@ -1,0 +1,41 @@
+{
+  "source_platform": "goomer",
+  "store": {
+    "id": "goom-cantina-familiar-brasa-j",
+    "name": "Cantina Familiar & Brasa Jardim Itaúna",
+    "slug": "cantina-familiar-brasa-jardim-itauna",
+    "phone": "(12) 3885-3526",
+    "rating": 4.81,
+    "price_level": 2,
+    "cuisine_types": [
+      "Gastronomia Familiar",
+      "Pizzas & Assados",
+      "Cozinha Inclusiva"
+    ],
+    "address": {
+      "street": "Via Principal de Jardim Itaúna, 616",
+      "neighborhood": "Jardim Itaúna",
+      "lat": -23.67877,
+      "lng": -45.44022
+    }
+  },
+  "categories": [
+    {
+      "name": "Para Compartilhar",
+      "products": [
+        {
+          "id": "goom-cantina-familiar-brasa-j-g-1",
+          "name": "Caldeirada Caiçara Familiar de Jardim Itaúna",
+          "description": "Peixe branco em postas com camarão, batatas e ervas frescas cozidos na panela de barro em Jardim Itaúna. Sem glúten e zero lactose.",
+          "price": "R$ 86,00",
+          "is_vegan": false,
+          "is_vegetarian": false,
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "complement_groups": []
+        }
+      ]
+    }
+  ],
+  "reviews": []
+}

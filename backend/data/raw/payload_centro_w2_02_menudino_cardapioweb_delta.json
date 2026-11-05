@@ -1,0 +1,42 @@
+{
+  "source_platform": "menudino_cardapioweb",
+  "tenant": {
+    "tenant_id": "menu-brasa-burger-artesanal-s",
+    "name": "Brasa & Burger Artesanal Santo Antônio",
+    "slug": "brasa-burger-artesanal-santo-antonio",
+    "street": "Rua Santa Cruz, 185",
+    "neighborhood": "Centro",
+    "latitude": -23.62377,
+    "longitude": -45.41132,
+    "phone": "(12) 3883-5520",
+    "rating": 4.78,
+    "price_level": 2,
+    "cuisines": [
+      "Hambúrguer Artesanal",
+      "Carnes Defumadas",
+      "Plant-Based"
+    ]
+  },
+  "catalog_sections": [
+    {
+      "section_name": "Burgers na Brasa",
+      "items": [
+        {
+          "sku": "menu-brasa-burger-artesanal-s-md-1",
+          "title": "Burger Artesanal Costela Defumada 200g",
+          "subtitle": "Blend de costela bovina defumada em lenha frutífera por 6 horas, queijo cheddar inglês, cebola caramelizada e pão brioche selado.",
+          "price": 39.9,
+          "modifiers": [
+            {
+              "name": "Ponto da Carne Ao Ponto",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "reviews": []
+}

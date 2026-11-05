@@ -1,0 +1,34 @@
+{
+  "source_platform": "google_maps_places",
+  "result": {
+    "place_id": "goog-quiosque-peixaria-orla-d",
+    "name": "Quiosque & Peixaria Orla de Casa Branca",
+    "slug": "quiosque-peixaria-orla-de-casa-branca",
+    "formatted_address": "Via Principal de Casa Branca, 682 - Casa Branca, Caraguatatuba - SP",
+    "neighborhood": "Casa Branca",
+    "formatted_phone_number": "(12) 3887-3071",
+    "rating": 4.72,
+    "user_ratings_total": 24,
+    "price_level": 2,
+    "cuisine_types": [
+      "Frutos do Mar",
+      "Porções de Praia",
+      "Açaí"
+    ],
+    "geometry": {
+      "location": {
+        "lat": -23.61777,
+        "lng": -45.39022
+      }
+    },
+    "menu_items": [
+      {
+        "name": "Porção de Camarão Sete Barbas no Fubá (Casa Branca)",
+        "description": "Camarão fresco empanado no fubá artesanal servido na orla de Casa Branca. Sem glúten e zero lactose.",
+        "price": 56.9,
+        "category": "Porções do Mar"
+      }
+    ],
+    "reviews": []
+  }
+}

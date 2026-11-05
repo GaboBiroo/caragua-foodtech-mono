@@ -1,0 +1,47 @@
+{
+  "source_platform": "menudino_cardapioweb",
+  "tenant": {
+    "tenant_id": "menu-rancho-da-tainha-brasa-m",
+    "name": "Rancho da Tainha & Brasa Massaguaçu",
+    "slug": "rancho-da-tainha-brasa-massaguacu",
+    "street": "Av. Maria Carlota, 1980",
+    "neighborhood": "Massaguaçu",
+    "latitude": -23.60247,
+    "longitude": -45.36662,
+    "phone": "(12) 3884-6210",
+    "rating": 4.83,
+    "price_level": 2,
+    "cuisines": [
+      "Peixes na Brasa",
+      "Frutos do Mar",
+      "Cozinha Litorânea"
+    ]
+  },
+  "catalog_sections": [
+    {
+      "section_name": "Brasa do Litoral Norte",
+      "items": [
+        {
+          "sku": "menu-rancho-da-tainha-brasa-m-md-1",
+          "title": "Tainha Espalmada na Brasa com Vinagrete de Maracujá",
+          "subtitle": "Tainha fresca aberta pelas costas assada no carvão, servida com arroz, pirão e vinagrete cítrico de maracujá. Sem glúten e sem lactose.",
+          "price": 88.0,
+          "modifiers": []
+        }
+      ]
+    },
+    {
+      "section_name": "Caldeiradas Família",
+      "items": [
+        {
+          "sku": "menu-rancho-da-tainha-brasa-m-md-2",
+          "title": "Caldeirada de Frutos do Mar na Pedra Sabão",
+          "subtitle": "Polvo, lula, camarão rosa e postas de pescada cozidos lentamente com batatas, tomates maduros e coentro fresco. Sem glúten e zero lactose.",
+          "price": 164.9,
+          "modifiers": []
+        }
+      ]
+    }
+  ],
+  "reviews": []
+}

@@ -1,0 +1,53 @@
+{
+  "url": "https://marketplace.ifood.com.br/v1/merchants/ifoo-deck-marina-gourmet-taba/catalog",
+  "status": 200,
+  "data": {
+    "data": {
+      "merchant": {
+        "id": "ifoo-deck-marina-gourmet-taba",
+        "name": "Deck Marina Gourmet Tabatinga",
+        "slug": "deck-marina-gourmet-tabatinga",
+        "userRating": 4.88,
+        "userRatingCount": 18,
+        "priceRange": 3,
+        "phone": "(12) 3884-8890",
+        "mainCategory": {
+          "name": "Mediterrânea"
+        },
+        "tags": [
+          "Polvo & Frutos do Mar",
+          "Contemporânea"
+        ],
+        "address": {
+          "streetName": "Alameda das Garças",
+          "streetNumber": "340",
+          "neighborhood": "Tabatinga",
+          "latitude": -23.57767,
+          "longitude": -45.32842
+        }
+      },
+      "catalog": {
+        "categories": [
+          {
+            "name": "Alta Gastronomia do Mar",
+            "items": [
+              {
+                "id": "ifoo-deck-marina-gourmet-taba-item-1",
+                "name": "Polvo Grelhado ao Azeite de Páprica e Batatas ao Murro",
+                "details": "Tentáculos de polvo macios selados na chapa de ferro com batatas bolinha ao murro, alho assado e páprica espanhola. Sem glúten e sem lactose.",
+                "unitMinPrice": 11200,
+                "priceInCents": true,
+                "dietaryRestrictions": [
+                  "GLUTEN_FREE",
+                  "LAC_FREE"
+                ],
+                "garnishGroups": []
+              }
+            ]
+          }
+        ]
+      },
+      "reviews": []
+    }
+  }
+}

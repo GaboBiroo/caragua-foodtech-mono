@@ -1,0 +1,41 @@
+{
+  "source_platform": "goomer",
+  "store": {
+    "id": "goom-restaurante-grelhados-sa",
+    "name": "Restaurante & Grelhados Sabor de Caputera",
+    "slug": "restaurante-grelhados-sabor-de-caputera",
+    "phone": "(12) 3885-9985",
+    "rating": 4.73,
+    "price_level": 2,
+    "cuisine_types": [
+      "Almoço Executivo",
+      "Carnes & Massas",
+      "Opções Veganas"
+    ],
+    "address": {
+      "street": "Via Principal de Caputera, 808",
+      "neighborhood": "Caputera",
+      "lat": -23.61677,
+      "lng": -45.41122
+    }
+  },
+  "categories": [
+    {
+      "name": "Pratos Executivos",
+      "products": [
+        {
+          "id": "goom-restaurante-grelhados-sa-g-1",
+          "name": "Executivo Pescada Grelhada com Pirão (Caputera)",
+          "description": "Filé de pescada fresca grelhada no azeite com arroz, pirão caiçara e salada orgânica em Caputera. Sem glúten e zero lactose.",
+          "price": "R$ 35,90",
+          "is_vegan": false,
+          "is_vegetarian": false,
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "complement_groups": []
+        }
+      ]
+    }
+  ],
+  "reviews": []
+}

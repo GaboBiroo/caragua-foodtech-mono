@@ -1,0 +1,34 @@
+{
+  "source_platform": "google_maps_places",
+  "result": {
+    "place_id": "goog-varanda-ribeirinha-do-ju",
+    "name": "Varanda Ribeirinha do Juqueriquerê",
+    "slug": "varanda-ribeirinha-do-juqueriquere",
+    "formatted_address": "Av. José Herculano, 6420 - Porto Novo - Porto Novo, Caraguatatuba - SP",
+    "neighborhood": "Porto Novo",
+    "formatted_phone_number": "(12) 3887-4090",
+    "rating": 4.81,
+    "user_ratings_total": 24,
+    "price_level": 2,
+    "cuisine_types": [
+      "Peixaria Ribeirinha",
+      "Caldeiradas",
+      "Culinária Caiçara"
+    ],
+    "geometry": {
+      "location": {
+        "lat": -23.68147,
+        "lng": -45.44142
+      }
+    },
+    "menu_items": [
+      {
+        "name": "Robalo de Rio e Mar Assado Inteiro com Pirão",
+        "description": "Robalo fresco pescado na foz do Rio Juqueriquerê assado com ervas, acompanhado de pirão tradicional e arroz branco. Sem glúten e zero lactose.",
+        "price": 99.0,
+        "category": "Especialidades do Porto Novo"
+      }
+    ],
+    "reviews": []
+  }
+}

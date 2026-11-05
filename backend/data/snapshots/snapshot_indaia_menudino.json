@@ -1,0 +1,55 @@
+[
+  {
+    "url": "https://api.cardapioweb.com/v1/tenants/brasa-mar-indaia/catalog",
+    "status": 200,
+    "data": {
+      "source_platform": "menudino_cardapioweb",
+      "tenant": {
+        "tenant_id": "cw-indaia-301",
+        "name": "Brasa & Mar Gastronomia Indaiá",
+        "slug": "brasa-mar-gastronomia-indaia",
+        "street": "Av. Geraldo Nogueira da Silva, 1420",
+        "neighborhood": "Indaiá",
+        "latitude": -23.6385,
+        "longitude": -45.4215,
+        "phone": "(12) 3882-7740",
+        "domain": "https://brasamarindaia.cardapioweb.com",
+        "rating": 4.75,
+        "review_count": 64,
+        "cuisines": ["Contemporânea", "Grelhados", "Massas Artesanais"],
+        "price_level": 3
+      },
+      "catalog_sections": [
+        {
+          "section_name": "Massas & Risotos",
+          "items": [
+            {
+              "sku": "cw-item-01",
+              "title": "Espaguete Artesanal ao Frutos do Mar",
+              "subtitle": "Massa italiana de trigo grano duro salteada na manteiga com camarão, lula e parmesão.",
+              "price": 78.90,
+              "modifiers": [
+                { "name": "Porção Individual (380g)", "price": 0.0, "is_required": true, "max_options": 1 }
+              ]
+            },
+            {
+              "sku": "cw-item-02",
+              "title": "Risoto Vegetariano de Cogumelos sem Glúten",
+              "subtitle": "Arroz arbóreo cremoso vegetariano, sem glúten, finalizado com queijo parmesão curado e ervas.",
+              "price": 69.00,
+              "modifiers": []
+            }
+          ]
+        }
+      ],
+      "reviews": [
+        {
+          "author_name": "4d3c2b1a0f9e8d7c6b5a4938271605f4e3d2c1b0a9f8e7d6c5b4a39281706f5e",
+          "rating": 4.8,
+          "comment": "Vista linda na orla do Indaiá e risoto no ponto al dente perfeito.",
+          "timestamp": "2026-10-25T22:00:00Z"
+        }
+      ]
+    }
+  }
+]

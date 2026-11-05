@@ -1,0 +1,141 @@
+{
+  "url": "https://marketplace.ifood.com.br/v1/merchants/ifood-caragua-martim-001/catalog",
+  "status": 200,
+  "data": {
+    "data": {
+      "merchant": {
+        "id": "ifood-caragua-martim-001",
+        "name": "Quiosque Mar Bravo Caiçara",
+        "slug": "quiosque-mar-bravo-caicara",
+        "userRating": 4.85,
+        "userRatingCount": 48,
+        "priceRange": 2,
+        "phone": "(12) 3882-4010",
+        "mainCategory": {
+          "name": "Frutos do Mar"
+        },
+        "tags": [
+          "Caiçara",
+          "Beira-Mar"
+        ],
+        "address": {
+          "streetName": "Av. Dr. Arthur Costa Filho",
+          "streetNumber": "1850",
+          "neighborhood": "Martim de Sá",
+          "latitude": -23.625,
+          "longitude": -45.391
+        }
+      },
+      "catalog": {
+        "categories": [
+          {
+            "name": "Porções Caiçaras",
+            "items": [
+              {
+                "id": "if-item-101",
+                "name": "Isca de Cação Empanado em Fubá Artesanal",
+                "details": "500g de cação fresco empanado em fubá de moinho d'água, sem trigo e sem leite, acompanha limão galego.",
+                "unitMinPrice": 5690,
+                "priceInCents": true,
+                "dietaryRestrictions": [
+                  "GLUTEN_FREE",
+                  "LAC_FREE"
+                ],
+                "garnishGroups": [
+                  {
+                    "name": "Complementos Sugeridos",
+                    "min": 1,
+                    "max": 2,
+                    "garnishItems": [
+                      {
+                        "description": "Molho Verde de Ervas Caiçaras (Sem Lactose)",
+                        "unitPrice": 0
+                      },
+                      {
+                        "description": "Pimenta Biquinho Curtida na Cachaça",
+                        "unitPrice": 450
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "if-item-102",
+                "name": "Moqueca Caiçara de Garoupa e Camarão Rosa",
+                "details": "Garoupa fresca da enseada cozida em panela de barro com camarão rosa, leite de coco natural, urucum e pirão. Sem glúten e sem lactose.",
+                "unitMinPrice": 14200,
+                "priceInCents": true,
+                "dietaryRestrictions": [
+                  "GLUTEN_FREE",
+                  "LAC_FREE"
+                ],
+                "garnishGroups": [
+                  {
+                    "name": "Complementos Sugeridos",
+                    "min": 1,
+                    "max": 1,
+                    "garnishItems": [
+                      {
+                        "description": "Suave",
+                        "unitPrice": 0
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "if-item-103",
+                "name": "Ceviche Tropical Vegano de Manga, Coco e Palmito",
+                "details": "Cubos de palmito pupunha fresco e manga palmer marinados em leite de tigre cítrico com coentro e pimenta dedo-de-moça. 100% vegano, sem glúten e zero lactose.",
+                "unitMinPrice": 4690,
+                "priceInCents": true,
+                "dietaryRestrictions": [
+                  "VEGAN",
+                  "VEGETARIAN",
+                  "GLUTEN_FREE",
+                  "LAC_FREE"
+                ],
+                "garnishGroups": []
+              },
+              {
+                "id": "if-item-104",
+                "name": "Lula à Dorê da Orla Martim de Sá",
+                "details": "Anéis de lula fresca selecionada empanados na hora, servidos com molho tártaro da casa.",
+                "unitMinPrice": 7200,
+                "priceInCents": true,
+                "dietaryRestrictions": [],
+                "garnishGroups": []
+              }
+            ]
+          }
+        ]
+      },
+      "reviews": [
+        {
+          "userName": "Mariana Alves (384)",
+          "score": 5.0,
+          "comment": "Excelente experiência no Quiosque Mar Bravo Caiçara em Martim de Sá! Peixe muito fresco e tempero impecável. Moro na Rua das Palmeiras, nº 240, apto 14, meu cel é (12) 99741-8822 e email mariana.alves@provedor.com.br.",
+          "createdAt": "2026-10-28T00:27:22.299238+00:00"
+        },
+        {
+          "userName": "Carlos Eduardo Ribeiro (284)",
+          "score": 4.8,
+          "comment": "Porção generosa, preço justo e opções sem lactose bem sinalizadas em Martim de Sá. Nota fiscal emitida no CPF 321.654.987-10 sem demora.",
+          "createdAt": "2026-10-21T00:27:22.299238+00:00"
+        },
+        {
+          "userName": "Fernanda Caiçara (484)",
+          "score": 4.9,
+          "comment": "Atendimento cordial e ingredientes frescos de verdade no coração de Martim de Sá. Voltaremos com toda a família no próximo fim de semana!",
+          "createdAt": "2026-10-14T00:27:22.299238+00:00"
+        },
+        {
+          "userName": "Bot Marketing Digital",
+          "score": 5.0,
+          "comment": "GANHE DINHEIRO RAPIDO NO PIX COMPRE SEGUIDORES CHAMA AGORA!!!!!",
+          "createdAt": "2026-10-29T00:27:22.299238+00:00"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "url": "https://marketplace.ifood.com.br/v1/merchants/ifoo-restaurante-grelhados-sa/catalog",
+  "status": 200,
+  "data": {
+    "data": {
+      "merchant": {
+        "id": "ifoo-restaurante-grelhados-sa",
+        "name": "Restaurante & Grelhados Sabor de Rio do Ouro",
+        "slug": "restaurante-grelhados-sabor-de-rio-do-ouro",
+        "userRating": 4.78,
+        "userRatingCount": 48,
+        "priceRange": 2,
+        "phone": "(12) 3884-7149",
+        "mainCategory": {
+          "name": "Almoço Executivo"
+        },
+        "tags": [
+          "Carnes & Massas",
+          "Opções Veganas"
+        ],
+        "address": {
+          "streetName": "Via Principal de Rio do Ouro",
+          "streetNumber": "263",
+          "neighborhood": "Rio do Ouro",
+          "latitude": -23.6078,
+          "longitude": -45.4082
+        }
+      },
+      "catalog": {
+        "categories": [
+          {
+            "name": "Pratos Executivos",
+            "items": [
+              {
+                "id": "ifoo-restaurante-grelhados-sa-item-1",
+                "name": "Executivo Pescada Grelhada com Pirão (Rio do Ouro)",
+                "details": "Filé de pescada fresca grelhada no azeite com arroz, pirão caiçara e salada orgânica em Rio do Ouro. Sem glúten e zero lactose.",
+                "unitMinPrice": 3990,
+                "priceInCents": true,
+                "dietaryRestrictions": [
+                  "GLUTEN_FREE",
+                  "LAC_FREE"
+                ],
+                "garnishGroups": []
+              },
+              {
+                "id": "ifoo-restaurante-grelhados-sa-item-2",
+                "name": "Bolinho de Taioba e Mandioca Vegano (Rio do Ouro)",
+                "details": "Porção artesanal 100% vegetal assada e dourada no azeite com ervas frescas. Vegano, sem glúten e sem lactose.",
+                "unitMinPrice": 3390,
+                "priceInCents": true,
+                "dietaryRestrictions": [
+                  "VEGAN",
+                  "VEGETARIAN",
+                  "GLUTEN_FREE",
+                  "LAC_FREE"
+                ],
+                "garnishGroups": []
+              }
+            ]
+          }
+        ]
+      },
+      "reviews": [
+        {
+          "userName": "Mariana Alves (487)",
+          "score": 5.0,
+          "comment": "Excelente experiência no Restaurante & Grelhados Sabor de Rio do Ouro em Rio do Ouro! Peixe muito fresco e tempero impecável. Moro na Rua das Palmeiras, nº 240, apto 14, meu cel é (12) 99741-8822 e email mariana.alves@provedor.com.br.",
+          "createdAt": "2026-11-03T17:42:50.608199+00:00"
+        },
+        {
+          "userName": "Carlos Eduardo Ribeiro (387)",
+          "score": 4.5,
+          "comment": "Porção generosa, preço justo e opções sem lactose bem sinalizadas em Rio do Ouro. Nota fiscal emitida no CPF 321.654.987-10 sem demora.",
+          "createdAt": "2026-10-27T17:42:50.608199+00:00"
+        },
+        {
+          "userName": "Fernanda Caiçara (487)",
+          "score": 4.9,
+          "comment": "Atendimento cordial e ingredientes frescos de verdade no coração de Rio do Ouro. Voltaremos com toda a família no próximo fim de semana!",
+          "createdAt": "2026-10-20T17:42:50.608199+00:00"
+        },
+        {
+          "userName": "Bot Marketing Digital",
+          "score": 5.0,
+          "comment": "GANHE DINHEIRO RAPIDO NO PIX COMPRE SEGUIDORES CHAMA AGORA!!!!!",
+          "createdAt": "2026-11-04T17:42:50.608199+00:00"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "source_platform": "goomer",
+  "store": {
+    "id": "goom-restaurante-grelhados-sa",
+    "name": "Restaurante & Grelhados Sabor de Estrela D'Alva",
+    "slug": "restaurante-grelhados-sabor-de-estrela-dalva",
+    "phone": "(12) 3881-8101",
+    "rating": 4.72,
+    "price_level": 2,
+    "cuisine_types": [
+      "Almoço Executivo",
+      "Carnes & Massas",
+      "Opções Veganas"
+    ],
+    "address": {
+      "street": "Via Principal de Estrela D'Alva, 332",
+      "neighborhood": "Estrela D'Alva",
+      "lat": -23.61177,
+      "lng": -45.41422
+    }
+  },
+  "categories": [
+    {
+      "name": "Pratos Executivos",
+      "products": [
+        {
+          "id": "goom-restaurante-grelhados-sa-g-1",
+          "name": "Executivo Pescada Grelhada com Pirão (Estrela D'Alva)",
+          "description": "Filé de pescada fresca grelhada no azeite com arroz, pirão caiçara e salada orgânica em Estrela D'Alva. Sem glúten e zero lactose.",
+          "price": "R$ 35,90",
+          "is_vegan": false,
+          "is_vegetarian": false,
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "complement_groups": []
+        }
+      ]
+    }
+  ],
+  "reviews": []
+}

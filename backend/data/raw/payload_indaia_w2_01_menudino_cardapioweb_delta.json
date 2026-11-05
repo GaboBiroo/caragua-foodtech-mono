@@ -1,0 +1,35 @@
+{
+  "source_platform": "menudino_cardapioweb",
+  "tenant": {
+    "tenant_id": "menu-forneria-pizzaria-artesa",
+    "name": "Forneria & Pizzaria Artesanal do Indaiá",
+    "slug": "forneria-pizzaria-artesanal-do-indaia",
+    "street": "Av. Geraldo Nogueira da Silva, 1420",
+    "neighborhood": "Indaiá",
+    "latitude": -23.63797,
+    "longitude": -45.42192,
+    "phone": "(12) 3887-3310",
+    "rating": 4.89,
+    "price_level": 3,
+    "cuisines": [
+      "Pizzaria Forno a Lenha",
+      "Massas Italianas",
+      "Fermentação Natural"
+    ]
+  },
+  "catalog_sections": [
+    {
+      "section_name": "Pizzas Forno a Lenha",
+      "items": [
+        {
+          "sku": "menu-forneria-pizzaria-artesa-md-1",
+          "title": "Pizza Artesanal Fermentação Natural Marguerita Bufala",
+          "subtitle": "Massa italiana de 48h de maturação assada em forno a lenha, molho de tomate San Marzano, mozzarella de búfala e manjericão.",
+          "price": 68.5,
+          "modifiers": []
+        }
+      ]
+    }
+  ],
+  "reviews": []
+}

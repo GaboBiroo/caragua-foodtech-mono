@@ -1,0 +1,111 @@
+{
+  "url": "https://marketplace.ifood.com.br/v1/merchants/ifoo-entreposto-restaurante-p/catalog",
+  "status": 200,
+  "data": {
+    "data": {
+      "merchant": {
+        "id": "ifoo-entreposto-restaurante-p",
+        "name": "Entreposto & Restaurante Pescador do Camaroeiro",
+        "slug": "entreposto-restaurante-pescador-do-camaroeiro",
+        "userRating": 4.91,
+        "userRatingCount": 48,
+        "priceRange": 2,
+        "phone": "(12) 3882-7741",
+        "mainCategory": {
+          "name": "Pescados Frescos"
+        },
+        "tags": [
+          "Camarões",
+          "Culinária Caiçara"
+        ],
+        "address": {
+          "streetName": "Entreposto de Pesca Artesanal do Camaroeiro",
+          "streetNumber": "88",
+          "neighborhood": "Camaroeiro",
+          "latitude": -23.6202,
+          "longitude": -45.4017
+        }
+      },
+      "catalog": {
+        "categories": [
+          {
+            "name": "Direto dos Barcos",
+            "items": [
+              {
+                "id": "ifoo-entreposto-restaurante-p-item-1",
+                "name": "Porção de Camarão Sete Barbas Empanado no Fubá",
+                "details": "600g de camarão sete barbas recém-desembarcado no Camaroeiro, crocante no fubá sem trigo e zero lactose, com limão cravo.",
+                "unitMinPrice": 6800,
+                "priceInCents": true,
+                "dietaryRestrictions": [
+                  "GLUTEN_FREE",
+                  "LAC_FREE"
+                ],
+                "garnishGroups": [
+                  {
+                    "name": "Complementos Sugeridos",
+                    "min": 0,
+                    "max": 1,
+                    "garnishItems": [
+                      {
+                        "description": "Molho de Pimenta Caseiro",
+                        "unitPrice": 0
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "ifoo-entreposto-restaurante-p-item-2",
+                "name": "Pescada Cambucu Inteira Assada na Folha de Bananeira",
+                "details": "Peixe fresco do dia assado lentamente na folha de bananeira com ervas da restinga, farofa d'água e vinagrete. Sem glúten e sem lactose.",
+                "unitMinPrice": 11800,
+                "priceInCents": true,
+                "dietaryRestrictions": [
+                  "GLUTEN_FREE",
+                  "LAC_FREE"
+                ],
+                "garnishGroups": []
+              },
+              {
+                "id": "ifoo-entreposto-restaurante-p-item-3",
+                "name": "Pastel Artesanal de Camarão Rosa com Catupiry",
+                "details": "Massa crocante frita na hora recheada com camarão rosa refogado no alho e requeijão cremoso.",
+                "unitMinPrice": 2490,
+                "priceInCents": true,
+                "dietaryRestrictions": [],
+                "garnishGroups": []
+              }
+            ]
+          }
+        ]
+      },
+      "reviews": [
+        {
+          "userName": "Mariana Alves (245)",
+          "score": 5.0,
+          "comment": "Excelente experiência no Entreposto & Restaurante Pescador do Camaroeiro em Camaroeiro! Peixe muito fresco e tempero impecável. Moro na Rua das Palmeiras, nº 240, apto 14, meu cel é (12) 99741-8822 e email mariana.alves@provedor.com.br.",
+          "createdAt": "2026-10-28T00:27:22.372209+00:00"
+        },
+        {
+          "userName": "Carlos Eduardo Ribeiro (845)",
+          "score": 4.5,
+          "comment": "Porção generosa, preço justo e opções sem lactose bem sinalizadas em Camaroeiro. Nota fiscal emitida no CPF 321.654.987-10 sem demora.",
+          "createdAt": "2026-10-21T00:27:22.372209+00:00"
+        },
+        {
+          "userName": "Fernanda Caiçara (445)",
+          "score": 4.9,
+          "comment": "Atendimento cordial e ingredientes frescos de verdade no coração de Camaroeiro. Voltaremos com toda a família no próximo fim de semana!",
+          "createdAt": "2026-10-14T00:27:22.372209+00:00"
+        },
+        {
+          "userName": "Bot Marketing Digital",
+          "score": 5.0,
+          "comment": "GANHE DINHEIRO RAPIDO NO PIX COMPRE SEGUIDORES CHAMA AGORA!!!!!",
+          "createdAt": "2026-10-29T00:27:22.372209+00:00"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "source_platform": "menudino_cardapioweb",
+  "tenant": {
+    "tenant_id": "menu-brasa-burger-artesanal-s",
+    "name": "Brasa & Burger Artesanal Santo Antônio",
+    "slug": "brasa-burger-artesanal-santo-antonio",
+    "street": "Rua Santa Cruz, 185",
+    "neighborhood": "Centro",
+    "latitude": -23.6238,
+    "longitude": -45.4113,
+    "phone": "(12) 3883-5520",
+    "rating": 4.78,
+    "price_level": 2,
+    "cuisines": [
+      "Hambúrguer Artesanal",
+      "Carnes Defumadas",
+      "Plant-Based"
+    ]
+  },
+  "catalog_sections": [
+    {
+      "section_name": "Burgers na Brasa",
+      "items": [
+        {
+          "sku": "menu-brasa-burger-artesanal-s-md-1",
+          "title": "Burger Artesanal Costela Defumada 200g",
+          "subtitle": "Blend de costela bovina defumada em lenha frutífera por 6 horas, queijo cheddar inglês, cebola caramelizada e pão brioche selado.",
+          "price": 44.9,
+          "modifiers": [
+            {
+              "name": "Ponto da Carne Ao Ponto",
+              "price": 0.0,
+              "is_required": true,
+              "max_options": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "section_name": "Linha Vegana & Celíaca",
+      "items": [
+        {
+          "sku": "menu-brasa-burger-artesanal-s-md-2",
+          "title": "Burger Plant-Based Vegano no Pão Sem Glúten",
+          "subtitle": "Hambúrguer 100% vegetal de cogumelos e feijão fradinho, maionese vegana de ervas, tomate assado e pão sem glúten. Zero lactose.",
+          "price": 41.9,
+          "modifiers": []
+        }
+      ]
+    },
+    {
+      "section_name": "Acompanhamentos",
+      "items": [
+        {
+          "sku": "menu-brasa-burger-artesanal-s-md-3",
+          "title": "Batata Rústica com Alecrim e Páprica Defumada",
+          "subtitle": "Batatas cortadas à mão assadas com alecrim fresco, alho confitado e sal marinho. Opção vegana, sem glúten e zero lactose.",
+          "price": 27.9,
+          "modifiers": []
+        }
+      ]
+    }
+  ],
+  "reviews": [
+    {
+      "author_name": "Mariana Alves (989)",
+      "rating": 5.0,
+      "comment": "Excelente experiência no Brasa & Burger Artesanal Santo Antônio em Centro! Peixe muito fresco e tempero impecável. Moro na Rua das Palmeiras, nº 240, apto 14, meu cel é (12) 99741-8822 e email mariana.alves@provedor.com.br.",
+      "timestamp": "2026-10-28T00:27:22.288011+00:00"
+    },
+    {
+      "author_name": "Carlos Eduardo Ribeiro (589)",
+      "rating": 4.5,
+      "comment": "Porção generosa, preço justo e opções sem lactose bem sinalizadas em Centro. Nota fiscal emitida no CPF 321.654.987-10 sem demora.",
+      "timestamp": "2026-10-21T00:27:22.288011+00:00"
+    },
+    {
+      "author_name": "Fernanda Caiçara (789)",
+      "rating": 4.9,
+      "comment": "Atendimento cordial e ingredientes frescos de verdade no coração de Centro. Voltaremos com toda a família no próximo fim de semana!",
+      "timestamp": "2026-10-14T00:27:22.288011+00:00"
+    }
+  ]
+}

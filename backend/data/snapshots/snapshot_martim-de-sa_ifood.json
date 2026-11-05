@@ -1,0 +1,87 @@
+[
+  {
+    "url": "https://marketplace.ifood.com.br/v1/merchants/caragua-martim-sa-01/catalog?graphql=true",
+    "status": 200,
+    "data": {
+      "data": {
+        "merchant": {
+          "id": "ifood-caragua-martim-001",
+          "name": "Quiosque Mar Bravo Caiçara",
+          "slug": "quiosque-mar-bravo-caicara",
+          "userRating": 4.85,
+          "userRatingCount": 142,
+          "priceRange": 2,
+          "phone": "(12) 3882-4010",
+          "mainCategory": { "name": "Frutos do Mar" },
+          "tags": ["Caiçara", "Porções", "Beira-Mar"],
+          "address": {
+            "streetName": "Av. Dr. Arthur Costa Filho",
+            "streetNumber": "1850",
+            "neighborhood": "Martim de Sá",
+            "latitude": -23.6250,
+            "longitude": -45.3910
+          }
+        },
+        "catalog": {
+          "categories": [
+            {
+              "name": "Porções Caiçaras",
+              "items": [
+                {
+                  "id": "if-item-101",
+                  "name": "Isca de Cação Empanado em Fubá Artesanal",
+                  "details": "500g de cação fresco empanado em fubá de moinho d'água, sem trigo e sem leite, acompanha limão galego.",
+                  "unitMinPrice": 5690,
+                  "priceInCents": true,
+                  "garnishGroups": [
+                    {
+                      "name": "Escolha seu Molho Artesanal",
+                      "min": 1,
+                      "max": 2,
+                      "garnishItems": [
+                        { "description": "Molho Verde de Ervas Caiçaras (Sem Lactose)", "unitPrice": 0 },
+                        { "description": "Pimenta Biquinho Curtida na Cachaça", "unitPrice": 450 }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "if-item-102",
+                  "name": "Moqueca Caiçara de Garoupa e Camarão Rosa",
+                  "details": "Garoupa fresca da enseada cozida em panela de barro com camarão rosa, leite de coco natural, urucum e pirão.",
+                  "unitMinPrice": 14200,
+                  "priceInCents": true,
+                  "garnishGroups": [
+                    {
+                      "name": "Ponto de Picância",
+                      "min": 1,
+                      "max": 1,
+                      "garnishItems": [
+                        { "description": "Suave", "unitPrice": 0 },
+                        { "description": "Picante Tradicional", "unitPrice": 0 }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "reviews": [
+          {
+            "userName": "8b7d42c1a9f03e6b21d89c457e102a3b4c5d6e7f8091a2b3c4d5e6f708192a3b",
+            "score": 5.0,
+            "comment": "Peixe super sequinho no fubá e atendimento ágil de frente para Martim de Sá!",
+            "createdAt": "2026-10-27T19:30:00Z"
+          },
+          {
+            "userName": "1f2e3d4c5b6a798807162534435261708998a7b6c5d4e3f20112233445566778",
+            "score": 5.0,
+            "comment": "COMPREI SEGUIDORES COM DESCONTO NO PIX CHAMA NO WHATS!!!!!",
+            "createdAt": "2026-10-28T15:10:00Z"
+          }
+        ]
+      }
+    }
+  }
+]

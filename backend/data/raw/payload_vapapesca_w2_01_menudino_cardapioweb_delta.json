@@ -1,0 +1,35 @@
+{
+  "source_platform": "menudino_cardapioweb",
+  "tenant": {
+    "tenant_id": "menu-cantina-familiar-brasa-v",
+    "name": "Cantina Familiar & Brasa Vapapesca",
+    "slug": "cantina-familiar-brasa-vapapesca",
+    "street": "Via Principal de Vapapesca, 457",
+    "neighborhood": "Vapapesca",
+    "latitude": -23.69227,
+    "longitude": -45.44922,
+    "phone": "(12) 3886-2429",
+    "rating": 4.72,
+    "price_level": 2,
+    "cuisines": [
+      "Gastronomia Familiar",
+      "Pizzas & Assados",
+      "Cozinha Inclusiva"
+    ]
+  },
+  "catalog_sections": [
+    {
+      "section_name": "Para Compartilhar",
+      "items": [
+        {
+          "sku": "menu-cantina-familiar-brasa-v-md-1",
+          "title": "Caldeirada Caiçara Familiar de Vapapesca",
+          "subtitle": "Peixe branco em postas com camarão, batatas e ervas frescas cozidos na panela de barro em Vapapesca. Sem glúten e zero lactose.",
+          "price": 86.0,
+          "modifiers": []
+        }
+      ]
+    }
+  ],
+  "reviews": []
+}

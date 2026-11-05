@@ -1,0 +1,65 @@
+{
+  "url": "https://marketplace.ifood.com.br/v1/merchants/ifood-caragua-martim-001/catalog",
+  "status": 200,
+  "data": {
+    "data": {
+      "merchant": {
+        "id": "ifood-caragua-martim-001",
+        "name": "Quiosque Mar Bravo Caiçara",
+        "slug": "quiosque-mar-bravo-caicara",
+        "userRating": 4.85,
+        "userRatingCount": 18,
+        "priceRange": 2,
+        "phone": "(12) 3882-4010",
+        "mainCategory": {
+          "name": "Frutos do Mar"
+        },
+        "tags": [
+          "Caiçara",
+          "Beira-Mar"
+        ],
+        "address": {
+          "streetName": "Av. Dr. Arthur Costa Filho",
+          "streetNumber": "1850",
+          "neighborhood": "Martim de Sá",
+          "latitude": -23.62497,
+          "longitude": -45.39102
+        }
+      },
+      "catalog": {
+        "categories": [
+          {
+            "name": "Panelas de Barro",
+            "items": [
+              {
+                "id": "if-item-102",
+                "name": "Moqueca Caiçara de Garoupa e Camarão Rosa",
+                "details": "Garoupa fresca da enseada cozida em panela de barro com camarão rosa, leite de coco natural, urucum e pirão. Sem glúten e sem lactose.",
+                "unitMinPrice": 12990,
+                "priceInCents": true,
+                "dietaryRestrictions": [
+                  "GLUTEN_FREE",
+                  "LAC_FREE"
+                ],
+                "garnishGroups": [
+                  {
+                    "name": "Complementos Sugeridos",
+                    "min": 1,
+                    "max": 1,
+                    "garnishItems": [
+                      {
+                        "description": "Suave",
+                        "unitPrice": 0
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "reviews": []
+    }
+  }
+}

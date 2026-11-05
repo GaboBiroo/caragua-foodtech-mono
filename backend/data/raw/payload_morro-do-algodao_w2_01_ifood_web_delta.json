@@ -1,0 +1,53 @@
+{
+  "url": "https://marketplace.ifood.com.br/v1/merchants/ifoo-cantina-familiar-brasa-m/catalog",
+  "status": 200,
+  "data": {
+    "data": {
+      "merchant": {
+        "id": "ifoo-cantina-familiar-brasa-m",
+        "name": "Cantina Familiar & Brasa Morro do Algodão",
+        "slug": "cantina-familiar-brasa-morro-do-algodao",
+        "userRating": 4.67,
+        "userRatingCount": 18,
+        "priceRange": 2,
+        "phone": "(12) 3884-7908",
+        "mainCategory": {
+          "name": "Gastronomia Familiar"
+        },
+        "tags": [
+          "Pizzas & Assados",
+          "Cozinha Inclusiva"
+        ],
+        "address": {
+          "streetName": "Via Principal de Morro do Algodão",
+          "streetNumber": "727",
+          "neighborhood": "Morro do Algodão",
+          "latitude": -23.67477,
+          "longitude": -45.43922
+        }
+      },
+      "catalog": {
+        "categories": [
+          {
+            "name": "Para Compartilhar",
+            "items": [
+              {
+                "id": "ifoo-cantina-familiar-brasa-m-item-1",
+                "name": "Caldeirada Caiçara Familiar de Morro do Algodão",
+                "details": "Peixe branco em postas com camarão, batatas e ervas frescas cozidos na panela de barro em Morro do Algodão. Sem glúten e zero lactose.",
+                "unitMinPrice": 8600,
+                "priceInCents": true,
+                "dietaryRestrictions": [
+                  "GLUTEN_FREE",
+                  "LAC_FREE"
+                ],
+                "garnishGroups": []
+              }
+            ]
+          }
+        ]
+      },
+      "reviews": []
+    }
+  }
+}

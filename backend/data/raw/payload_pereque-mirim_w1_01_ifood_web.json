@@ -1,0 +1,101 @@
+{
+  "url": "https://marketplace.ifood.com.br/v1/merchants/ifoo-sabor-da-enseada-sul-per/catalog",
+  "status": 200,
+  "data": {
+    "data": {
+      "merchant": {
+        "id": "ifoo-sabor-da-enseada-sul-per",
+        "name": "Sabor da Enseada Sul Perequê-Mirim",
+        "slug": "sabor-da-enseada-sul-pereque-mirim",
+        "userRating": 4.75,
+        "userRatingCount": 48,
+        "priceRange": 2,
+        "phone": "(12) 3888-5190",
+        "mainCategory": {
+          "name": "Cozinha Familiar"
+        },
+        "tags": [
+          "Peixes & Porções",
+          "Executivo"
+        ],
+        "address": {
+          "streetName": "Rua José Geraldo Fernandes",
+          "streetNumber": "512",
+          "neighborhood": "Perequê-Mirim",
+          "latitude": -23.7084,
+          "longitude": -45.4587
+        }
+      },
+      "catalog": {
+        "categories": [
+          {
+            "name": "Peixes na Brasa",
+            "items": [
+              {
+                "id": "ifoo-sabor-da-enseada-sul-per-item-1",
+                "name": "Anchova Grelhada no Carvão com Legumes na Brasa",
+                "details": "Anchova fresca da costa sul grelhada na brasa com batata-doce, abobrinha e arroz com alho. Sem glúten e zero lactose.",
+                "unitMinPrice": 7600,
+                "priceInCents": true,
+                "dietaryRestrictions": [
+                  "GLUTEN_FREE",
+                  "LAC_FREE"
+                ],
+                "garnishGroups": []
+              },
+              {
+                "id": "ifoo-sabor-da-enseada-sul-per-item-2",
+                "name": "Feijoada Vegana Completa de Cogumelos e Tofu Defumado",
+                "details": "Feijão preto cozido lentamente com tofu defumado, cogumelos paris, inhame, couve mineira, laranja e farofa de mandioca. Vegano, sem glúten e sem lactose.",
+                "unitMinPrice": 4590,
+                "priceInCents": true,
+                "dietaryRestrictions": [
+                  "VEGAN",
+                  "VEGETARIAN",
+                  "GLUTEN_FREE",
+                  "LAC_FREE"
+                ],
+                "garnishGroups": []
+              },
+              {
+                "id": "ifoo-sabor-da-enseada-sul-per-item-3",
+                "name": "Bolinho de Bacalhau Português (8 unidades)",
+                "details": "Bolinhos crocantes de lombo de bacalhau desfiado com batata asterix e salsa fresca.",
+                "unitMinPrice": 4900,
+                "priceInCents": true,
+                "dietaryRestrictions": [],
+                "garnishGroups": []
+              }
+            ]
+          }
+        ]
+      },
+      "reviews": [
+        {
+          "userName": "Mariana Alves (845)",
+          "score": 5.0,
+          "comment": "Excelente experiência no Sabor da Enseada Sul Perequê-Mirim em Perequê-Mirim! Peixe muito fresco e tempero impecável. Moro na Rua das Palmeiras, nº 240, apto 14, meu cel é (12) 99741-8822 e email mariana.alves@provedor.com.br.",
+          "createdAt": "2026-10-28T00:27:22.392035+00:00"
+        },
+        {
+          "userName": "Carlos Eduardo Ribeiro (545)",
+          "score": 4.5,
+          "comment": "Porção generosa, preço justo e opções sem lactose bem sinalizadas em Perequê-Mirim. Nota fiscal emitida no CPF 321.654.987-10 sem demora.",
+          "createdAt": "2026-10-21T00:27:22.392035+00:00"
+        },
+        {
+          "userName": "Fernanda Caiçara (345)",
+          "score": 4.9,
+          "comment": "Atendimento cordial e ingredientes frescos de verdade no coração de Perequê-Mirim. Voltaremos com toda a família no próximo fim de semana!",
+          "createdAt": "2026-10-14T00:27:22.392035+00:00"
+        },
+        {
+          "userName": "Bot Marketing Digital",
+          "score": 5.0,
+          "comment": "GANHE DINHEIRO RAPIDO NO PIX COMPRE SEGUIDORES CHAMA AGORA!!!!!",
+          "createdAt": "2026-10-29T00:27:22.392035+00:00"
+        }
+      ]
+    }
+  }
+}

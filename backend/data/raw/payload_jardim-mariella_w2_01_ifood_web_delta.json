@@ -1,0 +1,53 @@
+{
+  "url": "https://marketplace.ifood.com.br/v1/merchants/ifoo-quiosque-peixaria-orla-d/catalog",
+  "status": 200,
+  "data": {
+    "data": {
+      "merchant": {
+        "id": "ifoo-quiosque-peixaria-orla-d",
+        "name": "Quiosque & Peixaria Orla de Jardim Mariella",
+        "slug": "quiosque-peixaria-orla-de-jardim-mariella",
+        "userRating": 4.84,
+        "userRatingCount": 18,
+        "priceRange": 2,
+        "phone": "(12) 3884-9370",
+        "mainCategory": {
+          "name": "Frutos do Mar"
+        },
+        "tags": [
+          "Porções de Praia",
+          "Açaí"
+        ],
+        "address": {
+          "streetName": "Via Principal de Jardim Mariella",
+          "streetNumber": "119",
+          "neighborhood": "Jardim Mariella",
+          "latitude": -23.60727,
+          "longitude": -45.37372
+        }
+      },
+      "catalog": {
+        "categories": [
+          {
+            "name": "Porções do Mar",
+            "items": [
+              {
+                "id": "ifoo-quiosque-peixaria-orla-d-item-1",
+                "name": "Porção de Camarão Sete Barbas no Fubá (Jardim Mariella)",
+                "details": "Camarão fresco empanado no fubá artesanal servido na orla de Jardim Mariella. Sem glúten e zero lactose.",
+                "unitMinPrice": 5690,
+                "priceInCents": true,
+                "dietaryRestrictions": [
+                  "GLUTEN_FREE",
+                  "LAC_FREE"
+                ],
+                "garnishGroups": []
+              }
+            ]
+          }
+        ]
+      },
+      "reviews": []
+    }
+  }
+}

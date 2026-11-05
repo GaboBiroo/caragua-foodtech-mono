@@ -4,19 +4,25 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { 
-  Compass, Info, Mail, Trophy, GraduationCap, 
-  Menu, X, Sparkles, ArrowRight, Lock
+import {
+  Compass,
+  Info,
+  Mail,
+  Trophy,
+  GraduationCap,
+  Menu,
+  X,
+  Sparkles,
+  ArrowRight,
+  ShieldCheck,
 } from 'lucide-react';
 import { AcademicPortalModal } from './AcademicPortalModal';
 
 interface NavbarProps {
   onOpenAcademicModal?: () => void;
+  onOpenAIChat?: () => void;
 }
 
-/**
- * Símbolo Oficial de Onda/Maré & Sol Costeiro inspirado na identidade da Prefeitura de Caraguatatuba
- */
 export const CaraguaWaveEmblem: React.FC<{ className?: string }> = ({ className = 'w-8 h-8' }) => (
   <svg
     viewBox="0 0 44 44"
@@ -25,17 +31,14 @@ export const CaraguaWaveEmblem: React.FC<{ className?: string }> = ({ className 
     className={`${className} animate-tide-wave shrink-0`}
     aria-label="Símbolo de Onda e Maré de Caraguatatuba"
   >
-    {/* Sol Dourado Nascente sobre a Enseada */}
     <circle cx="29" cy="14" r="7.5" fill="#FFB703" />
     <circle cx="29" cy="14" r="10.5" stroke="#FFB703" strokeOpacity="0.35" strokeWidth="1.8" strokeDasharray="3 3" />
-    {/* Onda Superior (Verde Atlântico & Turquesa) */}
     <path
       d="M3 26.5C8.5 20.5 15.5 20.5 21.5 25.5C27.5 30.5 34.5 29.5 41 23.5"
       stroke="#38BDF8"
       strokeWidth="4"
       strokeLinecap="round"
     />
-    {/* Onda Principal da Maré de Caraguatatuba (Azul Oceano & Espuma Branca) */}
     <path
       d="M3 33.5C9.5 27.5 16.5 27.5 22.5 32.5C28.5 37.5 35.5 36.5 41 30.5"
       stroke="#FFB703"
@@ -52,14 +55,13 @@ export const CaraguaWaveEmblem: React.FC<{ className?: string }> = ({ className 
   </svg>
 );
 
-export const Navbar: React.FC<NavbarProps> = ({ onOpenAcademicModal }) => {
+export const Navbar: React.FC<NavbarProps> = ({ onOpenAcademicModal, onOpenAIChat }) => {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [internalAcademicOpen, setInternalAcademicOpen] = useState(false);
   const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
   const [isJumping, setIsJumping] = useState(false);
 
-  // Rastreamento suave 60fps estilo Coucou para o Jacquin da Navbar
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       const nx = (e.clientX / window.innerWidth - 0.5) * 8;
@@ -79,23 +81,21 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAcademicModal }) => {
   };
 
   const navLinks = [
-    { name: 'Início', href: '/', icon: Compass, label: 'Feed & Bairros' },
-    { name: 'Sobre Nós', href: '/sobre', icon: Info, label: 'História & TCC' },
+    { name: 'Marketplace', href: '/', icon: Compass, label: '53 Bairros & Vitrine' },
+    { name: 'Command Center', href: '/moderation', icon: ShieldCheck, label: 'Moderação & Scraper' },
+    { name: 'Rankings', href: '/rankings', icon: Trophy, label: 'Score Bayesiano' },
+    { name: 'Sobre', href: '/sobre', icon: Info, label: 'Engenharia & TCC' },
     { name: 'Contato', href: '/contato', icon: Mail, label: 'Credenciamento' },
-    { name: 'Rankings', href: '/rankings', icon: Trophy, label: 'Pódio & Métricas' },
-    { name: 'Login', href: '/login', icon: Lock, label: 'Acesso Restrito' },
   ];
 
   return (
     <>
-      <nav 
+      <nav
         aria-label="Navegação Principal CaráFood"
         className="sticky top-0 z-40 w-full bg-[#135136]/95 backdrop-blur-md border-b-2 border-[#FFB703]/85 text-white shadow-[0_8px_25px_-6px_rgba(19,81,54,0.45)] transition-all"
       >
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
-          
-          {/* LOGO CARÁFOOD + SÍMBOLO DE ONDA/MARÉ MUNICIPAL + JACQUIN PROTAGONISTA COUCOU */}
-          <Link 
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-3">
+          <Link
             href="/"
             onClick={() => {
               setIsJumping(true);
@@ -103,7 +103,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAcademicModal }) => {
             }}
             className="flex items-center gap-3 group focus:outline-none focus:ring-2 focus:ring-[#FFB703] rounded-2xl px-2 py-1 transition-transform hover:scale-[1.02]"
           >
-            {/* Jacquin Praiano Recortado com Física Coucou 60fps */}
             <motion.div
               animate={{
                 x: mouseOffset.x,
@@ -111,47 +110,48 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAcademicModal }) => {
                 rotate: mouseOffset.x * 0.7,
               }}
               transition={{ type: 'spring', stiffness: 320, damping: 24 }}
-              className={`relative w-14 h-16 sm:w-16 sm:h-20 md:w-20 md:h-24 shrink-0 -my-3 drop-shadow-[0_8px_18px_rgba(0,0,0,0.45)] animate-coucou-wave ${
+              className={`relative w-12 h-14 sm:w-14 sm:h-16 md:w-16 md:h-20 shrink-0 -my-2 drop-shadow-[0_8px_18px_rgba(0,0,0,0.45)] animate-coucou-wave ${
                 isJumping ? 'animate-coucou-jump' : ''
               }`}
             >
               <img
                 src="/jacquin-praiano.png"
-                alt="Chef Jacquin Praiano - Personagem Central CaráFood"
+                alt="Chef Jacquin Praiano - Curadoria CaráFood"
                 className="w-full h-full object-contain filter drop-shadow-[0_4px_12px_rgba(255,183,3,0.45)]"
               />
-              <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-[#FFB703] border-2 border-[#135136] rounded-full shadow-sm animate-pulse" />
+              <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-[#FFB703] border-2 border-[#135136] rounded-full shadow-sm animate-pulse" />
             </motion.div>
 
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
-                <span className="font-heading font-black text-2xl sm:text-3xl md:text-[34px] tracking-tight text-white leading-none group-hover:text-amber-200 transition-colors">
+                <span className="font-heading font-black text-2xl sm:text-3xl tracking-tight text-white leading-none group-hover:text-amber-200 transition-colors">
                   Cará<span className="text-[#FFB703]">Food</span>
                 </span>
-                {/* Símbolo de Onda/Maré inspirado na Prefeitura de Caraguatatuba */}
-                <CaraguaWaveEmblem className="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9" />
+                <CaraguaWaveEmblem className="w-7 h-7 sm:w-8 sm:h-8" />
               </div>
               <div className="flex items-center gap-1.5 mt-1">
-                <span className="text-[10px] sm:text-[11px] text-amber-200 font-extrabold tracking-wider uppercase bg-white/10 px-2.5 py-0.5 rounded-full border border-white/20">
-                  Chef Jacquin Praiano
+                <span className="text-[10px] text-amber-200 font-extrabold tracking-wider uppercase bg-white/10 px-2 py-0.5 rounded-full border border-white/20">
+                  53 Bairros • SVL-RRF
                 </span>
-                <span className="hidden sm:inline text-[10px] text-emerald-200 font-semibold">
-                  • Curadoria Oficial de Caraguatatuba
+                <span className="hidden xl:inline text-[10px] text-emerald-200 font-semibold">
+                  • PostGIS + pgvector 1536d
                 </span>
               </div>
             </div>
           </Link>
 
-          {/* LINKS DE NAVEGAÇÃO DESKTOP */}
-          <div className="hidden md:flex items-center gap-1.5 bg-white/10 p-1.5 rounded-full border border-white/15">
+          <div className="hidden lg:flex items-center gap-1 bg-white/10 p-1.5 rounded-full border border-white/15">
             {navLinks.map((item) => {
               const Icon = item.icon;
-              const isActive = pathname === item.href;
+              const isActive =
+                item.href === '/'
+                  ? pathname === '/' || pathname?.startsWith('/restaurants/')
+                  : pathname?.startsWith(item.href);
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${
+                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${
                     isActive
                       ? 'bg-[#FFB703] text-stone-900 shadow-sm scale-105'
                       : 'text-emerald-100 hover:text-white hover:bg-white/10'
@@ -164,21 +164,50 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAcademicModal }) => {
             })}
           </div>
 
-          {/* BOTÃO ACADÊMICO & MENU MOBILE */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2">
+            {onOpenAIChat && (
+              <button
+                type="button"
+                onClick={onOpenAIChat}
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#FFB703] hover:bg-amber-400 text-stone-950 text-xs font-extrabold shadow-md transition-all hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-stone-950" />
+                <span className="hidden sm:inline">Assistente IA</span>
+                <span className="sm:hidden">IA</span>
+              </button>
+            )}
+
+            <Link
+              href={pathname === '/moderation' ? '/' : '/moderation'}
+              className="lg:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/15 hover:bg-white/25 border border-white/25 text-xs font-bold text-white transition-all"
+            >
+              {pathname === '/moderation' ? (
+                <>
+                  <Compass className="w-3.5 h-3.5 text-[#FFB703]" />
+                  <span>Vitrine</span>
+                </>
+              ) : (
+                <>
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#FFB703]" />
+                  <span>Moderação</span>
+                </>
+              )}
+            </Link>
+
             <button
+              type="button"
               onClick={handleAcademicClick}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-emerald-950/85 hover:bg-emerald-900 border border-[#FFB703]/60 text-xs font-bold text-amber-200 hover:text-white shadow-sm transition-all hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#FFB703]"
-              title="Acesso da Banca Avaliadora • Prof. Cristiano S. Negrão"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-950/85 hover:bg-emerald-900 border border-[#FFB703]/60 text-xs font-bold text-amber-200 hover:text-white shadow-sm transition-all"
+              title="Portal Acadêmico TCC"
             >
               <GraduationCap className="w-4 h-4 text-[#FFB703]" />
-              <span className="hidden sm:inline">Portal Prof. Cristiano</span>
-              <span className="sm:hidden">Acadêmico</span>
+              <span className="hidden xl:inline">Portal TCC</span>
             </button>
 
             <button
+              type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white focus:outline-none focus:ring-2 focus:ring-[#FFB703]"
+              className="lg:hidden p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white focus:outline-none focus:ring-2 focus:ring-[#FFB703]"
               aria-label="Abrir Menu de Navegação"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -186,9 +215,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAcademicModal }) => {
           </div>
         </div>
 
-        {/* DRAWER / MENU MOBILE EXPANSÍVEL */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-[#0F402B] border-t border-white/10 px-4 py-4 space-y-2 shadow-2xl animate-in slide-in-from-top-2 duration-200">
+          <div className="lg:hidden bg-[#0F402B] border-t border-white/10 px-4 py-4 space-y-2 shadow-2xl">
             <div className="text-[11px] font-bold text-[#FFB703] uppercase tracking-wider px-2 pb-1 flex items-center justify-between">
               <span>Navegação CaráFood</span>
               <span className="text-[10px] text-emerald-200 font-normal">53 Bairros Oficiais</span>
@@ -220,6 +248,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAcademicModal }) => {
 
             <div className="pt-2 border-t border-white/10">
               <button
+                type="button"
                 onClick={() => {
                   setMobileMenuOpen(false);
                   handleAcademicClick();
@@ -228,7 +257,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAcademicModal }) => {
               >
                 <div className="flex items-center gap-3">
                   <GraduationCap className="w-4 h-4 text-[#FFB703]" />
-                  <span>Portal Prof. Cristiano (TCC)</span>
+                  <span>Portal Acadêmico TCC</span>
                 </div>
                 <ArrowRight className="w-4 h-4 text-[#FFB703]" />
               </button>
@@ -237,7 +266,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAcademicModal }) => {
         )}
       </nav>
 
-      {/* Modal Acadêmico Standalone para páginas secundárias */}
       <AcademicPortalModal
         isOpen={internalAcademicOpen}
         onClose={() => setInternalAcademicOpen(false)}
@@ -245,4 +273,3 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAcademicModal }) => {
     </>
   );
 };
-

@@ -1,0 +1,76 @@
+{
+  "source_platform": "goomer",
+  "store": {
+    "id": "goom-cantina-familiar-brasa-j",
+    "name": "Cantina Familiar & Brasa Jardim Progresso",
+    "slug": "cantina-familiar-brasa-jardim-progresso",
+    "phone": "(12) 3885-4717",
+    "rating": 4.79,
+    "price_level": 2,
+    "cuisine_types": [
+      "Gastronomia Familiar",
+      "Pizzas & Assados",
+      "Cozinha Inclusiva"
+    ],
+    "address": {
+      "street": "Via Principal de Jardim Progresso, 864",
+      "neighborhood": "Jardim Progresso",
+      "lat": -23.6988,
+      "lng": -45.4507
+    }
+  },
+  "categories": [
+    {
+      "name": "Para Compartilhar",
+      "products": [
+        {
+          "id": "goom-cantina-familiar-brasa-j-g-1",
+          "name": "Caldeirada Caiçara Familiar de Jardim Progresso",
+          "description": "Peixe branco em postas com camarão, batatas e ervas frescas cozidos na panela de barro em Jardim Progresso. Sem glúten e zero lactose.",
+          "price": "R$ 94,00",
+          "is_vegan": false,
+          "is_vegetarian": false,
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "complement_groups": []
+        }
+      ]
+    },
+    {
+      "name": "Massas Inclusivas",
+      "products": [
+        {
+          "id": "goom-cantina-familiar-brasa-j-g-2",
+          "name": "Nhoque Vegano de Batata-Doce Sem Glúten (Jardim Progresso)",
+          "description": "Nhoque artesanal preparado sem trigo e sem laticínios ao molho de tomates frescos e manjericão.",
+          "price": "R$ 43,90",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "complement_groups": []
+        }
+      ]
+    }
+  ],
+  "reviews": [
+    {
+      "author_name": "Mariana Alves (311)",
+      "rating": 5.0,
+      "comment": "Excelente experiência no Cantina Familiar & Brasa Jardim Progresso em Jardim Progresso! Peixe muito fresco e tempero impecável. Moro na Rua das Palmeiras, nº 240, apto 14, meu cel é (12) 99741-8822 e email mariana.alves@provedor.com.br.",
+      "timestamp": "2026-11-03T17:42:50.900552+00:00"
+    },
+    {
+      "author_name": "Carlos Eduardo Ribeiro (611)",
+      "rating": 4.5,
+      "comment": "Porção generosa, preço justo e opções sem lactose bem sinalizadas em Jardim Progresso. Nota fiscal emitida no CPF 321.654.987-10 sem demora.",
+      "timestamp": "2026-10-27T17:42:50.900552+00:00"
+    },
+    {
+      "author_name": "Fernanda Caiçara (511)",
+      "rating": 4.9,
+      "comment": "Atendimento cordial e ingredientes frescos de verdade no coração de Jardim Progresso. Voltaremos com toda a família no próximo fim de semana!",
+      "timestamp": "2026-10-20T17:42:50.900552+00:00"
+    }
+  ]
+}

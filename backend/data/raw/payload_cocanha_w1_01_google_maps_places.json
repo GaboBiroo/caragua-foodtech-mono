@@ -1,0 +1,65 @@
+{
+  "source_platform": "google_maps_places",
+  "result": {
+    "place_id": "goog-restaurante-brisa-da-ilh",
+    "name": "Restaurante Brisa da Ilha & Pescados Cocanha",
+    "slug": "restaurante-brisa-da-ilha-pescados-cocanha",
+    "formatted_address": "Rodovia Dr. Manoel Hyppólito Rego, Km 86 - Cocanha, Caraguatatuba - SP",
+    "neighborhood": "Cocanha",
+    "formatted_phone_number": "(12) 3884-4410",
+    "rating": 4.87,
+    "user_ratings_total": 45,
+    "price_level": 3,
+    "cuisine_types": [
+      "Frutos do Mar",
+      "Mariscos",
+      "Gastronomia Costeira"
+    ],
+    "geometry": {
+      "location": {
+        "lat": -23.5906,
+        "lng": -45.3523
+      }
+    },
+    "menu_items": [
+      {
+        "name": "Moqueca Caiçara Sem Lactose de Badejo e Camarão",
+        "description": "Postas altas de badejo e camarões médios cozidos em leite de coco puro artesanal, dendê leve e coentro. Sem glúten e zero lactose.",
+        "price": 134.0,
+        "category": "Especialidades da Costa Norte"
+      },
+      {
+        "name": "Mariscos ao Vinagrete Cítrico da Enseada",
+        "description": "Porção fresca cozida no vapor de vinho branco seco com cebola roxa, salsinha e azeite português. Sem glúten e sem lactose.",
+        "price": 62.0,
+        "category": "Entradas da Enseada"
+      },
+      {
+        "name": "Camarão na Moranga Cremosa Gratinada",
+        "description": "Moranga cabotiá assada inteira recheada com camarão rosa e creme aveludado de queijos.",
+        "price": 168.0,
+        "category": "Especiais para Compartilhar"
+      }
+    ],
+    "reviews": [
+      {
+        "author_name": "Mariana Alves (543)",
+        "rating": 5.0,
+        "text": "Excelente experiência no Restaurante Brisa da Ilha & Pescados Cocanha em Cocanha! Peixe muito fresco e tempero impecável. Moro na Rua das Palmeiras, nº 240, apto 14, meu cel é (12) 99741-8822 e email mariana.alves@provedor.com.br.",
+        "timestamp": "2026-10-28T00:27:22.346864+00:00"
+      },
+      {
+        "author_name": "Carlos Eduardo Ribeiro (443)",
+        "rating": 4.5,
+        "text": "Porção generosa, preço justo e opções sem lactose bem sinalizadas em Cocanha. Nota fiscal emitida no CPF 321.654.987-10 sem demora.",
+        "timestamp": "2026-10-21T00:27:22.346864+00:00"
+      },
+      {
+        "author_name": "Fernanda Caiçara (443)",
+        "rating": 4.9,
+        "text": "Atendimento cordial e ingredientes frescos de verdade no coração de Cocanha. Voltaremos com toda a família no próximo fim de semana!",
+        "timestamp": "2026-10-14T00:27:22.346864+00:00"
+      }
+    ]
+  }
+}

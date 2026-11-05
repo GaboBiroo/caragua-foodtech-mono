@@ -1,0 +1,41 @@
+{
+  "source_platform": "goomer",
+  "store": {
+    "id": "goom-estacao-sul-parrilla-mas",
+    "name": "Estação Sul Parrilla & Massas Palmeiras",
+    "slug": "estacao-sul-parrilla-massas-palmeiras",
+    "phone": "(12) 3888-1450",
+    "rating": 4.76,
+    "price_level": 2,
+    "cuisine_types": [
+      "Carnes na Brasa",
+      "Massas Artesanais",
+      "Família"
+    ],
+    "address": {
+      "street": "Av. José Herculano, 3890",
+      "neighborhood": "Praia das Palmeiras",
+      "lat": -23.65537,
+      "lng": -45.43052
+    }
+  },
+  "categories": [
+    {
+      "name": "Cortes na Brasa",
+      "products": [
+        {
+          "id": "goom-estacao-sul-parrilla-mas-g-1",
+          "name": "Picanha na Pedra com Mandioca Cozida na Manteiga de Garrafa",
+          "description": "450g de picanha fatiada na chapa quente acompanhada de arroz biro-biro, farofa crocante e vinagrete.",
+          "price": "R$ 108,90",
+          "is_vegan": false,
+          "is_vegetarian": false,
+          "is_gluten_free": false,
+          "is_lactose_free": false,
+          "complement_groups": []
+        }
+      ]
+    }
+  ],
+  "reviews": []
+}

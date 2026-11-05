@@ -1,0 +1,53 @@
+{
+  "url": "https://marketplace.ifood.com.br/v1/merchants/ifoo-sabor-da-enseada-sul-per/catalog",
+  "status": 200,
+  "data": {
+    "data": {
+      "merchant": {
+        "id": "ifoo-sabor-da-enseada-sul-per",
+        "name": "Sabor da Enseada Sul Perequê-Mirim",
+        "slug": "sabor-da-enseada-sul-pereque-mirim",
+        "userRating": 4.75,
+        "userRatingCount": 18,
+        "priceRange": 2,
+        "phone": "(12) 3888-5190",
+        "mainCategory": {
+          "name": "Cozinha Familiar"
+        },
+        "tags": [
+          "Peixes & Porções",
+          "Executivo"
+        ],
+        "address": {
+          "streetName": "Rua José Geraldo Fernandes",
+          "streetNumber": "512",
+          "neighborhood": "Perequê-Mirim",
+          "latitude": -23.70837,
+          "longitude": -45.45872
+        }
+      },
+      "catalog": {
+        "categories": [
+          {
+            "name": "Peixes na Brasa",
+            "items": [
+              {
+                "id": "ifoo-sabor-da-enseada-sul-per-item-1",
+                "name": "Anchova Grelhada no Carvão com Legumes na Brasa",
+                "details": "Anchova fresca da costa sul grelhada na brasa com batata-doce, abobrinha e arroz com alho. Sem glúten e zero lactose.",
+                "unitMinPrice": 6800,
+                "priceInCents": true,
+                "dietaryRestrictions": [
+                  "GLUTEN_FREE",
+                  "LAC_FREE"
+                ],
+                "garnishGroups": []
+              }
+            ]
+          }
+        ]
+      },
+      "reviews": []
+    }
+  }
+}

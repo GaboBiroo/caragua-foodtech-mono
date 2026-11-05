@@ -2,6 +2,7 @@ import os
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field
 
+
 class Settings(BaseSettings):
     """
     Configurações centralizadas da aplicação utilizando Pydantic Settings V2.
@@ -11,12 +12,13 @@ class Settings(BaseSettings):
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=False,
-        extra="ignore"
+        extra="ignore",
     )
 
     PROJECT_NAME: str = "Caraguá FoodTech API"
     ENVIRONMENT: str = "development"
     DEBUG: bool = True
+    SQL_ECHO: bool = False
 
     # PostgreSQL / pgvector / PostGIS
     POSTGRES_USER: str = "postgres"
@@ -29,10 +31,12 @@ class Settings(BaseSettings):
     REDIS_HOST: str = "localhost"
     REDIS_PORT: int = 6379
 
-    # Modelos de IA e Embeddings (Ecossistema Anthropic Claude e OpenAI)
-    ANTHROPIC_API_KEY: str = Field(default="", description="Chave da Anthropic Claude (preferencial conforme página 10 do TCC)")
+    # Modelos de IA e Embeddings (Local Ollama + Fallback Determinístico 1536d)
+    ANTHROPIC_API_KEY: str = Field(default="", description="Chave da Anthropic Claude")
     OPENAI_API_KEY: str = Field(default="", description="Chave da OpenAI para embeddings e RAG")
     OLLAMA_BASE_URL: str = "http://localhost:11434"
+    OLLAMA_EMBED_MODEL: str = "nomic-embed-text"
+    OLLAMA_CHAT_MODEL: str = "llama3.2"
     EMBEDDING_MODEL_NAME: str = "text-embedding-3-small"
     EMBEDDING_DIMENSION: int = 1536
 
@@ -52,5 +56,6 @@ class Settings(BaseSettings):
     def REDIS_URL(self) -> str:
         """Retorna a URL de conexão do Redis."""
         return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/0"
+
 
 settings = Settings()

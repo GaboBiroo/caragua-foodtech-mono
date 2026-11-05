@@ -1,0 +1,92 @@
+{
+  "url": "https://marketplace.ifood.com.br/v1/merchants/ifoo-quiosque-peixaria-orla-d/catalog",
+  "status": 200,
+  "data": {
+    "data": {
+      "merchant": {
+        "id": "ifoo-quiosque-peixaria-orla-d",
+        "name": "Quiosque & Peixaria Orla de Jardim Mariella",
+        "slug": "quiosque-peixaria-orla-de-jardim-mariella",
+        "userRating": 4.84,
+        "userRatingCount": 48,
+        "priceRange": 2,
+        "phone": "(12) 3884-9370",
+        "mainCategory": {
+          "name": "Frutos do Mar"
+        },
+        "tags": [
+          "Porções de Praia",
+          "Açaí"
+        ],
+        "address": {
+          "streetName": "Via Principal de Jardim Mariella",
+          "streetNumber": "119",
+          "neighborhood": "Jardim Mariella",
+          "latitude": -23.6073,
+          "longitude": -45.3737
+        }
+      },
+      "catalog": {
+        "categories": [
+          {
+            "name": "Porções do Mar",
+            "items": [
+              {
+                "id": "ifoo-quiosque-peixaria-orla-d-item-1",
+                "name": "Porção de Camarão Sete Barbas no Fubá (Jardim Mariella)",
+                "details": "Camarão fresco empanado no fubá artesanal servido na orla de Jardim Mariella. Sem glúten e zero lactose.",
+                "unitMinPrice": 6290,
+                "priceInCents": true,
+                "dietaryRestrictions": [
+                  "GLUTEN_FREE",
+                  "LAC_FREE"
+                ],
+                "garnishGroups": []
+              },
+              {
+                "id": "ifoo-quiosque-peixaria-orla-d-item-2",
+                "name": "Açaí na Tigela Puro Vegano de Jardim Mariella",
+                "details": "Açaí orgânico batido com banana da serra e frutas frescas. 100% vegano, sem glúten e sem lactose.",
+                "unitMinPrice": 2890,
+                "priceInCents": true,
+                "dietaryRestrictions": [
+                  "VEGAN",
+                  "VEGETARIAN",
+                  "GLUTEN_FREE",
+                  "LAC_FREE"
+                ],
+                "garnishGroups": []
+              }
+            ]
+          }
+        ]
+      },
+      "reviews": [
+        {
+          "userName": "Mariana Alves (940)",
+          "score": 5.0,
+          "comment": "Excelente experiência no Quiosque & Peixaria Orla de Jardim Mariella em Jardim Mariella! Peixe muito fresco e tempero impecável. Moro na Rua das Palmeiras, nº 240, apto 14, meu cel é (12) 99741-8822 e email mariana.alves@provedor.com.br.",
+          "createdAt": "2026-11-03T17:42:50.746330+00:00"
+        },
+        {
+          "userName": "Carlos Eduardo Ribeiro (340)",
+          "score": 4.8,
+          "comment": "Porção generosa, preço justo e opções sem lactose bem sinalizadas em Jardim Mariella. Nota fiscal emitida no CPF 321.654.987-10 sem demora.",
+          "createdAt": "2026-10-27T17:42:50.746330+00:00"
+        },
+        {
+          "userName": "Fernanda Caiçara (440)",
+          "score": 4.9,
+          "comment": "Atendimento cordial e ingredientes frescos de verdade no coração de Jardim Mariella. Voltaremos com toda a família no próximo fim de semana!",
+          "createdAt": "2026-10-20T17:42:50.746330+00:00"
+        },
+        {
+          "userName": "Bot Marketing Digital",
+          "score": 5.0,
+          "comment": "GANHE DINHEIRO RAPIDO NO PIX COMPRE SEGUIDORES CHAMA AGORA!!!!!",
+          "createdAt": "2026-11-04T17:42:50.746330+00:00"
+        }
+      ]
+    }
+  }
+}

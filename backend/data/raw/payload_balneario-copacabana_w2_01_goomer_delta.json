@@ -1,0 +1,41 @@
+{
+  "source_platform": "goomer",
+  "store": {
+    "id": "goom-quiosque-peixaria-orla-d",
+    "name": "Quiosque & Peixaria Orla de Balneário Copacabana",
+    "slug": "quiosque-peixaria-orla-de-balneario-copacabana",
+    "phone": "(12) 3885-1777",
+    "rating": 4.73,
+    "price_level": 2,
+    "cuisine_types": [
+      "Frutos do Mar",
+      "Porções de Praia",
+      "Açaí"
+    ],
+    "address": {
+      "street": "Via Principal de Balneário Copacabana, 408",
+      "neighborhood": "Balneário Copacabana",
+      "lat": -23.60927,
+      "lng": -45.37672
+    }
+  },
+  "categories": [
+    {
+      "name": "Porções do Mar",
+      "products": [
+        {
+          "id": "goom-quiosque-peixaria-orla-d-g-1",
+          "name": "Porção de Camarão Sete Barbas no Fubá (Balneário Copacabana)",
+          "description": "Camarão fresco empanado no fubá artesanal servido na orla de Balneário Copacabana. Sem glúten e zero lactose.",
+          "price": "R$ 56,90",
+          "is_vegan": false,
+          "is_vegetarian": false,
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "complement_groups": []
+        }
+      ]
+    }
+  ],
+  "reviews": []
+}

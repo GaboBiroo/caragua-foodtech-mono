@@ -1,0 +1,34 @@
+{
+  "source_platform": "google_maps_places",
+  "result": {
+    "place_id": "goog-quiosque-aguas-claras-da",
+    "name": "Quiosque Águas Claras da Mococa",
+    "slug": "quiosque-aguas-claras-da-mococa",
+    "formatted_address": "Praia da Mococa, Quiosque 04 - Mococa, Caraguatatuba - SP",
+    "neighborhood": "Mococa",
+    "formatted_phone_number": "(12) 3884-7120",
+    "rating": 4.82,
+    "user_ratings_total": 24,
+    "price_level": 2,
+    "cuisine_types": [
+      "Quiosque Pé na Areia",
+      "Pescados",
+      "Açaí"
+    ],
+    "geometry": {
+      "location": {
+        "lat": -23.58527,
+        "lng": -45.34072
+      }
+    },
+    "menu_items": [
+      {
+        "name": "Porção de Manjubinha Crocante no Fubá",
+        "description": "500g de manjubinhas frescas inteiras passadas no fubá mimoso e fritas em óleo de algodão limpo. Sem glúten e zero lactose.",
+        "price": 43.5,
+        "category": "Pé na Areia"
+      }
+    ],
+    "reviews": []
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "source_platform": "menudino_cardapioweb",
+  "tenant": {
+    "tenant_id": "menu-restaurante-grelhados-sa",
+    "name": "Restaurante & Grelhados Sabor de Ipiranga",
+    "slug": "restaurante-grelhados-sabor-de-ipiranga",
+    "street": "Via Principal de Ipiranga, 385",
+    "neighborhood": "Ipiranga",
+    "latitude": -23.6208,
+    "longitude": -45.4162,
+    "phone": "(12) 3886-5506",
+    "rating": 4.75,
+    "price_level": 2,
+    "cuisines": [
+      "Almoço Executivo",
+      "Carnes & Massas",
+      "Opções Veganas"
+    ]
+  },
+  "catalog_sections": [
+    {
+      "section_name": "Pratos Executivos",
+      "items": [
+        {
+          "sku": "menu-restaurante-grelhados-sa-md-1",
+          "title": "Executivo Pescada Grelhada com Pirão (Ipiranga)",
+          "subtitle": "Filé de pescada fresca grelhada no azeite com arroz, pirão caiçara e salada orgânica em Ipiranga. Sem glúten e zero lactose.",
+          "price": 39.9,
+          "modifiers": []
+        }
+      ]
+    },
+    {
+      "section_name": "Entradas Veganas",
+      "items": [
+        {
+          "sku": "menu-restaurante-grelhados-sa-md-2",
+          "title": "Bolinho de Taioba e Mandioca Vegano (Ipiranga)",
+          "subtitle": "Porção artesanal 100% vegetal assada e dourada no azeite com ervas frescas. Vegano, sem glúten e sem lactose.",
+          "price": 33.9,
+          "modifiers": []
+        }
+      ]
+    }
+  ],
+  "reviews": [
+    {
+      "author_name": "Mariana Alves (300)",
+      "rating": 5.0,
+      "comment": "Excelente experiência no Restaurante & Grelhados Sabor de Ipiranga em Ipiranga! Peixe muito fresco e tempero impecável. Moro na Rua das Palmeiras, nº 240, apto 14, meu cel é (12) 99741-8822 e email mariana.alves@provedor.com.br.",
+      "timestamp": "2026-11-03T17:42:50.569475+00:00"
+    },
+    {
+      "author_name": "Carlos Eduardo Ribeiro (700)",
+      "rating": 4.8,
+      "comment": "Porção generosa, preço justo e opções sem lactose bem sinalizadas em Ipiranga. Nota fiscal emitida no CPF 321.654.987-10 sem demora.",
+      "timestamp": "2026-10-27T17:42:50.569475+00:00"
+    },
+    {
+      "author_name": "Fernanda Caiçara (300)",
+      "rating": 4.9,
+      "comment": "Atendimento cordial e ingredientes frescos de verdade no coração de Ipiranga. Voltaremos com toda a família no próximo fim de semana!",
+      "timestamp": "2026-10-20T17:42:50.569475+00:00"
+    }
+  ]
+}

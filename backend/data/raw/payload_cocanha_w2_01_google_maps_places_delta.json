@@ -1,0 +1,34 @@
+{
+  "source_platform": "google_maps_places",
+  "result": {
+    "place_id": "goog-restaurante-brisa-da-ilh",
+    "name": "Restaurante Brisa da Ilha & Pescados Cocanha",
+    "slug": "restaurante-brisa-da-ilha-pescados-cocanha",
+    "formatted_address": "Rodovia Dr. Manoel Hyppólito Rego, Km 86 - Cocanha, Caraguatatuba - SP",
+    "neighborhood": "Cocanha",
+    "formatted_phone_number": "(12) 3884-4410",
+    "rating": 4.87,
+    "user_ratings_total": 24,
+    "price_level": 3,
+    "cuisine_types": [
+      "Frutos do Mar",
+      "Mariscos",
+      "Gastronomia Costeira"
+    ],
+    "geometry": {
+      "location": {
+        "lat": -23.59057,
+        "lng": -45.35232
+      }
+    },
+    "menu_items": [
+      {
+        "name": "Moqueca Caiçara Sem Lactose de Badejo e Camarão",
+        "description": "Postas altas de badejo e camarões médios cozidos em leite de coco puro artesanal, dendê leve e coentro. Sem glúten e zero lactose.",
+        "price": 119.9,
+        "category": "Especialidades da Costa Norte"
+      }
+    ],
+    "reviews": []
+  }
+}

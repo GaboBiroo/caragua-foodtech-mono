@@ -1,0 +1,41 @@
+{
+  "source_platform": "goomer",
+  "store": {
+    "id": "goom-cantina-familiar-brasa-j",
+    "name": "Cantina Familiar & Brasa Jardim Gaivotas",
+    "slug": "cantina-familiar-brasa-jardim-gaivotas",
+    "phone": "(12) 3881-5464",
+    "rating": 4.77,
+    "price_level": 2,
+    "cuisine_types": [
+      "Gastronomia Familiar",
+      "Pizzas & Assados",
+      "Cozinha Inclusiva"
+    ],
+    "address": {
+      "street": "Via Principal de Jardim Gaivotas, 612",
+      "neighborhood": "Jardim Gaivotas",
+      "lat": -23.64877,
+      "lng": -45.42422
+    }
+  },
+  "categories": [
+    {
+      "name": "Para Compartilhar",
+      "products": [
+        {
+          "id": "goom-cantina-familiar-brasa-j-g-1",
+          "name": "Caldeirada Caiçara Familiar de Jardim Gaivotas",
+          "description": "Peixe branco em postas com camarão, batatas e ervas frescas cozidos na panela de barro em Jardim Gaivotas. Sem glúten e zero lactose.",
+          "price": "R$ 86,00",
+          "is_vegan": false,
+          "is_vegetarian": false,
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "complement_groups": []
+        }
+      ]
+    }
+  ],
+  "reviews": []
+}

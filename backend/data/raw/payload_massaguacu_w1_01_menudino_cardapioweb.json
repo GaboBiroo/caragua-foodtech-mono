@@ -1,0 +1,78 @@
+{
+  "source_platform": "menudino_cardapioweb",
+  "tenant": {
+    "tenant_id": "menu-rancho-da-tainha-brasa-m",
+    "name": "Rancho da Tainha & Brasa Massaguaçu",
+    "slug": "rancho-da-tainha-brasa-massaguacu",
+    "street": "Av. Maria Carlota, 1980",
+    "neighborhood": "Massaguaçu",
+    "latitude": -23.6025,
+    "longitude": -45.3666,
+    "phone": "(12) 3884-6210",
+    "rating": 4.83,
+    "price_level": 2,
+    "cuisines": [
+      "Peixes na Brasa",
+      "Frutos do Mar",
+      "Cozinha Litorânea"
+    ]
+  },
+  "catalog_sections": [
+    {
+      "section_name": "Brasa do Litoral Norte",
+      "items": [
+        {
+          "sku": "menu-rancho-da-tainha-brasa-m-md-1",
+          "title": "Tainha Espalmada na Brasa com Vinagrete de Maracujá",
+          "subtitle": "Tainha fresca aberta pelas costas assada no carvão, servida com arroz, pirão e vinagrete cítrico de maracujá. Sem glúten e sem lactose.",
+          "price": 98.0,
+          "modifiers": []
+        }
+      ]
+    },
+    {
+      "section_name": "Caldeiradas Família",
+      "items": [
+        {
+          "sku": "menu-rancho-da-tainha-brasa-m-md-2",
+          "title": "Caldeirada de Frutos do Mar na Pedra Sabão",
+          "subtitle": "Polvo, lula, camarão rosa e postas de pescada cozidos lentamente com batatas, tomates maduros e coentro fresco. Sem glúten e zero lactose.",
+          "price": 156.0,
+          "modifiers": []
+        }
+      ]
+    },
+    {
+      "section_name": "Grelhados Veganos",
+      "items": [
+        {
+          "sku": "menu-rancho-da-tainha-brasa-m-md-3",
+          "title": "Espetinho Vegetal Grelhado com Abobrinha e Tofu",
+          "subtitle": "Espetos assados na brasa com tofu marinado no shoyu macrobiótico sem glúten, pimentão, cebola roxa e farofa de mandioca. Vegano e sem lactose.",
+          "price": 39.9,
+          "modifiers": []
+        }
+      ]
+    }
+  ],
+  "reviews": [
+    {
+      "author_name": "Mariana Alves (716)",
+      "rating": 5.0,
+      "comment": "Excelente experiência no Rancho da Tainha & Brasa Massaguaçu em Massaguaçu! Peixe muito fresco e tempero impecável. Moro na Rua das Palmeiras, nº 240, apto 14, meu cel é (12) 99741-8822 e email mariana.alves@provedor.com.br.",
+      "timestamp": "2026-10-28T00:27:22.305039+00:00"
+    },
+    {
+      "author_name": "Carlos Eduardo Ribeiro (416)",
+      "rating": 4.8,
+      "comment": "Porção generosa, preço justo e opções sem lactose bem sinalizadas em Massaguaçu. Nota fiscal emitida no CPF 321.654.987-10 sem demora.",
+      "timestamp": "2026-10-21T00:27:22.305039+00:00"
+    },
+    {
+      "author_name": "Fernanda Caiçara (316)",
+      "rating": 4.9,
+      "comment": "Atendimento cordial e ingredientes frescos de verdade no coração de Massaguaçu. Voltaremos com toda a família no próximo fim de semana!",
+      "timestamp": "2026-10-14T00:27:22.305039+00:00"
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "url": "https://marketplace.ifood.com.br/v1/merchants/ifoo-quiosque-peixaria-orla-d/catalog",
+  "status": 200,
+  "data": {
+    "data": {
+      "merchant": {
+        "id": "ifoo-quiosque-peixaria-orla-d",
+        "name": "Quiosque & Peixaria Orla de Cantagalo",
+        "slug": "quiosque-peixaria-orla-de-cantagalo",
+        "userRating": 4.78,
+        "userRatingCount": 48,
+        "priceRange": 2,
+        "phone": "(12) 3884-2838",
+        "mainCategory": {
+          "name": "Frutos do Mar"
+        },
+        "tags": [
+          "Porções de Praia",
+          "Açaí"
+        ],
+        "address": {
+          "streetName": "Via Principal de Cantagalo",
+          "streetNumber": "463",
+          "neighborhood": "Cantagalo",
+          "latitude": -23.6048,
+          "longitude": -45.4122
+        }
+      },
+      "catalog": {
+        "categories": [
+          {
+            "name": "Porções do Mar",
+            "items": [
+              {
+                "id": "ifoo-quiosque-peixaria-orla-d-item-1",
+                "name": "Porção de Camarão Sete Barbas no Fubá (Cantagalo)",
+                "details": "Camarão fresco empanado no fubá artesanal servido na orla de Cantagalo. Sem glúten e zero lactose.",
+                "unitMinPrice": 6290,
+                "priceInCents": true,
+                "dietaryRestrictions": [
+                  "GLUTEN_FREE",
+                  "LAC_FREE"
+                ],
+                "garnishGroups": []
+              },
+              {
+                "id": "ifoo-quiosque-peixaria-orla-d-item-2",
+                "name": "Açaí na Tigela Puro Vegano de Cantagalo",
+                "details": "Açaí orgânico batido com banana da serra e frutas frescas. 100% vegano, sem glúten e sem lactose.",
+                "unitMinPrice": 2890,
+                "priceInCents": true,
+                "dietaryRestrictions": [
+                  "VEGAN",
+                  "VEGETARIAN",
+                  "GLUTEN_FREE",
+                  "LAC_FREE"
+                ],
+                "garnishGroups": []
+              }
+            ]
+          }
+        ]
+      },
+      "reviews": [
+        {
+          "userName": "Mariana Alves (152)",
+          "score": 5.0,
+          "comment": "Excelente experiência no Quiosque & Peixaria Orla de Cantagalo em Cantagalo! Peixe muito fresco e tempero impecável. Moro na Rua das Palmeiras, nº 240, apto 14, meu cel é (12) 99741-8822 e email mariana.alves@provedor.com.br.",
+          "createdAt": "2026-11-03T17:42:50.705618+00:00"
+        },
+        {
+          "userName": "Carlos Eduardo Ribeiro (552)",
+          "score": 4.8,
+          "comment": "Porção generosa, preço justo e opções sem lactose bem sinalizadas em Cantagalo. Nota fiscal emitida no CPF 321.654.987-10 sem demora.",
+          "createdAt": "2026-10-27T17:42:50.705618+00:00"
+        },
+        {
+          "userName": "Fernanda Caiçara (652)",
+          "score": 4.9,
+          "comment": "Atendimento cordial e ingredientes frescos de verdade no coração de Cantagalo. Voltaremos com toda a família no próximo fim de semana!",
+          "createdAt": "2026-10-20T17:42:50.705618+00:00"
+        },
+        {
+          "userName": "Bot Marketing Digital",
+          "score": 5.0,
+          "comment": "GANHE DINHEIRO RAPIDO NO PIX COMPRE SEGUIDORES CHAMA AGORA!!!!!",
+          "createdAt": "2026-11-04T17:42:50.705618+00:00"
+        }
+      ]
+    }
+  }
+}

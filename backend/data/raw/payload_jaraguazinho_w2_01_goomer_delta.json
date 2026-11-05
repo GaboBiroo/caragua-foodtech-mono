@@ -1,0 +1,41 @@
+{
+  "source_platform": "goomer",
+  "store": {
+    "id": "goom-restaurante-grelhados-sa",
+    "name": "Restaurante & Grelhados Sabor de Jaraguazinho",
+    "slug": "restaurante-grelhados-sabor-de-jaraguazinho",
+    "phone": "(12) 3881-2640",
+    "rating": 4.79,
+    "price_level": 2,
+    "cuisine_types": [
+      "Almoço Executivo",
+      "Carnes & Massas",
+      "Opções Veganas"
+    ],
+    "address": {
+      "street": "Via Principal de Jaraguazinho, 164",
+      "neighborhood": "Jaraguazinho",
+      "lat": -23.61877,
+      "lng": -45.41222
+    }
+  },
+  "categories": [
+    {
+      "name": "Pratos Executivos",
+      "products": [
+        {
+          "id": "goom-restaurante-grelhados-sa-g-1",
+          "name": "Executivo Pescada Grelhada com Pirão (Jaraguazinho)",
+          "description": "Filé de pescada fresca grelhada no azeite com arroz, pirão caiçara e salada orgânica em Jaraguazinho. Sem glúten e zero lactose.",
+          "price": "R$ 35,90",
+          "is_vegan": false,
+          "is_vegetarian": false,
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "complement_groups": []
+        }
+      ]
+    }
+  ],
+  "reviews": []
+}

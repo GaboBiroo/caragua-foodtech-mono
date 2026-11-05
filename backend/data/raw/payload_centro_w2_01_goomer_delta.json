@@ -1,0 +1,85 @@
+{
+  "source_platform": "goomer",
+  "store": {
+    "id": "goom-cantina-peixaria-caicara",
+    "name": "Cantina & Peixaria Caiçara do Centro",
+    "slug": "cantina-peixaria-caicara-do-centro",
+    "phone": "(12) 3882-1940",
+    "rating": 4.86,
+    "price_level": 2,
+    "cuisine_types": [
+      "Culinária Caiçara",
+      "Frutos do Mar",
+      "Opções Veganas"
+    ],
+    "address": {
+      "street": "Av. Dr. Arthur Costa Filho, 410",
+      "neighborhood": "Centro",
+      "lat": -23.62217,
+      "lng": -45.41272
+    }
+  },
+  "categories": [
+    {
+      "name": "Clássicos Caiçaras",
+      "products": [
+        {
+          "id": "goom-cantina-peixaria-caicara-g-1",
+          "name": "Azul Marinho Tradicional com Pirão de Peixe",
+          "description": "Posta alta de garoupa cozida com banana-nanica verde na panela de ferro, pirão de caldo de peixe e arroz soltinho. Sem glúten e sem lactose.",
+          "price": "R$ 66,90",
+          "is_vegan": false,
+          "is_vegetarian": false,
+          "is_gluten_free": false,
+          "is_lactose_free": false,
+          "complement_groups": [
+            {
+              "name": "Escolhas do Chef",
+              "required": true,
+              "max_qty": 2,
+              "options": [
+                {
+                  "name": "Farinha de Mandioca Branca Artesanal",
+                  "price": 0.0
+                },
+                {
+                  "name": "Pimenta Cambuci na Cachaça",
+                  "price": 3.5
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Entradas Veganas & Raiz",
+      "products": [
+        {
+          "id": "goom-cantina-peixaria-caicara-g-2",
+          "name": "Bolinho de Taioba Vegano com Geleia de Cambuci",
+          "description": "Porção com 8 bolinhos crocantes 100% vegetais de taioba orgânica da serra empanados em fubá artesanal, sem glúten e zero lactose.",
+          "price": "R$ 34,90",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "complement_groups": [
+            {
+              "name": "Escolhas do Chef",
+              "required": true,
+              "max_qty": 2,
+              "options": [
+                {
+                  "name": "Geleia Artesanal de Cambuci",
+                  "price": 0.0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "reviews": []
+}

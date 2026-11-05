@@ -1,0 +1,41 @@
+{
+  "source_platform": "goomer",
+  "store": {
+    "id": "goom-raiz-verde-cozinha-natur",
+    "name": "Raiz Verde Cozinha Natural & Poke Indaiá",
+    "slug": "raiz-verde-cozinha-natural-poke-indaia",
+    "phone": "(12) 3887-9012",
+    "rating": 4.82,
+    "price_level": 2,
+    "cuisine_types": [
+      "Vegana",
+      "Saudável",
+      "Sem Glúten"
+    ],
+    "address": {
+      "street": "Rua Antônio Carlos, 310",
+      "neighborhood": "Indaiá",
+      "lat": -23.63977,
+      "lng": -45.42052
+    }
+  },
+  "categories": [
+    {
+      "name": "Pokes & Bowls",
+      "products": [
+        {
+          "id": "goom-raiz-verde-cozinha-natur-g-1",
+          "name": "Bowl Poke Vegano de Tofu Defumado e Manga",
+          "description": "Base de arroz japonês temperado, tofu orgânico grelhado no gergelim, manga, pepino sunomono, edamame e nori. Vegano, sem glúten e zero lactose.",
+          "price": "R$ 42,90",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "complement_groups": []
+        }
+      ]
+    }
+  ],
+  "reviews": []
+}

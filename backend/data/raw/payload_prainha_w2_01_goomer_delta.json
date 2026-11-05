@@ -1,0 +1,41 @@
+{
+  "source_platform": "goomer",
+  "store": {
+    "id": "goom-acai-tapiocaria-mirante-",
+    "name": "Açaí & Tapiocaria Mirante da Prainha",
+    "slug": "acai-tapiocaria-mirante-da-prainha",
+    "phone": "(12) 3883-1180",
+    "rating": 4.79,
+    "price_level": 1,
+    "cuisine_types": [
+      "Açaí",
+      "Tapiocas Sem Glúten",
+      "Lanches Naturais"
+    ],
+    "address": {
+      "street": "Av. Beira-Mar da Prainha, 220",
+      "neighborhood": "Prainha",
+      "lat": -23.61757,
+      "lng": -45.39872
+    }
+  },
+  "categories": [
+    {
+      "name": "Açaí & Tigelas",
+      "products": [
+        {
+          "id": "goom-acai-tapiocaria-mirante--g-1",
+          "name": "Açaí na Tigela Puro Orgânico 500ml Zero Lactose",
+          "description": "Polpa pura de açaí batida sem xarope artificial, acompanhada de banana prata, morango fresco e sementes de chia. Vegano, sem glúten e zero lactose.",
+          "price": "R$ 25,90",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "complement_groups": []
+        }
+      ]
+    }
+  ],
+  "reviews": []
+}

@@ -1,0 +1,41 @@
+{
+  "source_platform": "goomer",
+  "store": {
+    "id": "goom-quiosque-peixaria-orla-d",
+    "name": "Quiosque & Peixaria Orla de Portal da Fazendinha",
+    "slug": "quiosque-peixaria-orla-de-portal-da-fazendinha",
+    "phone": "(12) 3885-9073",
+    "rating": 4.83,
+    "price_level": 2,
+    "cuisine_types": [
+      "Frutos do Mar",
+      "Porções de Praia",
+      "Açaí"
+    ],
+    "address": {
+      "street": "Via Principal de Portal da Fazendinha, 168",
+      "neighborhood": "Portal da Fazendinha",
+      "lat": -23.59477,
+      "lng": -45.36122
+    }
+  },
+  "categories": [
+    {
+      "name": "Porções do Mar",
+      "products": [
+        {
+          "id": "goom-quiosque-peixaria-orla-d-g-1",
+          "name": "Porção de Camarão Sete Barbas no Fubá (Portal da Fazendinha)",
+          "description": "Camarão fresco empanado no fubá artesanal servido na orla de Portal da Fazendinha. Sem glúten e zero lactose.",
+          "price": "R$ 56,90",
+          "is_vegan": false,
+          "is_vegetarian": false,
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "complement_groups": []
+        }
+      ]
+    }
+  ],
+  "reviews": []
+}

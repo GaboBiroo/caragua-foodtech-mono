@@ -1,0 +1,66 @@
+{
+  "source_platform": "menudino_cardapioweb",
+  "tenant": {
+    "tenant_id": "menu-quiosque-peixaria-orla-d",
+    "name": "Quiosque & Peixaria Orla de Cidade Jardim",
+    "slug": "quiosque-peixaria-orla-de-cidade-jardim",
+    "street": "Via Principal de Cidade Jardim, 693",
+    "neighborhood": "Cidade Jardim",
+    "latitude": -23.6193,
+    "longitude": -45.3967,
+    "phone": "(12) 3882-7009",
+    "rating": 4.83,
+    "price_level": 2,
+    "cuisines": [
+      "Frutos do Mar",
+      "Porções de Praia",
+      "Açaí"
+    ]
+  },
+  "catalog_sections": [
+    {
+      "section_name": "Porções do Mar",
+      "items": [
+        {
+          "sku": "menu-quiosque-peixaria-orla-d-md-1",
+          "title": "Porção de Camarão Sete Barbas no Fubá (Cidade Jardim)",
+          "subtitle": "Camarão fresco empanado no fubá artesanal servido na orla de Cidade Jardim. Sem glúten e zero lactose.",
+          "price": 62.9,
+          "modifiers": []
+        }
+      ]
+    },
+    {
+      "section_name": "Tigelas Naturais",
+      "items": [
+        {
+          "sku": "menu-quiosque-peixaria-orla-d-md-2",
+          "title": "Açaí na Tigela Puro Vegano de Cidade Jardim",
+          "subtitle": "Açaí orgânico batido com banana da serra e frutas frescas. 100% vegano, sem glúten e sem lactose.",
+          "price": 28.9,
+          "modifiers": []
+        }
+      ]
+    }
+  ],
+  "reviews": [
+    {
+      "author_name": "Mariana Alves (880)",
+      "rating": 5.0,
+      "comment": "Excelente experiência no Quiosque & Peixaria Orla de Cidade Jardim em Cidade Jardim! Peixe muito fresco e tempero impecável. Moro na Rua das Palmeiras, nº 240, apto 14, meu cel é (12) 99741-8822 e email mariana.alves@provedor.com.br.",
+      "timestamp": "2026-11-03T17:42:50.700812+00:00"
+    },
+    {
+      "author_name": "Carlos Eduardo Ribeiro (380)",
+      "rating": 4.8,
+      "comment": "Porção generosa, preço justo e opções sem lactose bem sinalizadas em Cidade Jardim. Nota fiscal emitida no CPF 321.654.987-10 sem demora.",
+      "timestamp": "2026-10-27T17:42:50.700812+00:00"
+    },
+    {
+      "author_name": "Fernanda Caiçara (380)",
+      "rating": 4.9,
+      "comment": "Atendimento cordial e ingredientes frescos de verdade no coração de Cidade Jardim. Voltaremos com toda a família no próximo fim de semana!",
+      "timestamp": "2026-10-20T17:42:50.700812+00:00"
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "source_platform": "goomer",
+  "store": {
+    "id": "goom-restaurante-grelhados-sa",
+    "name": "Restaurante & Grelhados Sabor de Estrela D'Alva",
+    "slug": "restaurante-grelhados-sabor-de-estrela-dalva",
+    "phone": "(12) 3881-8101",
+    "rating": 4.72,
+    "price_level": 2,
+    "cuisine_types": [
+      "Almoço Executivo",
+      "Carnes & Massas",
+      "Opções Veganas"
+    ],
+    "address": {
+      "street": "Via Principal de Estrela D'Alva, 332",
+      "neighborhood": "Estrela D'Alva",
+      "lat": -23.6118,
+      "lng": -45.4142
+    }
+  },
+  "categories": [
+    {
+      "name": "Pratos Executivos",
+      "products": [
+        {
+          "id": "goom-restaurante-grelhados-sa-g-1",
+          "name": "Executivo Pescada Grelhada com Pirão (Estrela D'Alva)",
+          "description": "Filé de pescada fresca grelhada no azeite com arroz, pirão caiçara e salada orgânica em Estrela D'Alva. Sem glúten e zero lactose.",
+          "price": "R$ 39,90",
+          "is_vegan": false,
+          "is_vegetarian": false,
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "complement_groups": []
+        }
+      ]
+    },
+    {
+      "name": "Entradas Veganas",
+      "products": [
+        {
+          "id": "goom-restaurante-grelhados-sa-g-2",
+          "name": "Bolinho de Taioba e Mandioca Vegano (Estrela D'Alva)",
+          "description": "Porção artesanal 100% vegetal assada e dourada no azeite com ervas frescas. Vegano, sem glúten e sem lactose.",
+          "price": "R$ 33,90",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "complement_groups": []
+        }
+      ]
+    }
+  ],
+  "reviews": [
+    {
+      "author_name": "Mariana Alves (193)",
+      "rating": 5.0,
+      "comment": "Excelente experiência no Restaurante & Grelhados Sabor de Estrela D'Alva em Estrela D'Alva! Peixe muito fresco e tempero impecável. Moro na Rua das Palmeiras, nº 240, apto 14, meu cel é (12) 99741-8822 e email mariana.alves@provedor.com.br.",
+      "timestamp": "2026-11-03T17:42:50.631581+00:00"
+    },
+    {
+      "author_name": "Carlos Eduardo Ribeiro (293)",
+      "rating": 4.5,
+      "comment": "Porção generosa, preço justo e opções sem lactose bem sinalizadas em Estrela D'Alva. Nota fiscal emitida no CPF 321.654.987-10 sem demora.",
+      "timestamp": "2026-10-27T17:42:50.631581+00:00"
+    },
+    {
+      "author_name": "Fernanda Caiçara (793)",
+      "rating": 4.9,
+      "comment": "Atendimento cordial e ingredientes frescos de verdade no coração de Estrela D'Alva. Voltaremos com toda a família no próximo fim de semana!",
+      "timestamp": "2026-10-20T17:42:50.631581+00:00"
+    }
+  ]
+}

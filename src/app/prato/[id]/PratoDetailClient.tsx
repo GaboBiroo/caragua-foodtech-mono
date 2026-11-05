@@ -277,7 +277,7 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({ post, rela
                     </div>
                   </div>
                   <div className="pt-2 border-t border-stone-200/80 flex items-center justify-between flex-wrap gap-2">
-                    <DecaySparklineBadge rating={post.superRating} reviews={post.totalReviews} />
+                    <DecaySparklineBadge rating={post.superRating} reviewsCount={post.totalReviews} />
                     <span className="text-[9px] font-mono font-bold text-stone-500">
                       📍 H3 Res.9 • {post.neighborhood}
                     </span>

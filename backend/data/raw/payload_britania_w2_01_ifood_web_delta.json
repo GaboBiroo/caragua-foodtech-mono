@@ -1,0 +1,53 @@
+{
+  "url": "https://marketplace.ifood.com.br/v1/merchants/ifoo-cantina-familiar-brasa-b/catalog",
+  "status": 200,
+  "data": {
+    "data": {
+      "merchant": {
+        "id": "ifoo-cantina-familiar-brasa-b",
+        "name": "Cantina Familiar & Brasa Britânia",
+        "slug": "cantina-familiar-brasa-britania",
+        "userRating": 4.75,
+        "userRatingCount": 18,
+        "priceRange": 2,
+        "phone": "(12) 3884-2367",
+        "mainCategory": {
+          "name": "Gastronomia Familiar"
+        },
+        "tags": [
+          "Pizzas & Assados",
+          "Cozinha Inclusiva"
+        ],
+        "address": {
+          "streetName": "Via Principal de Britânia",
+          "streetNumber": "735",
+          "neighborhood": "Britânia",
+          "latitude": -23.65227,
+          "longitude": -45.42972
+        }
+      },
+      "catalog": {
+        "categories": [
+          {
+            "name": "Para Compartilhar",
+            "items": [
+              {
+                "id": "ifoo-cantina-familiar-brasa-b-item-1",
+                "name": "Caldeirada Caiçara Familiar de Britânia",
+                "details": "Peixe branco em postas com camarão, batatas e ervas frescas cozidos na panela de barro em Britânia. Sem glúten e zero lactose.",
+                "unitMinPrice": 8600,
+                "priceInCents": true,
+                "dietaryRestrictions": [
+                  "GLUTEN_FREE",
+                  "LAC_FREE"
+                ],
+                "garnishGroups": []
+              }
+            ]
+          }
+        ]
+      },
+      "reviews": []
+    }
+  }
+}

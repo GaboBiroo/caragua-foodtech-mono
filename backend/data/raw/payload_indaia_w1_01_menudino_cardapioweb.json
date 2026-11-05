@@ -1,0 +1,78 @@
+{
+  "source_platform": "menudino_cardapioweb",
+  "tenant": {
+    "tenant_id": "menu-forneria-pizzaria-artesa",
+    "name": "Forneria & Pizzaria Artesanal do Indaiá",
+    "slug": "forneria-pizzaria-artesanal-do-indaia",
+    "street": "Av. Geraldo Nogueira da Silva, 1420",
+    "neighborhood": "Indaiá",
+    "latitude": -23.638,
+    "longitude": -45.4219,
+    "phone": "(12) 3887-3310",
+    "rating": 4.89,
+    "price_level": 3,
+    "cuisines": [
+      "Pizzaria Forno a Lenha",
+      "Massas Italianas",
+      "Fermentação Natural"
+    ]
+  },
+  "catalog_sections": [
+    {
+      "section_name": "Pizzas Forno a Lenha",
+      "items": [
+        {
+          "sku": "menu-forneria-pizzaria-artesa-md-1",
+          "title": "Pizza Artesanal Fermentação Natural Marguerita Bufala",
+          "subtitle": "Massa italiana de 48h de maturação assada em forno a lenha, molho de tomate San Marzano, mozzarella de búfala e manjericão.",
+          "price": 76.0,
+          "modifiers": []
+        }
+      ]
+    },
+    {
+      "section_name": "Pizzas Veganas & Sem Glúten",
+      "items": [
+        {
+          "sku": "menu-forneria-pizzaria-artesa-md-2",
+          "title": "Pizza Vegana Sem Glúten de Shimeji e Alho-Poró",
+          "subtitle": "Disco artesanal de farinha de arroz e grão-de-bico sem glúten, queijo de castanha de caju zero lactose, shimeji grelhado e alho-poró.",
+          "price": 58.9,
+          "modifiers": []
+        }
+      ]
+    },
+    {
+      "section_name": "Risotos",
+      "items": [
+        {
+          "sku": "menu-forneria-pizzaria-artesa-md-3",
+          "title": "Risoto de Camarão Rosa com Limão Cravo",
+          "subtitle": "Arroz arbóreo cremoso finalizado com camarões rosa da costa e raspas de limão cravo.",
+          "price": 84.0,
+          "modifiers": []
+        }
+      ]
+    }
+  ],
+  "reviews": [
+    {
+      "author_name": "Mariana Alves (748)",
+      "rating": 5.0,
+      "comment": "Excelente experiência no Forneria & Pizzaria Artesanal do Indaiá em Indaiá! Peixe muito fresco e tempero impecável. Moro na Rua das Palmeiras, nº 240, apto 14, meu cel é (12) 99741-8822 e email mariana.alves@provedor.com.br.",
+      "timestamp": "2026-10-28T00:27:22.294389+00:00"
+    },
+    {
+      "author_name": "Carlos Eduardo Ribeiro (548)",
+      "rating": 4.8,
+      "comment": "Porção generosa, preço justo e opções sem lactose bem sinalizadas em Indaiá. Nota fiscal emitida no CPF 321.654.987-10 sem demora.",
+      "timestamp": "2026-10-21T00:27:22.294389+00:00"
+    },
+    {
+      "author_name": "Fernanda Caiçara (548)",
+      "rating": 4.9,
+      "comment": "Atendimento cordial e ingredientes frescos de verdade no coração de Indaiá. Voltaremos com toda a família no próximo fim de semana!",
+      "timestamp": "2026-10-14T00:27:22.294389+00:00"
+    }
+  ]
+}

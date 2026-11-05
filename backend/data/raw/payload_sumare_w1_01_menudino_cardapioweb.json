@@ -1,0 +1,78 @@
+{
+  "source_platform": "menudino_cardapioweb",
+  "tenant": {
+    "tenant_id": "menu-trattoria-forno-a-lenha-",
+    "name": "Trattoria & Forno a Lenha Mirante do Sumaré",
+    "slug": "trattoria-forno-a-lenha-mirante-do-sumare",
+    "street": "Rua Ceará, 275",
+    "neighborhood": "Sumaré",
+    "latitude": -23.6287,
+    "longitude": -45.4046,
+    "phone": "(12) 3882-6615",
+    "rating": 4.84,
+    "price_level": 3,
+    "cuisines": [
+      "Italiana",
+      "Massas Frescas",
+      "Vinhos & Pizzas"
+    ]
+  },
+  "catalog_sections": [
+    {
+      "section_name": "Massas do Mar",
+      "items": [
+        {
+          "sku": "menu-trattoria-forno-a-lenha--md-1",
+          "title": "Fettuccine Artesanal aos Frutos do Mar",
+          "subtitle": "Massa fresca puxada no vinho branco com camarões, anéis de lula, mexilhões e tomates cereja confitados.",
+          "price": 78.0,
+          "modifiers": []
+        }
+      ]
+    },
+    {
+      "section_name": "Massas Sem Glúten & Veganas",
+      "items": [
+        {
+          "sku": "menu-trattoria-forno-a-lenha--md-2",
+          "title": "Penne Integral Sem Glúten ao Pesto de Manjericão e Nozes",
+          "subtitle": "Massa italiana certificada sem glúten envolvida em pesto fresco de manjericão orgânico, azeite extravirgem e nozes, sem queijo. Vegano e zero lactose.",
+          "price": 52.0,
+          "modifiers": []
+        }
+      ]
+    },
+    {
+      "section_name": "Antepastos",
+      "items": [
+        {
+          "sku": "menu-trattoria-forno-a-lenha--md-3",
+          "title": "Burrata Cremosa com Focaccia de Fermentação Natural",
+          "subtitle": "Burrata inteira servida sobre tomates assados, pesto genovês e focaccia quentinha de alecrim.",
+          "price": 56.0,
+          "modifiers": []
+        }
+      ]
+    }
+  ],
+  "reviews": [
+    {
+      "author_name": "Mariana Alves (215)",
+      "rating": 5.0,
+      "comment": "Excelente experiência no Trattoria & Forno a Lenha Mirante do Sumaré em Sumaré! Peixe muito fresco e tempero impecável. Moro na Rua das Palmeiras, nº 240, apto 14, meu cel é (12) 99741-8822 e email mariana.alves@provedor.com.br.",
+      "timestamp": "2026-10-28T00:27:22.384584+00:00"
+    },
+    {
+      "author_name": "Carlos Eduardo Ribeiro (315)",
+      "rating": 4.5,
+      "comment": "Porção generosa, preço justo e opções sem lactose bem sinalizadas em Sumaré. Nota fiscal emitida no CPF 321.654.987-10 sem demora.",
+      "timestamp": "2026-10-21T00:27:22.384584+00:00"
+    },
+    {
+      "author_name": "Fernanda Caiçara (715)",
+      "rating": 4.9,
+      "comment": "Atendimento cordial e ingredientes frescos de verdade no coração de Sumaré. Voltaremos com toda a família no próximo fim de semana!",
+      "timestamp": "2026-10-14T00:27:22.384584+00:00"
+    }
+  ]
+}

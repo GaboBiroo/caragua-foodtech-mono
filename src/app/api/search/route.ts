@@ -1,23 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { INITIAL_RESTAURANTS } from '@/data/caraguaData';
+
+const BACKEND_API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api/v1';
 
 export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const q = (searchParams.get('q') || '').toLowerCase();
-  const polo = searchParams.get('polo');
+  try {
+    const searchParams = req.nextUrl.searchParams;
+    const q = searchParams.get('q') || '';
+    const neighborhood = searchParams.get('neighborhood') || searchParams.get('polo') || '';
+    const params = new URLSearchParams();
+    if (q) params.set('q', q);
+    if (neighborhood) params.set('neighborhood', neighborhood);
 
-  let results = INITIAL_RESTAURANTS;
-  if (polo) {
-    results = results.filter(r => r.neighborhood.toLowerCase().includes(polo.toLowerCase()));
+    const upstreamUrl = `${BACKEND_API_BASE}/dishes/search${params.toString() ? `?${params.toString()}` : ''}`;
+    const response = await fetch(upstreamUrl, { cache: 'no-store' });
+    if (!response.ok) {
+      return NextResponse.json({ success: false, error: `Upstream status ${response.status}` }, { status: response.status });
+    }
+    const payload = await response.json();
+    return NextResponse.json({
+      success: true,
+      count: payload.count ?? 0,
+      results: payload.results ?? [],
+    });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Falha na busca híbrida de pratos';
+    return NextResponse.json({ success: false, error: message }, { status: 502 });
   }
-
-  if (q) {
-    results = results.filter(r =>
-      r.name.toLowerCase().includes(q) ||
-      r.neighborhood.toLowerCase().includes(q) ||
-      r.dishes.some(d => d.name.toLowerCase().includes(q) || d.description.toLowerCase().includes(q))
-    );
-  }
-
-  return NextResponse.json({ success: true, count: results.length, results });
 }

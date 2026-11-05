@@ -1,0 +1,53 @@
+{
+  "url": "https://marketplace.ifood.com.br/v1/merchants/ifoo-cantina-familiar-brasa-j/catalog",
+  "status": 200,
+  "data": {
+    "data": {
+      "merchant": {
+        "id": "ifoo-cantina-familiar-brasa-j",
+        "name": "Cantina Familiar & Brasa Jardim Britânia",
+        "slug": "cantina-familiar-brasa-jardim-britania",
+        "userRating": 4.83,
+        "userRatingCount": 18,
+        "priceRange": 2,
+        "phone": "(12) 3884-4068",
+        "mainCategory": {
+          "name": "Gastronomia Familiar"
+        },
+        "tags": [
+          "Pizzas & Assados",
+          "Cozinha Inclusiva"
+        ],
+        "address": {
+          "streetName": "Via Principal de Jardim Britânia",
+          "streetNumber": "543",
+          "neighborhood": "Jardim Britânia",
+          "latitude": -23.65077,
+          "longitude": -45.42922
+        }
+      },
+      "catalog": {
+        "categories": [
+          {
+            "name": "Para Compartilhar",
+            "items": [
+              {
+                "id": "ifoo-cantina-familiar-brasa-j-item-1",
+                "name": "Caldeirada Caiçara Familiar de Jardim Britânia",
+                "details": "Peixe branco em postas com camarão, batatas e ervas frescas cozidos na panela de barro em Jardim Britânia. Sem glúten e zero lactose.",
+                "unitMinPrice": 8600,
+                "priceInCents": true,
+                "dietaryRestrictions": [
+                  "GLUTEN_FREE",
+                  "LAC_FREE"
+                ],
+                "garnishGroups": []
+              }
+            ]
+          }
+        ]
+      },
+      "reviews": []
+    }
+  }
+}

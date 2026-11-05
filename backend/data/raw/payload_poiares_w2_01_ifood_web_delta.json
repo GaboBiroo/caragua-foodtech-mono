@@ -1,0 +1,53 @@
+{
+  "url": "https://marketplace.ifood.com.br/v1/merchants/ifoo-restaurante-grelhados-sa/catalog",
+  "status": 200,
+  "data": {
+    "data": {
+      "merchant": {
+        "id": "ifoo-restaurante-grelhados-sa",
+        "name": "Restaurante & Grelhados Sabor de Poiares",
+        "slug": "restaurante-grelhados-sabor-de-poiares",
+        "userRating": 4.68,
+        "userRatingCount": 18,
+        "priceRange": 2,
+        "phone": "(12) 3884-1443",
+        "mainCategory": {
+          "name": "Almoço Executivo"
+        },
+        "tags": [
+          "Carnes & Massas",
+          "Opções Veganas"
+        ],
+        "address": {
+          "streetName": "Via Principal de Poiares",
+          "streetNumber": "703",
+          "neighborhood": "Poiares",
+          "latitude": -23.64177,
+          "longitude": -45.41922
+        }
+      },
+      "catalog": {
+        "categories": [
+          {
+            "name": "Pratos Executivos",
+            "items": [
+              {
+                "id": "ifoo-restaurante-grelhados-sa-item-1",
+                "name": "Executivo Pescada Grelhada com Pirão (Poiares)",
+                "details": "Filé de pescada fresca grelhada no azeite com arroz, pirão caiçara e salada orgânica em Poiares. Sem glúten e zero lactose.",
+                "unitMinPrice": 3590,
+                "priceInCents": true,
+                "dietaryRestrictions": [
+                  "GLUTEN_FREE",
+                  "LAC_FREE"
+                ],
+                "garnishGroups": []
+              }
+            ]
+          }
+        ]
+      },
+      "reviews": []
+    }
+  }
+}

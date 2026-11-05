@@ -1,0 +1,59 @@
+{
+  "source_platform": "google_maps_places",
+  "result": {
+    "place_id": "goog-bistro-sol-brisa-martim-",
+    "name": "Bistrô Sol & Brisa Martim de Sá",
+    "slug": "bistro-sol-brisa-martim-de-sa",
+    "formatted_address": "Av. Flamboyant, 95 - Martim de Sá, Caraguatatuba - SP",
+    "neighborhood": "Martim de Sá",
+    "formatted_phone_number": "(12) 3884-2190",
+    "rating": 4.74,
+    "user_ratings_total": 45,
+    "price_level": 3,
+    "cuisine_types": [
+      "Contemporânea",
+      "Peixes Frescos",
+      "Saudável"
+    ],
+    "geometry": {
+      "location": {
+        "lat": -23.6264,
+        "lng": -45.3898
+      }
+    },
+    "menu_items": [
+      {
+        "name": "Badejo Grelhado na Crosta de Castanhas Sem Glúten",
+        "description": "Filé alto de badejo grelhado no azeite de ervas com purê de mandioquinha sem leite e aspargos. Sem glúten e zero lactose.",
+        "price": 89.9,
+        "category": "Grelhados do Mar"
+      },
+      {
+        "name": "Salada Mediterrânea Vegana de Grão-de-Bico e Quinoa",
+        "description": "Mix de folhas orgânicas, quinoa real, grão-de-bico assado com cúrcuma, abacate e vinagrete cítrico. Vegano, sem glúten e zero lactose.",
+        "price": 44.0,
+        "category": "Saudáveis & Veganos"
+      }
+    ],
+    "reviews": [
+      {
+        "author_name": "Mariana Alves (788)",
+        "rating": 5.0,
+        "text": "Excelente experiência no Bistrô Sol & Brisa Martim de Sá em Martim de Sá! Peixe muito fresco e tempero impecável. Moro na Rua das Palmeiras, nº 240, apto 14, meu cel é (12) 99741-8822 e email mariana.alves@provedor.com.br.",
+        "timestamp": "2026-10-28T00:27:22.300637+00:00"
+      },
+      {
+        "author_name": "Carlos Eduardo Ribeiro (688)",
+        "rating": 4.8,
+        "text": "Porção generosa, preço justo e opções sem lactose bem sinalizadas em Martim de Sá. Nota fiscal emitida no CPF 321.654.987-10 sem demora.",
+        "timestamp": "2026-10-21T00:27:22.300637+00:00"
+      },
+      {
+        "author_name": "Fernanda Caiçara (488)",
+        "rating": 4.9,
+        "text": "Atendimento cordial e ingredientes frescos de verdade no coração de Martim de Sá. Voltaremos com toda a família no próximo fim de semana!",
+        "timestamp": "2026-10-14T00:27:22.300637+00:00"
+      }
+    ]
+  }
+}

@@ -2,18 +2,18 @@ from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
-    create_async_engine
+    create_async_engine,
 )
 from app.core.config import settings
 
-# Engine assíncrono otimizado com pool para alta concorrência
+# Engine assíncrono otimizado com pool para alta concorrência e baixa latência
 async_engine = create_async_engine(
     settings.DATABASE_ASYNC_URL,
-    echo=settings.DEBUG,
+    echo=settings.SQL_ECHO,
     pool_size=15,
     max_overflow=25,
     pool_recycle=1800,
-    pool_pre_ping=True
+    pool_pre_ping=True,
 )
 
 # Fábrica de sessões assíncronas SQLAlchemy 2.0
@@ -21,8 +21,9 @@ AsyncSessionLocal = async_sessionmaker(
     bind=async_engine,
     class_=AsyncSession,
     expire_on_commit=False,
-    autoflush=False
+    autoflush=False,
 )
+
 
 async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
     """

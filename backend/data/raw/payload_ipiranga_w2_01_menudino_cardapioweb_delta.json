@@ -1,0 +1,35 @@
+{
+  "source_platform": "menudino_cardapioweb",
+  "tenant": {
+    "tenant_id": "menu-restaurante-grelhados-sa",
+    "name": "Restaurante & Grelhados Sabor de Ipiranga",
+    "slug": "restaurante-grelhados-sabor-de-ipiranga",
+    "street": "Via Principal de Ipiranga, 385",
+    "neighborhood": "Ipiranga",
+    "latitude": -23.62077,
+    "longitude": -45.41622,
+    "phone": "(12) 3886-5506",
+    "rating": 4.75,
+    "price_level": 2,
+    "cuisines": [
+      "Almoço Executivo",
+      "Carnes & Massas",
+      "Opções Veganas"
+    ]
+  },
+  "catalog_sections": [
+    {
+      "section_name": "Pratos Executivos",
+      "items": [
+        {
+          "sku": "menu-restaurante-grelhados-sa-md-1",
+          "title": "Executivo Pescada Grelhada com Pirão (Ipiranga)",
+          "subtitle": "Filé de pescada fresca grelhada no azeite com arroz, pirão caiçara e salada orgânica em Ipiranga. Sem glúten e zero lactose.",
+          "price": 35.9,
+          "modifiers": []
+        }
+      ]
+    }
+  ],
+  "reviews": []
+}

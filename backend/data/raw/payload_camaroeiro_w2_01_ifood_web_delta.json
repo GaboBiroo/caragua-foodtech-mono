@@ -1,0 +1,65 @@
+{
+  "url": "https://marketplace.ifood.com.br/v1/merchants/ifoo-entreposto-restaurante-p/catalog",
+  "status": 200,
+  "data": {
+    "data": {
+      "merchant": {
+        "id": "ifoo-entreposto-restaurante-p",
+        "name": "Entreposto & Restaurante Pescador do Camaroeiro",
+        "slug": "entreposto-restaurante-pescador-do-camaroeiro",
+        "userRating": 4.91,
+        "userRatingCount": 18,
+        "priceRange": 2,
+        "phone": "(12) 3882-7741",
+        "mainCategory": {
+          "name": "Pescados Frescos"
+        },
+        "tags": [
+          "Camarões",
+          "Culinária Caiçara"
+        ],
+        "address": {
+          "streetName": "Entreposto de Pesca Artesanal do Camaroeiro",
+          "streetNumber": "88",
+          "neighborhood": "Camaroeiro",
+          "latitude": -23.62017,
+          "longitude": -45.40172
+        }
+      },
+      "catalog": {
+        "categories": [
+          {
+            "name": "Direto dos Barcos",
+            "items": [
+              {
+                "id": "ifoo-entreposto-restaurante-p-item-1",
+                "name": "Porção de Camarão Sete Barbas Empanado no Fubá",
+                "details": "600g de camarão sete barbas recém-desembarcado no Camaroeiro, crocante no fubá sem trigo e zero lactose, com limão cravo.",
+                "unitMinPrice": 5990,
+                "priceInCents": true,
+                "dietaryRestrictions": [
+                  "GLUTEN_FREE",
+                  "LAC_FREE"
+                ],
+                "garnishGroups": [
+                  {
+                    "name": "Complementos Sugeridos",
+                    "min": 0,
+                    "max": 1,
+                    "garnishItems": [
+                      {
+                        "description": "Molho de Pimenta Caseiro",
+                        "unitPrice": 0
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "reviews": []
+    }
+  }
+}

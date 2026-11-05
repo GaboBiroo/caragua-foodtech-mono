@@ -1,0 +1,35 @@
+{
+  "source_platform": "menudino_cardapioweb",
+  "tenant": {
+    "tenant_id": "menu-cantina-familiar-brasa-p",
+    "name": "Cantina Familiar & Brasa Pontal de Santa Marina",
+    "slug": "cantina-familiar-brasa-pontal-de-santa-marina",
+    "street": "Via Principal de Pontal de Santa Marina, 481",
+    "neighborhood": "Pontal de Santa Marina",
+    "latitude": -23.66477,
+    "longitude": -45.42722,
+    "phone": "(12) 3886-4260",
+    "rating": 4.71,
+    "price_level": 2,
+    "cuisines": [
+      "Gastronomia Familiar",
+      "Pizzas & Assados",
+      "Cozinha Inclusiva"
+    ]
+  },
+  "catalog_sections": [
+    {
+      "section_name": "Para Compartilhar",
+      "items": [
+        {
+          "sku": "menu-cantina-familiar-brasa-p-md-1",
+          "title": "Caldeirada Caiçara Familiar de Pontal de Santa Marina",
+          "subtitle": "Peixe branco em postas com camarão, batatas e ervas frescas cozidos na panela de barro em Pontal de Santa Marina. Sem glúten e zero lactose.",
+          "price": 86.0,
+          "modifiers": []
+        }
+      ]
+    }
+  ],
+  "reviews": []
+}

@@ -1,0 +1,34 @@
+{
+  "source_platform": "google_maps_places",
+  "result": {
+    "place_id": "goog-cantina-familiar-brasa-b",
+    "name": "Cantina Familiar & Brasa Barranco Alto",
+    "slug": "cantina-familiar-brasa-barranco-alto",
+    "formatted_address": "Via Principal de Barranco Alto, 710 - Barranco Alto, Caraguatatuba - SP",
+    "neighborhood": "Barranco Alto",
+    "formatted_phone_number": "(12) 3883-1440",
+    "rating": 4.75,
+    "user_ratings_total": 24,
+    "price_level": 2,
+    "cuisine_types": [
+      "Gastronomia Familiar",
+      "Pizzas & Assados",
+      "Cozinha Inclusiva"
+    ],
+    "geometry": {
+      "location": {
+        "lat": -23.68877,
+        "lng": -45.44622
+      }
+    },
+    "menu_items": [
+      {
+        "name": "Caldeirada Caiçara Familiar de Barranco Alto",
+        "description": "Peixe branco em postas com camarão, batatas e ervas frescas cozidos na panela de barro em Barranco Alto. Sem glúten e zero lactose.",
+        "price": 86.0,
+        "category": "Para Compartilhar"
+      }
+    ],
+    "reviews": []
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "url": "https://marketplace.ifood.com.br/v1/merchants/ifoo-cantina-familiar-brasa-t/catalog",
+  "status": 200,
+  "data": {
+    "data": {
+      "merchant": {
+        "id": "ifoo-cantina-familiar-brasa-t",
+        "name": "Cantina Familiar & Brasa Travessão",
+        "slug": "cantina-familiar-brasa-travessao",
+        "userRating": 4.77,
+        "userRatingCount": 18,
+        "priceRange": 2,
+        "phone": "(12) 3884-4543",
+        "mainCategory": {
+          "name": "Gastronomia Familiar"
+        },
+        "tags": [
+          "Pizzas & Assados",
+          "Cozinha Inclusiva"
+        ],
+        "address": {
+          "streetName": "Via Principal de Travessão",
+          "streetNumber": "487",
+          "neighborhood": "Travessão",
+          "latitude": -23.70077,
+          "longitude": -45.45222
+        }
+      },
+      "catalog": {
+        "categories": [
+          {
+            "name": "Para Compartilhar",
+            "items": [
+              {
+                "id": "ifoo-cantina-familiar-brasa-t-item-1",
+                "name": "Caldeirada Caiçara Familiar de Travessão",
+                "details": "Peixe branco em postas com camarão, batatas e ervas frescas cozidos na panela de barro em Travessão. Sem glúten e zero lactose.",
+                "unitMinPrice": 8600,
+                "priceInCents": true,
+                "dietaryRestrictions": [
+                  "GLUTEN_FREE",
+                  "LAC_FREE"
+                ],
+                "garnishGroups": []
+              }
+            ]
+          }
+        ]
+      },
+      "reviews": []
+    }
+  }
+}

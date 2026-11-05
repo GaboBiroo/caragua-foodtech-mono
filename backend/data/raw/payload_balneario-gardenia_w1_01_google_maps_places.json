@@ -1,0 +1,59 @@
+{
+  "source_platform": "google_maps_places",
+  "result": {
+    "place_id": "goog-quiosque-peixaria-orla-d",
+    "name": "Quiosque & Peixaria Orla de Balneário Gardênia",
+    "slug": "quiosque-peixaria-orla-de-balneario-gardenia",
+    "formatted_address": "Via Principal de Balneário Gardênia, 434 - Balneário Gardênia, Caraguatatuba - SP",
+    "neighborhood": "Balneário Gardênia",
+    "formatted_phone_number": "(12) 3887-8796",
+    "rating": 4.74,
+    "user_ratings_total": 45,
+    "price_level": 2,
+    "cuisine_types": [
+      "Frutos do Mar",
+      "Porções de Praia",
+      "Açaí"
+    ],
+    "geometry": {
+      "location": {
+        "lat": -23.5983,
+        "lng": -45.3642
+      }
+    },
+    "menu_items": [
+      {
+        "name": "Porção de Camarão Sete Barbas no Fubá (Balneário Gardênia)",
+        "description": "Camarão fresco empanado no fubá artesanal servido na orla de Balneário Gardênia. Sem glúten e zero lactose.",
+        "price": 62.9,
+        "category": "Porções do Mar"
+      },
+      {
+        "name": "Açaí na Tigela Puro Vegano de Balneário Gardênia",
+        "description": "Açaí orgânico batido com banana da serra e frutas frescas. 100% vegano, sem glúten e sem lactose.",
+        "price": 28.9,
+        "category": "Tigelas Naturais"
+      }
+    ],
+    "reviews": [
+      {
+        "author_name": "Mariana Alves (571)",
+        "rating": 5.0,
+        "text": "Excelente experiência no Quiosque & Peixaria Orla de Balneário Gardênia em Balneário Gardênia! Peixe muito fresco e tempero impecável. Moro na Rua das Palmeiras, nº 240, apto 14, meu cel é (12) 99741-8822 e email mariana.alves@provedor.com.br.",
+        "timestamp": "2026-11-03T17:42:50.758124+00:00"
+      },
+      {
+        "author_name": "Carlos Eduardo Ribeiro (371)",
+        "rating": 4.5,
+        "text": "Porção generosa, preço justo e opções sem lactose bem sinalizadas em Balneário Gardênia. Nota fiscal emitida no CPF 321.654.987-10 sem demora.",
+        "timestamp": "2026-10-27T17:42:50.758124+00:00"
+      },
+      {
+        "author_name": "Fernanda Caiçara (371)",
+        "rating": 4.9,
+        "text": "Atendimento cordial e ingredientes frescos de verdade no coração de Balneário Gardênia. Voltaremos com toda a família no próximo fim de semana!",
+        "timestamp": "2026-10-20T17:42:50.758124+00:00"
+      }
+    ]
+  }
+}

@@ -1,0 +1,71 @@
+[
+  {
+    "url": "https://api.goomer.app/v2/stores/cantina-camaroeiro-centro/menu",
+    "status": 200,
+    "data": {
+      "source_platform": "goomer",
+      "store": {
+        "id": "goomer-centro-201",
+        "name": "Cantina & Raiz do Camaroeiro",
+        "slug": "cantina-raiz-do-camaroeiro",
+        "phone": "(12) 3883-1920",
+        "website": "https://cantinacamaroeiro.goomer.app",
+        "rating": 4.9,
+        "review_count": 96,
+        "price_level": 2,
+        "cuisine_types": ["Tradição Caiçara", "Opções Veganas", "Grelhados"],
+        "address": {
+          "street": "Av. Dr. Arthur Costa Filho, 410",
+          "neighborhood": "Centro",
+          "latitude": -23.6226,
+          "longitude": -45.4124
+        }
+      },
+      "categories": [
+        {
+          "name": "Grelhados na Brasa",
+          "products": [
+            {
+              "id": "gm-prod-01",
+              "name": "Tainha Espalmada na Brasa Sem Glúten",
+              "description": "Tainha inteira grelhada na brasa sem glúten e sem lactose, servida com vinagrete e farofa de banana-da-terra.",
+              "price": "R$ 86,00",
+              "complement_groups": [
+                {
+                  "name": "Guarnição Inclusa",
+                  "required": true,
+                  "max_qty": 1,
+                  "options": [
+                    { "name": "Arroz Branco Soltinho", "price": 0.0 },
+                    { "name": "Pirão de Caldo de Peixe", "price": 0.0 }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Cozinha Natural & Vegana",
+          "products": [
+            {
+              "id": "gm-prod-02",
+              "name": "Moqueca Vegana de Banana-da-Terra e Palmito Pupunha",
+              "description": "Prato 100% vegetal, vegano, sem glúten e sem ingredientes de origem animal, com leite de coco fresco e coentro.",
+              "price": "R$ 62,50",
+              "is_vegan": true,
+              "is_gluten_free": true
+            }
+          ]
+        }
+      ],
+      "reviews": [
+        {
+          "author": "9c8b7a6f5e4d3c2b1a09f8e7d6c5b4a39281706f5e4d3c2b1a09f8e7d6c5b4a3",
+          "rating": 4.9,
+          "comment": "A moqueca vegana de palmito pupunha é impecável e super bem servida no Centro.",
+          "timestamp": "2026-10-26T21:15:00Z"
+        }
+      ]
+    }
+  }
+]

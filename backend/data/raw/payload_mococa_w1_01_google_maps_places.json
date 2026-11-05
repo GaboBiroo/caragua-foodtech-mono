@@ -1,0 +1,59 @@
+{
+  "source_platform": "google_maps_places",
+  "result": {
+    "place_id": "goog-quiosque-aguas-claras-da",
+    "name": "Quiosque Águas Claras da Mococa",
+    "slug": "quiosque-aguas-claras-da-mococa",
+    "formatted_address": "Praia da Mococa, Quiosque 04 - Mococa, Caraguatatuba - SP",
+    "neighborhood": "Mococa",
+    "formatted_phone_number": "(12) 3884-7120",
+    "rating": 4.82,
+    "user_ratings_total": 45,
+    "price_level": 2,
+    "cuisine_types": [
+      "Quiosque Pé na Areia",
+      "Pescados",
+      "Açaí"
+    ],
+    "geometry": {
+      "location": {
+        "lat": -23.5853,
+        "lng": -45.3407
+      }
+    },
+    "menu_items": [
+      {
+        "name": "Porção de Manjubinha Crocante no Fubá",
+        "description": "500g de manjubinhas frescas inteiras passadas no fubá mimoso e fritas em óleo de algodão limpo. Sem glúten e zero lactose.",
+        "price": 48.0,
+        "category": "Pé na Areia"
+      },
+      {
+        "name": "Tigela Tropical de Pitaya e Açaí Vegano Sem Lactose",
+        "description": "Creme natural de pitaya vermelha com açaí orgânico, coco em lascas e castanha-do-pará. Vegano, sem glúten e zero lactose.",
+        "price": 32.0,
+        "category": "Refrescantes"
+      }
+    ],
+    "reviews": [
+      {
+        "author_name": "Mariana Alves (942)",
+        "rating": 5.0,
+        "text": "Excelente experiência no Quiosque Águas Claras da Mococa em Mococa! Peixe muito fresco e tempero impecável. Moro na Rua das Palmeiras, nº 240, apto 14, meu cel é (12) 99741-8822 e email mariana.alves@provedor.com.br.",
+        "timestamp": "2026-10-28T00:27:22.406858+00:00"
+      },
+      {
+        "author_name": "Carlos Eduardo Ribeiro (842)",
+        "rating": 4.8,
+        "text": "Porção generosa, preço justo e opções sem lactose bem sinalizadas em Mococa. Nota fiscal emitida no CPF 321.654.987-10 sem demora.",
+        "timestamp": "2026-10-21T00:27:22.406858+00:00"
+      },
+      {
+        "author_name": "Fernanda Caiçara (442)",
+        "rating": 4.9,
+        "text": "Atendimento cordial e ingredientes frescos de verdade no coração de Mococa. Voltaremos com toda a família no próximo fim de semana!",
+        "timestamp": "2026-10-14T00:27:22.406858+00:00"
+      }
+    ]
+  }
+}

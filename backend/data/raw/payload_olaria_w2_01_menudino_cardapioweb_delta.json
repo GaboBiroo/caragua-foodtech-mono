@@ -1,0 +1,35 @@
+{
+  "source_platform": "menudino_cardapioweb",
+  "tenant": {
+    "tenant_id": "menu-quiosque-peixaria-orla-d",
+    "name": "Quiosque & Peixaria Orla de Olaria",
+    "slug": "quiosque-peixaria-orla-de-olaria",
+    "street": "Via Principal de Olaria, 633",
+    "neighborhood": "Olaria",
+    "latitude": -23.61577,
+    "longitude": -45.40222,
+    "phone": "(12) 3886-9449",
+    "rating": 4.73,
+    "price_level": 2,
+    "cuisines": [
+      "Frutos do Mar",
+      "Porções de Praia",
+      "Açaí"
+    ]
+  },
+  "catalog_sections": [
+    {
+      "section_name": "Porções do Mar",
+      "items": [
+        {
+          "sku": "menu-quiosque-peixaria-orla-d-md-1",
+          "title": "Porção de Camarão Sete Barbas no Fubá (Olaria)",
+          "subtitle": "Camarão fresco empanado no fubá artesanal servido na orla de Olaria. Sem glúten e zero lactose.",
+          "price": 56.9,
+          "modifiers": []
+        }
+      ]
+    }
+  ],
+  "reviews": []
+}

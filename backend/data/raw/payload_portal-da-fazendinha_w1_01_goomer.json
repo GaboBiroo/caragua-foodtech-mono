@@ -1,0 +1,76 @@
+{
+  "source_platform": "goomer",
+  "store": {
+    "id": "goom-quiosque-peixaria-orla-d",
+    "name": "Quiosque & Peixaria Orla de Portal da Fazendinha",
+    "slug": "quiosque-peixaria-orla-de-portal-da-fazendinha",
+    "phone": "(12) 3885-9073",
+    "rating": 4.83,
+    "price_level": 2,
+    "cuisine_types": [
+      "Frutos do Mar",
+      "Porções de Praia",
+      "Açaí"
+    ],
+    "address": {
+      "street": "Via Principal de Portal da Fazendinha, 168",
+      "neighborhood": "Portal da Fazendinha",
+      "lat": -23.5948,
+      "lng": -45.3612
+    }
+  },
+  "categories": [
+    {
+      "name": "Porções do Mar",
+      "products": [
+        {
+          "id": "goom-quiosque-peixaria-orla-d-g-1",
+          "name": "Porção de Camarão Sete Barbas no Fubá (Portal da Fazendinha)",
+          "description": "Camarão fresco empanado no fubá artesanal servido na orla de Portal da Fazendinha. Sem glúten e zero lactose.",
+          "price": "R$ 62,90",
+          "is_vegan": false,
+          "is_vegetarian": false,
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "complement_groups": []
+        }
+      ]
+    },
+    {
+      "name": "Tigelas Naturais",
+      "products": [
+        {
+          "id": "goom-quiosque-peixaria-orla-d-g-2",
+          "name": "Açaí na Tigela Puro Vegano de Portal da Fazendinha",
+          "description": "Açaí orgânico batido com banana da serra e frutas frescas. 100% vegano, sem glúten e sem lactose.",
+          "price": "R$ 28,90",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "complement_groups": []
+        }
+      ]
+    }
+  ],
+  "reviews": [
+    {
+      "author_name": "Mariana Alves (294)",
+      "rating": 5.0,
+      "comment": "Excelente experiência no Quiosque & Peixaria Orla de Portal da Fazendinha em Portal da Fazendinha! Peixe muito fresco e tempero impecável. Moro na Rua das Palmeiras, nº 240, apto 14, meu cel é (12) 99741-8822 e email mariana.alves@provedor.com.br.",
+      "timestamp": "2026-11-03T17:42:50.738743+00:00"
+    },
+    {
+      "author_name": "Carlos Eduardo Ribeiro (594)",
+      "rating": 4.8,
+      "comment": "Porção generosa, preço justo e opções sem lactose bem sinalizadas em Portal da Fazendinha. Nota fiscal emitida no CPF 321.654.987-10 sem demora.",
+      "timestamp": "2026-10-27T17:42:50.738743+00:00"
+    },
+    {
+      "author_name": "Fernanda Caiçara (494)",
+      "rating": 4.9,
+      "comment": "Atendimento cordial e ingredientes frescos de verdade no coração de Portal da Fazendinha. Voltaremos com toda a família no próximo fim de semana!",
+      "timestamp": "2026-10-20T17:42:50.738743+00:00"
+    }
+  ]
+}

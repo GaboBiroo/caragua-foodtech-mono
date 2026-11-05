@@ -1,0 +1,35 @@
+{
+  "source_platform": "menudino_cardapioweb",
+  "tenant": {
+    "tenant_id": "menu-restaurante-grelhados-sa",
+    "name": "Restaurante & Grelhados Sabor de Ponte Seca",
+    "slug": "restaurante-grelhados-sabor-de-ponte-seca",
+    "street": "Via Principal de Ponte Seca, 797",
+    "neighborhood": "Ponte Seca",
+    "latitude": -23.61177,
+    "longitude": -45.40922,
+    "phone": "(12) 3882-7866",
+    "rating": 4.87,
+    "price_level": 2,
+    "cuisines": [
+      "Almoço Executivo",
+      "Carnes & Massas",
+      "Opções Veganas"
+    ]
+  },
+  "catalog_sections": [
+    {
+      "section_name": "Pratos Executivos",
+      "items": [
+        {
+          "sku": "menu-restaurante-grelhados-sa-md-1",
+          "title": "Executivo Pescada Grelhada com Pirão (Ponte Seca)",
+          "subtitle": "Filé de pescada fresca grelhada no azeite com arroz, pirão caiçara e salada orgânica em Ponte Seca. Sem glúten e zero lactose.",
+          "price": 35.9,
+          "modifiers": []
+        }
+      ]
+    }
+  ],
+  "reviews": []
+}

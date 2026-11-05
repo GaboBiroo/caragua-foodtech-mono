@@ -1,0 +1,41 @@
+{
+  "source_platform": "goomer",
+  "store": {
+    "id": "goom-defumador-costelaria-da-",
+    "name": "Defumador & Costelaria da Serra do Tinga",
+    "slug": "defumador-costelaria-da-serra-do-tinga",
+    "phone": "(12) 3883-9410",
+    "rating": 4.87,
+    "price_level": 2,
+    "cuisine_types": [
+      "Defumados",
+      "Costela no Bafo",
+      "Cozinha da Roça"
+    ],
+    "address": {
+      "street": "Estrada Municipal do Tinga, 780",
+      "neighborhood": "Tinga",
+      "lat": -23.63457,
+      "lng": -45.41532
+    }
+  },
+  "categories": [
+    {
+      "name": "Defumados de Longa Cocção",
+      "products": [
+        {
+          "id": "goom-defumador-costelaria-da--g-1",
+          "name": "Costela Bovina Defumada na Lenha por 12 Horas",
+          "description": "Costela janela desmanchando defumada lentamente em lenha de jabuticabeira, mandioca cozida sem leite e farofa crocante de milho. Sem glúten e zero lactose.",
+          "price": "R$ 102,90",
+          "is_vegan": false,
+          "is_vegetarian": false,
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "complement_groups": []
+        }
+      ]
+    }
+  ],
+  "reviews": []
+}

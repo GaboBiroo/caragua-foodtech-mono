@@ -1,0 +1,34 @@
+{
+  "source_platform": "google_maps_places",
+  "result": {
+    "place_id": "goog-bistro-sol-brisa-martim-",
+    "name": "Bistrô Sol & Brisa Martim de Sá",
+    "slug": "bistro-sol-brisa-martim-de-sa",
+    "formatted_address": "Av. Flamboyant, 95 - Martim de Sá, Caraguatatuba - SP",
+    "neighborhood": "Martim de Sá",
+    "formatted_phone_number": "(12) 3884-2190",
+    "rating": 4.74,
+    "user_ratings_total": 24,
+    "price_level": 3,
+    "cuisine_types": [
+      "Contemporânea",
+      "Peixes Frescos",
+      "Saudável"
+    ],
+    "geometry": {
+      "location": {
+        "lat": -23.62637,
+        "lng": -45.38982
+      }
+    },
+    "menu_items": [
+      {
+        "name": "Badejo Grelhado na Crosta de Castanhas Sem Glúten",
+        "description": "Filé alto de badejo grelhado no azeite de ervas com purê de mandioquinha sem leite e aspargos. Sem glúten e zero lactose.",
+        "price": 79.9,
+        "category": "Grelhados do Mar"
+      }
+    ],
+    "reviews": []
+  }
+}

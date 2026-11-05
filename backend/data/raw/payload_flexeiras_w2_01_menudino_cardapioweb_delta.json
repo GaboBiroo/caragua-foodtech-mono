@@ -1,0 +1,35 @@
+{
+  "source_platform": "menudino_cardapioweb",
+  "tenant": {
+    "tenant_id": "menu-cantina-familiar-brasa-f",
+    "name": "Cantina Familiar & Brasa Flexeiras",
+    "slug": "cantina-familiar-brasa-flexeiras",
+    "street": "Via Principal de Flexeiras, 405",
+    "neighborhood": "Flexeiras",
+    "latitude": -23.68427,
+    "longitude": -45.44272,
+    "phone": "(12) 3882-3089",
+    "rating": 4.7,
+    "price_level": 2,
+    "cuisines": [
+      "Gastronomia Familiar",
+      "Pizzas & Assados",
+      "Cozinha Inclusiva"
+    ]
+  },
+  "catalog_sections": [
+    {
+      "section_name": "Para Compartilhar",
+      "items": [
+        {
+          "sku": "menu-cantina-familiar-brasa-f-md-1",
+          "title": "Caldeirada Caiçara Familiar de Flexeiras",
+          "subtitle": "Peixe branco em postas com camarão, batatas e ervas frescas cozidos na panela de barro em Flexeiras. Sem glúten e zero lactose.",
+          "price": 86.0,
+          "modifiers": []
+        }
+      ]
+    }
+  ],
+  "reviews": []
+}

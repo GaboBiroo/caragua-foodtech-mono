@@ -1,0 +1,65 @@
+{
+  "source_platform": "google_maps_places",
+  "result": {
+    "place_id": "goog-varanda-ribeirinha-do-ju",
+    "name": "Varanda Ribeirinha do Juqueriquerê",
+    "slug": "varanda-ribeirinha-do-juqueriquere",
+    "formatted_address": "Av. José Herculano, 6420 - Porto Novo - Porto Novo, Caraguatatuba - SP",
+    "neighborhood": "Porto Novo",
+    "formatted_phone_number": "(12) 3887-4090",
+    "rating": 4.81,
+    "user_ratings_total": 45,
+    "price_level": 2,
+    "cuisine_types": [
+      "Peixaria Ribeirinha",
+      "Caldeiradas",
+      "Culinária Caiçara"
+    ],
+    "geometry": {
+      "location": {
+        "lat": -23.6815,
+        "lng": -45.4414
+      }
+    },
+    "menu_items": [
+      {
+        "name": "Robalo de Rio e Mar Assado Inteiro com Pirão",
+        "description": "Robalo fresco pescado na foz do Rio Juqueriquerê assado com ervas, acompanhado de pirão tradicional e arroz branco. Sem glúten e zero lactose.",
+        "price": 112.0,
+        "category": "Especialidades do Porto Novo"
+      },
+      {
+        "name": "Prato Executivo Isca de Pescada no Fubá",
+        "description": "Porção individual econômica de pescada branca empanada no fubá, arroz, feijão tropeiro sem bacon e salada. Sem glúten e sem lactose.",
+        "price": 36.9,
+        "category": "Executivo Econômico"
+      },
+      {
+        "name": "Casquinha Vegana de Carne de Jaca Desfiada no Dendê",
+        "description": "Jaca verde jovem desfiada e refogada com leite de coco, pimentões coloridos, coentro e farofa de dendê sem glúten. 100% vegana e zero lactose.",
+        "price": 24.9,
+        "category": "Entradas Inclusivas"
+      }
+    ],
+    "reviews": [
+      {
+        "author_name": "Mariana Alves (932)",
+        "rating": 5.0,
+        "text": "Excelente experiência no Varanda Ribeirinha do Juqueriquerê em Porto Novo! Peixe muito fresco e tempero impecável. Moro na Rua das Palmeiras, nº 240, apto 14, meu cel é (12) 99741-8822 e email mariana.alves@provedor.com.br.",
+        "timestamp": "2026-10-28T00:27:22.356989+00:00"
+      },
+      {
+        "author_name": "Carlos Eduardo Ribeiro (832)",
+        "rating": 4.8,
+        "text": "Porção generosa, preço justo e opções sem lactose bem sinalizadas em Porto Novo. Nota fiscal emitida no CPF 321.654.987-10 sem demora.",
+        "timestamp": "2026-10-21T00:27:22.356989+00:00"
+      },
+      {
+        "author_name": "Fernanda Caiçara (632)",
+        "rating": 4.9,
+        "text": "Atendimento cordial e ingredientes frescos de verdade no coração de Porto Novo. Voltaremos com toda a família no próximo fim de semana!",
+        "timestamp": "2026-10-14T00:27:22.356989+00:00"
+      }
+    ]
+  }
+}

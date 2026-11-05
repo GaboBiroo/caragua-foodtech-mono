@@ -1,0 +1,66 @@
+{
+  "source_platform": "menudino_cardapioweb",
+  "tenant": {
+    "tenant_id": "menu-cantina-familiar-brasa-v",
+    "name": "Cantina Familiar & Brasa Vapapesca",
+    "slug": "cantina-familiar-brasa-vapapesca",
+    "street": "Via Principal de Vapapesca, 457",
+    "neighborhood": "Vapapesca",
+    "latitude": -23.6923,
+    "longitude": -45.4492,
+    "phone": "(12) 3886-2429",
+    "rating": 4.72,
+    "price_level": 2,
+    "cuisines": [
+      "Gastronomia Familiar",
+      "Pizzas & Assados",
+      "Cozinha Inclusiva"
+    ]
+  },
+  "catalog_sections": [
+    {
+      "section_name": "Para Compartilhar",
+      "items": [
+        {
+          "sku": "menu-cantina-familiar-brasa-v-md-1",
+          "title": "Caldeirada Caiçara Familiar de Vapapesca",
+          "subtitle": "Peixe branco em postas com camarão, batatas e ervas frescas cozidos na panela de barro em Vapapesca. Sem glúten e zero lactose.",
+          "price": 94.0,
+          "modifiers": []
+        }
+      ]
+    },
+    {
+      "section_name": "Massas Inclusivas",
+      "items": [
+        {
+          "sku": "menu-cantina-familiar-brasa-v-md-2",
+          "title": "Nhoque Vegano de Batata-Doce Sem Glúten (Vapapesca)",
+          "subtitle": "Nhoque artesanal preparado sem trigo e sem laticínios ao molho de tomates frescos e manjericão.",
+          "price": 43.9,
+          "modifiers": []
+        }
+      ]
+    }
+  ],
+  "reviews": [
+    {
+      "author_name": "Mariana Alves (483)",
+      "rating": 5.0,
+      "comment": "Excelente experiência no Cantina Familiar & Brasa Vapapesca em Vapapesca! Peixe muito fresco e tempero impecável. Moro na Rua das Palmeiras, nº 240, apto 14, meu cel é (12) 99741-8822 e email mariana.alves@provedor.com.br.",
+      "timestamp": "2026-11-03T17:42:50.842178+00:00"
+    },
+    {
+      "author_name": "Carlos Eduardo Ribeiro (283)",
+      "rating": 4.5,
+      "comment": "Porção generosa, preço justo e opções sem lactose bem sinalizadas em Vapapesca. Nota fiscal emitida no CPF 321.654.987-10 sem demora.",
+      "timestamp": "2026-10-27T17:42:50.842178+00:00"
+    },
+    {
+      "author_name": "Fernanda Caiçara (783)",
+      "rating": 4.9,
+      "comment": "Atendimento cordial e ingredientes frescos de verdade no coração de Vapapesca. Voltaremos com toda a família no próximo fim de semana!",
+      "timestamp": "2026-10-20T17:42:50.842178+00:00"
+    }
+  ]
+}

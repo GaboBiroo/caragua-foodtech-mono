@@ -1,0 +1,76 @@
+{
+  "source_platform": "goomer",
+  "store": {
+    "id": "goom-restaurante-grelhados-sa",
+    "name": "Restaurante & Grelhados Sabor de Jardim Jaqueira",
+    "slug": "restaurante-grelhados-sabor-de-jardim-jaqueira",
+    "phone": "(12) 3881-8435",
+    "rating": 4.79,
+    "price_level": 2,
+    "cuisine_types": [
+      "Almoço Executivo",
+      "Carnes & Massas",
+      "Opções Veganas"
+    ],
+    "address": {
+      "street": "Via Principal de Jardim Jaqueira, 564",
+      "neighborhood": "Jardim Jaqueira",
+      "lat": -23.6183,
+      "lng": -45.4182
+    }
+  },
+  "categories": [
+    {
+      "name": "Pratos Executivos",
+      "products": [
+        {
+          "id": "goom-restaurante-grelhados-sa-g-1",
+          "name": "Executivo Pescada Grelhada com Pirão (Jardim Jaqueira)",
+          "description": "Filé de pescada fresca grelhada no azeite com arroz, pirão caiçara e salada orgânica em Jardim Jaqueira. Sem glúten e zero lactose.",
+          "price": "R$ 39,90",
+          "is_vegan": false,
+          "is_vegetarian": false,
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "complement_groups": []
+        }
+      ]
+    },
+    {
+      "name": "Entradas Veganas",
+      "products": [
+        {
+          "id": "goom-restaurante-grelhados-sa-g-2",
+          "name": "Bolinho de Taioba e Mandioca Vegano (Jardim Jaqueira)",
+          "description": "Porção artesanal 100% vegetal assada e dourada no azeite com ervas frescas. Vegano, sem glúten e sem lactose.",
+          "price": "R$ 33,90",
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "is_lactose_free": true,
+          "complement_groups": []
+        }
+      ]
+    }
+  ],
+  "reviews": [
+    {
+      "author_name": "Mariana Alves (682)",
+      "rating": 5.0,
+      "comment": "Excelente experiência no Restaurante & Grelhados Sabor de Jardim Jaqueira em Jardim Jaqueira! Peixe muito fresco e tempero impecável. Moro na Rua das Palmeiras, nº 240, apto 14, meu cel é (12) 99741-8822 e email mariana.alves@provedor.com.br.",
+      "timestamp": "2026-11-03T17:42:50.639295+00:00"
+    },
+    {
+      "author_name": "Carlos Eduardo Ribeiro (582)",
+      "rating": 4.8,
+      "comment": "Porção generosa, preço justo e opções sem lactose bem sinalizadas em Jardim Jaqueira. Nota fiscal emitida no CPF 321.654.987-10 sem demora.",
+      "timestamp": "2026-10-27T17:42:50.639295+00:00"
+    },
+    {
+      "author_name": "Fernanda Caiçara (582)",
+      "rating": 4.9,
+      "comment": "Atendimento cordial e ingredientes frescos de verdade no coração de Jardim Jaqueira. Voltaremos com toda a família no próximo fim de semana!",
+      "timestamp": "2026-10-20T17:42:50.639295+00:00"
+    }
+  ]
+}

@@ -63,6 +63,23 @@ interface VerifiedCustomerReview {
   review_date: string | null;
 }
 
+function formatOpeningHours(val: unknown): string {
+  if (!val) return 'Ter a Dom • 11h30 às 23h00';
+  if (typeof val === 'string') return val;
+  if (typeof val === 'object' && val !== null) {
+    const obj = val as Record<string, unknown>;
+    if (obj.osm_schedule && typeof obj.osm_schedule === 'string') {
+      return obj.osm_schedule
+        .replace(/Mo-Fr/g, 'Segunda a Sexta')
+        .replace(/Mo-Su/g, 'Todos os dias')
+        .replace(/Sa-Su/g, 'Sábado e Domingo')
+        .replace(/Tu-Su/g, 'Terça a Domingo');
+    }
+    return 'Ter a Dom • 11h30 às 23h00';
+  }
+  return String(val);
+}
+
 interface RestaurantDetailData {
   id: string;
   name: string;
@@ -73,7 +90,7 @@ interface RestaurantDetailData {
   state: string;
   phone?: string | null;
   website?: string | null;
-  opening_hours?: string | null;
+  opening_hours?: any;
   latitude: number;
   longitude: number;
   price_level: number;
@@ -348,7 +365,7 @@ export default function RestaurantMenuDetailPage() {
                     {detail.opening_hours && (
                       <span className="inline-flex items-center gap-1 text-stone-600">
                         <Clock className="w-3.5 h-3.5 text-[#135136]" />
-                        {detail.opening_hours}
+                        {formatOpeningHours(detail.opening_hours)}
                       </span>
                     )}
                   </div>

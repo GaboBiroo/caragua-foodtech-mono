@@ -28,6 +28,23 @@ import { realDataStore } from '../../../data/realDataStore';
 
 
 
+function formatOpeningHours(val: unknown): string {
+  if (!val) return 'Ter a Dom • 11h30 às 23h00';
+  if (typeof val === 'string') return val;
+  if (typeof val === 'object' && val !== null) {
+    const obj = val as Record<string, unknown>;
+    if (obj.osm_schedule && typeof obj.osm_schedule === 'string') {
+      return obj.osm_schedule
+        .replace(/Mo-Fr/g, 'Segunda a Sexta')
+        .replace(/Mo-Su/g, 'Todos os dias')
+        .replace(/Sa-Su/g, 'Sábado e Domingo')
+        .replace(/Tu-Su/g, 'Terça a Domingo');
+    }
+    return 'Ter a Dom • 11h30 às 23h00';
+  }
+  return String(val);
+}
+
 interface PratoDetailClientProps {
   dishIdParam?: string;
   post: FeedPost;
@@ -157,7 +174,7 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
           setNeighborhood(data.restaurant.neighborhood);
           setAddress(data.restaurant.address);
           if (data.restaurant.phone) setPhone(data.restaurant.phone);
-          if (data.restaurant.opening_hours) setOpeningHours(data.restaurant.opening_hours);
+          if (data.restaurant.opening_hours) setOpeningHours(formatOpeningHours(data.restaurant.opening_hours));
           if (typeof data.restaurant.distance_km === 'number') {
             setDistanceKm(data.restaurant.distance_km);
           }

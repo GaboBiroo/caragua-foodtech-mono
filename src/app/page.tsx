@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
 import { CaraguaAIChatDrawer } from '../components/CaraguaAIChatDrawer';
+import { realDataStore } from '../data/realDataStore';
 
 interface DishPreview {
   id: string;
@@ -71,7 +72,15 @@ interface NeighborhoodSummaryItem {
   active_dishes_count: number;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL;
+const getApiBase = () => {
+  if (typeof window !== 'undefined') {
+    if (!BACKEND_URL || BACKEND_URL.includes('localhost') || BACKEND_URL.includes('127.0.0.1')) {
+      return '/api';
+    }
+  }
+  return BACKEND_URL || '/api';
+};
 
 const DIETARY_PILLS = [
   { key: 'vegan', label: 'Vegano', emoji: '🌱' },
@@ -150,17 +159,25 @@ export default function HomePage() {
     let mounted = true;
     (async () => {
       try {
-        const res = await fetch(`${API_BASE}/restaurants/neighborhoods/summary`, {
+        const apiBase = getApiBase();
+        const res = await fetch(`${apiBase}/restaurants/neighborhoods/summary`, {
           cache: 'no-store',
         });
-        if (!res.ok) return;
-        const data = await res.json();
-        if (mounted && Array.isArray(data.neighborhoods)) {
-          setNeighborhoods(data.neighborhoods);
-          setPopulatedZonesCount(data.populated_neighborhoods_count || 53);
+        if (res.ok) {
+          const data = await res.json();
+          if (mounted && Array.isArray(data.neighborhoods) && data.neighborhoods.length > 0) {
+            setNeighborhoods(data.neighborhoods);
+            setPopulatedZonesCount(data.populated_neighborhoods_count || 53);
+            return;
+          }
         }
       } catch {
-        // Segue normalmente se o resumo demorar
+        // Segue para fallback com dados reais
+      }
+      if (mounted) {
+        const local = realDataStore.getNeighborhoodsSummary();
+        setNeighborhoods(local.neighborhoods);
+        setPopulatedZonesCount(local.populated_neighborhoods_count);
       }
     })();
     return () => {
@@ -176,6 +193,9 @@ export default function HomePage() {
       if (selectedNeighborhood && selectedNeighborhood !== 'Todos') {
         params.set('neighborhood', selectedNeighborhood);
       }
+      if (selectedMacroRegion && selectedMacroRegion !== 'Todas') {
+        params.set('macroRegion', selectedMacroRegion);
+      }
       if (debouncedSearch) {
         params.set('search', debouncedSearch);
       }
@@ -190,26 +210,39 @@ export default function HomePage() {
       params.set('sort_by', sortBy === 'distance' ? 'distance' : 'recommended');
       params.set('limit', '60');
 
-      const res = await fetch(`${API_BASE}/restaurants?${params.toString()}`, {
+      const apiBase = getApiBase();
+      const res = await fetch(`${apiBase}/restaurants?${params.toString()}`, {
         cache: 'no-store',
       });
-      if (!res.ok) {
-        throw new Error(`Não foi possível carregar os cardápios (${res.status})`);
-      }
-      const data: RestaurantCardData[] = await res.json();
-      setRestaurants(data);
-    } catch {
-      try {
-        const fallbackRes = await fetch('/api/restaurants?limit=60', { cache: 'no-store' });
-        const fallbackJson = await fallbackRes.json();
-        if (Array.isArray(fallbackJson.restaurants)) {
-          setRestaurants(fallbackJson.restaurants);
-        } else {
-          setErrorMsg('Estamos atualizando os cardápios da cidade. Tente atualizar a página em instantes!');
+      if (res.ok) {
+        const json = await res.json();
+        const data: RestaurantCardData[] = Array.isArray(json) ? json : json.restaurants || [];
+        if (data.length > 0) {
+          setRestaurants(data);
+          setLoading(false);
+          return;
         }
-      } catch {
-        setErrorMsg('Não conseguimos carregar os cardápios agora. Verifique sua conexão e tente novamente.');
       }
+    } catch {
+      // Fallback
+    }
+
+    // Fallback garantido usando o banco de dados real com 0ms de latência
+    try {
+      const localData = realDataStore.getRestaurants({
+        neighborhood: selectedNeighborhood,
+        macroRegion: selectedMacroRegion,
+        search: debouncedSearch,
+        dietary: selectedDietary,
+        priceDropOnly,
+        lat: userCoords.lat,
+        lon: userCoords.lon,
+        sortBy,
+        limit: 60,
+      });
+      setRestaurants(localData);
+    } catch {
+      setErrorMsg('Não conseguimos carregar os cardápios agora. Verifique sua conexão e tente novamente.');
     } finally {
       setLoading(false);
     }
@@ -218,6 +251,7 @@ export default function HomePage() {
     priceDropOnly,
     selectedDietary,
     selectedNeighborhood,
+    selectedMacroRegion,
     sortBy,
     userCoords.lat,
     userCoords.lon,

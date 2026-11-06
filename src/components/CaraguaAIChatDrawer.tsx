@@ -277,7 +277,7 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
                       syncJson.answer ||
                       syncJson.reply ||
                       'Dei uma olhada nos cardápios de hoje! Veja as sugestões logo abaixo.',
-                    recommendations: syncJson.recommendations || [],
+                    recommendations: syncJson.recommendations || syncJson.dishes || [],
                     isStreaming: false,
                   }
                 : m

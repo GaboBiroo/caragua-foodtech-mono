@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { CaraguaAIChatDrawer } from '@/components/CaraguaAIChatDrawer';
+import { realDataStore } from '@/data/realDataStore';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
 
@@ -185,14 +186,26 @@ export default function RestaurantMenuDetailPage() {
     setIsLoading(true);
     setErrorMsg(null);
     try {
-      const res = await fetch(`${API_BASE}/restaurants/${encodeURIComponent(slug)}`, {
+      const res = await fetch(`/api/restaurants/${encodeURIComponent(slug)}`, {
         cache: 'no-store',
       });
-      if (!res.ok) {
-        throw new Error('Não encontramos este restaurante agora.');
+      if (res.ok) {
+        const json: RestaurantDetailData = await res.json();
+        setDetail(json);
+        setIsLoading(false);
+        return;
       }
-      const json: RestaurantDetailData = await res.json();
-      setDetail(json);
+    } catch {
+      // Fallback gracioso
+    }
+
+    try {
+      const fallbackData = realDataStore.getRestaurantBySlug(slug) as unknown as RestaurantDetailData;
+      if (fallbackData) {
+        setDetail(fallbackData);
+      } else {
+        setErrorMsg('Não encontramos este restaurante agora.');
+      }
     } catch (err: unknown) {
       setErrorMsg(
         err instanceof Error

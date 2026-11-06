@@ -16,8 +16,9 @@ import {
 } from 'lucide-react';
 import { Navbar } from '../../components/Navbar';
 import { CaraguaAIChatDrawer } from '../../components/CaraguaAIChatDrawer';
+import { realDataStore } from '../../data/realDataStore';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+
 
 interface FavoriteDishItem {
   id: string;
@@ -68,18 +69,25 @@ export default function FavoritesPage() {
     let mounted = true;
     (async () => {
       try {
-        const res = await fetch(`${API_BASE}/restaurants?limit=60`, {
+        const res = await fetch('/api/restaurants?limit=60', {
           cache: 'no-store',
         });
-        if (!res.ok) return;
-        const json: FavoriteRestaurantItem[] = await res.json();
-        if (mounted && Array.isArray(json)) {
-          setFavorites(json);
+        if (res.ok) {
+          const json = await res.json();
+          const items: FavoriteRestaurantItem[] = Array.isArray(json) ? json : json.restaurants || [];
+          if (mounted && items.length > 0) {
+            setFavorites(items);
+            setLoading(false);
+            return;
+          }
         }
       } catch {
-        // Mantém lista vazia em caso de oscilação momentânea
-      } finally {
-        if (mounted) setLoading(false);
+        // Fallback
+      }
+      if (mounted) {
+        const local = realDataStore.getRestaurants({ limit: 60 }) as unknown as FavoriteRestaurantItem[];
+        setFavorites(local);
+        setLoading(false);
       }
     })();
     return () => {

@@ -15,7 +15,7 @@ import {
 import { Navbar } from '../../components/Navbar';
 import { NEIGHBORHOODS } from '../../data/caraguaData';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+
 
 interface SavedLeadItem {
   id: string;
@@ -49,8 +49,8 @@ export default function ContatoPage() {
     (async () => {
       try {
         const [neighRes, leadsRes] = await Promise.all([
-          fetch(`${API_BASE}/restaurants/neighborhoods/summary`, { cache: 'no-store' }),
-          fetch(`${API_BASE}/restaurants/leads?limit=5`, { cache: 'no-store' }),
+          fetch('/api/restaurants/neighborhoods/summary', { cache: 'no-store' }),
+          fetch('/api/restaurants/leads?limit=5', { cache: 'no-store' }),
         ]);
         if (neighRes.ok) {
           const nData = await neighRes.json();
@@ -81,7 +81,7 @@ export default function ContatoPage() {
 
     let protocolNumber = `CG-FT-${Math.floor(100000 + Math.random() * 900000)}`;
     try {
-      const res = await fetch(`${API_BASE}/restaurants/leads`, {
+      const res = await fetch('/api/restaurants/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

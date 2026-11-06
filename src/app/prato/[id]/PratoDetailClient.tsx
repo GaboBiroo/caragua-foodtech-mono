@@ -24,8 +24,9 @@ import {
 } from 'lucide-react';
 import { FeedPost } from '../../../data/caraguaData';
 import { Navbar } from '../../../components/Navbar';
+import { realDataStore } from '../../../data/realDataStore';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+
 
 interface PratoDetailClientProps {
   dishIdParam?: string;
@@ -111,12 +112,23 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
     let active = true;
     (async () => {
       try {
-        const res = await fetch(
-          `${API_BASE}/restaurants/dishes/${encodeURIComponent(targetId)}`,
-          { cache: 'no-store' }
-        );
-        if (!res.ok) return;
-        const data = await res.json();
+        let data: any = null;
+        try {
+          const res = await fetch(
+            `/api/restaurants/dishes/${encodeURIComponent(targetId)}`,
+            { cache: 'no-store' }
+          );
+          if (res.ok) {
+            data = await res.json();
+          }
+        } catch {
+          // Fallback
+        }
+
+        if (!data) {
+          data = realDataStore.getDishById(targetId);
+        }
+
         if (!active || !data?.dish || !data?.restaurant) return;
 
         // Se o parâmetro na URL for um UUID do banco ou um índice numérico, usa os dados reais do banco
@@ -234,7 +246,7 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
 
     let savedProtocol = `CF-2026-${Math.floor(100000 + Math.random() * 900000)}`;
     try {
-      const res = await fetch(`${API_BASE}/restaurants/reviews`, {
+      const res = await fetch('/api/restaurants/reviews', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

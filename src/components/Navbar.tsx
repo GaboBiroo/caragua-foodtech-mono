@@ -15,6 +15,7 @@ import {
   Sparkles,
   ArrowRight,
   ShieldCheck,
+  LogIn,
 } from 'lucide-react';
 import { AcademicPortalModal } from './AcademicPortalModal';
 
@@ -81,11 +82,11 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAcademicModal, onOpenAICha
   };
 
   const navLinks = [
-    { name: 'Cardápios', href: '/', icon: Compass, label: 'Onde Comer Hoje' },
-    { name: 'Painel da Equipe', href: '/moderation', icon: ShieldCheck, label: 'Curadoria de Cardápios' },
-    { name: 'Favoritos', href: '/rankings', icon: Trophy, label: 'Os Mais Queridos' },
-    { name: 'Sobre', href: '/sobre', icon: Info, label: 'Nossa História' },
-    { name: 'Contato', href: '/contato', icon: Mail, label: 'Cadastrar Local' },
+    { name: 'Início', href: '/', icon: Compass, label: 'Onde Comer Hoje' },
+    { name: 'Rankings', href: '/rankings', icon: Trophy, label: 'Os Mais Queridos' },
+    { name: 'Sobre Nós', href: '/sobre', icon: Info, label: 'Nossa História' },
+    { name: 'Contato', href: '/contato', icon: Mail, label: 'Credenciar Local' },
+    { name: 'Curadoria', href: '/moderation', icon: ShieldCheck, label: 'Painel da Equipe' },
   ];
 
   return (
@@ -204,6 +205,19 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAcademicModal, onOpenAICha
               <span className="hidden xl:inline">Portal TCC</span>
             </button>
 
+            <Link
+              href="/login"
+              className={`hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-extrabold border transition-all ${
+                pathname === '/login'
+                  ? 'bg-white text-stone-900 border-white shadow-sm'
+                  : 'bg-white/10 hover:bg-white/20 text-white border-white/25'
+              }`}
+              title="Acesso de Avaliador, Gestor ou Curador"
+            >
+              <LogIn className="w-3.5 h-3.5 text-[#FFB703]" />
+              <span>Entrar</span>
+            </Link>
+
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -246,7 +260,18 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAcademicModal, onOpenAICha
               );
             })}
 
-            <div className="pt-2 border-t border-white/10">
+            <div className="pt-2 border-t border-white/10 space-y-2">
+              <Link
+                href="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-bold bg-white/10 hover:bg-white/20 text-white border border-white/20"
+              >
+                <div className="flex items-center gap-3">
+                  <LogIn className="w-4 h-4 text-[#FFB703]" />
+                  <span>Entrar na Plataforma</span>
+                </div>
+                <span className="text-[11px] font-normal text-emerald-200">Avaliador • Gestor</span>
+              </Link>
               <button
                 type="button"
                 onClick={() => {

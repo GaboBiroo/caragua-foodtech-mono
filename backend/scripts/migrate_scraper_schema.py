@@ -83,6 +83,24 @@ MIGRATION_STATEMENTS = [
     "ALTER TABLE reviews ADD COLUMN IF NOT EXISTS source_platform VARCHAR(64);",
     "CREATE UNIQUE INDEX IF NOT EXISTS idx_reviews_ingestion_hash_unique ON reviews(ingestion_hash) WHERE ingestion_hash IS NOT NULL;",
 
+    # 7b. Tabela de Credenciamento e Contato de Estabelecimentos (S05 & S13 Persistência Real)
+    """
+    CREATE TABLE IF NOT EXISTS merchant_leads (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        protocol VARCHAR(32) UNIQUE NOT NULL,
+        restaurant_name VARCHAR(255) NOT NULL,
+        contact_name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        phone VARCHAR(64),
+        neighborhood VARCHAR(120) NOT NULL,
+        subject VARCHAR(120) NOT NULL,
+        message TEXT NOT NULL,
+        status VARCHAR(32) NOT NULL DEFAULT 'received',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+    """,
+    "CREATE INDEX IF NOT EXISTS idx_merchant_leads_created_at ON merchant_leads(created_at DESC);",
+
     # 8. Trigger SQL Automático BEFORE INSERT OR UPDATE em dishes:
     # Quando um prato é inserido, aprovado na moderação ou muda de nome/descrição/preço, marca needs_reindexing = TRUE.
     """

@@ -117,6 +117,9 @@ export default function HomePage() {
   const [populatedZonesCount, setPopulatedZonesCount] = useState<number>(53);
 
   const [selectedNeighborhood, setSelectedNeighborhood] = useState<string>('Todos');
+  const [selectedMacroRegion, setSelectedMacroRegion] = useState<'Todas' | 'Norte' | 'Centro' | 'Sul'>('Todas');
+  const [neighborhoodDrawerOpen, setNeighborhoodDrawerOpen] = useState<boolean>(false);
+  const [drawerSearch, setDrawerSearch] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [debouncedSearch, setDebouncedSearch] = useState<string>('');
   const [selectedDietary, setSelectedDietary] = useState<string[]>([]);
@@ -262,9 +265,25 @@ export default function HomePage() {
     return found ? found.name : selectedNeighborhood;
   }, [neighborhoods, selectedNeighborhood]);
 
+  const neighborhoodRegionMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const n of neighborhoods) {
+      map[n.name.toLowerCase()] = n.region;
+    }
+    return map;
+  }, [neighborhoods]);
+
+  const displayedRestaurants = useMemo(() => {
+    if (selectedMacroRegion === 'Todas') return restaurants;
+    return restaurants.filter((r) => {
+      const reg = neighborhoodRegionMap[(r.neighborhood || '').toLowerCase()] || 'Centro';
+      return reg.toLowerCase() === selectedMacroRegion.toLowerCase();
+    });
+  }, [restaurants, selectedMacroRegion, neighborhoodRegionMap]);
+
   const totalDishesOnScreen = useMemo(
-    () => restaurants.reduce((acc, r) => acc + (r.active_dishes_count || r.dishes.length), 0),
-    [restaurants]
+    () => displayedRestaurants.reduce((acc, r) => acc + (r.active_dishes_count || r.dishes.length), 0),
+    [displayedRestaurants]
   );
 
   return (
@@ -441,15 +460,58 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Atalhos rápidos para praias e bairros queridos */}
-          <div className="mt-3 flex items-center gap-1.5 overflow-x-auto pb-1">
+          {/* Filtro de Macro-Regiões + Atalhos Rápidos + Gaveta dos 53 Bairros */}
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+              {(['Todas', 'Norte', 'Centro', 'Sul'] as const).map((macro) => {
+                const active = selectedMacroRegion === macro;
+                const labelMap = {
+                  Todas: '🗺️ Todas as Regiões',
+                  Norte: '🏖️ Norte (Cocanha & Massaguaçu)',
+                  Centro: '🏛️ Centro & Martim de Sá',
+                  Sul: '⛵ Sul (Palmeiras & Porto Novo)',
+                };
+                return (
+                  <button
+                    key={macro}
+                    type="button"
+                    onClick={() => {
+                      setSelectedMacroRegion(macro);
+                      if (macro !== 'Todas') setSelectedNeighborhood('Todos');
+                    }}
+                    className={`shrink-0 px-3 py-1 rounded-full text-xs font-extrabold transition-all ${
+                      active
+                        ? 'bg-white text-[#135136] shadow-xs'
+                        : 'bg-emerald-950/50 hover:bg-emerald-950/75 text-emerald-100 border border-white/20'
+                    }`}
+                  >
+                    {labelMap[macro]}
+                  </button>
+                );
+              })}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setNeighborhoodDrawerOpen(true)}
+              className="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#FFB703]/20 hover:bg-[#FFB703]/30 border border-[#FFB703]/60 text-xs font-extrabold text-[#FFB703] transition-all"
+            >
+              <MapPin className="w-3.5 h-3.5" />
+              <span>Explorar os 53 Bairros ({populatedZonesCount} ativos)</span>
+            </button>
+          </div>
+
+          <div className="mt-2 flex items-center gap-1.5 overflow-x-auto pb-1">
             {FEATURED_NEIGHBORHOODS.map((bName) => {
               const isSelected = selectedNeighborhood === bName;
               return (
                 <button
                   key={bName}
                   type="button"
-                  onClick={() => setSelectedNeighborhood(bName)}
+                  onClick={() => {
+                    setSelectedNeighborhood(bName);
+                    if (bName !== 'Todos') setSelectedMacroRegion('Todas');
+                  }}
                   className={`shrink-0 px-3 py-1 rounded-full text-xs font-bold transition-all ${
                     isSelected
                       ? 'bg-[#FFB703] text-stone-950 shadow-xs'
@@ -469,18 +531,21 @@ export default function HomePage() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="font-heading font-black text-xl sm:text-2xl text-stone-900">
-              {selectedNeighborhoodLabel === 'Todos'
-                ? 'Lugares abertos e verificados em Caraguá'
-                : `Onde comer em ${selectedNeighborhoodLabel}`}
+              {selectedNeighborhoodLabel !== 'Todos'
+                ? `Onde comer em ${selectedNeighborhoodLabel}`
+                : selectedMacroRegion !== 'Todas'
+                ? `Lugares verificados na Região ${selectedMacroRegion} de Caraguá`
+                : 'Lugares abertos e verificados em Caraguá'}
             </h2>
             <p className="text-xs sm:text-sm text-stone-600">
-              Encontramos <strong>{restaurants.length} estabelecimentos</strong> com{' '}
+              Encontramos <strong>{displayedRestaurants.length} estabelecimentos</strong> com{' '}
               <strong>{totalDishesOnScreen} pratos conferidos</strong> para você escolher sem erro.
             </p>
           </div>
 
           <div className="flex items-center gap-2">
             {(selectedNeighborhood !== 'Todos' ||
+              selectedMacroRegion !== 'Todas' ||
               selectedDietary.length > 0 ||
               priceDropOnly ||
               debouncedSearch) && (
@@ -488,6 +553,7 @@ export default function HomePage() {
                 type="button"
                 onClick={() => {
                   setSelectedNeighborhood('Todos');
+                  setSelectedMacroRegion('Todas');
                   setSelectedDietary([]);
                   setPriceDropOnly(false);
                   setSearchQuery('');
@@ -531,7 +597,7 @@ export default function HomePage() {
               </div>
             ))}
           </div>
-        ) : restaurants.length === 0 ? (
+        ) : displayedRestaurants.length === 0 ? (
           <div className="rounded-3xl bg-white border border-stone-200/90 p-10 text-center space-y-4 shadow-xs">
             <Utensils className="w-10 h-10 text-[#135136] mx-auto" />
             <h3 className="font-heading font-extrabold text-lg text-stone-900">
@@ -546,6 +612,7 @@ export default function HomePage() {
                 type="button"
                 onClick={() => {
                   setSelectedNeighborhood('Todos');
+                  setSelectedMacroRegion('Todas');
                   setSelectedDietary([]);
                   setPriceDropOnly(false);
                   setSearchQuery('');
@@ -569,7 +636,7 @@ export default function HomePage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {restaurants.map((rest) => {
+            {displayedRestaurants.map((rest) => {
               const starScore = (rest.rating_score ?? rest.rating_average ?? 4.8).toFixed(1);
               return (
                 <article
@@ -652,12 +719,13 @@ export default function HomePage() {
                       </div>
 
                       {rest.dishes_preview.slice(0, 3).map((dish) => (
-                        <div
+                        <Link
                           key={dish.id}
-                          className="rounded-2xl bg-[#FAF7F2] px-3 py-2 border border-stone-200/70 flex items-start justify-between gap-2"
+                          href={`/prato/${dish.id}`}
+                          className="rounded-2xl bg-[#FAF7F2] hover:bg-amber-50/70 px-3 py-2 border border-stone-200/70 hover:border-[#135136]/40 flex items-start justify-between gap-2 transition-colors group"
                         >
                           <div className="min-w-0">
-                            <div className="font-bold text-xs text-stone-900 truncate">
+                            <div className="font-bold text-xs text-stone-900 group-hover:text-[#135136] truncate transition-colors">
                               {dish.name}
                             </div>
                             <div className="flex flex-wrap gap-1 mt-1">
@@ -688,13 +756,17 @@ export default function HomePage() {
                             <span className="font-heading font-black text-xs text-[#135136] block">
                               {formatBRL(dish.price)}
                             </span>
-                            {dish.last_price_delta_pct < 0 && (
+                            {dish.last_price_delta_pct < 0 ? (
                               <span className="text-[9px] font-extrabold text-emerald-700 block">
                                 {formatSavingsBadge(dish)}
                               </span>
+                            ) : (
+                              <span className="text-[9px] font-bold text-stone-400 group-hover:text-[#135136] block">
+                                Ver prato →
+                              </span>
                             )}
                           </div>
-                        </div>
+                        </Link>
                       ))}
                     </div>
                   </div>
@@ -759,12 +831,16 @@ export default function HomePage() {
 
             <div className="p-6 overflow-y-auto space-y-3 flex-1">
               {quickModalRest.dishes.map((d) => (
-                <div
+                <Link
                   key={d.id}
-                  className="rounded-2xl border border-stone-200 p-3.5 flex items-start justify-between gap-3"
+                  href={`/prato/${d.id}`}
+                  onClick={() => setQuickModalRest(null)}
+                  className="rounded-2xl border border-stone-200 hover:border-[#135136] p-3.5 flex items-start justify-between gap-3 transition-colors group"
                 >
                   <div>
-                    <div className="font-bold text-sm text-stone-900">{d.name}</div>
+                    <div className="font-bold text-sm text-stone-900 group-hover:text-[#135136] transition-colors">
+                      {d.name}
+                    </div>
                     <p className="text-xs text-stone-600 mt-0.5">{d.description}</p>
                     {d.suggested_sides && d.suggested_sides.length > 0 && (
                       <div className="text-[11px] text-emerald-800 font-semibold mt-1.5">
@@ -776,13 +852,17 @@ export default function HomePage() {
                     <div className="font-heading font-black text-sm text-[#135136]">
                       {formatBRL(d.price)}
                     </div>
-                    {d.last_price_delta_pct < 0 && (
+                    {d.last_price_delta_pct < 0 ? (
                       <span className="text-[10px] font-extrabold text-emerald-700 block mt-0.5">
                         {formatSavingsBadge(d)}
                       </span>
+                    ) : (
+                      <span className="text-[10px] font-bold text-stone-400 group-hover:text-[#135136] block mt-0.5">
+                        Ver prato & avaliar →
+                      </span>
                     )}
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
 
@@ -810,6 +890,124 @@ export default function HomePage() {
                 <span>Abrir Cardápio Completo e Avaliações</span>
                 <ArrowRight className="w-3.5 h-3.5 text-[#FFB703]" />
               </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Gaveta Exploradora dos 53 Bairros Oficiais de Caraguatatuba (Progressive Disclosure) */}
+      {neighborhoodDrawerOpen && (
+        <div
+          className="fixed inset-0 z-50 bg-stone-950/60 backdrop-blur-xs flex items-center justify-center p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Explorador dos 53 Bairros de Caraguatatuba"
+        >
+          <div className="bg-white rounded-3xl max-w-4xl w-full max-h-[85vh] overflow-hidden shadow-2xl border border-stone-200 flex flex-col">
+            <div className="bg-[#135136] text-white px-6 py-4 flex items-center justify-between gap-4">
+              <div>
+                <span className="text-[11px] font-extrabold text-[#FFB703] uppercase tracking-wider">
+                  Mapa Oficial • 53 Bairros de Caraguatatuba
+                </span>
+                <h3 className="font-heading font-black text-xl">
+                  Escolha seu bairro na Região Norte, Central ou Sul
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setNeighborhoodDrawerOpen(false)}
+                className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white"
+                aria-label="Fechar explorador de bairros"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="px-6 py-3 bg-stone-50 border-b border-stone-200 flex flex-wrap items-center justify-between gap-3">
+              <div className="relative flex-1 min-w-[220px]">
+                <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={drawerSearch}
+                  onChange={(e) => setDrawerSearch(e.target.value)}
+                  placeholder="Filtrar entre os 53 bairros (ex.: Cocanha, Martim de Sá, Tinga, Perequê)..."
+                  className="w-full pl-10 pr-4 py-2 rounded-xl bg-white border border-stone-300 text-xs font-bold text-stone-900 focus:outline-none focus:ring-2 focus:ring-[#135136]"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedNeighborhood('Todos');
+                  setSelectedMacroRegion('Todas');
+                  setNeighborhoodDrawerOpen(false);
+                }}
+                className="px-3.5 py-2 rounded-xl bg-[#FFB703] text-stone-950 text-xs font-extrabold"
+              >
+                Ver Todos os 53 Bairros
+              </button>
+            </div>
+
+            <div className="p-6 overflow-y-auto space-y-6 flex-1">
+              {(['Norte', 'Centro', 'Sul'] as const).map((regionName) => {
+                const regionItems = neighborhoods.filter(
+                  (n) =>
+                    n.region.toLowerCase() === regionName.toLowerCase() &&
+                    (!drawerSearch.trim() ||
+                      n.name.toLowerCase().includes(drawerSearch.trim().toLowerCase()))
+                );
+                if (regionItems.length === 0) return null;
+                return (
+                  <div key={regionName} className="space-y-2.5">
+                    <div className="flex items-center justify-between border-b border-stone-200 pb-1.5">
+                      <h4 className="font-heading font-black text-sm text-[#135136] uppercase tracking-wider">
+                        Região {regionName} ({regionItems.length} bairros)
+                      </h4>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedMacroRegion(regionName);
+                          setSelectedNeighborhood('Todos');
+                          setNeighborhoodDrawerOpen(false);
+                        }}
+                        className="text-xs font-extrabold text-[#135136] hover:underline"
+                      >
+                        Filtrar toda a Região {regionName} →
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                      {regionItems.map((n) => {
+                        const active = selectedNeighborhood === n.name;
+                        return (
+                          <button
+                            key={n.slug}
+                            type="button"
+                            onClick={() => {
+                              setSelectedNeighborhood(n.name);
+                              setSelectedMacroRegion('Todas');
+                              setNeighborhoodDrawerOpen(false);
+                            }}
+                            className={`text-left px-3 py-2 rounded-xl border text-xs transition-all ${
+                              active
+                                ? 'bg-[#135136] text-white border-[#135136] font-extrabold'
+                                : 'bg-[#FAF7F2] hover:bg-emerald-50 text-stone-800 border-stone-200 font-bold'
+                            }`}
+                          >
+                            <div className="truncate">{n.name}</div>
+                            <div
+                              className={`text-[10px] mt-0.5 ${
+                                active ? 'text-amber-200' : 'text-stone-500 font-medium'
+                              }`}
+                            >
+                              {n.restaurants_count} {n.restaurants_count === 1 ? 'local' : 'locais'} •{' '}
+                              {n.active_dishes_count} pratos
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

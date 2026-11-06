@@ -39,6 +39,10 @@ FRONTEND_TARGET_FILES: List[Path] = [
     MONOREPO_ROOT / "src" / "app" / "restaurants" / "[slug]" / "page.tsx",
     MONOREPO_ROOT / "src" / "app" / "moderation" / "page.tsx",
     MONOREPO_ROOT / "src" / "app" / "rankings" / "page.tsx",
+    MONOREPO_ROOT / "src" / "app" / "sobre" / "page.tsx",
+    MONOREPO_ROOT / "src" / "app" / "contato" / "page.tsx",
+    MONOREPO_ROOT / "src" / "app" / "login" / "page.tsx",
+    MONOREPO_ROOT / "src" / "app" / "prato" / "[id]" / "PratoDetailClient.tsx",
 ]
 
 # Lista negra estrita de jargões técnicos proibidos na interface e no chat
@@ -288,6 +292,45 @@ async def gate_3_verify_live_api_and_chef_chat() -> Dict[str, object]:
         ), f"Escopo vazou pratos de outros lugares: {[r['restaurant_name'] for r in stream_recs]}"
         stream_jargon = scan_text_for_jargon(tokens_joined)
         assert not stream_jargon, f"Jargão detectado no streaming do Chef: {stream_jargon}"
+
+        # 5. Verifica endpoints S09 (Master-Detail /dishes/1) e S13 (/reviews + /leads persistidos no PostgreSQL)
+        dish_detail_res = await client.get("/api/v1/restaurants/dishes/1")
+        assert dish_detail_res.status_code == 200, f"GET /restaurants/dishes/1 falhou: {dish_detail_res.text}"
+        dish_detail_payload = dish_detail_res.json()
+        assert "super_nota" in dish_detail_payload and dish_detail_payload["super_nota"]["google_weight_pct"] == 50
+
+        lead_res = await client.post(
+            "/api/v1/restaurants/leads",
+            json={
+                "restaurant_name": "Quiosque Sol do Camaroeiro",
+                "contact_name": "Carlos Oliveira",
+                "email": "carlos@camaroeiro.com.br",
+                "phone": "(12) 99711-2233",
+                "neighborhood": "Prainha",
+                "subject": "credenciamento",
+                "message": "Gostaria de credenciar nosso cardápio de porções de camarão sete-barbas e peixe na brasa.",
+            },
+        )
+        assert lead_res.status_code == 201, f"POST /restaurants/leads falhou: {lead_res.text}"
+        lead_payload = lead_res.json()
+        assert lead_payload.get("protocol", "").startswith("CG-FT-")
+
+        rev_post_res = await client.post(
+            "/api/v1/restaurants/reviews",
+            json={
+                "dish_id": "1",
+                "author_name": "Mariana Santos",
+                "flavor_score": 5.0,
+                "presentation_score": 4.5,
+                "originality_score": 5.0,
+                "service_score": 5.0,
+                "ambiance_score": 4.5,
+                "comment_text": "Peixe muito fresco, tempero caiçara no ponto exato e porção generosa!",
+            },
+        )
+        assert rev_post_res.status_code == 201, f"POST /restaurants/reviews falhou: {rev_post_res.text}"
+        rev_post_payload = rev_post_res.json()
+        assert rev_post_payload.get("protocol", "").startswith("CF-2026-")
 
     return {
         "api_real_osm_visible_top50": len(real_osm_in_api),

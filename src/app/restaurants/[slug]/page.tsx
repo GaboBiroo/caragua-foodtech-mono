@@ -502,9 +502,12 @@ export default function RestaurantMenuDetailPage() {
                           >
                             <div>
                               <div className="flex items-start justify-between gap-3">
-                                <div className="font-heading font-bold text-base text-stone-900">
+                                <Link
+                                  href={`/prato/${dish.id}`}
+                                  className="font-heading font-bold text-base text-stone-900 hover:text-[#135136] transition-colors"
+                                >
                                   {dish.name}
-                                </div>
+                                </Link>
                                 <div className="text-right shrink-0">
                                   {prevPrice && deltaPct < 0 && (
                                     <div className="text-[11px] text-stone-400 line-through">
@@ -514,6 +517,12 @@ export default function RestaurantMenuDetailPage() {
                                   <div className="font-heading font-black text-lg text-[#135136]">
                                     {formatBRL(dish.price)}
                                   </div>
+                                  <Link
+                                    href={`/prato/${dish.id}`}
+                                    className="text-[10px] font-bold text-stone-400 hover:text-[#135136] block mt-0.5"
+                                  >
+                                    Avaliar prato →
+                                  </Link>
                                 </div>
                               </div>
 

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import { INITIAL_FEED_POSTS } from '../../../data/caraguaData';
+import { INITIAL_FEED_POSTS, FeedPost } from '../../../data/caraguaData';
 import { PratoDetailClient } from './PratoDetailClient';
 
 interface Props {
@@ -10,23 +9,32 @@ interface Props {
   };
 }
 
-export function generateStaticParams() {
-  return INITIAL_FEED_POSTS.map((post) => ({
-    id: post.id,
-  }));
+function resolveFallbackPost(rawId: string): FeedPost {
+  const exact = INITIAL_FEED_POSTS.find((p) => p.id === rawId);
+  if (exact) return exact;
+
+  const numMatch = rawId.match(/^(?:post-)?(\d+)$/i);
+  if (numMatch) {
+    const idx = Math.max(0, parseInt(numMatch[1], 10) - 1);
+    return INITIAL_FEED_POSTS[idx % INITIAL_FEED_POSTS.length];
+  }
+
+  const lower = rawId.toLowerCase();
+  const partial = INITIAL_FEED_POSTS.find(
+    (p) =>
+      p.id.toLowerCase().includes(lower) ||
+      p.dishName.toLowerCase().includes(lower) ||
+      p.neighborhood.toLowerCase().includes(lower)
+  );
+  return partial || INITIAL_FEED_POSTS[0];
 }
 
 export function generateMetadata({ params }: Props): Metadata {
-  const post = INITIAL_FEED_POSTS.find((p) => p.id === params.id);
-  if (!post) {
-    return {
-      title: 'Prato Não Encontrado | CaráFood',
-    };
-  }
+  const post = resolveFallbackPost(params.id);
 
   return {
     title: `${post.dishName} — ${post.restaurantName} (${post.neighborhood}) | CaráFood`,
-    description: `${post.dishName} no ${post.restaurantName}. Preço: R$ ${post.dishPrice.toFixed(2)}. ${post.caption}`,
+    description: `${post.dishName} no ${post.restaurantName} em ${post.neighborhood}, Caraguatatuba. Preço conferido: R$ ${post.dishPrice.toFixed(2)}.`,
     openGraph: {
       title: `${post.dishName} — ${post.restaurantName}`,
       description: post.caption,
@@ -41,13 +49,8 @@ export function generateMetadata({ params }: Props): Metadata {
 }
 
 export default function PratoDetailPage({ params }: Props) {
-  const post = INITIAL_FEED_POSTS.find((p) => p.id === params.id);
-
-  if (!post) {
-    notFound();
-  }
-
+  const post = resolveFallbackPost(params.id);
   const relatedPosts = INITIAL_FEED_POSTS.filter((p) => p.id !== post.id);
 
-  return <PratoDetailClient post={post} relatedPosts={relatedPosts} />;
+  return <PratoDetailClient dishIdParam={params.id} post={post} relatedPosts={relatedPosts} />;
 }

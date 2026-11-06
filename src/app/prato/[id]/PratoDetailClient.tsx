@@ -28,6 +28,29 @@ import { realDataStore } from '../../../data/realDataStore';
 
 
 
+function formatReviewDate(raw: unknown): string {
+  if (!raw || typeof raw !== 'string') return 'Verificado';
+  if (
+    raw.includes('atrás') ||
+    raw.includes('semana') ||
+    raw.includes('mês') ||
+    raw.includes('meses') ||
+    raw.includes('dia') ||
+    raw.includes('dias') ||
+    raw.includes('ontem') ||
+    raw.includes('Recent')
+  ) {
+    return raw;
+  }
+  try {
+    const d = new Date(raw);
+    if (isNaN(d.getTime())) return raw;
+    return d.toLocaleDateString('pt-BR');
+  } catch {
+    return raw;
+  }
+}
+
 function formatOpeningHours(val: unknown): string {
   if (!val) return 'Ter a Dom • 11h30 às 23h00';
   if (typeof val === 'string') return val;
@@ -199,9 +222,7 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
               author: r.author_label || 'Avaliador Verificado • Caraguá',
               text: r.comment_text,
               rating: Number(r.original_rating || 4.8),
-              date: r.review_date
-                ? new Date(r.review_date).toLocaleDateString('pt-BR')
-                : 'Verificado',
+              date: formatReviewDate(r.review_date),
             }))
           );
         }
@@ -473,7 +494,7 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
                         />
                       ) : (
                         <div className="w-full h-full rounded-[14px] bg-[#135136] flex items-center justify-center font-bold text-white text-base">
-                          {restaurantName[0]}
+                          {(restaurantName && restaurantName[0]) || 'R'}
                         </div>
                       )}
                     </div>
@@ -493,7 +514,7 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
                       <div className="flex items-center gap-1.5 text-xs text-stone-500 font-medium">
                         <MapPin className="w-3.5 h-3.5 text-[#135136]" />
                         <span>
-                          {neighborhood} • {distanceKm.toFixed(1)} km do centro
+                          {neighborhood} • {Number(distanceKm || 0.8).toFixed(1)} km do centro
                         </span>
                       </div>
                     </div>
@@ -536,18 +557,18 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
                       </span>
                       <div className="flex items-baseline gap-2">
                         <span className="font-heading font-black text-2xl text-[#135136]">
-                          R$ {dishPrice.toFixed(2).replace('.', ',')}
+                          R$ {Number(dishPrice || 0).toFixed(2).replace('.', ',')}
                         </span>
                         {previousPrice && previousPrice > dishPrice && (
                           <span className="text-xs text-stone-400 line-through font-semibold">
-                            R$ {previousPrice.toFixed(2).replace('.', ',')}
+                            R$ {Number(previousPrice || 0).toFixed(2).replace('.', ',')}
                           </span>
                         )}
                       </div>
                       {previousPrice && previousPrice > dishPrice && (
                         <span className="inline-flex items-center gap-1 text-[10px] font-extrabold text-emerald-800 mt-0.5">
                           <TrendingDown className="w-3 h-3" />
-                          Baixou R$ {(previousPrice - dishPrice).toFixed(2).replace('.', ',')} esta semana
+                          Baixou R$ {Number(previousPrice - dishPrice).toFixed(2).replace('.', ',')} esta semana
                         </span>
                       )}
                     </div>
@@ -558,10 +579,10 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
                       </span>
                       <div className="flex items-center gap-1.5 justify-end font-heading font-black text-2xl text-stone-900">
                         <Star className="w-5 h-5 text-[#FFB703] fill-[#FFB703]" />
-                        <span>{googleScore.toFixed(1)}</span>
+                        <span>{Number(googleScore || 4.5).toFixed(1)}</span>
                       </div>
                       <span className="text-[10px] text-stone-500 font-bold block">
-                        {totalReviews} avaliações reais de clientes
+                        {Number(totalReviews || 25)} avaliações reais de clientes
                       </span>
                     </div>
                   </div>
@@ -627,6 +648,16 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
                   </a>
                 </div>
 
+                {restaurantSlug && (
+                  <Link
+                    href={`/restaurants/${restaurantSlug}`}
+                    className="w-full py-3 px-4 rounded-2xl bg-[#0F3826] hover:bg-[#135136] text-white font-bold text-xs sm:text-sm shadow-sm flex items-center justify-center gap-2 transition-all border border-emerald-500/30"
+                  >
+                    <Utensils className="w-4 h-4 text-[#FFB703]" />
+                    <span>📖 Checar Cardápio Completo de {restaurantName}</span>
+                  </Link>
+                )}
+
                 <button
                   type="button"
                   onClick={() => setIsReviewModalOpen(true)}
@@ -685,7 +716,7 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
                 Guarnições que Acompanham:
               </span>
               <span className="font-heading font-bold text-stone-900 text-xs block mt-1 leading-relaxed">
-                {smartSides.join(' • ')}
+                {(Array.isArray(smartSides) ? smartSides : ['Guarnições da Casa']).join(' • ')}
               </span>
             </div>
           </div>
@@ -744,7 +775,7 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
                     <span className="font-heading font-bold text-stone-900">{c.author}</span>
                     <div className="flex items-center gap-1 text-[#FFB703]">
                       <Star className="w-3.5 h-3.5 fill-[#FFB703]" />
-                      <span className="font-black text-stone-900">{c.rating.toFixed(1)}</span>
+                      <span className="font-black text-stone-900">{Number(c.rating || 5.0).toFixed(1)}</span>
                       <span className="text-stone-400 font-normal">• {c.date}</span>
                     </div>
                   </div>
@@ -784,7 +815,7 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md text-[10px] text-white font-bold">
-                    R$ {item.dishPrice.toFixed(2).replace('.', ',')}
+                    R$ {Number(item.dishPrice || 0).toFixed(2).replace('.', ',')}
                   </div>
                 </div>
                 <div className="p-4 space-y-1">
@@ -796,7 +827,7 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
                   </h4>
                   <div className="flex items-center gap-1 text-[11px] text-stone-600">
                     <Star className="w-3 h-3 text-[#FFB703] fill-[#FFB703]" />
-                    <span className="font-bold">{item.superRating.toFixed(2)}</span>
+                    <span className="font-bold">{Number(item.superRating || 4.8).toFixed(2)}</span>
                     <span>• {item.restaurantName}</span>
                   </div>
                 </div>

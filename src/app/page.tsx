@@ -16,6 +16,9 @@ import {
   RefreshCw,
   ChefHat,
   X,
+  Heart,
+  Bookmark,
+  Award,
 } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
 import { CaraguaAIChatDrawer } from '../components/CaraguaAIChatDrawer';
@@ -35,6 +38,7 @@ interface DishPreview {
   is_lactose_free: boolean;
   last_price_delta_pct: number;
   suggested_sides?: string[];
+  image_url?: string;
 }
 
 interface RestaurantCardData {
@@ -59,6 +63,8 @@ interface RestaurantCardData {
   distance_km: number;
   dishes_preview: DishPreview[];
   dishes: DishPreview[];
+  banner_url?: string;
+  image_url?: string;
 }
 
 interface NeighborhoodSummaryItem {
@@ -121,9 +127,33 @@ function formatSavingsBadge(dish: DishPreview): string {
 }
 
 export default function HomePage() {
-  const [restaurants, setRestaurants] = useState<RestaurantCardData[]>([]);
+  const [restaurants, setRestaurants] = useState<RestaurantCardData[]>(() => {
+    return realDataStore.getRestaurants({ limit: 60 }) as unknown as RestaurantCardData[];
+  });
   const [neighborhoods, setNeighborhoods] = useState<NeighborhoodSummaryItem[]>([]);
   const [populatedZonesCount, setPopulatedZonesCount] = useState<number>(53);
+
+  const [viewMode, setViewMode] = useState<'feed' | 'places'>('feed');
+  const [likedPostIds, setLikedPostIds] = useState<Set<string>>(new Set());
+  const [savedPostIds, setSavedPostIds] = useState<Set<string>>(new Set());
+
+  const toggleLike = (id: string) => {
+    setLikedPostIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSave = (id: string) => {
+    setSavedPostIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   const [selectedNeighborhood, setSelectedNeighborhood] = useState<string>('Todos');
   const [selectedMacroRegion, setSelectedMacroRegion] = useState<'Todas' | 'Norte' | 'Centro' | 'Sul'>('Todas');
@@ -141,7 +171,7 @@ export default function HomePage() {
   });
   const [gpsActive, setGpsActive] = useState<boolean>(false);
 
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const [aiDrawerOpen, setAiDrawerOpen] = useState<boolean>(false);
@@ -315,9 +345,26 @@ export default function HomePage() {
     });
   }, [restaurants, selectedMacroRegion, neighborhoodRegionMap]);
 
+  // Se o filtro local de um bairro específico retornar 0 itens, faz fallback automático
+  // para os melhores restaurantes de Caraguá para nunca exibir uma tela vazia
+  const effectiveRestaurants = useMemo(() => {
+    if (displayedRestaurants.length > 0) return displayedRestaurants;
+    return (realDataStore.getRestaurants({ limit: 12 }) as unknown as RestaurantCardData[]) || [];
+  }, [displayedRestaurants]);
+
+  const feedDishCards = useMemo(() => {
+    const cards: Array<{ dish: DishPreview; restaurant: RestaurantCardData }> = [];
+    for (const rest of effectiveRestaurants) {
+      for (const dish of rest.dishes_preview || rest.dishes || []) {
+        cards.push({ dish, restaurant: rest });
+      }
+    }
+    return cards;
+  }, [effectiveRestaurants]);
+
   const totalDishesOnScreen = useMemo(
-    () => displayedRestaurants.reduce((acc, r) => acc + (r.active_dishes_count || r.dishes.length), 0),
-    [displayedRestaurants]
+    () => effectiveRestaurants.reduce((acc, r) => acc + (r.active_dishes_count || (r.dishes || []).length || (r.dishes_preview || []).length), 0),
+    [effectiveRestaurants]
   );
 
   return (
@@ -562,7 +609,7 @@ export default function HomePage() {
 
       {/* Vitrine Principal de Restaurantes, Quiosques, Pizzarias e Padarias */}
       <main className="max-w-7xl mx-auto w-full px-4 sm:px-6 py-7 flex-1 space-y-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h2 className="font-heading font-black text-xl sm:text-2xl text-stone-900">
               {selectedNeighborhoodLabel !== 'Todos'
@@ -571,13 +618,39 @@ export default function HomePage() {
                 ? `Lugares verificados na Região ${selectedMacroRegion} de Caraguá`
                 : 'Lugares abertos e verificados em Caraguá'}
             </h2>
-            <p className="text-xs sm:text-sm text-stone-600">
-              Encontramos <strong>{displayedRestaurants.length} estabelecimentos</strong> com{' '}
+            <p className="text-xs sm:text-sm text-stone-600 mt-0.5">
+              Encontramos <strong>{effectiveRestaurants.length} estabelecimentos</strong> com{' '}
               <strong>{totalDishesOnScreen} pratos conferidos</strong> para você escolher sem erro.
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* Alternador de Visualização: Feed Estilo Instagram vs Guia de Lugares */}
+            <div className="inline-flex p-1 rounded-2xl bg-stone-200/80 border border-stone-300/80">
+              <button
+                type="button"
+                onClick={() => setViewMode('feed')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 ${
+                  viewMode === 'feed'
+                    ? 'bg-white text-[#135136] shadow-sm'
+                    : 'text-stone-600 hover:text-stone-900'
+                }`}
+              >
+                <span>📸 Fotos & Pratos (Feed)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('places')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 ${
+                  viewMode === 'places'
+                    ? 'bg-white text-[#135136] shadow-sm'
+                    : 'text-stone-600 hover:text-stone-900'
+                }`}
+              >
+                <span>🏪 Lista de Lugares</span>
+              </button>
+            </div>
+
             {(selectedNeighborhood !== 'Todos' ||
               selectedMacroRegion !== 'Todas' ||
               selectedDietary.length > 0 ||
@@ -601,7 +674,7 @@ export default function HomePage() {
             <button
               type="button"
               onClick={() => void fetchCatalog()}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-stone-300 hover:border-[#135136] text-xs font-bold text-stone-700 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-stone-300 hover:border-[#135136] text-xs font-bold text-stone-700 transition-colors shadow-xs"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
               <span>Atualizar cardápios</span>
@@ -609,13 +682,31 @@ export default function HomePage() {
           </div>
         </div>
 
-        {errorMsg && (
-          <div className="rounded-2xl bg-rose-50 border border-rose-300 p-4 text-sm text-rose-900 font-medium">
-            {errorMsg}
+        {displayedRestaurants.length === 0 && (
+          <div className="rounded-2xl bg-amber-50 border border-amber-200 p-4 text-xs text-amber-950 font-medium flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <span className="text-base">🏖️</span>
+              <span>
+                Não encontramos estabelecimentos exclusivos neste bairro com todos os filtros ativos. Exibindo os lugares mais recomendados de Caraguatatuba:
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedNeighborhood('Todos');
+                setSelectedMacroRegion('Todas');
+                setSelectedDietary([]);
+                setPriceDropOnly(false);
+                setSearchQuery('');
+              }}
+              className="px-3 py-1 rounded-xl bg-amber-200 hover:bg-amber-300 text-amber-950 font-bold text-[11px] shrink-0"
+            >
+              Ver toda a cidade
+            </button>
           </div>
         )}
 
-        {loading ? (
+        {loading && effectiveRestaurants.length === 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {Array.from({ length: 6 }).map((_, idx) => (
               <div
@@ -631,158 +722,271 @@ export default function HomePage() {
               </div>
             ))}
           </div>
-        ) : displayedRestaurants.length === 0 ? (
-          <div className="rounded-3xl bg-white border border-stone-200/90 p-10 text-center space-y-4 shadow-xs">
-            <Utensils className="w-10 h-10 text-[#135136] mx-auto" />
-            <h3 className="font-heading font-extrabold text-lg text-stone-900">
-              Ainda não achamos um prato com todos esses filtros juntos neste bairro
-            </h3>
-            <p className="text-sm text-stone-600 max-w-md mx-auto">
-              Experimente olhar em todos os bairros de Caraguá ou peça uma sugestão sob medida
-              para o nosso Chef CaráFood!
-            </p>
-            <div className="flex justify-center gap-3">
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedNeighborhood('Todos');
-                  setSelectedMacroRegion('Todas');
-                  setSelectedDietary([]);
-                  setPriceDropOnly(false);
-                  setSearchQuery('');
-                }}
-                className="px-4 py-2 rounded-xl bg-[#135136] text-white font-bold text-xs"
-              >
-                Ver todos os lugares de Caraguá
-              </button>
-              <button
-                type="button"
-                onClick={() =>
-                  openAssistantWithPrompt(
-                    'Me indica lugares gostosos e com bom preço abertos hoje em Caraguá?'
-                  )
-                }
-                className="px-4 py-2 rounded-xl bg-[#FFB703] text-stone-950 font-extrabold text-xs"
-              >
-                Perguntar ao Chef CaráFood
-              </button>
-            </div>
+        ) : viewMode === 'feed' ? (
+          /* Modo 1: Feed Estilo Instagram com Fotos Reais e Vistosas dos Pratos */
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {feedDishCards.map(({ dish, restaurant }) => {
+              const starScore = (restaurant.rating_score ?? restaurant.rating_average ?? 4.8).toFixed(1);
+              const isLiked = likedPostIds.has(dish.id);
+              const isSaved = savedPostIds.has(dish.id);
+              return (
+                <article
+                  key={`${restaurant.id}-${dish.id}`}
+                  className="bg-white rounded-[28px] border border-stone-200/90 shadow-xs hover:shadow-xl hover:border-[#135136]/50 transition-all duration-300 flex flex-col justify-between overflow-hidden group"
+                >
+                  {/* Cabeçalho do Restaurante */}
+                  <div className="p-4 flex items-center justify-between border-b border-stone-100">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-10 h-10 rounded-2xl bg-[#135136] text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-xs">
+                        {(restaurant.name && restaurant.name[0]) || 'R'}
+                      </div>
+                      <div className="min-w-0">
+                        <Link
+                          href={`/restaurants/${restaurant.slug}`}
+                          className="font-heading font-black text-sm text-stone-900 hover:text-[#135136] transition-colors truncate block"
+                        >
+                          {restaurant.name}
+                        </Link>
+                        <div className="flex items-center gap-1.5 text-xs text-stone-500 font-medium">
+                          <MapPin className="w-3 h-3 text-[#135136] shrink-0" />
+                          <span className="truncate">{restaurant.neighborhood}</span>
+                          <span>•</span>
+                          <span className="shrink-0">{formatDistanceHuman(restaurant.distance_meters, restaurant.distance_km)}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div
+                      className="shrink-0 bg-amber-50 border border-amber-200/80 rounded-xl px-2 py-1 text-right"
+                      title="Nota no Google Maps"
+                    >
+                      <div className="inline-flex items-center gap-1 font-heading font-black text-xs text-stone-900">
+                        <Star className="w-3 h-3 fill-[#FFB703] text-[#FFB703]" />
+                        <span>{starScore}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Foto Principal do Prato com Badges Flutuantes */}
+                  <div className="relative aspect-[16/10] overflow-hidden bg-stone-900">
+                    <img
+                      src={dish.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80'}
+                      alt={dish.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
+
+                    {/* Badges Flutuantes */}
+                    <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 z-10 max-w-[80%]">
+                      {dish.is_vegan && (
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/90 text-white backdrop-blur-md shadow-xs">
+                          🌱 Vegano
+                        </span>
+                      )}
+                      {dish.is_gluten_free && (
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-500/90 text-white backdrop-blur-md shadow-xs">
+                          🌾 Sem Glúten
+                        </span>
+                      )}
+                      {dish.is_lactose_free && (
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-sky-500/90 text-white backdrop-blur-md shadow-xs">
+                          🥛 Sem Lactose
+                        </span>
+                      )}
+                      {dish.savings_brl && dish.savings_brl > 0 ? (
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-600/90 text-white backdrop-blur-md shadow-xs">
+                          📉 Baixou R$ {dish.savings_brl.toFixed(2).replace('.', ',')}
+                        </span>
+                      ) : null}
+                    </div>
+
+                    {/* Preço Flutuante em Vidro */}
+                    <div className="absolute bottom-3 right-3 px-3 py-1.5 rounded-xl bg-stone-950/85 backdrop-blur-md text-white font-heading font-black text-sm shadow-lg border border-white/20">
+                      {formatBRL(dish.price)}
+                    </div>
+                  </div>
+
+                  {/* Informações do Prato */}
+                  <div className="p-4 space-y-2.5 flex-1 flex flex-col justify-between">
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#135136] block">
+                        {dish.category || 'Especialidade da Casa'}
+                      </span>
+                      <h4 className="font-heading font-bold text-stone-900 text-base leading-snug group-hover:text-[#135136] transition-colors line-clamp-1">
+                        <Link href={`/prato/${dish.id}`}>
+                          {dish.name}
+                        </Link>
+                      </h4>
+                      <p className="text-xs text-stone-600 line-clamp-2 leading-relaxed">
+                        {dish.description}
+                      </p>
+                    </div>
+
+                    {/* Ações Diretas: Checar Cardápio + Ver Prato */}
+                    <div className="pt-3 border-t border-stone-100 space-y-2">
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setQuickModalRest(restaurant)}
+                          className="py-2.5 px-3 rounded-xl bg-amber-100/90 hover:bg-amber-200 text-amber-950 font-extrabold text-xs flex items-center justify-center gap-1.5 transition-colors border border-amber-300/80"
+                        >
+                          <Utensils className="w-3.5 h-3.5 text-amber-900" />
+                          <span>📖 Checar Cardápio</span>
+                        </button>
+
+                        <Link
+                          href={`/prato/${dish.id}`}
+                          className="py-2.5 px-3 rounded-xl bg-[#135136] hover:bg-[#0D3825] text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-colors shadow-xs"
+                        >
+                          <span>Ver Prato</span>
+                          <ArrowRight className="w-3.5 h-3.5 text-[#FFB703]" />
+                        </Link>
+                      </div>
+
+                      <div className="flex items-center justify-between text-[11px] text-stone-500 pt-1">
+                        <div className="flex items-center gap-3">
+                          <button
+                            type="button"
+                            onClick={() => toggleLike(dish.id)}
+                            className={`inline-flex items-center gap-1 font-semibold transition-colors ${
+                              isLiked ? 'text-rose-600 font-bold' : 'hover:text-stone-800'
+                            }`}
+                          >
+                            <Heart className={`w-3.5 h-3.5 ${isLiked ? 'fill-rose-600 text-rose-600' : ''}`} />
+                            <span>{isLiked ? 'Recomendado' : 'Recomendar'}</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => toggleSave(dish.id)}
+                            className={`inline-flex items-center gap-1 font-semibold transition-colors ${
+                              isSaved ? 'text-[#FFB703] font-bold' : 'hover:text-stone-800'
+                            }`}
+                          >
+                            <Bookmark className={`w-3.5 h-3.5 ${isSaved ? 'fill-[#FFB703] text-[#FFB703]' : ''}`} />
+                            <span>{isSaved ? 'Salvo' : 'Salvar'}</span>
+                          </button>
+                        </div>
+
+                        <span className="text-[10px] text-emerald-800 font-bold bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                          ✓ Conferido Hoje
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         ) : (
+          /* Modo 2: Lista dos Estabelecimentos com Banners e Destaques */
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {displayedRestaurants.map((rest) => {
+            {effectiveRestaurants.map((rest) => {
               const starScore = (rest.rating_score ?? rest.rating_average ?? 4.8).toFixed(1);
               return (
                 <article
                   key={rest.id}
-                  className="bg-white rounded-3xl border border-stone-200/90 shadow-xs hover:shadow-xl hover:border-[#135136]/45 transition-all flex flex-col justify-between overflow-hidden"
+                  className="bg-white rounded-3xl border border-stone-200/90 shadow-xs hover:shadow-xl hover:border-[#135136]/45 transition-all flex flex-col justify-between overflow-hidden group"
                 >
-                  <div className="p-5 space-y-3.5">
-                    {/* Cabeçalho do Restaurante */}
-                    <div className="flex items-start justify-between gap-2.5">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="inline-flex items-center gap-1 text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-950/10 text-[#135136]">
-                            <MapPin className="w-3 h-3" />
-                            {rest.neighborhood}
-                          </span>
-                          <span className="text-[11px] font-semibold text-stone-500">
-                            {formatDistanceHuman(rest.distance_meters, rest.distance_km)}
-                          </span>
-                          {rest.has_price_drop && (
-                            <span className="inline-flex items-center gap-0.5 text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300">
-                              <TrendingDown className="w-3 h-3" />
-                              Baixou de preço
-                            </span>
-                          )}
-                        </div>
+                  {/* Banner Fotográfico do Restaurante */}
+                  <div className="relative aspect-[16/9] overflow-hidden bg-stone-900">
+                    <img
+                      src={rest.banner_url || rest.image_url || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80'}
+                      alt={rest.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
 
-                        <h3 className="font-heading font-black text-lg text-stone-900 leading-snug">
-                          <Link
-                            href={`/restaurants/${rest.slug}`}
-                            className="hover:text-[#135136] transition-colors"
-                          >
-                            {rest.name}
-                          </Link>
-                        </h3>
-                        <p className="text-xs text-stone-500 line-clamp-1">{rest.address}</p>
-                      </div>
-
-                      {/* Nota com estrela e tooltip humano */}
-                      <div
-                        className="shrink-0 bg-amber-50 border border-amber-200/90 rounded-2xl px-2.5 py-1.5 text-right"
-                        title="Nota real calculada com avaliações verificadas"
-                      >
-                        <div className="inline-flex items-center gap-1 font-heading font-black text-sm text-stone-900">
-                          <Star className="w-3.5 h-3.5 fill-[#FFB703] text-[#FFB703]" />
-                          <span>{starScore}</span>
-                        </div>
-                        <span className="block text-[9px] font-bold text-stone-500">
-                          {rest.total_reviews} avaliações
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Especialidades & Selo Preço Honesto Verificado */}
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      {rest.cuisine_types.slice(0, 2).map((c) => (
-                        <span
-                          key={c}
-                          className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-stone-100 text-stone-700"
-                        >
-                          {c}
-                        </span>
-                      ))}
-                      <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-900 border border-emerald-200">
-                        <ShieldCheck className="w-3 h-3 text-emerald-700" />
-                        Preço honesto verificado
+                    <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 z-10">
+                      <span className="inline-flex items-center gap-1 text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-black/60 text-white backdrop-blur-md border border-white/20">
+                        <MapPin className="w-3 h-3 text-[#FFB703]" />
+                        {rest.neighborhood}
                       </span>
+                      {rest.has_price_drop && (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-extrabold px-2.5 py-1 rounded-full bg-rose-600/90 text-white backdrop-blur-md shadow-xs border border-white/20">
+                          <TrendingDown className="w-3 h-3" />
+                          Baixou de preço
+                        </span>
+                      )}
                     </div>
 
-                    {/* Pratos em Destaque no Cardápio */}
-                    <div className="pt-2 border-t border-stone-100 space-y-2">
+                    <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white z-10">
+                      <span className="text-xs font-semibold drop-shadow-md">
+                        {formatDistanceHuman(rest.distance_meters, rest.distance_km)}
+                      </span>
+                      <div className="inline-flex items-center gap-1 bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-xl border border-white/20">
+                        <Star className="w-3.5 h-3.5 fill-[#FFB703] text-[#FFB703]" />
+                        <span className="font-heading font-black text-xs text-white">{starScore}</span>
+                        <span className="text-[10px] text-stone-300">({rest.total_reviews})</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-5 space-y-3.5 flex-1 flex flex-col justify-between">
+                    <div className="space-y-2">
+                      <h3 className="font-heading font-black text-lg text-stone-900 leading-snug">
+                        <Link
+                          href={`/restaurants/${rest.slug}`}
+                          className="hover:text-[#135136] transition-colors"
+                        >
+                          {rest.name}
+                        </Link>
+                      </h3>
+                      <p className="text-xs text-stone-500 line-clamp-1">{rest.address}</p>
+
+                      {/* Especialidades */}
+                      <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                        {rest.cuisine_types.slice(0, 2).map((c) => (
+                          <span
+                            key={c}
+                            className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-stone-100 text-stone-700"
+                          >
+                            {c}
+                          </span>
+                        ))}
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-900 border border-emerald-200">
+                          <ShieldCheck className="w-3 h-3 text-emerald-700" />
+                          Preço verificado
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Destaques do Cardápio com Miniatura */}
+                    <div className="pt-3 border-t border-stone-100 space-y-2">
                       <div className="flex items-center justify-between text-[11px] font-extrabold text-stone-500">
-                        <span>Destaques do cardápio ({rest.active_dishes_count})</span>
+                        <span>Pratos mais pedidos ({rest.active_dishes_count})</span>
                         <button
                           type="button"
                           onClick={() => setQuickModalRest(rest)}
                           className="text-[#135136] hover:underline font-bold"
                         >
-                          Espiar cardápio rápido
+                          Ver todos os itens →
                         </button>
                       </div>
 
-                      {rest.dishes_preview.slice(0, 3).map((dish) => (
+                      {rest.dishes_preview.slice(0, 2).map((dish) => (
                         <Link
                           key={dish.id}
                           href={`/prato/${dish.id}`}
-                          className="rounded-2xl bg-[#FAF7F2] hover:bg-amber-50/70 px-3 py-2 border border-stone-200/70 hover:border-[#135136]/40 flex items-start justify-between gap-2 transition-colors group"
+                          className="rounded-2xl bg-[#FAF7F2] hover:bg-amber-50/70 p-2 border border-stone-200/70 hover:border-[#135136]/40 flex items-center justify-between gap-2.5 transition-colors group"
                         >
-                          <div className="min-w-0">
-                            <div className="font-bold text-xs text-stone-900 group-hover:text-[#135136] truncate transition-colors">
-                              {dish.name}
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div className="w-10 h-10 rounded-xl overflow-hidden bg-stone-200 shrink-0">
+                              <img
+                                src={dish.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=150&q=80'}
+                                alt={dish.name}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                                loading="lazy"
+                              />
                             </div>
-                            <div className="flex flex-wrap gap-1 mt-1">
-                              {dish.is_vegan && (
-                                <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-sm bg-emerald-100 text-emerald-900">
-                                  🌱 Vegano
-                                </span>
-                              )}
-                              {dish.is_vegetarian && !dish.is_vegan && (
-                                <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-sm bg-lime-100 text-lime-900">
-                                  🥗 Vegetariano
-                                </span>
-                              )}
-                              {dish.is_gluten_free && (
-                                <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-sm bg-amber-100 text-amber-950">
-                                  🌾 Sem Glúten
-                                </span>
-                              )}
-                              {dish.is_lactose_free && (
-                                <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-sm bg-sky-100 text-sky-950">
-                                  🥛 Sem Lactose
-                                </span>
-                              )}
+                            <div className="min-w-0">
+                              <div className="font-bold text-xs text-stone-900 group-hover:text-[#135136] truncate transition-colors">
+                                {dish.name}
+                              </div>
+                              <span className="text-[10px] text-stone-500 block truncate">
+                                {dish.category}
+                              </span>
                             </div>
                           </div>
 
@@ -790,41 +994,28 @@ export default function HomePage() {
                             <span className="font-heading font-black text-xs text-[#135136] block">
                               {formatBRL(dish.price)}
                             </span>
-                            {dish.last_price_delta_pct < 0 ? (
-                              <span className="text-[9px] font-extrabold text-emerald-700 block">
-                                {formatSavingsBadge(dish)}
-                              </span>
-                            ) : (
-                              <span className="text-[9px] font-bold text-stone-400 group-hover:text-[#135136] block">
-                                Ver prato →
-                              </span>
-                            )}
                           </div>
                         </Link>
                       ))}
                     </div>
                   </div>
 
-                  {/* Rodapé de Ações */}
-                  <div className="px-5 py-3 bg-stone-50 border-t border-stone-200/80 flex items-center justify-between gap-2">
+                  {/* Rodapé com Dois Botões Claros */}
+                  <div className="p-4 pt-0 grid grid-cols-2 gap-2">
                     <button
                       type="button"
-                      onClick={() =>
-                        openAssistantWithPrompt(
-                          `O que você me recomenda pedir hoje no ${rest.name} em ${rest.neighborhood}?`
-                        )
-                      }
-                      className="text-xs font-bold text-stone-700 hover:text-[#135136] inline-flex items-center gap-1"
+                      onClick={() => setQuickModalRest(rest)}
+                      className="py-2.5 px-3 rounded-xl bg-amber-100/90 hover:bg-amber-200 text-amber-950 font-extrabold text-xs flex items-center justify-center gap-1.5 transition-colors border border-amber-300/80"
                     >
-                      <Sparkles className="w-3.5 h-3.5 text-[#FFB703]" />
-                      <span>Pedir dica daqui</span>
+                      <Utensils className="w-3.5 h-3.5 text-amber-900" />
+                      <span>📖 Checar Cardápio</span>
                     </button>
 
                     <Link
                       href={`/restaurants/${rest.slug}`}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#135136] hover:bg-[#1E6B47] text-white font-bold text-xs shadow-xs transition-all"
+                      className="py-2.5 px-3 rounded-xl bg-[#135136] hover:bg-[#0D3825] text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-colors shadow-xs"
                     >
-                      <span>Ver Cardápio</span>
+                      <span>Ver Restaurante</span>
                       <ArrowRight className="w-3.5 h-3.5 text-[#FFB703]" />
                     </Link>
                   </div>
@@ -864,23 +1055,36 @@ export default function HomePage() {
             </div>
 
             <div className="p-6 overflow-y-auto space-y-3 flex-1">
-              {quickModalRest.dishes.map((d) => (
+              {(quickModalRest.dishes && quickModalRest.dishes.length > 0
+                ? quickModalRest.dishes
+                : quickModalRest.dishes_preview || []
+              ).map((d) => (
                 <Link
                   key={d.id}
                   href={`/prato/${d.id}`}
                   onClick={() => setQuickModalRest(null)}
-                  className="rounded-2xl border border-stone-200 hover:border-[#135136] p-3.5 flex items-start justify-between gap-3 transition-colors group"
+                  className="rounded-2xl border border-stone-200 hover:border-[#135136] p-3 flex items-center justify-between gap-3 transition-colors group"
                 >
-                  <div>
-                    <div className="font-bold text-sm text-stone-900 group-hover:text-[#135136] transition-colors">
-                      {d.name}
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-14 h-14 rounded-xl overflow-hidden bg-stone-200 shrink-0">
+                      <img
+                        src={d.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=200&q=80'}
+                        alt={d.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                        loading="lazy"
+                      />
                     </div>
-                    <p className="text-xs text-stone-600 mt-0.5">{d.description}</p>
-                    {d.suggested_sides && d.suggested_sides.length > 0 && (
-                      <div className="text-[11px] text-emerald-800 font-semibold mt-1.5">
-                        Acompanha muito bem: {d.suggested_sides.join(' • ')}
+                    <div className="min-w-0">
+                      <div className="font-bold text-sm text-stone-900 group-hover:text-[#135136] transition-colors truncate">
+                        {d.name}
                       </div>
-                    )}
+                      <p className="text-xs text-stone-600 line-clamp-1 mt-0.5">{d.description}</p>
+                      {d.suggested_sides && d.suggested_sides.length > 0 && (
+                        <div className="text-[11px] text-emerald-800 font-semibold mt-1 truncate">
+                          Acompanha: {d.suggested_sides.join(' • ')}
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <div className="text-right shrink-0">
                     <div className="font-heading font-black text-sm text-[#135136]">
@@ -892,7 +1096,7 @@ export default function HomePage() {
                       </span>
                     ) : (
                       <span className="text-[10px] font-bold text-stone-400 group-hover:text-[#135136] block mt-0.5">
-                        Ver prato & avaliar →
+                        Ver prato →
                       </span>
                     )}
                   </div>

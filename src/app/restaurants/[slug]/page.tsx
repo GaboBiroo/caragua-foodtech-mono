@@ -253,7 +253,7 @@ export default function RestaurantMenuDetailPage() {
           if (
             dietFilter.priceDrop &&
             dish.last_price_delta_pct >= 0 &&
-            !dish.price_history.some((h) => h.delta_percentage < 0)
+            !(dish.price_history || []).some((h) => h.delta_percentage < 0)
           ) {
             return false;
           }
@@ -507,9 +507,10 @@ export default function RestaurantMenuDetailPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {group.items.map((dish) => {
+                        const priceHistory = Array.isArray(dish.price_history) ? dish.price_history : [];
                         const latestStep =
-                          dish.price_history.length > 0
-                            ? dish.price_history[dish.price_history.length - 1]
+                          priceHistory.length > 0
+                            ? priceHistory[priceHistory.length - 1]
                             : null;
                         const deltaPct =
                           dish.last_price_delta_pct !== 0
@@ -594,10 +595,10 @@ export default function RestaurantMenuDetailPage() {
                                   )}
                                 </div>
 
-                                {dish.price_history.length > 0 && (
+                                {priceHistory.length > 0 && (
                                   <div className="flex items-center gap-1.5" title="Histórico recente de preço">
                                     <MiniPriceCurve
-                                      steps={dish.price_history}
+                                      steps={priceHistory}
                                       currentPrice={dish.price}
                                     />
                                   </div>
@@ -649,14 +650,17 @@ export default function RestaurantMenuDetailPage() {
 
               {detail.reviews.length === 0 ? (
                 <p className="text-sm text-stone-500">
-                  Este lugar acabou de chegar por aqui e ainda está recebendo suas primeiras avaliações.
+                  Nenhuma avaliação pública do Google Maps registrada até o momento para este estabelecimento.
                 </p>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {detail.reviews.map((rev) => {
                     const cleanText = sanitizeReviewText(
-                      rev.public_comment || rev.comment_text || ''
+                      rev.public_comment || rev.comment_text || (rev as any).comment || ''
                     );
+                    const stars = Number(rev.original_rating ?? (rev as any).rating ?? 5.0);
+                    const author = rev.author_label || (rev as any).author || 'Cliente Google Maps';
+                    const dateDisplay = (rev as any).date || (rev.review_date ? new Date(rev.review_date).toLocaleDateString('pt-BR') : 'Recentemente');
                     return (
                       <article
                         key={rev.id}
@@ -665,12 +669,12 @@ export default function RestaurantMenuDetailPage() {
                         <div className="flex items-center justify-between gap-2">
                           <span className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-950/10 text-[#135136]">
                             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
-                            {rev.author_label || 'Cliente verificado • Morador/Visitante'}
+                            {author}
                           </span>
 
                           <div className="inline-flex items-center gap-1 text-xs font-extrabold text-stone-900 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
                             <Star className="w-3.5 h-3.5 fill-[#FFB703] text-[#FFB703]" />
-                            <span>{rev.original_rating.toFixed(1).replace('.', ',')}</span>
+                            <span>{stars.toFixed(1).replace('.', ',')}</span>
                           </div>
                         </div>
 
@@ -679,12 +683,8 @@ export default function RestaurantMenuDetailPage() {
                         </p>
 
                         <div className="text-[11px] text-stone-400 flex items-center justify-between pt-1">
-                          <span>Pedido conferido em Caraguá</span>
-                          {rev.review_date && (
-                            <span>
-                              {new Date(rev.review_date).toLocaleDateString('pt-BR')}
-                            </span>
-                          )}
+                          <span>Avaliação real no Google Maps</span>
+                          <span>{dateDisplay}</span>
                         </div>
                       </article>
                     );

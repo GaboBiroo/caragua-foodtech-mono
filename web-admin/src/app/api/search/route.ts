@@ -1,23 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { INITIAL_RESTAURANTS } from '@/data/caraguaData';
+import { realDataStore } from '@/data/realDataStore';
+
+const BACKEND_API_BASE = process.env.NEXT_PUBLIC_API_URL;
 
 export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const q = (searchParams.get('q') || '').toLowerCase();
-  const polo = searchParams.get('polo');
+  const searchParams = req.nextUrl.searchParams;
+  const q = searchParams.get('q') || '';
+  const neighborhood = searchParams.get('neighborhood') || searchParams.get('polo') || '';
 
-  let results = INITIAL_RESTAURANTS;
-  if (polo) {
-    results = results.filter(r => r.neighborhood.toLowerCase().includes(polo.toLowerCase()));
+  if (BACKEND_API_BASE && !BACKEND_API_BASE.includes('localhost') && !BACKEND_API_BASE.includes('127.0.0.1')) {
+    try {
+      const params = new URLSearchParams();
+      if (q) params.set('q', q);
+      if (neighborhood) params.set('neighborhood', neighborhood);
+      const upstreamUrl = `${BACKEND_API_BASE}/dishes/search?${params.toString()}`;
+      const response = await fetch(upstreamUrl, { cache: 'no-store' });
+      if (response.ok) {
+        const payload = await response.json();
+        return NextResponse.json({
+          success: true,
+          count: payload.count ?? 0,
+          results: payload.results ?? [],
+        });
+      }
+    } catch {
+      // Fallback
+    }
   }
 
-  if (q) {
-    results = results.filter(r =>
-      r.name.toLowerCase().includes(q) ||
-      r.neighborhood.toLowerCase().includes(q) ||
-      r.dishes.some(d => d.name.toLowerCase().includes(q) || d.description.toLowerCase().includes(q))
-    );
-  }
-
-  return NextResponse.json({ success: true, count: results.length, results });
+  const results = realDataStore.searchDishes(q, neighborhood);
+  return NextResponse.json({
+    success: true,
+    count: results.length,
+    results,
+  });
 }

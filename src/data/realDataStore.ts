@@ -255,18 +255,34 @@ export const realDataStore = {
 
   getRestaurantBySlug(slug: string): Record<string, unknown> | null {
     const details = (dump.restaurant_details || {}) as Record<string, Record<string, unknown>>;
-    if (details[slug]) {
-      return details[slug];
+    let raw = details[slug];
+    if (!raw) {
+      const norm = normalizeStr(slug);
+      const foundKey = Object.keys(details).find((k) => normalizeStr(k) === norm || normalizeStr(k).includes(norm));
+      if (foundKey) {
+        raw = details[foundKey];
+      }
     }
-    // Fallback por busca de slug similar
-    const norm = normalizeStr(slug);
-    const foundKey = Object.keys(details).find((k) => normalizeStr(k) === norm || normalizeStr(k).includes(norm));
-    if (foundKey) {
-      return details[foundKey];
+
+    if (raw) {
+      const googleReviews = (raw.recent_reviews || raw.reviews || []) as any[];
+      return {
+        ...raw,
+        reviews: googleReviews.map((r: any) => ({
+          id: r.id || `gmap-${Math.random()}`,
+          author_label: r.author || r.author_label || 'Cliente Google Maps',
+          original_rating: Number(r.rating ?? r.original_rating ?? 5.0),
+          comment_text: r.comment || r.comment_text || '',
+          public_comment: r.comment || r.comment_text || '',
+          review_date: r.date || r.review_date || 'Recentemente',
+          source: 'Google Maps',
+        })),
+      };
     }
-    // Fallback gerado a partir de restaurants catalog
+
+    // Fallback gerado a partir de restaurants catalog sem dados falsos
     const rest = (dump.restaurants as unknown as RestaurantCardData[]).find(
-      (r) => normalizeStr(r.slug) === norm || normalizeStr(r.name) === norm
+      (r) => normalizeStr(r.slug) === normalizeStr(slug) || normalizeStr(r.name) === normalizeStr(slug)
     );
     if (rest) {
       return {
@@ -276,7 +292,7 @@ export const realDataStore = {
         address: rest.address,
         neighborhood: rest.neighborhood,
         phone: rest.phone || '(12) 3882-1000',
-        website: rest.website || 'https://caraguatatuba.sp.gov.br',
+        website: rest.website || null,
         latitude: rest.latitude,
         longitude: rest.longitude,
         rating_average: rest.rating_average,
@@ -285,7 +301,7 @@ export const realDataStore = {
         is_real_osm: rest.is_real_osm ?? true,
         menu_by_category: [
           {
-            category: 'Pratos Principais',
+            category: 'Cardápio Principal',
             items: rest.dishes_preview.map((d) => ({
               ...d,
               price_history: [
@@ -298,16 +314,8 @@ export const realDataStore = {
             })),
           },
         ],
-        recent_reviews: [
-          {
-            id: 'rev-auto-1',
-            author: 'Morador Caiçara',
-            rating: 5,
-            comment: 'Excelente atendimento e ingredientes frescos direto do mar de Caraguá.',
-            date: 'Hoje',
-            verified: true,
-          },
-        ],
+        reviews: [],
+        recent_reviews: [],
       };
     }
     return null;
@@ -369,23 +377,14 @@ export const realDataStore = {
           },
           super_nota: {
             super_score: r.rating_average,
-            google_score: Math.min(5, r.rating_average + 0.1),
-            google_weight_pct: 50,
-            tripadvisor_score: Math.max(4.0, r.rating_average - 0.1),
-            tripadvisor_weight_pct: 30,
-            curatorship_score: 4.5,
-            curatorship_weight_pct: 20,
+            google_score: r.rating_average,
+            google_weight_pct: 100,
+            tripadvisor_score: r.rating_average,
+            tripadvisor_weight_pct: 0,
+            curatorship_score: r.rating_average,
+            curatorship_weight_pct: 0,
           },
-          reviews: [
-            {
-              id: 'rev-auto',
-              author: 'Cliente de Caraguá',
-              rating: 5,
-              comment: 'Prato muito bem servido e saboroso, recomendo a todos!',
-              date: 'Esta semana',
-              verified: true,
-            },
-          ],
+          reviews: [],
           related_dishes: r.dishes_preview.filter((d) => d.id !== match.id).slice(0, 4),
         };
       }

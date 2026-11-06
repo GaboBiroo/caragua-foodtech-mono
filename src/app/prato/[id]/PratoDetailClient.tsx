@@ -111,16 +111,9 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
   const [tableVoucher, setTableVoucher] = useState('');
   const [reviewComment, setReviewComment] = useState('');
 
-  const [comments, setComments] = useState(
-    post.commentsList || [
-      {
-        author: 'Cliente verificado • Caraguá',
-        text: 'Prato sensacional, frescor incomparável e muito bem servido!',
-        rating: 5,
-        date: 'Recentemente',
-      },
-    ]
-  );
+  const [comments, setComments] = useState<
+    Array<{ author: string; text: string; rating: number; date: string }>
+  >([]);
 
   // Hidratação ao vivo pelo PostgreSQL quando o ID corresponde a um prato do banco
   useEffect(() => {
@@ -561,49 +554,29 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
 
                     <div className="text-right">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 block">
-                        Super Nota CaráFood
+                        Nota no Google Maps
                       </span>
                       <div className="flex items-center gap-1.5 justify-end font-heading font-black text-2xl text-stone-900">
                         <Star className="w-5 h-5 text-[#FFB703] fill-[#FFB703]" />
-                        <span>{superScore.toFixed(2)}</span>
+                        <span>{googleScore.toFixed(1)}</span>
                       </div>
                       <span className="text-[10px] text-stone-500 font-bold block">
-                        {totalReviews} avaliações verificadas
+                        {totalReviews} avaliações reais de clientes
                       </span>
                     </div>
                   </div>
 
-                  {/* Composição Aberta da Super Nota (50% Google • 30% TripAdvisor • 20% Curadoria) */}
-                  <div className="pt-2.5 border-t border-stone-200/80 space-y-1.5">
-                    <div className="text-[10px] font-extrabold uppercase tracking-wider text-stone-500">
-                      Composição Transparente da Nota (HU02):
+                  {/* Informações Oficiais Auditadas pelo Google Maps */}
+                  <div className="pt-2.5 border-t border-stone-200/80 flex items-center justify-between text-xs text-stone-600">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
+                      <span className="font-semibold text-stone-800">
+                        Avaliações reais conferidas no Google Maps
+                      </span>
                     </div>
-                    <div className="grid grid-cols-3 gap-1.5 text-center">
-                      <div className="rounded-xl bg-white p-2 border border-stone-200/80">
-                        <span className="text-[9px] font-bold text-stone-500 block">
-                          Google (50%)
-                        </span>
-                        <span className="font-heading font-black text-xs text-stone-900">
-                          ⭐ {googleScore.toFixed(1)}
-                        </span>
-                      </div>
-                      <div className="rounded-xl bg-white p-2 border border-stone-200/80">
-                        <span className="text-[9px] font-bold text-stone-500 block">
-                          TripAdvisor (30%)
-                        </span>
-                        <span className="font-heading font-black text-xs text-stone-900">
-                          ⭐ {tripadvisorScore.toFixed(1)}
-                        </span>
-                      </div>
-                      <div className="rounded-xl bg-emerald-50 p-2 border border-emerald-200">
-                        <span className="text-[9px] font-bold text-emerald-900 block">
-                          Curadoria (20%)
-                        </span>
-                        <span className="font-heading font-black text-xs text-[#135136]">
-                          ⭐ {curatorshipScore.toFixed(1)}
-                        </span>
-                      </div>
-                    </div>
+                    <span className="font-bold text-stone-500">
+                      Média pública oficial de Caraguatatuba
+                    </span>
                   </div>
                 </div>
 
@@ -738,24 +711,48 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
             </button>
           </div>
 
-          <div className="space-y-3">
-            {comments.map((c, i) => (
-              <div
-                key={i}
-                className="p-4 rounded-2xl bg-stone-50 border border-stone-200/80 space-y-1.5"
-              >
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-heading font-bold text-stone-900">{c.author}</span>
-                  <div className="flex items-center gap-1 text-[#FFB703]">
-                    <Star className="w-3.5 h-3.5 fill-[#FFB703]" />
-                    <span className="font-black text-stone-900">{c.rating.toFixed(1)}</span>
-                    <span className="text-stone-400 font-normal">• {c.date}</span>
-                  </div>
-                </div>
-                <p className="text-xs text-stone-700 leading-relaxed">&ldquo;{c.text}&rdquo;</p>
+          {comments.length === 0 ? (
+            <div className="p-8 rounded-2xl bg-stone-50 border border-dashed border-stone-300 text-center space-y-3">
+              <div className="w-12 h-12 mx-auto rounded-full bg-stone-100 flex items-center justify-center text-stone-400">
+                <MessageCircle className="w-6 h-6" />
               </div>
-            ))}
-          </div>
+              <div className="space-y-1">
+                <p className="font-heading font-bold text-stone-800 text-sm">
+                  Nenhuma avaliação registrada ainda para este prato
+                </p>
+                <p className="text-xs text-stone-500 max-w-md mx-auto">
+                  Você já pediu este prato no restaurante? Seja a primeira pessoa a registrar uma nota e comentário pela cédula oficial!
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsReviewModalOpen(true)}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#135136] text-white text-xs font-bold hover:bg-[#0D3825] transition-colors"
+              >
+                <Star className="w-3.5 h-3.5 fill-[#FFB703] text-[#FFB703]" />
+                <span>Avaliar este Prato Agora</span>
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {comments.map((c, i) => (
+                <div
+                  key={i}
+                  className="p-4 rounded-2xl bg-stone-50 border border-stone-200/80 space-y-1.5"
+                >
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-heading font-bold text-stone-900">{c.author}</span>
+                    <div className="flex items-center gap-1 text-[#FFB703]">
+                      <Star className="w-3.5 h-3.5 fill-[#FFB703]" />
+                      <span className="font-black text-stone-900">{c.rating.toFixed(1)}</span>
+                      <span className="text-stone-400 font-normal">• {c.date}</span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-stone-700 leading-relaxed">&ldquo;{c.text}&rdquo;</p>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
 
         {/* 4. Outros Pratos Recomendados em Caraguatatuba */}

@@ -2,8 +2,8 @@ import './globals.css';
 import { Metadata, Viewport } from 'next';
 
 export const metadata: Metadata = {
-  title: 'CaráFood — O Guia Gastronômico Oficial da Costa Caiçara de Caraguatatuba',
-  description: 'Descubra os melhores quiosques, mexilhões da Cocanha (AMAPEC), frutos do mar do Camaroeiro e os 53 bairros de Caraguatatuba no CaráFood com o Chef Jacquin Praiano.',
+  title: 'CaráFood — Onde Comer Hoje nos 53 Bairros de Caraguatatuba',
+  description: 'Descubra quiosques, pizzarias, padarias e restaurantes reais em Caraguá, compare cardápios, veja onde o preço baixou e encontre opções para a sua dieta.',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,

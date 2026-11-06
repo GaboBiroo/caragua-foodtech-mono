@@ -976,10 +976,7 @@ export const INITIAL_FEED_POSTS: FeedPost[] = [
       price: 68.0,
       highlight: "Pesca da Enseada • Molho Tártaro Artesanal"
     },
-    commentsList: [
-      { author: "Thiago P.", text: "Melhor isca de peixe de Martim de Sá! Crocante e bem servida.", rating: 5, date: "Há 30 min" },
-      { author: "Marina S.", text: "O molho tártaro com limão-cravo é absurdo de bom!", rating: 5, date: "Há 1 hora" }
-    ]
+    commentsList: []
   },
   {
     id: "post-marujo-sororoca",
@@ -1013,10 +1010,7 @@ export const INITIAL_FEED_POSTS: FeedPost[] = [
     regionalLLMSummary: "Centro: Bicampeão oficial do festival com notas máximas no júri técnico do Cliente Oculto.",
     isLocalProducer: true,
     createdAt: "Há 3 horas",
-    commentsList: [
-      { author: "Eduardo R.", text: "Comi na 20ª edição e voltei essa semana. Padrão internacional no Centro!", rating: 5, date: "Ontem" },
-      { author: "Patrícia V.", text: "Azeite aromático impecável e peixe no ponto exato.", rating: 5, date: "Há 2 dias" }
-    ]
+    commentsList: []
   },
   {
     id: "post-japa-pizza-pernil",
@@ -1050,9 +1044,7 @@ export const INITIAL_FEED_POSTS: FeedPost[] = [
       price: 78.0,
       highlight: "🏆 1º Lugar Pizzas • Fermentação Longa"
     },
-    commentsList: [
-      { author: "Carlos M.", text: "Melhor pizza do litoral paulista inteiro. O pernil desmancha na boca!", rating: 5, date: "Há 1 hora" }
-    ]
+    commentsList: []
   },
   {
     id: "post-inbrasa-melt",
@@ -1086,9 +1078,7 @@ export const INITIAL_FEED_POSTS: FeedPost[] = [
       price: 38.0,
       highlight: "🏆 1º Lugar Delivery • Cheddar e Bacon"
     },
-    commentsList: [
-      { author: "Lucas B.", text: "Chegou em casa como se tivesse saído da chapa agora. Imbatível!", rating: 5, date: "Há 2 horas" }
-    ]
+    commentsList: []
   },
   {
     id: "post-fcburger-gorgonzolita",
@@ -1121,9 +1111,7 @@ export const INITIAL_FEED_POSTS: FeedPost[] = [
       price: 42.0,
       highlight: "🏆 1º Lugar Lanches • Pão Brioche Selado"
     },
-    commentsList: [
-      { author: "Renata A.", text: "O creme de gorgonzola não é enjoativo, é suave e viciante!", rating: 5, date: "Há 3 horas" }
-    ]
+    commentsList: []
   },
   {
     id: "post-golfinho-massaguacu",
@@ -1157,9 +1145,7 @@ export const INITIAL_FEED_POSTS: FeedPost[] = [
       price: 138.0,
       highlight: "40 Anos de Tradição • Serve 3 Pessoas com Pirão"
     },
-    commentsList: [
-      { author: "Família Silveira", text: "Almoço de domingo obrigatório quando descemos a serra. Porção gigante!", rating: 5, date: "Ontem" }
-    ]
+    commentsList: []
   },
   {
     id: "post-cocanha-mexilhoes",
@@ -1194,9 +1180,7 @@ export const INITIAL_FEED_POSTS: FeedPost[] = [
       price: 45.0,
       highlight: "🌊 Fazenda Marinha da Cocanha • Vapor e Limão"
     },
-    commentsList: [
-      { author: "Gabriel M.", text: "Comi no passeio de barco da AMAPEC. Frescor inacreditável!", rating: 5, date: "Ontem" }
-    ]
+    commentsList: []
   },
   {
     id: "post-gama-costela",
@@ -1229,9 +1213,7 @@ export const INITIAL_FEED_POSTS: FeedPost[] = [
       price: 39.0,
       highlight: "🏆 1º Lugar Porções • Pura Carne sem Massa"
     },
-    commentsList: [
-      { author: "Felipe T.", text: "O Tinga tem gastronomia de primeiro escalão! Esse bolinho é imbatível.", rating: 5, date: "Ontem" }
-    ]
+    commentsList: []
   },
   {
     id: "post-espeticho-camarao",
@@ -1265,9 +1247,7 @@ export const INITIAL_FEED_POSTS: FeedPost[] = [
       price: 65.0,
       highlight: "🏆 1º Lugar Petiscos • Redução Cítrica Maracujá"
     },
-    commentsList: [
-      { author: "Helena G.", text: "Comer esse camarão olhando o mar da Tabatinga é uma experiência única.", rating: 5, date: "Há 2 dias" }
-    ]
+    commentsList: []
   },
   {
     id: "post-centro-azul-marinho",
@@ -1301,9 +1281,7 @@ export const INITIAL_FEED_POSTS: FeedPost[] = [
       price: 75.0,
       highlight: "🏺 Patrimônio Imaterial • Panela de Ferro Fundido"
     },
-    commentsList: [
-      { author: "Dona Neide", text: "Minha avó fazia exatamente assim no Canto do Bagre. Emocionante o sabor!", rating: 5, date: "Há 1 dia" }
-    ]
+    commentsList: []
   },
   {
     id: "post-goes-ice-roll",
@@ -1336,9 +1314,7 @@ export const INITIAL_FEED_POSTS: FeedPost[] = [
       price: 24.0,
       highlight: "🏆 1º Lugar Sobremesas • Frutas Vermelhas Frescas"
     },
-    commentsList: [
-      { author: "Jéssica L.", text: "Ver fazer na hora na chapa fria é um show, e o sabor é maravilhoso!", rating: 5, date: "Há 2 dias" }
-    ]
+    commentsList: []
   },
   {
     id: "post-aloha-polvo",
@@ -1372,9 +1348,7 @@ export const INITIAL_FEED_POSTS: FeedPost[] = [
       price: 89.0,
       highlight: "🏆 Pódio Caraguá a Gosto • Batatas ao Murro"
     },
-    commentsList: [
-      { author: "Marcos V.", text: "Polvo mais macio que já comi no litoral norte. Vale cada centavo!", rating: 5, date: "Ontem" }
-    ]
+    commentsList: []
   },
   {
     id: "post-zanfredo-risotto",
@@ -1408,9 +1382,7 @@ export const INITIAL_FEED_POSTS: FeedPost[] = [
       price: 82.0,
       highlight: "🏆 Premiado • Caldo da Costa Mantecato"
     },
-    commentsList: [
-      { author: "Giulia B.", text: "Cremoso no ponto exato, sabor de mar muito limpo!", rating: 5, date: "Há 2 dias" }
-    ]
+    commentsList: []
   },
   {
     id: "post-sol-e-cia-peixe-porco",
@@ -1445,9 +1417,7 @@ export const INITIAL_FEED_POSTS: FeedPost[] = [
       price: 58.0,
       highlight: "🏆 3º Lugar Porções • Crocante no Limão-Cravo"
     },
-    commentsList: [
-      { author: "Fábio R.", text: "Sequinha de verdade, não fica oleosa. Melhor porção da praia de Martim!", rating: 5, date: "Há 2 dias" }
-    ]
+    commentsList: []
   },
   {
     id: "post-garage-mar-pizza",
@@ -1480,9 +1450,7 @@ export const INITIAL_FEED_POSTS: FeedPost[] = [
       price: 85.0,
       highlight: "🏆 2º Lugar Pizzas • Forno a Lenha"
     },
-    commentsList: [
-      { author: "Priscila M.", text: "Combinação espetacular de salmão e cream cheese. Massa crocante!", rating: 5, date: "Há 3 dias" }
-    ]
+    commentsList: []
   }
 ];
 

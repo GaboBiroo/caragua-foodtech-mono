@@ -27,26 +27,26 @@ export const RadarTab: React.FC<RadarTabProps> = ({
         <div className="coucou-card p-5">
           <div className="flex items-center gap-2 text-xs text-[#52525B] mb-2 font-medium">
             <Activity className="w-4 h-4 text-[#0D9488]" />
-            <span>Avaliações Monitoradas</span>
+            <span>Avaliações Indexadas</span>
           </div>
           <div className="font-mono text-2xl font-bold text-[#18181B] tracking-tight">
-            1.420
+            {INITIAL_RESTAURANTS.reduce((acc, r) => acc + (r.totalReviews || 0), 0).toLocaleString('pt-BR')}
           </div>
           <p className="text-[11px] text-[#71717A] mt-1 font-mono">
-            Google Maps + iFood + App (Caraguá)
+            Google Maps + Cardápios Reais (Caraguá)
           </p>
         </div>
 
         <div className="coucou-card p-5">
           <div className="flex items-center gap-2 text-xs text-[#52525B] mb-2 font-medium">
             <ShieldCheck className="w-4 h-4 text-[#059669]" />
-            <span>Detector Anti-Fraude</span>
+            <span>Locais Mapeados</span>
           </div>
           <div className="font-mono text-2xl font-bold text-[#059669] tracking-tight">
-            38 Bots Expurgados
+            {INITIAL_RESTAURANTS.length} Lugares Reais
           </div>
           <p className="text-[11px] text-[#71717A] mt-1 font-mono">
-            Filtro Z-Score & Isolamento de IP
+            Fontes verificadas em Caraguatatuba
           </p>
         </div>
 

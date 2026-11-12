@@ -17,18 +17,18 @@ export const DynamicIsland: React.FC<DynamicIslandProps> = ({
   const [chatMessages, setChatMessages] = useState<Array<{ sender: 'jacquin' | 'user'; text: string; recDish?: string }>>([
     {
       sender: 'jacquin',
-      text: 'Mon ami! Bem-vindo ao CaráFood! Tá procurando um camarão crocante, uma isca de badejo pé na areia ou um prato caiçara de verdade hoje?',
+      text: 'Mon ami! Bem-vindo ao CaráFood! Busque pratos reais com preços de hoje e fotos oficiais em Caraguatatuba!',
     }
   ]);
   const [inputText, setInputText] = useState('');
 
   const quickChips = [
-    { label: '🦪 Mexilhão da Cocanha', query: 'cocanha' },
-    { label: '🏺 Azul-Marinho', query: 'azul marinho' },
-    { label: '🐙 Polvo no Aloha', query: 'polvo' },
-    { label: '🐟 Peixe fresco da orla', query: 'peixe' },
-    { label: '🏆 Vencedores Caraguá a Gosto', query: 'premiados' },
-    { label: '🍕 Pizza artesanal a lenha', query: 'pizza' },
+    { label: '🍔 Lanches & Burgers', query: 'burger' },
+    { label: '🍤 Frutos do Mar', query: 'camarão' },
+    { label: '🍕 Pizzas', query: 'pizza' },
+    { label: '🍣 Japonês', query: 'sushi' },
+    { label: '🥩 Marmitas & Executivo', query: 'marmita' },
+    { label: '🍧 Açaí & Sobremesas', query: 'açai' },
   ];
 
   const handleSend = (text: string) => {
@@ -42,37 +42,20 @@ export const DynamicIsland: React.FC<DynamicIslandProps> = ({
       let reply = '';
       let dish = '';
 
-      if (q.includes('cocanha') || q.includes('mexilh') || q.includes('amapec') || q.includes('zanfredo')) {
-        reply = 'Mon ami, os mexilhões da Fazenda Marinha da Cocanha (AMAPEC) são os mais frescos do Brasil! Cultivados em espinhéis longline, servidos ao vapor com limão-cravo ou no Risotto premiado da Cantinetta Zanfredo!';
-        dish = 'Mexilhões da Cocanha ao Vapor';
-        if (onSelectCategory) onSelectCategory('maricultura');
-      } else if (q.includes('azul') || q.includes('marinho') || q.includes('ancestral') || q.includes('banana')) {
-        reply = 'O verdadeiro Azul-Marinho tem que ser feito na panela de ferro fundido bruto com banana nanica verde! A reação dos taninos deixa o caldo ardósia escuro e o pirão na Cantina Caiçara Tradição é patrimônio vivo!';
-        dish = 'Azul-Marinho Tradicional na Panela de Ferro';
-      } else if (q.includes('polvo') || q.includes('aloha')) {
-        reply = 'Polvo exige ponto exato pra não virar borracha! No Aloha Bistrô da Praia no Centro, o polvo é braseado na grelha viva com batatas ao murro na manteiga de garrafa. Pódio consecutivo do festival!';
-        dish = 'Polvo Grelhado Aloha';
-      } else if (q.includes('fub') || q.includes('sol e cia') || q.includes('petisco')) {
-        reply = 'Iscas de peixe fresquinhas no fubá mimoso e limão-cravo pé na areia! O Quiosque Sol e Cia em Martim de Sá levou 3º lugar do festival com a porção Boca da Noite!';
-        dish = 'Boca da Noite – Iscas no Fubá Mimoso';
+      if (q.includes('burger') || q.includes('lanche') || q.includes('sandu')) {
+        reply = 'Use os filtros de categoria ou bairro na tela inicial para ver lanchonetes reais em Caraguatatuba com cardápio e fotos conferidas!';
+        if (onSelectCategory) onSelectCategory('lanches');
       } else if (q.includes('vegano') || q.includes('vegetar') || q.includes('sem carne')) {
-        reply = 'Para comer sem carne e com muito frescor no CaráFood: o Bowl Caiçara do Empório Verde Mar é cheio de vida e ingredientes da Mata Atlântica!';
-        dish = 'Bowl Caiçara de Quinoa e Shimeji';
+        reply = 'Ative o filtro de restrição alimentar na busca para localizar apenas opções compatíveis no cardápio real!';
         if (onSelectCategory) onSelectCategory('vegano');
-      } else if (q.includes('camar') || q.includes('risoto')) {
-        reply = 'Quer camarão nobre de verdade? O Camarão Tropical Espeticho na Tabatinga ou o Risoto no Indaiá são fantásticos, mon ami!';
-        dish = 'Camarão Tropical Espeticho';
-        if (onSelectCategory) onSelectCategory('camarão');
-      } else if (q.includes('badejo') || q.includes('peixe') || q.includes('sororoca') || q.includes('isca')) {
-        reply = 'A Sororoca a Mediterrâneo do Marujo Gastro Bar no Centro foi bicampeã do Caraguá a Gosto, e a Isca de Badejo no Canto Bravo em Martim de Sá é crocância pura!';
-        dish = 'Sororoca a Mediterrâneo';
-        if (onSelectCategory) onSelectCategory('peixe');
-      } else if (q.includes('pizza') || q.includes('lenha')) {
-        reply = 'No Indaiá a Pizzaria Japa Pizza foi multicampeã com a pizza de Pernil Supremo no forno a lenha, e o Garage Steakhouse levou pódio com a Pizza Garage Mar com salmão defumado!';
-        dish = 'Pizza Pernil Supremo';
+      } else if (q.includes('camar') || q.includes('peixe') || q.includes('frutos')) {
+        reply = 'Explore os estabelecimentos de frutos do mar no guia principal com avaliações do Google Maps e cardápio original anexado!';
+        if (onSelectCategory) onSelectCategory('frutos do mar');
+      } else if (q.includes('pizza')) {
+        reply = 'Veja as pizzarias ativas de Caraguatatuba no catálogo principal com preços reais por tamanho!';
         if (onSelectCategory) onSelectCategory('pizza');
       } else {
-        reply = 'Na orla de Caraguatatuba os quiosques e restaurantes estão com os peixes frescos da safra que chegaram hoje no Camaroeiro. Olha os pratos do feed do CaráFood!';
+        reply = 'Use o campo de busca ou clique em "Checar Cardápio" em qualquer restaurante para conferir preços, fotos e link oficial!';
       }
 
       setChatMessages(prev => [...prev, { sender: 'jacquin', text: reply, recDish: dish }]);
@@ -109,7 +92,7 @@ export const DynamicIsland: React.FC<DynamicIslandProps> = ({
                   <span className="w-2 h-2 rounded-full bg-[#FFB703] animate-pulse" />
                 </div>
                 <p className="text-[11px] sm:text-xs text-amber-200 truncate font-medium">
-                  &quot;Badejo crocante no Canto Bravo tá incrível!&quot;
+                  &quot;Pratos reais e fotos oficiais em Caraguatatuba!&quot;
                 </p>
               </div>
             </div>

@@ -87,17 +87,18 @@ export const JacquinChatDrawer: React.FC<JacquinChatDrawerProps> = ({
           });
         });
       } else if (q.includes('azul') || q.includes('marinho') || q.includes('tradicional')) {
-        llmTag = 'LLM Regional Centro Histórico (Patrimônio & Tradição)';
-        replyText = 'O autêntico Azul-Marinho caiçara é feito com peixe fresco cozido na panela de barro com banana verde nanica, que confere o tom azulado natural à calda de pirão. A Cantina Tradição no Centro prepara com nota 4.94 ★!';
-        
-        const rTrad = INITIAL_RESTAURANTS.find(r => r.id === 'rest-centro-cantina');
-        if (rTrad) {
-          const dAzul = rTrad.dishes.find(d => d.id === 'd-4-azul');
-          if (dAzul) recs.push({ dish: dAzul, restaurantName: rTrad.name, neighborhood: rTrad.neighborhood, decayedRating: rTrad.decayedRatingAverage });
-        }
+        llmTag = 'Cardápio Regional de Caraguatatuba';
+        replyText = 'Buscando pratos tradicionais reais no catálogo sincronizado para Caraguatatuba!';
+        INITIAL_RESTAURANTS.forEach(r => {
+          r.dishes.forEach(d => {
+            if (d.name.toLowerCase().includes('peixe') || d.name.toLowerCase().includes('moqueca')) {
+              if (recs.length < 2) recs.push({ dish: d, restaurantName: r.name, neighborhood: r.neighborhood, decayedRating: r.decayedRatingAverage });
+            }
+          });
+        });
       } else if (q.includes('camar') || q.includes('frutos') || q.includes('peixe')) {
-        llmTag = 'LLM Regional Martim de Sá & Indaiá';
-        replyText = 'Para frutos do mar com frescor absoluto, o Risoto de Camarão Rosa do Mar & Terra Gourmet (Indaiá) e o Camarão Sete-Barbas do Quiosque Canto Bravo (Martim de Sá) têm os maiores spikes de qualidade nas últimas 48h!';
+        llmTag = 'Busca Real • Caraguatatuba';
+        replyText = 'Pratos de frutos do mar extraídos diretamente dos cardápios reais de Caraguatatuba:';
         
         INITIAL_RESTAURANTS.forEach(r => {
           r.dishes.forEach(d => {
@@ -107,7 +108,7 @@ export const JacquinChatDrawer: React.FC<JacquinChatDrawerProps> = ({
           });
         });
       } else {
-        replyText = `Com base nas 1.420 avaliações sincronizadas e na proximidade com ${selectedNeighborhood === 'todos' ? 'Caraguatatuba' : selectedNeighborhood}, os estabelecimentos auditados garantem o melhor frescor costeiro. Posso te indicar pratos por tipo de culinária ou promoções ativas!`;
+        replyText = `Consulte pratos reais, preços e notas públicas do Google Maps em ${selectedNeighborhood === 'todos' ? 'Caraguatatuba' : selectedNeighborhood}. Use a busca principal ou o botão Checar Cardápio em qualquer lugar!`;
       }
 
       setMessages(prev => [

@@ -15,6 +15,11 @@ export interface DishPreview {
   last_price_delta_pct: number;
   suggested_sides?: string[];
   image_url?: string;
+  price_history?: Array<{
+    recorded_at: string;
+    price: number;
+    delta_percentage: number;
+  }>;
 }
 
 export interface RestaurantCardData {
@@ -27,6 +32,8 @@ export interface RestaurantCardData {
   state?: string;
   phone?: string | null;
   website?: string | null;
+  menu_url?: string | null;
+  instagram?: string | null;
   latitude: number;
   longitude: number;
   price_level: number;
@@ -34,10 +41,16 @@ export interface RestaurantCardData {
   rating_average: number;
   total_reviews: number;
   active_dishes_count: number;
+  dish_photos_count?: number;
   has_price_drop: boolean;
   is_real_osm?: boolean;
   source_platform: string;
   cuisine_types: string[];
+  banner_url?: string;
+  image_url?: string;
+  cover_image?: string;
+  gallery_photos?: string[];
+  opening_hours?: string | null;
   distance_meters: number;
   distance_km: number;
   dishes_preview: DishPreview[];
@@ -75,6 +88,9 @@ export interface DishDetailData {
     description: string;
     price: number;
     category: string;
+    image_url?: string;
+    previous_price?: number | null;
+    savings_brl?: number;
     is_vegan: boolean;
     is_vegetarian: boolean;
     is_gluten_free: boolean;
@@ -94,6 +110,12 @@ export interface DishDetailData {
     neighborhood: string;
     phone: string | null;
     website: string | null;
+    menu_url?: string | null;
+    image_url?: string;
+    banner_url?: string;
+    opening_hours?: string | null;
+    source_platform?: string;
+    distance_km?: number;
     latitude: number;
     longitude: number;
     rating_average: number;
@@ -228,17 +250,19 @@ export const realDataStore = {
       filtered = filtered.filter((r) => r.has_price_drop);
     }
 
-    // 6. Ordenação
+    // 6. Ordenação: restaurantes com fotos reais de pratos, avaliações Google e boa nota primeiro
     filtered.sort((a, b) => {
       if (options?.sortBy === 'distance') {
         return a.distance_km - b.distance_km;
       }
-      const scoreA = (a.rating_score ?? a.rating_average ?? 4.5) * 10 + Math.min(a.total_reviews, 50);
-      const scoreB = (b.rating_score ?? b.rating_average ?? 4.5) * 10 + Math.min(b.total_reviews, 50);
+      const photoWeightA = (a.dish_photos_count ?? (a.dishes_preview || []).filter((d) => d.image_url).length) > 0 ? 500 : 0;
+      const photoWeightB = (b.dish_photos_count ?? (b.dishes_preview || []).filter((d) => d.image_url).length) > 0 ? 500 : 0;
+      const scoreA = photoWeightA + (a.rating_score ?? a.rating_average ?? 0) * 10 + Math.min(a.total_reviews || 0, 50);
+      const scoreB = photoWeightB + (b.rating_score ?? b.rating_average ?? 0) * 10 + Math.min(b.total_reviews || 0, 50);
       return scoreB - scoreA;
     });
 
-    const limit = options?.limit ?? 60;
+    const limit = options?.limit ?? 120;
     return filtered.slice(0, limit);
   },
 
@@ -291,8 +315,14 @@ export const realDataStore = {
         slug: rest.slug,
         address: rest.address,
         neighborhood: rest.neighborhood,
-        phone: rest.phone || '(12) 3882-1000',
+        phone: rest.phone || null,
         website: rest.website || null,
+        menu_url: rest.menu_url || rest.website || null,
+        banner_url: rest.banner_url,
+        image_url: rest.image_url,
+        gallery_photos: rest.gallery_photos || [],
+        opening_hours: rest.opening_hours || null,
+        source_platform: rest.source_platform,
         latitude: rest.latitude,
         longitude: rest.longitude,
         rating_average: rest.rating_average,
@@ -304,13 +334,7 @@ export const realDataStore = {
             category: 'Cardápio Principal',
             items: rest.dishes_preview.map((d) => ({
               ...d,
-              price_history: [
-                {
-                  recorded_at: new Date().toISOString(),
-                  price: d.price,
-                  delta_percentage: d.last_price_delta_pct,
-                },
-              ],
+              price_history: d.price_history || [],
             })),
           },
         ],
@@ -327,17 +351,21 @@ export const realDataStore = {
       return dishDetails[idOrIndex];
     }
 
-    // Busca por número de índice (ex: "1", "2")
-    const num = parseInt(idOrIndex, 10);
-    const keys = Object.keys(dishDetails);
-    if (!isNaN(num) && num >= 1 && num <= keys.length) {
-      return dishDetails[keys[num - 1]];
+    // Busca por número de índice explícito (ex: "1", "2")
+    if (/^\d+$/.test(idOrIndex)) {
+      const num = parseInt(idOrIndex, 10);
+      const keys = Object.keys(dishDetails);
+      if (num >= 1 && num <= keys.length) {
+        return dishDetails[keys[num - 1]];
+      }
     }
 
-    // Busca em todos os restaurantes por ID ou nome
+    // Busca exata ou parcial forte em pratos do catálogo
     const allRests = (dump.restaurants || []) as unknown as RestaurantCardData[];
     for (const r of allRests) {
-      const match = (r.dishes_preview || []).find((d) => d.id === idOrIndex || normalizeStr(d.name).includes(normalizeStr(idOrIndex)));
+      const match = (r.dishes_preview || []).find(
+        (d) => d.id === idOrIndex || (idOrIndex.length > 3 && normalizeStr(d.name).includes(normalizeStr(idOrIndex)))
+      );
       if (match) {
         return {
           dish: {
@@ -346,19 +374,16 @@ export const realDataStore = {
             name: match.name,
             description: match.description,
             price: match.price,
+            previous_price: match.previous_price ?? null,
+            savings_brl: match.savings_brl ?? 0,
             category: match.category,
+            image_url: match.image_url,
             is_vegan: match.is_vegan,
             is_vegetarian: match.is_vegetarian,
             is_gluten_free: match.is_gluten_free,
             is_lactose_free: match.is_lactose_free,
             last_price_delta_pct: match.last_price_delta_pct,
-            price_history: [
-              {
-                recorded_at: new Date().toISOString(),
-                price: match.price,
-                delta_percentage: match.last_price_delta_pct,
-              },
-            ],
+            price_history: match.price_history || [],
           },
           restaurant: {
             id: r.id,
@@ -366,8 +391,14 @@ export const realDataStore = {
             slug: r.slug,
             address: r.address,
             neighborhood: r.neighborhood,
-            phone: r.phone || '(12) 3882-1000',
+            phone: r.phone || null,
             website: r.website || null,
+            menu_url: r.menu_url || r.website || null,
+            image_url: r.image_url,
+            banner_url: r.banner_url,
+            opening_hours: r.opening_hours || null,
+            source_platform: r.source_platform,
+            distance_km: r.distance_km,
             latitude: r.latitude,
             longitude: r.longitude,
             rating_average: r.rating_average,
@@ -378,21 +409,16 @@ export const realDataStore = {
           super_nota: {
             super_score: r.rating_average,
             google_score: r.rating_average,
-            google_weight_pct: 100,
-            tripadvisor_score: r.rating_average,
+            google_weight_pct: r.rating_average > 0 ? 100 : 0,
+            tripadvisor_score: 0,
             tripadvisor_weight_pct: 0,
-            curatorship_score: r.rating_average,
+            curatorship_score: 0,
             curatorship_weight_pct: 0,
           },
           reviews: [],
           related_dishes: r.dishes_preview.filter((d) => d.id !== match.id).slice(0, 4),
         };
       }
-    }
-
-    // Se ainda não achou e tem pratos, retorna o primeiro como fallback gracioso
-    if (keys.length > 0) {
-      return dishDetails[keys[0]];
     }
 
     return null;
@@ -443,10 +469,19 @@ export const realDataStore = {
     }
 
     const topMatches = matchedDishes.slice(0, 4);
+    if (topMatches.length === 0) {
+      return {
+        reply: 'Ainda estamos sincronizando mais cardápios reais para essa busca em Caraguatatuba. Tente buscar por pizza, hambúrguer, sushi, açaí ou marmita!',
+        dishes: [],
+        recommendations: [],
+      };
+    }
+
     const recommendations = topMatches.map((m) => ({
       id: m.dish.id,
       name: m.dish.name,
       price: m.dish.price,
+      image_url: m.dish.image_url,
       restaurant_name: m.restaurant.name,
       restaurant_slug: m.restaurant.slug,
       neighborhood: m.restaurant.neighborhood,
@@ -462,14 +497,15 @@ export const realDataStore = {
     }));
 
     const first = topMatches[0];
-    const reply = `Olha só, separei ${topMatches.length} opções deliciosas aqui em Caraguá para você! Minha primeira dica é o **${first.dish.name}** lá no **${first.restaurant.name}** (${first.restaurant.neighborhood}), por **R$ ${first.dish.price.toFixed(2).replace('.', ',')}**!\n\n` +
+    const ratingBadge = (val: number) => (val > 0 ? ` • ⭐ **${val.toFixed(1)}**` : '');
+    const reply = `Olha só, separei ${topMatches.length} opções reais dos cardápios de Caraguá para você! Minha primeira dica é **${first.dish.name}** lá no **${first.restaurant.name}** (${first.restaurant.neighborhood}), por **R$ ${first.dish.price.toFixed(2).replace('.', ',')}**!\n\n` +
       topMatches
         .map(
           (m, idx) =>
-            `${idx + 1}. **${m.dish.name}** — **R$ ${m.dish.price.toFixed(2).replace('.', ',')}**\n📍 *${m.restaurant.name}* (${m.restaurant.neighborhood}) • ⭐ **${m.restaurant.rating_average.toFixed(1)}**`
+            `${idx + 1}. **${m.dish.name}** — **R$ ${m.dish.price.toFixed(2).replace('.', ',')}**\n📍 *${m.restaurant.name}* (${m.restaurant.neighborhood})${ratingBadge(m.restaurant.rating_average)}`
         )
         .join('\n\n') +
-      `\n\nTodas essas opções foram conferidas no cardápio de hoje. Bom apetite!`;
+      `\n\nTodos esses pratos e preços foram extraídos de cardápios reais ativos em Caraguatatuba!`;
 
     return { reply, dishes: recommendations, recommendations };
   },

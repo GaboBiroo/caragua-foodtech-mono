@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
   const lat = searchParams.get('lat') ? parseFloat(searchParams.get('lat')!) : undefined;
   const lon = searchParams.get('lon') ? parseFloat(searchParams.get('lon')!) : undefined;
   const sortBy = (searchParams.get('sort_by') as 'recommended' | 'distance') || 'recommended';
-  const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!, 10) : 60;
+  const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!, 10) : 120;
 
   // Se houver backend externo configurado explicitamente via env, tenta upstream
   if (BACKEND_API_BASE && !BACKEND_API_BASE.includes('localhost') && !BACKEND_API_BASE.includes('127.0.0.1')) {

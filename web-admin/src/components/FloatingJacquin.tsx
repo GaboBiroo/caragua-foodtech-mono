@@ -70,12 +70,10 @@ export const FloatingJacquin: React.FC<FloatingJacquinProps> = ({
   };
 
   const quickPrompts = [
-    { label: '🦪 Mexilhão da Cocanha', query: 'cocanha' },
-    { label: '🏺 Azul-Marinho', query: 'azul marinho' },
-    { label: '🐙 Polvo no Aloha', query: 'polvo' },
-    { label: '🐟 Peixe fresco da orla', query: 'peixe' },
-    { label: '🏆 Campeões Caraguá a Gosto', query: 'premiados' },
-    { label: '🍕 Pizza artesanal a lenha', query: 'pizza' },
+    { label: '🍔 Lanches & Burgers', query: 'burger' },
+    { label: '🍤 Frutos do Mar', query: 'camarão' },
+    { label: '🍕 Pizzas', query: 'pizza' },
+    { label: '🥗 Saudável / Vegano', query: 'vegano' },
   ];
 
   const handleSend = (text: string) => {
@@ -88,39 +86,22 @@ export const FloatingJacquin: React.FC<FloatingJacquinProps> = ({
     setTimeout(() => {
       const q = text.toLowerCase();
       let reply = '';
-      let dish = '';
+      const dish = '';
 
-      if (q.includes('cocanha') || q.includes('mexilh') || q.includes('amapec') || q.includes('zanfredo')) {
-        reply = 'Mon ami, os mexilhões da Fazenda Marinha da Cocanha (AMAPEC) são cultivados em águas limpas nos espinhéis longline! É o melhor marisco do litoral paulista, seja no vapor ou no Risotto premiado da Cantinetta Zanfredo!';
-        dish = 'Mexilhões da Cocanha ao Vapor';
-        if (onSelectCategory) onSelectCategory('maricultura');
-      } else if (q.includes('azul') || q.includes('marinho') || q.includes('ancestral') || q.includes('banana')) {
-        reply = 'O verdadeiro Azul-Marinho tem que ser feito na panela de ferro fundido bruto com banana nanica verde! A reação dos taninos deixa o caldo ardósia escuro e o pirão na Cantina Caiçara Tradição é patrimônio vivo!';
-        dish = 'Azul-Marinho Tradicional na Panela de Ferro';
-      } else if (q.includes('polvo') || q.includes('aloha')) {
-        reply = 'Polvo exige ponto exato pra não virar borracha! No Aloha Bistrô da Praia no Centro, o polvo é braseado na grelha viva com batatas ao murro na manteiga de garrafa!';
-        dish = 'Polvo Grelhado Aloha';
-      } else if (q.includes('fub') || q.includes('sol e cia') || q.includes('petisco')) {
-        reply = 'Iscas de peixe sequinhas no fubá mimoso e limão-cravo na beira da praia! O Quiosque Sol e Cia em Martim de Sá levou 3º lugar do festival com a porção Boca da Noite!';
-        dish = 'Boca da Noite – Iscas no Fubá Mimoso';
+      if (q.includes('burger') || q.includes('lanche') || q.includes('sandu')) {
+        reply = 'Filtre por Lanches ou pesquise na página inicial para conferir hambúrgueres reais em Caraguatatuba com preços e fotos conferidas!';
+        if (onSelectCategory) onSelectCategory('lanches');
       } else if (q.includes('vegano') || q.includes('vegetar') || q.includes('sem carne')) {
-        reply = 'Mon ami, aqui no CaráFood tem comida limpa e consciente! O Bowl Caiçara do Empório Verde Mar no Indaiá é feito com shimeji fresco e banana da serra!';
-        dish = 'Bowl Caiçara de Quinoa e Shimeji';
+        reply = 'Use os filtros de dieta no catálogo para ver apenas pratos compatíveis de cardápios reais em Caraguatatuba!';
         if (onSelectCategory) onSelectCategory('vegano');
-      } else if (q.includes('camar') || q.includes('risoto')) {
-        reply = 'Camarão tem que ser graúdo e bem preparado! O Camarão Tropical Espeticho na Tabatinga ou o Risoto no Indaiá são fantásticos!';
-        dish = 'Camarão Tropical Espeticho';
+      } else if (q.includes('camar') || q.includes('peixe') || q.includes('frutos')) {
+        reply = 'Filtre por Frutos do Mar ou pesquise o nome do prato para ver preços conferidos e fotos reais!';
         if (onSelectCategory) onSelectCategory('camarão');
-      } else if (q.includes('badejo') || q.includes('peixe') || q.includes('sororoca') || q.includes('isca')) {
-        reply = 'A Sororoca a Mediterrâneo do Marujo Gastro Bar no Centro foi bicampeã do festival, e a Isca de Badejo no Canto Bravo em Martim de Sá é crocância pura!';
-        dish = 'Sororoca a Mediterrâneo';
-        if (onSelectCategory) onSelectCategory('peixe');
-      } else if (q.includes('pizza') || q.includes('lenha')) {
-        reply = 'No Indaiá a Pizzaria Japa Pizza foi multicampeã com a pizza de Pernil Supremo no forno a lenha, e o Garage Steakhouse levou pódio com a Pizza Garage Mar com salmão defumado!';
-        dish = 'Pizza Pernil Supremo';
+      } else if (q.includes('pizza')) {
+        reply = 'Veja as pizzarias de Caraguatatuba no catálogo principal com preços reais e avaliações do Google Maps!';
         if (onSelectCategory) onSelectCategory('pizza');
       } else {
-        reply = 'Os pescadores do Camaroeiro (Colônia Z-8) trouxeram peixes fresquíssimos hoje! Dá uma olhada no feed do CaráFood logo abaixo. Quer que eu filtre alguma categoria para você?';
+        reply = 'Navegue pelo catálogo ou use o Chef CaráFood na página inicial para consultar pratos reais, preços em R$ e avaliações do Google Maps!';
       }
 
       setChatMessages((prev) => [...prev, { sender: 'jacquin', text: reply, recDish: dish }]);

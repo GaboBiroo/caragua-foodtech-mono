@@ -347,8 +347,8 @@ export const AcademicPortalModal: React.FC<AcademicPortalModalProps> = ({
                         <span className="font-mono font-bold text-lg text-[#18181B]">30 Dias</span>
                       </div>
                       <div className="p-4 rounded-2xl bg-[#FAF6F0] border border-[#E2D9CC]">
-                        <span className="text-[11px] text-[#71717A] block">Amostras Sincronizadas</span>
-                        <span className="font-mono font-bold text-lg text-[#18181B]">1.420 Reviews</span>
+                        <span className="text-[11px] text-[#71717A] block">Fontes Integradas</span>
+                        <span className="font-mono font-bold text-lg text-[#18181B]">Google Maps + Cardápios</span>
                       </div>
                       <div className="p-4 rounded-2xl bg-[#FAF6F0] border border-[#E2D9CC]">
                         <span className="text-[11px] text-[#71717A] block">Margem de Erro Auditada</span>

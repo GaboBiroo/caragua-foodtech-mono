@@ -90,6 +90,12 @@ interface RestaurantDetailData {
   state: string;
   phone?: string | null;
   website?: string | null;
+  menu_url?: string | null;
+  source_platform?: string | null;
+  image_url?: string | null;
+  cover_image?: string | null;
+  banner_url?: string | null;
+  gallery_photos?: string[];
   opening_hours?: any;
   latitude: number;
   longitude: number;
@@ -125,7 +131,7 @@ function sanitizeReviewText(raw: string): string {
     .replace(/\s{2,}/g, ' ')
     .replace(/\s+([,.;!?])/g, '$1')
     .trim();
-  return cleaned || 'Comida muito caprichada, bem servida e entregue no capricho!';
+  return cleaned;
 }
 
 const MiniPriceCurve: React.FC<{ steps: DishPriceStep[]; currentPrice: number }> = ({
@@ -272,9 +278,8 @@ export default function RestaurantMenuDetailPage() {
       .filter((block) => block.items.length > 0);
   }, [detail, menuSearch, dietFilter]);
 
-  const starRating = detail
-    ? (detail.rating_score ?? detail.rating_average ?? 4.8).toFixed(1)
-    : '4.8';
+  const rawRating = detail ? (detail.rating_score ?? detail.rating_average ?? 0) : 0;
+  const starRating = rawRating > 0 ? rawRating.toFixed(1) : 'Novo';
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] text-stone-900 flex flex-col">
@@ -385,7 +390,21 @@ export default function RestaurantMenuDetailPage() {
                       <ExternalLink className="w-3 h-3" />
                     </a>
 
-                    {detail.website && (
+                    {(detail.menu_url || detail.website) && (
+                      <a
+                        href={detail.menu_url || detail.website || '#'}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#135136] hover:bg-[#0D3B27] text-white font-bold transition-colors shadow-xs"
+                      >
+                        <span>
+                          Conferir Cardápio Original
+                          {detail.source_platform ? ` (${detail.source_platform})` : ''}
+                        </span>
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </a>
+                    )}
+                    {detail.website && detail.website !== detail.menu_url && (
                       <a
                         href={detail.website}
                         target="_blank"
@@ -413,10 +432,18 @@ export default function RestaurantMenuDetailPage() {
                       <span className="font-heading font-black text-3xl text-stone-900">
                         {starRating}
                       </span>
-                      <span className="text-xs font-bold text-stone-600">de 5,0</span>
+                      {rawRating > 0 && (
+                        <span className="text-xs font-bold text-stone-600">de 5,0</span>
+                      )}
                     </div>
                     <p className="text-xs text-stone-600 mt-1">
-                      Com base em <strong>{detail.review_count}</strong> opiniões reais de moradores e visitantes
+                      {detail.review_count > 0 ? (
+                        <>
+                          Com base em <strong>{detail.review_count}</strong> avaliações públicas no Google Maps
+                        </>
+                      ) : (
+                        <>Ainda sem avaliações públicas indexadas no Google Maps</>
+                      )}
                     </p>
                   </div>
 
@@ -435,6 +462,49 @@ export default function RestaurantMenuDetailPage() {
                   </button>
                 </div>
               </div>
+
+              {(() => {
+                const rawPhotos = [
+                  detail.cover_image,
+                  detail.banner_url,
+                  detail.image_url,
+                  ...(detail.gallery_photos || []),
+                  ...detail.dishes.map((d) => d.image_url),
+                ].filter((u): u is string => Boolean(u && typeof u === 'string' && u.startsWith('http')));
+                const uniquePhotos = Array.from(new Set(rawPhotos)).slice(0, 12);
+                if (uniquePhotos.length === 0) return null;
+                return (
+                  <div className="pt-4 border-t border-stone-100 space-y-2.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-extrabold uppercase tracking-wider text-stone-700">
+                        📸 Fotos Reais do Lugar & Pratos ({uniquePhotos.length})
+                      </span>
+                      <span className="text-[11px] font-semibold text-stone-500">
+                        Google Maps & Cardápio Digital
+                      </span>
+                    </div>
+                    <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-thin">
+                      {uniquePhotos.map((photoUrl, idx) => (
+                        <a
+                          key={`${photoUrl}-${idx}`}
+                          href={photoUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="shrink-0 w-36 h-28 sm:w-44 sm:h-32 rounded-2xl overflow-hidden border border-stone-200 bg-stone-100 hover:border-[#135136] transition-all group"
+                          title="Abrir foto real em tamanho original"
+                        >
+                          <img
+                            src={photoUrl}
+                            alt={`${detail.name} — foto real ${idx + 1}`}
+                            loading="lazy"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
             </header>
 
             {/* Busca no Cardápio e Filtros de Restrição Alimentar */}
@@ -533,12 +603,27 @@ export default function RestaurantMenuDetailPage() {
                           >
                             <div>
                               <div className="flex items-start justify-between gap-3">
-                                <Link
-                                  href={`/prato/${dish.id}`}
-                                  className="font-heading font-bold text-base text-stone-900 hover:text-[#135136] transition-colors"
-                                >
-                                  {dish.name}
-                                </Link>
+                                {dish.image_url && (
+                                  <Link
+                                    href={`/prato/${dish.id}`}
+                                    className="w-20 h-20 rounded-2xl overflow-hidden border border-stone-200 bg-stone-100 shrink-0"
+                                  >
+                                    <img
+                                      src={dish.image_url}
+                                      alt={dish.name}
+                                      loading="lazy"
+                                      className="w-full h-full object-cover"
+                                    />
+                                  </Link>
+                                )}
+                                <div className="flex-1 min-w-0">
+                                  <Link
+                                    href={`/prato/${dish.id}`}
+                                    className="font-heading font-bold text-base text-stone-900 hover:text-[#135136] transition-colors block"
+                                  >
+                                    {dish.name}
+                                  </Link>
+                                </div>
                                 <div className="text-right shrink-0">
                                   {prevPrice && deltaPct < 0 && (
                                     <div className="text-[11px] text-stone-400 line-through">
@@ -654,7 +739,14 @@ export default function RestaurantMenuDetailPage() {
                 </p>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {detail.reviews.map((rev) => {
+                  {detail.reviews
+                    .filter((rev) => {
+                      const cleanText = sanitizeReviewText(
+                        rev.public_comment || rev.comment_text || (rev as any).comment || ''
+                      );
+                      return cleanText.length > 0;
+                    })
+                    .map((rev) => {
                     const cleanText = sanitizeReviewText(
                       rev.public_comment || rev.comment_text || (rev as any).comment || ''
                     );

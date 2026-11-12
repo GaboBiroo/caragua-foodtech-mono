@@ -48,6 +48,8 @@ interface RestaurantCardData {
   address: string;
   neighborhood: string;
   phone?: string | null;
+  website?: string | null;
+  menu_url?: string | null;
   latitude: number;
   longitude: number;
   price_level: number;
@@ -65,6 +67,7 @@ interface RestaurantCardData {
   dishes: DishPreview[];
   banner_url?: string;
   image_url?: string;
+  gallery_photos?: string[];
 }
 
 interface NeighborhoodSummaryItem {
@@ -128,7 +131,7 @@ function formatSavingsBadge(dish: DishPreview): string {
 
 export default function HomePage() {
   const [restaurants, setRestaurants] = useState<RestaurantCardData[]>(() => {
-    return realDataStore.getRestaurants({ limit: 60 }) as unknown as RestaurantCardData[];
+    return realDataStore.getRestaurants({ limit: 120 }) as unknown as RestaurantCardData[];
   });
   const [neighborhoods, setNeighborhoods] = useState<NeighborhoodSummaryItem[]>([]);
   const [populatedZonesCount, setPopulatedZonesCount] = useState<number>(53);
@@ -238,7 +241,7 @@ export default function HomePage() {
       params.set('lat', String(userCoords.lat));
       params.set('lon', String(userCoords.lon));
       params.set('sort_by', sortBy === 'distance' ? 'distance' : 'recommended');
-      params.set('limit', '60');
+      params.set('limit', '120');
 
       const apiBase = getApiBase();
       const res = await fetch(`${apiBase}/restaurants?${params.toString()}`, {
@@ -268,7 +271,7 @@ export default function HomePage() {
         lat: userCoords.lat,
         lon: userCoords.lon,
         sortBy,
-        limit: 60,
+        limit: 120,
       });
       setRestaurants(localData);
     } catch {
@@ -345,18 +348,26 @@ export default function HomePage() {
     });
   }, [restaurants, selectedMacroRegion, neighborhoodRegionMap]);
 
-  // Se o filtro local de um bairro específico retornar 0 itens, faz fallback automático
-  // para os melhores restaurantes de Caraguá para nunca exibir uma tela vazia
-  const effectiveRestaurants = useMemo(() => {
-    if (displayedRestaurants.length > 0) return displayedRestaurants;
-    return (realDataStore.getRestaurants({ limit: 12 }) as unknown as RestaurantCardData[]) || [];
-  }, [displayedRestaurants]);
+  const hasActiveFilter =
+    selectedNeighborhood !== 'Todos' ||
+    selectedMacroRegion !== 'Todas' ||
+    searchQuery.trim().length > 0 ||
+    selectedDietary.length > 0 ||
+    priceDropOnly;
 
+  const effectiveRestaurants = useMemo(() => {
+    if (displayedRestaurants.length > 0 || hasActiveFilter) return displayedRestaurants;
+    return (realDataStore.getRestaurants({ limit: 120 }) as unknown as RestaurantCardData[]) || [];
+  }, [displayedRestaurants, hasActiveFilter]);
+
+  // Feed Estilo Instagram exibe exclusivamente pratos com foto real extraída do cardápio
   const feedDishCards = useMemo(() => {
     const cards: Array<{ dish: DishPreview; restaurant: RestaurantCardData }> = [];
     for (const rest of effectiveRestaurants) {
       for (const dish of rest.dishes_preview || rest.dishes || []) {
-        cards.push({ dish, restaurant: rest });
+        if (dish.image_url && dish.image_url.startsWith('http')) {
+          cards.push({ dish, restaurant: rest });
+        }
       }
     }
     return cards;
@@ -687,7 +698,7 @@ export default function HomePage() {
             <div className="flex items-center gap-2">
               <span className="text-base">🏖️</span>
               <span>
-                Não encontramos estabelecimentos exclusivos neste bairro com todos os filtros ativos. Exibindo os lugares mais recomendados de Caraguatatuba:
+                Não encontramos estabelecimentos exclusivos neste bairro com todos os filtros ativos. Experimente ajustar a busca ou ver toda a cidade:
               </span>
             </div>
             <button
@@ -723,10 +734,29 @@ export default function HomePage() {
             ))}
           </div>
         ) : viewMode === 'feed' ? (
-          /* Modo 1: Feed Estilo Instagram com Fotos Reais e Vistosas dos Pratos */
+          /* Modo 1: Feed Estilo Instagram com Fotos Reais dos Pratos */
+          feedDishCards.length === 0 ? (
+            <div className="bg-white rounded-3xl border border-stone-200 p-10 text-center space-y-3">
+              <Utensils className="w-8 h-8 mx-auto text-[#135136]" />
+              <h3 className="font-heading font-black text-xl text-stone-900">
+                Nenhum prato com foto encontrado para este filtro
+              </h3>
+              <p className="text-sm text-stone-600">
+                Alterne para &ldquo;Restaurantes &amp; Cardápios&rdquo; ou clique em Limpar filtros para ver todos os cardápios reais.
+              </p>
+              <button
+                type="button"
+                onClick={() => setViewMode('places')}
+                className="px-5 py-2.5 rounded-2xl bg-[#135136] text-white font-bold text-xs"
+              >
+                Ver Restaurantes &amp; Cardápios
+              </button>
+            </div>
+          ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {feedDishCards.map(({ dish, restaurant }) => {
-              const starScore = (restaurant.rating_score ?? restaurant.rating_average ?? 4.8).toFixed(1);
+              const rawScore = Number(restaurant.rating_score ?? restaurant.rating_average ?? 0);
+              const starScore = rawScore > 0 ? rawScore.toFixed(1) : 'Novo';
               const isLiked = likedPostIds.has(dish.id);
               const isSaved = savedPostIds.has(dish.id);
               return (
@@ -737,8 +767,12 @@ export default function HomePage() {
                   {/* Cabeçalho do Restaurante */}
                   <div className="p-4 flex items-center justify-between border-b border-stone-100">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-10 h-10 rounded-2xl bg-[#135136] text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-xs">
-                        {(restaurant.name && restaurant.name[0]) || 'R'}
+                      <div className="w-10 h-10 rounded-2xl bg-[#135136] text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-xs overflow-hidden">
+                        {restaurant.image_url ? (
+                          <img src={restaurant.image_url} alt={restaurant.name} className="w-full h-full object-cover" loading="lazy" />
+                        ) : (
+                          (restaurant.name && restaurant.name[0]) || 'R'
+                        )}
                       </div>
                       <div className="min-w-0">
                         <Link
@@ -758,7 +792,7 @@ export default function HomePage() {
 
                     <div
                       className="shrink-0 bg-amber-50 border border-amber-200/80 rounded-xl px-2 py-1 text-right"
-                      title="Nota no Google Maps"
+                      title={restaurant.total_reviews > 0 ? `Nota Google Maps (${restaurant.total_reviews} avaliações)` : 'Sem avaliações no Google ainda'}
                     >
                       <div className="inline-flex items-center gap-1 font-heading font-black text-xs text-stone-900">
                         <Star className="w-3 h-3 fill-[#FFB703] text-[#FFB703]" />
@@ -767,10 +801,10 @@ export default function HomePage() {
                     </div>
                   </div>
 
-                  {/* Foto Principal do Prato com Badges Flutuantes */}
+                  {/* Foto Real do Prato */}
                   <div className="relative aspect-[16/10] overflow-hidden bg-stone-900">
                     <img
-                      src={dish.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80'}
+                      src={dish.image_url!}
                       alt={dish.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
@@ -878,24 +912,33 @@ export default function HomePage() {
               );
             })}
           </div>
+          )
         ) : (
-          /* Modo 2: Lista dos Estabelecimentos com Banners e Destaques */
+          /* Modo 2: Lista dos Estabelecimentos com Banners e Destaques Reais */
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {effectiveRestaurants.map((rest) => {
-              const starScore = (rest.rating_score ?? rest.rating_average ?? 4.8).toFixed(1);
+              const rawScore = Number(rest.rating_score ?? rest.rating_average ?? 0);
+              const starScore = rawScore > 0 ? rawScore.toFixed(1) : 'Novo';
+              const bannerSrc = rest.banner_url || rest.image_url || rest.gallery_photos?.[0] || '';
               return (
                 <article
                   key={rest.id}
                   className="bg-white rounded-3xl border border-stone-200/90 shadow-xs hover:shadow-xl hover:border-[#135136]/45 transition-all flex flex-col justify-between overflow-hidden group"
                 >
-                  {/* Banner Fotográfico do Restaurante */}
-                  <div className="relative aspect-[16/9] overflow-hidden bg-stone-900">
-                    <img
-                      src={rest.banner_url || rest.image_url || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80'}
-                      alt={rest.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      loading="lazy"
-                    />
+                  {/* Banner Fotográfico Real do Restaurante */}
+                  <div className="relative aspect-[16/9] overflow-hidden bg-gradient-to-br from-[#135136] to-[#0D3825]">
+                    {bannerSrc ? (
+                      <img
+                        src={bannerSrc}
+                        alt={rest.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-emerald-100/70">
+                        <Utensils className="w-10 h-10" />
+                      </div>
+                    )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
 
                     <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 z-10">
@@ -972,14 +1015,16 @@ export default function HomePage() {
                           className="rounded-2xl bg-[#FAF7F2] hover:bg-amber-50/70 p-2 border border-stone-200/70 hover:border-[#135136]/40 flex items-center justify-between gap-2.5 transition-colors group"
                         >
                           <div className="flex items-center gap-2.5 min-w-0">
-                            <div className="w-10 h-10 rounded-xl overflow-hidden bg-stone-200 shrink-0">
-                              <img
-                                src={dish.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=150&q=80'}
-                                alt={dish.name}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                                loading="lazy"
-                              />
-                            </div>
+                            {dish.image_url && (
+                              <div className="w-10 h-10 rounded-xl overflow-hidden bg-stone-200 shrink-0">
+                                <img
+                                  src={dish.image_url}
+                                  alt={dish.name}
+                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                                  loading="lazy"
+                                />
+                              </div>
+                            )}
                             <div className="min-w-0">
                               <div className="font-bold text-xs text-stone-900 group-hover:text-[#135136] truncate transition-colors">
                                 {dish.name}
@@ -1039,7 +1084,9 @@ export default function HomePage() {
               <div>
                 <span className="text-[11px] font-bold text-[#FFB703] uppercase tracking-wider">
                   {quickModalRest.neighborhood} • ⭐{' '}
-                  {(quickModalRest.rating_score ?? quickModalRest.rating_average ?? 4.8).toFixed(1)}
+                  {Number(quickModalRest.rating_score ?? quickModalRest.rating_average ?? 0) > 0
+                    ? Number(quickModalRest.rating_score ?? quickModalRest.rating_average).toFixed(1)
+                    : 'Novo'}
                 </span>
                 <h3 className="font-heading font-black text-xl">{quickModalRest.name}</h3>
                 <p className="text-xs text-emerald-100">{quickModalRest.address}</p>
@@ -1066,14 +1113,16 @@ export default function HomePage() {
                   className="rounded-2xl border border-stone-200 hover:border-[#135136] p-3 flex items-center justify-between gap-3 transition-colors group"
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-14 h-14 rounded-xl overflow-hidden bg-stone-200 shrink-0">
-                      <img
-                        src={d.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=200&q=80'}
-                        alt={d.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                        loading="lazy"
-                      />
-                    </div>
+                    {d.image_url && (
+                      <div className="w-14 h-14 rounded-xl overflow-hidden bg-stone-200 shrink-0">
+                        <img
+                          src={d.image_url}
+                          alt={d.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                          loading="lazy"
+                        />
+                      </div>
+                    )}
                     <div className="min-w-0">
                       <div className="font-bold text-sm text-stone-900 group-hover:text-[#135136] transition-colors truncate">
                         {d.name}
@@ -1104,7 +1153,7 @@ export default function HomePage() {
               ))}
             </div>
 
-            <div className="px-6 py-3.5 bg-stone-50 border-t border-stone-200 flex items-center justify-between">
+            <div className="px-6 py-3.5 bg-stone-50 border-t border-stone-200 flex flex-wrap items-center justify-between gap-2">
               <button
                 type="button"
                 onClick={() => {
@@ -1120,14 +1169,28 @@ export default function HomePage() {
                 <span>Perguntar ao Chef sobre este lugar</span>
               </button>
 
-              <Link
-                href={`/restaurants/${quickModalRest.slug}`}
-                onClick={() => setQuickModalRest(null)}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#135136] text-white font-bold text-xs"
-              >
-                <span>Abrir Cardápio Completo e Avaliações</span>
-                <ArrowRight className="w-3.5 h-3.5 text-[#FFB703]" />
-              </Link>
+              <div className="flex flex-wrap items-center gap-2">
+                {(quickModalRest.menu_url || quickModalRest.website) && (
+                  <a
+                    href={(quickModalRest.menu_url || quickModalRest.website)!}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-950 font-bold text-xs border border-amber-300"
+                  >
+                    <span>Conferir na Fonte ({quickModalRest.source_platform})</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </a>
+                )}
+
+                <Link
+                  href={`/restaurants/${quickModalRest.slug}`}
+                  onClick={() => setQuickModalRest(null)}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#135136] text-white font-bold text-xs"
+                >
+                  <span>Abrir Cardápio Completo e Avaliações</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-[#FFB703]" />
+                </Link>
+              </div>
             </div>
           </div>
         </div>

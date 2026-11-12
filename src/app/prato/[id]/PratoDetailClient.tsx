@@ -72,12 +72,22 @@ interface PratoDetailClientProps {
   dishIdParam?: string;
   post: FeedPost;
   relatedPosts: FeedPost[];
+  initialMenuUrl?: string | null;
+  initialSourcePlatform?: string | null;
+  initialPhone?: string | null;
+  initialOpeningHours?: string | null;
+  initialAddress?: string | null;
 }
 
 export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
   dishIdParam,
   post,
   relatedPosts,
+  initialMenuUrl = null,
+  initialSourcePlatform = null,
+  initialPhone = null,
+  initialOpeningHours = null,
+  initialAddress = null,
 }) => {
   const [dishName, setDishName] = useState(post.dishName);
   const [dishCategory, setDishCategory] = useState(post.dishCategory);
@@ -86,34 +96,23 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
   const [caption, setCaption] = useState(post.caption);
   const [postImage, setPostImage] = useState(post.postImage);
   const [isVegan, setIsVegan] = useState(Boolean(post.isVegan));
-  const [isGlutenFree, setIsGlutenFree] = useState(false);
+  const [isGlutenFree, setIsGlutenFree] = useState(Boolean(post.isGlutenFree));
   const [isLactoseFree, setIsLactoseFree] = useState(false);
-  const [smartSides, setSmartSides] = useState<string[]>([
-    'Arroz branco soltinho',
-    'Pirão de peixe na panela de ferro',
-    'Farofa crocante de banana',
-  ]);
 
-  const [restaurantId, setRestaurantId] = useState<string>('');
+  const [restaurantId, setRestaurantId] = useState<string>(post.restaurantId || '');
   const [restaurantSlug, setRestaurantSlug] = useState<string>('');
   const [restaurantName, setRestaurantName] = useState(post.restaurantName);
   const [neighborhood, setNeighborhood] = useState(post.neighborhood);
-  const [address, setAddress] = useState<string>(`${post.neighborhood}, Caraguatatuba - SP`);
-  const [phone, setPhone] = useState<string>('(12) 3882-1500');
-  const [openingHours, setOpeningHours] = useState<string>('Ter a Dom • 11h30 às 23h00');
+  const [address, setAddress] = useState<string>(initialAddress || `${post.neighborhood}, Caraguatatuba - SP`);
+  const [phone, setPhone] = useState<string>(initialPhone || '');
+  const [openingHours, setOpeningHours] = useState<string>(initialOpeningHours ? formatOpeningHours(initialOpeningHours) : 'Horário conforme cardápio');
+  const [menuUrl, setMenuUrl] = useState<string | null>(initialMenuUrl);
+  const [sourcePlatform, setSourcePlatform] = useState<string>(initialSourcePlatform || post.verifiedSource || 'Cardápio Digital');
   const [distanceKm, setDistanceKm] = useState<number>(post.distanceKm);
 
   const [superScore, setSuperScore] = useState<number>(post.superRating);
-  const [googleScore, setGoogleScore] = useState<number>(
-    Math.min(5.0, Number((post.superRating - 0.04).toFixed(2)))
-  );
-  const [tripadvisorScore, setTripadvisorScore] = useState<number>(
-    Math.min(5.0, Number((post.superRating - 0.08).toFixed(2)))
-  );
-  const [curatorshipScore, setCuratorshipScore] = useState<number>(
-    Math.min(5.0, Number((post.superRating + 0.05).toFixed(2)))
-  );
-  const [totalReviews, setTotalReviews] = useState<number>(post.totalReviews);
+  const [googleScore, setGoogleScore] = useState<number>(Number(post.superRating || 0));
+  const [totalReviews, setTotalReviews] = useState<number>(post.totalReviews || 0);
 
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(post.likes);
@@ -136,9 +135,9 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
 
   const [comments, setComments] = useState<
     Array<{ author: string; text: string; rating: number; date: string }>
-  >([]);
+  >(post.commentsList || []);
 
-  // Hidratação ao vivo pelo PostgreSQL quando o ID corresponde a um prato do banco
+  // Hidratação ao vivo pelo PostgreSQL / dump real
   useEffect(() => {
     const targetId = dishIdParam || post.id;
     if (!targetId) return;
@@ -164,70 +163,55 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
 
         if (!active || !data?.dish || !data?.restaurant) return;
 
-        // Se o parâmetro na URL for um UUID do banco ou um índice numérico, usa os dados reais do banco
-        const isUuidOrNumeric =
-          /^[0-9a-f]{8}-[0-9a-f]{4}-/i.test(targetId) || /^(?:post-)?\d+$/i.test(targetId);
+        setDishName(data.dish.name);
+        setDishCategory(data.dish.category || 'Cardápio');
+        setDishPrice(Number(data.dish.price || 0));
+        setPreviousPrice(
+          data.dish.previous_price ? Number(data.dish.previous_price) : null
+        );
+        if (data.dish.description) setCaption(data.dish.description);
+        if (data.dish.image_url) setPostImage(data.dish.image_url);
+        setIsVegan(Boolean(data.dish.is_vegan));
+        setIsGlutenFree(Boolean(data.dish.is_gluten_free));
+        setIsLactoseFree(Boolean(data.dish.is_lactose_free));
 
-        if (isUuidOrNumeric) {
-          setDishName(data.dish.name);
-          setDishCategory(data.dish.category || 'Especialidades da Casa');
-          setDishPrice(Number(data.dish.price));
-          setPreviousPrice(
-            data.dish.previous_price ? Number(data.dish.previous_price) : null
-          );
-          if (data.dish.description) setCaption(data.dish.description);
-          if (data.dish.image_url) setPostImage(data.dish.image_url);
-          setIsVegan(Boolean(data.dish.is_vegan));
-          setIsGlutenFree(Boolean(data.dish.is_gluten_free));
-          setIsLactoseFree(Boolean(data.dish.is_lactose_free));
-          if (Array.isArray(data.dish.smart_defaults) && data.dish.smart_defaults.length > 0) {
-            setSmartSides(data.dish.smart_defaults);
-          }
-
-          setRestaurantId(data.restaurant.id);
-          setRestaurantSlug(data.restaurant.slug);
-          setRestaurantName(data.restaurant.name);
-          setNeighborhood(data.restaurant.neighborhood);
-          setAddress(data.restaurant.address);
-          if (data.restaurant.phone) setPhone(data.restaurant.phone);
-          if (data.restaurant.opening_hours) setOpeningHours(formatOpeningHours(data.restaurant.opening_hours));
-          if (typeof data.restaurant.distance_km === 'number') {
-            setDistanceKm(data.restaurant.distance_km);
-          }
-        } else {
-          // Mesmo para slugs editoriais, vincula o restaurante e notas reais do banco
-          setRestaurantId(data.restaurant.id);
-          setRestaurantSlug(data.restaurant.slug);
-          if (data.restaurant.address) setAddress(data.restaurant.address);
-          if (data.restaurant.phone) setPhone(data.restaurant.phone);
+        setRestaurantId(data.restaurant.id || '');
+        setRestaurantSlug(data.restaurant.slug || '');
+        setRestaurantName(data.restaurant.name);
+        setNeighborhood(data.restaurant.neighborhood || 'Caraguatatuba');
+        if (data.restaurant.address) setAddress(data.restaurant.address);
+        if (data.restaurant.phone) setPhone(data.restaurant.phone);
+        if (data.restaurant.opening_hours) setOpeningHours(formatOpeningHours(data.restaurant.opening_hours));
+        if (data.restaurant.menu_url || data.restaurant.website) {
+          setMenuUrl(data.restaurant.menu_url || data.restaurant.website);
+        }
+        if (data.restaurant.source_platform) setSourcePlatform(data.restaurant.source_platform);
+        if (typeof data.restaurant.distance_km === 'number') {
+          setDistanceKm(data.restaurant.distance_km);
         }
 
         if (data.super_nota) {
-          setSuperScore(Number(data.super_nota.super_score));
-          setGoogleScore(Number(data.super_nota.google_score));
-          setTripadvisorScore(Number(data.super_nota.tripadvisor_score));
-          setCuratorshipScore(Number(data.super_nota.curatorship_score));
+          setSuperScore(Number(data.super_nota.super_score || 0));
+          setGoogleScore(Number(data.super_nota.google_score || 0));
         }
         if (typeof data.restaurant.total_reviews === 'number') {
           setTotalReviews(data.restaurant.total_reviews);
         }
         if (Array.isArray(data.reviews) && data.reviews.length > 0) {
           setComments(
-            data.reviews.slice(0, 8).map((r: {
-              author_label?: string;
-              comment_text: string;
-              original_rating: number;
-              review_date?: string;
-            }) => ({
-              author: r.author_label || 'Avaliador Verificado • Caraguá',
-              text: r.comment_text,
-              rating: Number(r.original_rating || 4.8),
-              date: formatReviewDate(r.review_date),
-            }))
+            data.reviews
+              .filter((r: any) => Boolean((r.comment_text || r.comment || '').trim()))
+              .slice(0, 8)
+              .map((r: any) => ({
+                author: r.author_label || r.author || 'Cliente Google Maps',
+                text: r.comment_text || r.comment || '',
+                rating: Number(r.original_rating ?? r.rating ?? 5.0),
+                date: formatReviewDate(r.review_date || r.date),
+              }))
           );
         }
       } catch {
-        // Mantém os dados carregados inicialmente caso offline
+        // Mantém os dados iniciais caso offline
       }
     })();
     return () => {
@@ -329,10 +313,12 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
     `${restaurantName} ${neighborhood} Caraguatatuba SP`
   )}`;
-  const cleanDigits = phone.replace(/\D/g, '') || '1238821500';
-  const whatsappUrl = `https://wa.me/55${cleanDigits}?text=${encodeURIComponent(
-    `Olá! Vi o prato "${dishName}" (${restaurantName}) no guia CaráFood e gostaria de saber mais!`
-  )}`;
+  const cleanDigits = phone.replace(/\D/g, '');
+  const whatsappUrl = cleanDigits.length >= 10
+    ? `https://wa.me/55${cleanDigits.startsWith('55') ? cleanDigits.slice(2) : cleanDigits}?text=${encodeURIComponent(
+        `Olá! Vi o prato "${dishName}" (${restaurantName}) no guia CaráFood e gostaria de saber mais!`
+      )}`
+    : null;
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] text-[#1A202C] selection:bg-[#FFB703]/30 selection:text-[#135136]">
@@ -385,13 +371,21 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
         {/* 1. Seção Principal: Imagem + Ficha Completa + Quadro da Super Nota */}
         <section className="bg-white rounded-[32px] overflow-hidden border border-stone-200/90 shadow-md">
           <div className="grid grid-cols-1 lg:grid-cols-12">
-            {/* Coluna Esquerda: Foto do Prato e Selos de Procedência */}
-            <div className="lg:col-span-7 relative aspect-[4/3] sm:aspect-[16/11] lg:aspect-auto lg:min-h-[500px] bg-stone-900 overflow-hidden">
-              <img
-                src={postImage}
-                alt={dishName}
-                className="w-full h-full object-cover object-center"
-              />
+            {/* Coluna Esquerda: Foto Real do Prato */}
+            <div className="lg:col-span-7 relative aspect-[4/3] sm:aspect-[16/11] lg:aspect-auto lg:min-h-[500px] bg-stone-900 overflow-hidden flex items-center justify-center">
+              {postImage ? (
+                <img
+                  src={postImage}
+                  alt={dishName}
+                  className="w-full h-full object-cover object-center"
+                />
+              ) : (
+                <div className="p-8 text-center text-emerald-100/80 space-y-2">
+                  <Utensils className="w-10 h-10 mx-auto text-[#FFB703]" />
+                  <p className="font-heading font-bold text-lg text-white">{dishName}</p>
+                  <p className="text-xs text-stone-300">Cardápio real sem foto divulgada para este item</p>
+                </div>
+              )}
 
               <div className="absolute top-4 left-4 flex flex-col gap-2 z-10 max-w-[85%]">
                 {post.caraguaGostoAward && (
@@ -579,24 +573,26 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
                       </span>
                       <div className="flex items-center gap-1.5 justify-end font-heading font-black text-2xl text-stone-900">
                         <Star className="w-5 h-5 text-[#FFB703] fill-[#FFB703]" />
-                        <span>{Number(googleScore || 4.5).toFixed(1)}</span>
+                        <span>{googleScore > 0 ? Number(googleScore).toFixed(1) : 'Novo'}</span>
                       </div>
                       <span className="text-[10px] text-stone-500 font-bold block">
-                        {Number(totalReviews || 25)} avaliações reais de clientes
+                        {totalReviews > 0
+                          ? `${totalReviews} avaliações reais no Google`
+                          : 'Ainda sem avaliações no Google'}
                       </span>
                     </div>
                   </div>
 
-                  {/* Informações Oficiais Auditadas pelo Google Maps */}
+                  {/* Fonte Verificada */}
                   <div className="pt-2.5 border-t border-stone-200/80 flex items-center justify-between text-xs text-stone-600">
                     <div className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
                       <span className="font-semibold text-stone-800">
-                        Avaliações reais conferidas no Google Maps
+                        Fonte: {sourcePlatform}
                       </span>
                     </div>
                     <span className="font-bold text-stone-500">
-                      Média pública oficial de Caraguatatuba
+                      Caraguatatuba - SP
                     </span>
                   </div>
                 </div>
@@ -604,29 +600,29 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
                 {/* Descrição do Prato */}
                 <p className="text-stone-700 text-xs sm:text-sm leading-relaxed">{caption}</p>
 
-                {/* Parecer Gastronômico do Chef */}
-                <div className="p-3.5 rounded-2xl bg-emerald-50/80 border border-emerald-200/90 flex items-start gap-3">
-                  <div className="w-10 h-11 shrink-0 drop-shadow-xs">
-                    <img
-                      src="/jacquin-praiano.png"
-                      alt="Chef CaráFood"
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                  <div className="text-xs">
-                    <span className="font-heading font-black text-[#135136] block">
-                      Dica da Curadoria CaráFood:
-                    </span>
-                    <p className="text-stone-700 italic font-medium mt-0.5 leading-relaxed">
-                      &ldquo;{post.jacquinTip}&rdquo;
-                    </p>
-                  </div>
-                </div>
+                {menuUrl && (
+                  <a
+                    href={menuUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-3.5 rounded-2xl bg-emerald-50/80 border border-emerald-200/90 flex items-center justify-between gap-3 hover:bg-emerald-100/70 transition-colors"
+                  >
+                    <div className="text-xs">
+                      <span className="font-heading font-black text-[#135136] block">
+                        Conferir no Cardápio Original ({sourcePlatform})
+                      </span>
+                      <span className="text-stone-600 block mt-0.5">
+                        Verifique preço atualizado, adicionais e pedido direto no estabelecimento
+                      </span>
+                    </div>
+                    <ArrowUpRight className="w-4 h-4 text-[#135136] shrink-0" />
+                  </a>
+                )}
               </div>
 
-              {/* Botões de Ação Direta (HU03: Google Maps + WhatsApp + Cédula Oficial) */}
+              {/* Botões de Ação Direta */}
               <div className="space-y-2 pt-2">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div className={`grid grid-cols-1 ${whatsappUrl ? 'sm:grid-cols-2' : ''} gap-2`}>
                   <a
                     href={mapsUrl}
                     target="_blank"
@@ -637,15 +633,17 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
                     <span>Traçar Rota no Maps</span>
                   </a>
 
-                  <a
-                    href={whatsappUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="py-3 px-4 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-sm flex items-center justify-center gap-1.5 transition-all"
-                  >
-                    <Phone className="w-4 h-4 text-[#FFB703]" />
-                    <span>Chamar no WhatsApp</span>
-                  </a>
+                  {whatsappUrl && (
+                    <a
+                      href={whatsappUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="py-3 px-4 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-sm flex items-center justify-center gap-1.5 transition-all"
+                    >
+                      <Phone className="w-4 h-4 text-[#FFB703]" />
+                      <span>Chamar no WhatsApp</span>
+                    </a>
+                  )}
                 </div>
 
                 {restaurantSlug && (
@@ -671,13 +669,13 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
           </div>
         </section>
 
-        {/* 2. Ficha Técnica, Acompanhamentos e Endereço */}
+        {/* 2. Ficha Real de Endereço, Categoria e Origem */}
         <section className="bg-white rounded-[28px] p-6 sm:p-8 border border-stone-200/90 shadow-xs space-y-4">
           <div className="flex items-center justify-between flex-wrap gap-2">
             <div className="flex items-center gap-2.5">
               <Utensils className="w-5 h-5 text-[#135136]" />
               <h2 className="font-heading font-black text-xl text-stone-900">
-                Ficha do Prato, Acompanhamentos & Funcionamento
+                Informações Reais do Estabelecimento
               </h2>
             </div>
             <span className="inline-flex items-center gap-1.5 text-xs font-bold text-stone-600">
@@ -699,24 +697,25 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
 
             <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200/80">
               <span className="text-stone-500 font-bold block text-[11px] uppercase">
-                Procedência dos Ingredientes:
+                Categoria no Cardápio:
               </span>
               <span className="font-heading font-bold text-stone-900 text-sm block mt-0.5">
-                {neighborhood.toLowerCase().includes('cocanha')
-                  ? 'AMAPEC • Fazenda Marinha da Cocanha'
-                  : 'Entreposto do Camaroeiro • Colônia Z-8'}
+                {dishCategory}
               </span>
               <span className="text-stone-600 block text-xs mt-0.5">
-                Insumos frescos de produtores locais de Caraguatatuba
+                Preço real catalogado: R$ {Number(dishPrice || 0).toFixed(2).replace('.', ',')}
               </span>
             </div>
 
             <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200/80">
               <span className="text-stone-500 font-bold block text-[11px] uppercase">
-                Guarnições que Acompanham:
+                Origem dos Dados:
               </span>
-              <span className="font-heading font-bold text-stone-900 text-xs block mt-1 leading-relaxed">
-                {(Array.isArray(smartSides) ? smartSides : ['Guarnições da Casa']).join(' • ')}
+              <span className="font-heading font-bold text-stone-900 text-sm block mt-0.5">
+                {sourcePlatform}
+              </span>
+              <span className="text-stone-600 block text-xs mt-0.5">
+                Extração direta do cardápio digital e Google Maps
               </span>
             </div>
           </div>
@@ -808,12 +807,16 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
                 href={`/prato/${item.id}`}
                 className="group bg-white rounded-3xl overflow-hidden border border-stone-200/80 shadow-xs hover:shadow-md transition-all hover:-translate-y-1"
               >
-                <div className="aspect-[4/3] bg-stone-900 relative overflow-hidden">
-                  <img
-                    src={item.postImage}
-                    alt={item.dishName}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+                <div className="aspect-[4/3] bg-stone-900 relative overflow-hidden flex items-center justify-center">
+                  {item.postImage ? (
+                    <img
+                      src={item.postImage}
+                      alt={item.dishName}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  ) : (
+                    <Utensils className="w-8 h-8 text-emerald-200/60" />
+                  )}
                   <div className="absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md text-[10px] text-white font-bold">
                     R$ {Number(item.dishPrice || 0).toFixed(2).replace('.', ',')}
                   </div>
@@ -827,7 +830,7 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
                   </h4>
                   <div className="flex items-center gap-1 text-[11px] text-stone-600">
                     <Star className="w-3 h-3 text-[#FFB703] fill-[#FFB703]" />
-                    <span className="font-bold">{Number(item.superRating || 4.8).toFixed(2)}</span>
+                    <span className="font-bold">{item.superRating > 0 ? Number(item.superRating).toFixed(1) : 'Novo'}</span>
                     <span>• {item.restaurantName}</span>
                   </div>
                 </div>

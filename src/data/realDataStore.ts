@@ -8,6 +8,7 @@ export interface DishPreview {
   previous_price?: number | null;
   savings_brl?: number;
   category: string;
+  food_types?: string[];
   is_vegan: boolean;
   is_vegetarian: boolean;
   is_gluten_free: boolean;
@@ -38,6 +39,8 @@ export interface RestaurantCardData {
   longitude: number;
   price_level: number;
   rating_score?: number;
+  bayesian_rating?: number;
+  ranking_score?: number;
   rating_average: number;
   total_reviews: number;
   active_dishes_count: number;
@@ -46,6 +49,7 @@ export interface RestaurantCardData {
   is_real_osm?: boolean;
   source_platform: string;
   cuisine_types: string[];
+  food_types?: string[];
   banner_url?: string;
   image_url?: string;
   cover_image?: string;
@@ -172,16 +176,43 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
   return R * c;
 }
 
+export const FOOD_TYPE_MATCHERS: Record<string, RegExp> = {
+  combo_familia: /\b(combo\s*familia|familia|para\s*dividir|serve\s*[2-9]|casal|galera|kit\s*festa|em\s*dobro|trio|quarteto|combo\s*[2-9]|2\s*(pizzas|lanches|burgers)|barca\s*(grande|mega|giga))\b/,
+  sushi: /\b(sushi|sashimi|temaki|uramaki|hossomaki|niguiri|hot\s*roll|yakisoba|yakissoba|combinado|barca|harumaki|rolinho\s*primavera|guioza|sunomono|shimeji|poke)\b/,
+  pizza: /\b(pizza|pizzas|calzone|broto|brotinho|esfiha|esfirra|esfihas|borda\s*recheada)\b/,
+  lanches: /\b(burger|burguer|hamburguer|smash|x-?bacon|x-?salada|x-?tudo|x-?burguer|x-?frango|x-?egg|x-?calabresa|lanche|lanches|hot\s*dog|dogao|sanduiche|beirute|podrao|prensado)\b/,
+  marmitas: /\b(marmita|marmitex|executivo|prato\s*feito|\bpf\b|panqueca|strogonoff|estrogonofe|parmegiana|feijoada|tropeiro|pirao)\b/,
+  frutos_do_mar: /\b(camarao|peixe|cacao|tilapia|merluza|salmao|lula|polvo|marisco|mexilhao|moqueca|bacalhau|casquinha)\b/,
+  porcoes: /\b(porcao|porcoes|batata\s*recheada|batata\s*frita|fritas|onion|isca|iscas|torresmo|pastel|pasteis|coxinha|salgado|salgados|espeto|espetinho|bolinho|nuggets)\b/,
+  doces_acai: /\b(acai|sorvete|sorvetes|milk\s*shake|milkshake|churro|churros|bolo|torta|brownie|pudim|brigadeiro|trufa|petit\s*gateau|pizza\s*doce|sobremesa|pave|fondue|banoffee)\b/,
+};
+
+export function dishMatchesFoodType(dish: DishPreview, foodType: string): boolean {
+  if (!foodType || foodType === 'todos') return true;
+  if (Array.isArray(dish.food_types) && dish.food_types.length > 0) {
+    return dish.food_types.includes(foodType);
+  }
+  const rx = FOOD_TYPE_MATCHERS[foodType];
+  if (!rx) return true;
+  const hay = normalizeStr(
+    foodType === 'combo_familia'
+      ? `${dish.category} ${dish.name} ${dish.description || ''}`
+      : `${dish.category} ${dish.name}`
+  );
+  return rx.test(hay);
+}
+
 export const realDataStore = {
   getRestaurants(options?: {
     neighborhood?: string;
     macroRegion?: 'Todas' | 'Norte' | 'Centro' | 'Sul';
     search?: string;
     dietary?: string[];
+    foodType?: string;
     priceDropOnly?: boolean;
     lat?: number;
     lon?: number;
-    sortBy?: 'recommended' | 'distance';
+    sortBy?: 'recommended' | 'rating' | 'distance';
     limit?: number;
   }): RestaurantCardData[] {
     const rawRestaurants = (dump.restaurants || []) as unknown as RestaurantCardData[];
@@ -245,21 +276,48 @@ export const realDataStore = {
       });
     }
 
-    // 5. Filtro de queda de preço
+    // 5. Filtro de tipo de comida (Lanche, Pizza, Sushi, Combo Família, etc.)
+    if (options?.foodType && options.foodType !== 'todos') {
+      const targetType = options.foodType;
+      filtered = filtered.filter((r) => {
+        if (Array.isArray(r.food_types) && r.food_types.includes(targetType)) return true;
+        return (r.dishes_preview || []).some((d) => dishMatchesFoodType(d, targetType));
+      });
+    }
+
+    // 6. Filtro de queda de preço
     if (options?.priceDropOnly) {
       filtered = filtered.filter((r) => r.has_price_drop);
     }
 
-    // 6. Ordenação: restaurantes com fotos reais de pratos, avaliações Google e boa nota primeiro
+    // 7. Ordenação respeitando a Nota Bayesiana oficial (W_R), volume Google Maps e proximidade
     filtered.sort((a, b) => {
       if (options?.sortBy === 'distance') {
-        return a.distance_km - b.distance_km;
+        if (a.distance_km !== b.distance_km) return a.distance_km - b.distance_km;
+        return (b.bayesian_rating ?? b.rating_score ?? 0) - (a.bayesian_rating ?? a.rating_score ?? 0);
       }
-      const photoWeightA = (a.dish_photos_count ?? (a.dishes_preview || []).filter((d) => d.image_url).length) > 0 ? 500 : 0;
-      const photoWeightB = (b.dish_photos_count ?? (b.dishes_preview || []).filter((d) => d.image_url).length) > 0 ? 500 : 0;
-      const scoreA = photoWeightA + (a.rating_score ?? a.rating_average ?? 0) * 10 + Math.min(a.total_reviews || 0, 50);
-      const scoreB = photoWeightB + (b.rating_score ?? b.rating_average ?? 0) * 10 + Math.min(b.total_reviews || 0, 50);
-      return scoreB - scoreA;
+
+      const wrA = Number(a.bayesian_rating ?? a.rating_score ?? a.rating_average ?? 0);
+      const wrB = Number(b.bayesian_rating ?? b.rating_score ?? b.rating_average ?? 0);
+
+      if (options?.sortBy === 'rating') {
+        if (wrB !== wrA) return wrB - wrA;
+        return (b.total_reviews || 0) - (a.total_reviews || 0);
+      }
+
+      // Modo padrão Marketplace Discovery (Uber Eats / DoorDash / CaráFood W_R):
+      // prioriza casas com fotos reais de pratos, Nota Bayesiana W_R alta, volume de avaliações, queda de preço e leve decaimento por distância
+      const hasPhotoA = (a.dish_photos_count ?? (a.dishes_preview || []).filter((d) => d.image_url).length) > 0 ? 100 : 0;
+      const hasPhotoB = (b.dish_photos_count ?? (b.dishes_preview || []).filter((d) => d.image_url).length) > 0 ? 100 : 0;
+      const proxA = 8 / (1 + Math.max(0, a.distance_km || 0) / 5);
+      const proxB = 8 / (1 + Math.max(0, b.distance_km || 0) / 5);
+      const volA = Math.log10(1 + Math.max(0, a.total_reviews || 0)) * 6;
+      const volB = Math.log10(1 + Math.max(0, b.total_reviews || 0)) * 6;
+      const dropA = a.has_price_drop ? 4 : 0;
+      const dropB = b.has_price_drop ? 4 : 0;
+      const rankA = hasPhotoA + wrA * 25 + volA + proxA + dropA;
+      const rankB = hasPhotoB + wrB * 25 + volB + proxB + dropB;
+      return rankB - rankA;
     });
 
     const limit = options?.limit ?? 120;

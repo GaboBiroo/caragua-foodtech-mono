@@ -10,10 +10,11 @@ export async function GET(req: NextRequest) {
   const search = searchParams.get('search') || undefined;
   const dietaryRaw = searchParams.get('dietary');
   const dietary = dietaryRaw ? dietaryRaw.split(',') : undefined;
+  const foodType = searchParams.get('food_type') || searchParams.get('category') || undefined;
   const priceDropOnly = searchParams.get('price_drop_only') === 'true';
   const lat = searchParams.get('lat') ? parseFloat(searchParams.get('lat')!) : undefined;
   const lon = searchParams.get('lon') ? parseFloat(searchParams.get('lon')!) : undefined;
-  const sortBy = (searchParams.get('sort_by') as 'recommended' | 'distance') || 'recommended';
+  const sortBy = (searchParams.get('sort_by') as 'recommended' | 'rating' | 'distance') || 'recommended';
   const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!, 10) : 120;
 
   // Se houver backend externo configurado explicitamente via env, tenta upstream
@@ -41,6 +42,7 @@ export async function GET(req: NextRequest) {
     macroRegion,
     search,
     dietary,
+    foodType,
     priceDropOnly,
     lat,
     lon,

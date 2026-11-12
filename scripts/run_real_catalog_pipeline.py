@@ -15,7 +15,10 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
+import re
 import sys
+import unicodedata
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -73,6 +76,8 @@ INITIAL_ANOTA_SLUGS: List[str] = [
     "martim-food",
     "sorveteriaeacaibeiramar",
     "point-do-japa-1",
+    "kaipiras-lanches",
+    "le-cheff-marmitaria-2",
 ]
 
 
@@ -134,6 +139,122 @@ def normalize_opening_hours(raw: Any) -> Optional[str]:
 
 def deterministic_uuid(key: str) -> str:
     return str(uuid.uuid5(uuid.NAMESPACE_URL, f"carafood-real:{key}"))
+
+
+BAYESIAN_CONFIDENCE_M = 25.0
+
+BEVERAGE_STOP_RE = re.compile(
+    r"\b(bebida|bebidas|refrigerante|refrigerantes|cerveja|cervejas|chopp|chope|vinho|vinhos|"
+    r"agua|suco|sucos|energ[eé]tico|soda|h2oh|schweppes|coca-?cola|guaran[aá]|fanta|sprite|pepsi|"
+    r"heineken|brahma|skol|amstel|budweiser|corona|spaten|stella)\b"
+)
+
+FOOD_TYPE_REGEXES: List[Tuple[str, re.Pattern[str]]] = [
+    ("combo_familia", re.compile(
+        r"\b(combo\s*fam[ií]lia|fam[ií]lia|para\s*dividir|serve\s*[2-9]|casal|galera|kit\s*festa|"
+        r"em\s*dobro|trio\b|quarteto|combo\s*[2-9]|2\s*(?:pizzas|lanches|burgers|x-)|barca\s*(?:grande|mega|giga))\b"
+    )),
+    ("sushi", re.compile(
+        r"\b(sushi|sashimi|temaki|uramaki|hossomaki|niguiri|hot\s*roll|yakisoba|yakissoba|"
+        r"combinado|barca|harumaki|rolinho\s+primavera|guioza|sunomono|shimeji|poke\b|culin[aá]ria\s+japonesa)\b"
+    )),
+    ("pizza", re.compile(
+        r"\b(pizza|pizzas|calzone|broto|brotinho|esfiha|esfirra|esfihas|borda\s+recheada)\b"
+    )),
+    ("lanches", re.compile(
+        r"\b(burger|burguer|hamb[uú]rguer|smash|x-?bacon|x-?salada|x-?tudo|x-?burguer|"
+        r"x-?frango|x-?egg|x-?calabresa|lanche|lanches|hot\s*dog|dog[aã]o|sandu[ií]che|beirute|podr[aã]o|prensado)\b"
+    )),
+    ("marmitas", re.compile(
+        r"\b(marmita|marmitex|executivo|prato\s*feito|\bpf\b|panqueca|strogonoff|estrogonofe|"
+        r"parmegiana|feijoada|tropeiro|pir[aã]o|fil[eé]\s+de\s+frango|bife\s+acebolado|virado)\b"
+    )),
+    ("frutos_do_mar", re.compile(
+        r"\b(camar[aã]o|peixe|ca[cç][aã]o|til[aá]pia|merluza|salm[aã]o|lula|polvo|"
+        r"marisco|mexilh[aã]o|moqueca|bacalhau|casquinha|iscas?\s+de\s+peixe)\b"
+    )),
+    ("porcoes", re.compile(
+        r"\b(por[cç][aã]o|por[cç][oõ]es|batata\s*recheada|batata\s*frita|fritas|onion|isca|iscas|"
+        r"torresmo|pastel|past[eé]is|coxinha|salgado|salgados|espeto|espetinho|bolinho|nuggets)\b"
+    )),
+    ("doces_acai", re.compile(
+        r"\b(a[cç]a[ií]|sorvete|sorvetes|milk\s*shake|milkshake|churro|churros|bolo|torta|"
+        r"brownie|pudim|brigadeiro|trufa|petit\s*gateau|pizza\s*doce|sobremesa|pav[eê]|fondue|banoffee)\b"
+    )),
+]
+
+
+def _ascii_lower(txt: str) -> str:
+    return unicodedata.normalize("NFD", txt or "").encode("ascii", "ignore").decode("ascii").lower()
+
+
+def classify_dish_food_types(name: str, description: str, category: str) -> List[str]:
+    """Deterministically classify each real dish into canonical consumer food types."""
+    cat_name = _ascii_lower(f"{category} {name}")
+    full_txt = _ascii_lower(f"{category} {name} {description}")
+    is_beverage = bool(BEVERAGE_STOP_RE.search(_ascii_lower(category))) and not any(
+        w in _ascii_lower(name) for w in ("combo", "pizza", "burger", "lanche", "acai", "marmita")
+    )
+    if is_beverage:
+        return ["bebidas"]
+
+    matched: List[str] = []
+    for ftype, rx in FOOD_TYPE_REGEXES:
+        hay = full_txt if ftype == "combo_familia" else cat_name
+        if rx.search(hay):
+            matched.append(ftype)
+
+    # Evitar que itens puramente de sushi (ex: Temaki Salmão) apareçam em Frutos do Mar se o usuário buscar Peixaria/Orla, a menos que seja prato de peixe
+    if "sushi" in matched and "frutos_do_mar" in matched and not re.search(r"\b(moqueca|til[aá]pia|camar[aã]o|isca|lula|polvo|ca[cç][aã]o|merluza)\b", cat_name):
+        matched.remove("frutos_do_mar")
+
+    return matched or ["outros"]
+
+
+def diversify_store_preview_dishes(menu_by_category: List[Dict[str, Any]], max_items: int = 16) -> List[Dict[str, Any]]:
+    """Select up to `max_items` dishes spread round-robin across store categories, favoring real photos & promos."""
+    buckets: List[List[Dict[str, Any]]] = []
+    for blk in menu_by_category:
+        items = list(blk.get("items") or [])
+        if not items:
+            continue
+
+        def _item_key(d: Dict[str, Any]) -> Tuple[int, int, int, float]:
+            has_img = 1 if d.get("image_url") else 0
+            has_drop = 1 if (d.get("last_price_delta_pct") or 0) < 0 else 0
+            is_drink = 1 if "bebidas" in (d.get("food_types") or []) else 0
+            return (has_img, -is_drink, has_drop, float(d.get("price") or 0))
+
+        buckets.append(sorted(items, key=_item_key, reverse=True))
+
+    # Order category buckets so photo-rich food categories come first
+    buckets.sort(
+        key=lambda b: (
+            1 if b[0].get("image_url") else 0,
+            0 if "bebidas" in (b[0].get("food_types") or []) else 1,
+            len(b),
+        ),
+        reverse=True,
+    )
+
+    chosen: List[Dict[str, Any]] = []
+    seen_ids: Set[str] = set()
+    round_idx = 0
+    while len(chosen) < max_items:
+        added_this_round = False
+        for b in buckets:
+            if round_idx < len(b):
+                cand = b[round_idx]
+                if cand["id"] not in seen_ids:
+                    chosen.append(cand)
+                    seen_ids.add(cand["id"])
+                    added_this_round = True
+                    if len(chosen) >= max_items:
+                        break
+        if not added_this_round:
+            break
+        round_idx += 1
+    return chosen
 
 
 def deduplicate_stores(stores: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -319,6 +440,7 @@ def run_pipeline(discover_gmaps: bool = False, refresh_aiqfome: bool = False, sk
                     has_price_drop = True
 
                 diet = DietaryInferenceEngine.infer(name, desc, cat_name)
+                food_types = classify_dish_food_types(name, desc, cat_name)
                 dish_id = deterministic_uuid(f"dish:{clean_slug}:{cat_name}:{name}")
                 all_prices.append(price)
                 if img_u and img_u not in dish_with_photo_urls:
@@ -343,6 +465,7 @@ def run_pipeline(discover_gmaps: bool = False, refresh_aiqfome: bool = False, sk
                     "previous_price": round(float(prev_price), 2) if prev_price else None,
                     "savings_brl": savings_brl,
                     "category": cat_name,
+                    "food_types": food_types,
                     "image_url": img_u,
                     "is_vegan": bool(diet.get("is_vegan", False)),
                     "is_vegetarian": bool(diet.get("is_vegetarian", False)),
@@ -367,14 +490,13 @@ def run_pipeline(discover_gmaps: bool = False, refresh_aiqfome: bool = False, sk
             if du not in gallery_photos:
                 gallery_photos.append(du)
 
-        # Rank preview dishes: photo + discount + savory non-beverage items first
-        def _preview_rank(d: Dict[str, Any]) -> Tuple[int, int, float]:
-            has_img = 1 if d["image_url"] else 0
-            has_drop = 1 if d["last_price_delta_pct"] < 0 else 0
-            is_drink = 1 if any(w in (d["category"] + " " + d["name"]).lower() for w in ("bebida", "refrigerante", "cerveja", "coca", "água", "agua")) else 0
-            return (has_img, has_drop, -is_drink, d["price"])
-
-        preview_dishes = sorted(all_store_dishes, key=_preview_rank, reverse=True)[:8]
+        preview_dishes = diversify_store_preview_dishes(menu_by_category, max_items=16)
+        store_food_types = sorted({
+            ft
+            for d in all_store_dishes
+            for ft in (d.get("food_types") or [])
+            if ft not in ("bebidas", "outros")
+        })
         dist_km = round(calculate_haversine(PRACA_EVENTOS_LAT, PRACA_EVENTOS_LON, exact_lat, exact_lng), 2)
         dist_m = int(round(dist_km * 1000))
         source_label = f"{st['source_platform']} + Google Maps" if gm.get("matched") else st["source_platform"]
@@ -384,6 +506,7 @@ def run_pipeline(discover_gmaps: bool = False, refresh_aiqfome: bool = False, sk
 
         super_nota = {
             "super_score": rating_avg,
+            "bayesian_rating": rating_avg,
             "google_score": rating_avg,
             "google_weight_pct": 100 if rating_avg > 0 else 0,
             "tripadvisor_score": 0.0,
@@ -408,6 +531,7 @@ def run_pipeline(discover_gmaps: bool = False, refresh_aiqfome: bool = False, sk
             "longitude": exact_lng,
             "price_level": infer_price_level(all_prices),
             "rating_score": rating_avg,
+            "bayesian_rating": rating_avg,
             "rating_average": rating_avg,
             "total_reviews": total_revs,
             "review_count": total_revs,
@@ -417,6 +541,7 @@ def run_pipeline(discover_gmaps: bool = False, refresh_aiqfome: bool = False, sk
             "is_real_osm": True,
             "source_platform": source_label,
             "cuisine_types": cuisines,
+            "food_types": store_food_types,
             "banner_url": banner_url,
             "image_url": avatar_url,
             "cover_image": banner_url,
@@ -467,13 +592,82 @@ def run_pipeline(discover_gmaps: bool = False, refresh_aiqfome: bool = False, sk
                 "related_dishes": related,
             }
 
-    # Sort restaurants so entries with real dish photos, Google reviews, and price drops headline the catalog
+    # Compute city-wide Bayesian prior C and update W_R across all restaurants/details/dishes
+    rated_vals = [
+        float(r["rating_average"])
+        for r in restaurants_list
+        if (r.get("rating_average") or 0) > 0 and (r.get("total_reviews") or 0) > 0
+    ]
+    city_prior_c = round(sum(rated_vals) / len(rated_vals), 2) if rated_vals else 4.20
+
+    slug_to_wr: Dict[str, float] = {}
+    for r in restaurants_list:
+        raw_r = float(r.get("rating_average") or 0.0)
+        vol_v = int(r.get("total_reviews") or 0)
+        if raw_r > 0 and vol_v > 0:
+            wr = round(
+                ((vol_v / (vol_v + BAYESIAN_CONFIDENCE_M)) * raw_r)
+                + ((BAYESIAN_CONFIDENCE_M / (vol_v + BAYESIAN_CONFIDENCE_M)) * city_prior_c),
+                2,
+            )
+        else:
+            wr = 0.0
+
+        has_photos_bonus = 100.0 if (r.get("dish_photos_count") or 0) > 0 else 0.0
+        photo_richness = min(float(r.get("dish_photos_count") or 0), 20.0) * 0.5
+        promo_bonus = 4.0 if r.get("has_price_drop") else 0.0
+        volume_bonus = math.log10(1.0 + max(0, vol_v)) * 6.0
+        ranking_score = round(has_photos_bonus + (wr * 25.0) + volume_bonus + photo_richness + promo_bonus, 3)
+
+        r["bayesian_rating"] = wr
+        r["rating_score"] = wr
+        r["ranking_score"] = ranking_score
+        slug_to_wr[r["slug"]] = wr
+
+        det = restaurant_details.get(r["slug"])
+        if det:
+            det["bayesian_rating"] = wr
+            det["rating_score"] = wr
+            det["ranking_score"] = ranking_score
+            det["super_nota"] = {
+                "super_score": wr,
+                "bayesian_rating": wr,
+                "google_score": raw_r,
+                "prior_c": city_prior_c,
+                "confidence_m": BAYESIAN_CONFIDENCE_M,
+                "google_weight_pct": 100 if raw_r > 0 else 0,
+                "tripadvisor_score": 0.0,
+                "tripadvisor_weight_pct": 0,
+                "curatorship_score": 0.0,
+                "curatorship_weight_pct": 0,
+            }
+
+    for dd in dish_details.values():
+        rslug = dd["restaurant"]["slug"]
+        wr = slug_to_wr.get(rslug, dd["restaurant"]["rating_average"])
+        raw_r = float(dd["restaurant"].get("rating_average") or 0.0)
+        dd["restaurant"]["bayesian_rating"] = wr
+        dd["restaurant"]["rating_score"] = wr
+        dd["super_nota"] = {
+            "super_score": wr,
+            "bayesian_rating": wr,
+            "google_score": raw_r,
+            "prior_c": city_prior_c,
+            "confidence_m": BAYESIAN_CONFIDENCE_M,
+            "google_weight_pct": 100 if raw_r > 0 else 0,
+            "tripadvisor_score": 0.0,
+            "tripadvisor_weight_pct": 0,
+            "curatorship_score": 0.0,
+            "curatorship_weight_pct": 0,
+        }
+
+    # Sort canonically by Bayesian Super Score W_R + verified dish photo completeness + review volume
     restaurants_list.sort(
         key=lambda r: (
             1 if r["dish_photos_count"] > 0 else 0,
-            min(r["dish_photos_count"], 20),
+            r["bayesian_rating"],
             r["total_reviews"],
-            r["rating_average"],
+            min(r["dish_photos_count"], 20),
             r["active_dishes_count"],
         ),
         reverse=True,

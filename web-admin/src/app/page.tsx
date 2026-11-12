@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
 import { CaraguaAIChatDrawer } from '../components/CaraguaAIChatDrawer';
-import { realDataStore } from '../data/realDataStore';
+import { realDataStore, dishMatchesFoodType } from '../data/realDataStore';
 
 interface DishPreview {
   id: string;
@@ -32,6 +32,7 @@ interface DishPreview {
   previous_price?: number | null;
   savings_brl?: number;
   category: string;
+  food_types?: string[];
   is_vegan: boolean;
   is_vegetarian: boolean;
   is_gluten_free: boolean;
@@ -54,13 +55,17 @@ interface RestaurantCardData {
   longitude: number;
   price_level: number;
   rating_score?: number;
+  bayesian_rating?: number;
+  ranking_score?: number;
   rating_average: number;
   total_reviews: number;
   active_dishes_count: number;
+  dish_photos_count?: number;
   has_price_drop: boolean;
   is_real_osm?: boolean;
   source_platform: string;
   cuisine_types: string[];
+  food_types?: string[];
   distance_meters: number;
   distance_km: number;
   dishes_preview: DishPreview[];
@@ -96,6 +101,18 @@ const DIETARY_PILLS = [
   { key: 'vegetarian', label: 'Vegetariano', emoji: '🥗' },
   { key: 'gluten_free', label: 'Sem Glúten', emoji: '🌾' },
   { key: 'lactose_free', label: 'Sem Lactose', emoji: '🥛' },
+] as const;
+
+const FOOD_TYPE_TABS = [
+  { key: 'todos', label: 'Todos os Tipos', emoji: '🍽️' },
+  { key: 'lanches', label: 'Lanches & Burgers', emoji: '🍔' },
+  { key: 'pizza', label: 'Pizzas & Esfihas', emoji: '🍕' },
+  { key: 'sushi', label: 'Sushi & Japa', emoji: '🍣' },
+  { key: 'combo_familia', label: 'Combo Família', emoji: '👨‍👩‍👧‍👦' },
+  { key: 'marmitas', label: 'Marmitas & Executivos', emoji: '🍱' },
+  { key: 'porcoes', label: 'Porções & Pastéis', emoji: '🍟' },
+  { key: 'frutos_do_mar', label: 'Frutos do Mar', emoji: '🍤' },
+  { key: 'doces_acai', label: 'Açaí & Sobremesas', emoji: '🍨' },
 ] as const;
 
 const FEATURED_NEIGHBORHOODS = [
@@ -165,8 +182,9 @@ export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [debouncedSearch, setDebouncedSearch] = useState<string>('');
   const [selectedDietary, setSelectedDietary] = useState<string[]>([]);
+  const [selectedFoodType, setSelectedFoodType] = useState<string>('todos');
   const [priceDropOnly, setPriceDropOnly] = useState<boolean>(false);
-  const [sortBy, setSortBy] = useState<'recommended' | 'distance'>('recommended');
+  const [sortBy, setSortBy] = useState<'recommended' | 'rating' | 'distance'>('recommended');
 
   const [userCoords, setUserCoords] = useState<{ lat: number; lon: number }>({
     lat: -23.6226,
@@ -235,12 +253,15 @@ export default function HomePage() {
       if (selectedDietary.length > 0) {
         params.set('dietary', selectedDietary.join(','));
       }
+      if (selectedFoodType && selectedFoodType !== 'todos') {
+        params.set('food_type', selectedFoodType);
+      }
       if (priceDropOnly) {
         params.set('price_drop_only', 'true');
       }
       params.set('lat', String(userCoords.lat));
       params.set('lon', String(userCoords.lon));
-      params.set('sort_by', sortBy === 'distance' ? 'distance' : 'recommended');
+      params.set('sort_by', sortBy);
       params.set('limit', '120');
 
       const apiBase = getApiBase();
@@ -250,11 +271,9 @@ export default function HomePage() {
       if (res.ok) {
         const json = await res.json();
         const data: RestaurantCardData[] = Array.isArray(json) ? json : json.restaurants || [];
-        if (data.length > 0) {
-          setRestaurants(data);
-          setLoading(false);
-          return;
-        }
+        setRestaurants(data);
+        setLoading(false);
+        return;
       }
     } catch {
       // Fallback
@@ -267,6 +286,7 @@ export default function HomePage() {
         macroRegion: selectedMacroRegion,
         search: debouncedSearch,
         dietary: selectedDietary,
+        foodType: selectedFoodType,
         priceDropOnly,
         lat: userCoords.lat,
         lon: userCoords.lon,
@@ -283,6 +303,7 @@ export default function HomePage() {
     debouncedSearch,
     priceDropOnly,
     selectedDietary,
+    selectedFoodType,
     selectedNeighborhood,
     selectedMacroRegion,
     sortBy,
@@ -351,6 +372,7 @@ export default function HomePage() {
   const hasActiveFilter =
     selectedNeighborhood !== 'Todos' ||
     selectedMacroRegion !== 'Todas' ||
+    selectedFoodType !== 'todos' ||
     searchQuery.trim().length > 0 ||
     selectedDietary.length > 0 ||
     priceDropOnly;
@@ -360,18 +382,111 @@ export default function HomePage() {
     return (realDataStore.getRestaurants({ limit: 120 }) as unknown as RestaurantCardData[]) || [];
   }, [displayedRestaurants, hasActiveFilter]);
 
-  // Feed Estilo Instagram exibe exclusivamente pratos com foto real extraída do cardápio
+  // Feed Estilo Instagram com Diversificação Anti-Agrupamento (Sliding-Window MMR + Round-Robin entre restaurantes)
+  // Evita exibir vários pratos seguidos do mesmo restaurante e alterna categorias no topo do feed.
   const feedDishCards = useMemo(() => {
-    const cards: Array<{ dish: DishPreview; restaurant: RestaurantCardData }> = [];
+    const normalizeQ = (s: string) =>
+      (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    const queryNorm = normalizeQ(debouncedSearch);
+
+    const queues: Array<{
+      rest: RestaurantCardData;
+      items: DishPreview[];
+      cursor: number;
+      lastPickedAt: number;
+    }> = [];
+
     for (const rest of effectiveRestaurants) {
-      for (const dish of rest.dishes_preview || rest.dishes || []) {
-        if (dish.image_url && dish.image_url.startsWith('http')) {
-          cards.push({ dish, restaurant: rest });
+      const candidates = (rest.dishes_preview || rest.dishes || []).filter((dish) => {
+        if (!dish.image_url || !dish.image_url.startsWith('http')) return false;
+        if (selectedFoodType !== 'todos' && !dishMatchesFoodType(dish, selectedFoodType)) return false;
+        if (selectedDietary.includes('vegan') && !dish.is_vegan) return false;
+        if (selectedDietary.includes('vegetarian') && !(dish.is_vegetarian || dish.is_vegan)) return false;
+        if (selectedDietary.includes('gluten_free') && !dish.is_gluten_free) return false;
+        if (selectedDietary.includes('lactose_free') && !dish.is_lactose_free) return false;
+        if (priceDropOnly && !((dish.savings_brl || 0) > 0 || (dish.last_price_delta_pct || 0) < 0)) return false;
+        return true;
+      });
+
+      if (candidates.length === 0) continue;
+
+      const sortedStoreItems = [...candidates].sort((a, b) => {
+        if (queryNorm) {
+          const hitA = normalizeQ(`${a.name} ${a.category}`).includes(queryNorm) ? 1 : 0;
+          const hitB = normalizeQ(`${b.name} ${b.category}`).includes(queryNorm) ? 1 : 0;
+          if (hitB !== hitA) return hitB - hitA;
         }
+        const drinkA = (a.food_types || []).includes('bebidas') ? 1 : 0;
+        const drinkB = (b.food_types || []).includes('bebidas') ? 1 : 0;
+        if (drinkA !== drinkB) return drinkA - drinkB;
+        const dropA = (a.last_price_delta_pct || 0) < 0 ? 1 : 0;
+        const dropB = (b.last_price_delta_pct || 0) < 0 ? 1 : 0;
+        if (dropB !== dropA) return dropB - dropA;
+        return (b.price || 0) - (a.price || 0);
+      });
+
+      const maxPerStore = queryNorm || effectiveRestaurants.length <= 2 ? 12 : 5;
+      queues.push({
+        rest,
+        items: sortedStoreItems.slice(0, maxPerStore),
+        cursor: 0,
+        lastPickedAt: -999,
+      });
+    }
+
+    const result: Array<{ dish: DishPreview; restaurant: RestaurantCardData }> = [];
+    const recentCategories: string[] = [];
+
+    while (true) {
+      const remaining = queues.filter((q) => q.cursor < q.items.length);
+      if (remaining.length === 0) break;
+
+      const step = result.length;
+      const minGap = remaining.length >= 2 ? Math.min(6, remaining.length - 1) : 0;
+
+      // Filtrar restaurantes que respeitam o espaçamento mínimo sem repetir seguido
+      let eligible = remaining.filter((q) => step - q.lastPickedAt >= minGap);
+      if (eligible.length === 0) {
+        eligible = remaining.filter((q) => step - q.lastPickedAt >= 1);
+      }
+      if (eligible.length === 0) {
+        eligible = remaining;
+      }
+
+      // Sliding Window MMR (janela de 3 slots) para variar estilos quando em "Todos"
+      let chosen = eligible[0];
+      if (selectedFoodType === 'todos' && eligible.length > 1) {
+        // Prioriza a primeira rodada (Wave 0) entre restaurantes diferentes mantendo diversidade de categoria
+        const scored = eligible.map((q, idx) => {
+          const nextDish = q.items[q.cursor];
+          const primaryType = (nextDish.food_types && nextDish.food_types[0]) || nextDish.category || 'outros';
+          const inWindowPenalty = recentCategories.includes(primaryType) ? 18 : 0;
+          const waveBonus = q.cursor === 0 ? 12 : -q.cursor * 4;
+          const rankBonus = Math.max(0, 12 - idx * 0.6);
+          return { q, score: waveBonus + rankBonus - inWindowPenalty };
+        });
+        scored.sort((a, b) => b.score - a.score);
+        chosen = scored[0].q;
+      } else {
+        // Quando o usuário escolheu um tipo específico (ex: Pizza), respeita rigorosamente a ordem do ranking por ondas
+        eligible.sort((a, b) => a.cursor - b.cursor);
+        chosen = eligible[0];
+      }
+
+      const dish = chosen.items[chosen.cursor];
+      chosen.cursor += 1;
+      chosen.lastPickedAt = step;
+      result.push({ dish, restaurant: chosen.rest });
+
+      const catKey = (dish.food_types && dish.food_types[0]) || dish.category || 'outros';
+      recentCategories.push(catKey);
+      if (recentCategories.length > 3) {
+        recentCategories.shift();
       }
     }
-    return cards;
-  }, [effectiveRestaurants]);
+
+    return result;
+  }, [effectiveRestaurants, selectedFoodType, selectedDietary, priceDropOnly, debouncedSearch]);
 
   const totalDishesOnScreen = useMemo(
     () => effectiveRestaurants.reduce((acc, r) => acc + (r.active_dishes_count || (r.dishes || []).length || (r.dishes_preview || []).length), 0),
@@ -524,8 +639,8 @@ export default function HomePage() {
                 </button>
               </div>
 
-              <div className="flex items-center gap-1.5 text-xs">
-                <span className="text-stone-500 font-semibold">Mostrar primeiro:</span>
+              <div className="flex items-center gap-1.5 text-xs flex-wrap">
+                <span className="text-stone-500 font-semibold">Ordem:</span>
                 <button
                   type="button"
                   onClick={() => setSortBy('recommended')}
@@ -534,8 +649,21 @@ export default function HomePage() {
                       ? 'bg-amber-100 text-amber-950'
                       : 'text-stone-600 hover:bg-stone-100'
                   }`}
+                  title="Posicionamento inteligente: Nota Bayesiana W_R + fotos reais + volume + proximidade"
                 >
-                  ⭐ Mais bem avaliados
+                  🎯 Mais recomendados
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSortBy('rating')}
+                  className={`px-2.5 py-1 rounded-lg font-bold ${
+                    sortBy === 'rating'
+                      ? 'bg-amber-100 text-amber-950'
+                      : 'text-stone-600 hover:bg-stone-100'
+                  }`}
+                  title="Ordenar estritamente pela Nota Bayesiana oficial (W_R)"
+                >
+                  ⭐ Maior nota (W_R)
                 </button>
                 <button
                   type="button"
@@ -549,6 +677,31 @@ export default function HomePage() {
                   📍 Mais próximos
                 </button>
               </div>
+            </div>
+
+            {/* Exibir por Tipo de Comida (Sushi, Pizza, Lanche, Combo Família, etc.) */}
+            <div className="flex items-center gap-1.5 overflow-x-auto pt-2 border-t border-stone-100 pb-0.5">
+              <span className="text-[11px] font-extrabold text-stone-500 shrink-0 mr-1">
+                Tipo:
+              </span>
+              {FOOD_TYPE_TABS.map((tab) => {
+                const active = selectedFoodType === tab.key;
+                return (
+                  <button
+                    key={tab.key}
+                    type="button"
+                    onClick={() => setSelectedFoodType(tab.key)}
+                    className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-extrabold border transition-all inline-flex items-center gap-1.5 ${
+                      active
+                        ? 'bg-[#FFB703] text-stone-950 border-[#FFB703] shadow-xs'
+                        : 'bg-stone-50 hover:bg-stone-100 text-stone-700 border-stone-200'
+                    }`}
+                  >
+                    <span>{tab.emoji}</span>
+                    <span>{tab.label}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -664,6 +817,7 @@ export default function HomePage() {
 
             {(selectedNeighborhood !== 'Todos' ||
               selectedMacroRegion !== 'Todas' ||
+              selectedFoodType !== 'todos' ||
               selectedDietary.length > 0 ||
               priceDropOnly ||
               debouncedSearch) && (
@@ -672,6 +826,7 @@ export default function HomePage() {
                 onClick={() => {
                   setSelectedNeighborhood('Todos');
                   setSelectedMacroRegion('Todas');
+                  setSelectedFoodType('todos');
                   setSelectedDietary([]);
                   setPriceDropOnly(false);
                   setSearchQuery('');
@@ -706,6 +861,7 @@ export default function HomePage() {
               onClick={() => {
                 setSelectedNeighborhood('Todos');
                 setSelectedMacroRegion('Todas');
+                setSelectedFoodType('todos');
                 setSelectedDietary([]);
                 setPriceDropOnly(false);
                 setSearchQuery('');
@@ -755,8 +911,8 @@ export default function HomePage() {
           ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {feedDishCards.map(({ dish, restaurant }) => {
-              const rawScore = Number(restaurant.rating_score ?? restaurant.rating_average ?? 0);
-              const starScore = rawScore > 0 ? rawScore.toFixed(1) : 'Novo';
+              const wrScore = Number(restaurant.bayesian_rating ?? restaurant.rating_score ?? restaurant.rating_average ?? 0);
+              const starScore = wrScore > 0 ? wrScore.toFixed(2).replace('.', ',') : 'Novo';
               const isLiked = likedPostIds.has(dish.id);
               const isSaved = savedPostIds.has(dish.id);
               return (
@@ -792,11 +948,20 @@ export default function HomePage() {
 
                     <div
                       className="shrink-0 bg-amber-50 border border-amber-200/80 rounded-xl px-2 py-1 text-right"
-                      title={restaurant.total_reviews > 0 ? `Nota Google Maps (${restaurant.total_reviews} avaliações)` : 'Sem avaliações no Google ainda'}
+                      title={
+                        restaurant.total_reviews > 0
+                          ? `Nota Bayesiana W_R: ${starScore} • Google Maps: ${restaurant.rating_average.toFixed(1)} (${restaurant.total_reviews} avaliações)`
+                          : 'Estabelecimento ainda sem avaliações públicas no Google Maps'
+                      }
                     >
                       <div className="inline-flex items-center gap-1 font-heading font-black text-xs text-stone-900">
                         <Star className="w-3 h-3 fill-[#FFB703] text-[#FFB703]" />
                         <span>{starScore}</span>
+                        {restaurant.total_reviews > 0 && (
+                          <span className="text-[10px] font-semibold text-stone-500">
+                            ({restaurant.total_reviews})
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -917,8 +1082,8 @@ export default function HomePage() {
           /* Modo 2: Lista dos Estabelecimentos com Banners e Destaques Reais */
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {effectiveRestaurants.map((rest) => {
-              const rawScore = Number(rest.rating_score ?? rest.rating_average ?? 0);
-              const starScore = rawScore > 0 ? rawScore.toFixed(1) : 'Novo';
+              const wrScore = Number(rest.bayesian_rating ?? rest.rating_score ?? rest.rating_average ?? 0);
+              const starScore = wrScore > 0 ? wrScore.toFixed(2).replace('.', ',') : 'Novo';
               const bannerSrc = rest.banner_url || rest.image_url || rest.gallery_photos?.[0] || '';
               return (
                 <article

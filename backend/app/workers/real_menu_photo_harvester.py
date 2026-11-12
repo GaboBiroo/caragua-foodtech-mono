@@ -506,17 +506,49 @@ class GoogleMapsEnricher:
         return photos[:8]
 
     @staticmethod
-    def _titles_compatible(store_name: str, gmap_title: str) -> bool:
-        def _tokens(txt: str) -> Set[str]:
-            norm = re.sub(r"[^a-z0-9 ]", " ", (txt or "").lower())
-            stops = {"de", "da", "do", "dos", "das", "e", "em", "caraguatatuba", "caragua", "restaurante", "bar", "lanchonete", "pizzaria", "delivery", "sp"}
-            return {t for t in norm.split() if len(t) >= 3 and t not in stops}
+    def _titles_compatible(store_name: str, gmap_title: str, store_address: str = "", gmap_address: str = "") -> bool:
+        import unicodedata
 
+        def _ascii(s: str) -> str:
+            return unicodedata.normalize("NFD", s or "").encode("ascii", "ignore").decode("ascii").lower()
+
+        def _tokens(txt: str) -> Set[str]:
+            norm = re.sub(r"[^a-z0-9 ]", " ", _ascii(txt))
+            stops = {
+                "de", "da", "do", "dos", "das", "e", "em", "na", "no", "para", "com",
+                "caraguatatuba", "caragua", "sp", "restaurante", "bar", "lanchonete",
+                "lanches", "lanche", "pizzaria", "pizza", "pizzas", "hamburgueria",
+                "burger", "burguer", "delivery", "ifood", "acai", "sorveteria", "sorvetes",
+                "pastel", "pasteis", "salgados", "salgado", "confeitaria", "doces",
+                "marmita", "marmitaria", "quiosque", "adega", "espeto", "espetinho",
+                "food", "casa", "point", "cantinho", "unidade", "sabor", "comidinhas",
+                "bebidas", "raiz", "premium", "oficial", "artesanal", "salao",
+            }
+            return {t for t in norm.split() if len(t) >= 2 and t not in stops}
+
+        s_ascii = _ascii(store_name)
+        g_ascii = _ascii(gmap_title)
         t1 = _tokens(store_name)
         t2 = _tokens(gmap_title)
-        if not t1 or not t2:
-            return True
-        return bool(t1 & t2)
+
+        if not t1:
+            # Generic names (e.g. "Sabor de Casa") must match as an exact sub-phrase
+            core = re.sub(r"\b(marmitaria|restaurante|lanchonete|pizzaria)\b", "", s_ascii).strip()
+            return bool(core and core in g_ascii)
+
+        overlap = t1 & t2
+        if not overlap:
+            return False
+
+        # Very short 2-char brand overlap (e.g. "xp") requires either extra overlap or compatible street/neighborhood
+        if max((len(tok) for tok in overlap), default=0) <= 2 and len(overlap) == 1:
+            if store_address and gmap_address:
+                addr1 = _tokens(store_address)
+                addr2 = _tokens(gmap_address)
+                if addr1 and addr2 and not (addr1 & addr2):
+                    return False
+
+        return True
 
     def enrich_stores(self, stores: List[Dict[str, Any]], cache_path: Path) -> Dict[str, Dict[str, Any]]:
         """Match and enrich every store on Google Maps (incremental JSON cache on disk)."""
@@ -564,10 +596,19 @@ class GoogleMapsEnricher:
 
                     place_href = ""
                     if "/maps/place/" not in page.url:
-                        first = page.locator("a.hfpxzc").first
-                        if first.count() > 0:
-                            place_href = first.get_attribute("href") or ""
-                            first.click(timeout=5000)
+                        anchors = page.locator("a.hfpxzc")
+                        cnt = min(6, anchors.count())
+                        chosen_idx = None
+                        for ai in range(cnt):
+                            cand = anchors.nth(ai)
+                            lbl = (cand.get_attribute("aria-label") or "").strip()
+                            if self._titles_compatible(q_name, lbl, store.get("address", ""), ""):
+                                chosen_idx = ai
+                                break
+                        if chosen_idx is not None:
+                            target_a = anchors.nth(chosen_idx)
+                            place_href = target_a.get_attribute("href") or ""
+                            target_a.click(timeout=5000)
                             page.wait_for_timeout(2200)
 
                     lat, lng = parse_gmap_coords_from_url(page.url)
@@ -575,10 +616,14 @@ class GoogleMapsEnricher:
                         lat, lng = parse_gmap_coords_from_url(place_href)
 
                     title = page.locator("h1.DUwDvf").first.inner_text().strip() if page.locator("h1.DUwDvf").count() > 0 else ""
+                    gmap_addr = ""
+                    addr_btn = page.locator('button[data-item-id="address"]').first
+                    if addr_btn.count() > 0:
+                        gmap_addr = (addr_btn.get_attribute("aria-label") or addr_btn.inner_text() or "").strip()
 
                     # Verify it matches this Caraguatatuba store
                     coords_ok = is_valid_caragua_coords(lat, lng) if (lat is not None and lng is not None) else True
-                    if title and coords_ok and self._titles_compatible(q_name, title):
+                    if title and coords_ok and self._titles_compatible(q_name, title, store.get("address", ""), gmap_addr):
                         record["matched"] = True
                         record["gmap_title"] = title
                         if is_valid_caragua_coords(lat, lng):

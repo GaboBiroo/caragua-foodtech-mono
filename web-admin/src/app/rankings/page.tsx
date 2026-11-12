@@ -35,7 +35,9 @@ interface FavoriteRestaurantItem {
   neighborhood: string;
   address: string;
   cuisine_types: string[];
+  food_types?: string[];
   rating_score?: number;
+  bayesian_rating?: number;
   rating_average: number;
   total_reviews: number;
   has_price_drop: boolean;
@@ -44,12 +46,14 @@ interface FavoriteRestaurantItem {
 
 const RANKING_CATEGORIES = [
   { key: 'Todos', label: '🏆 Todos de Caraguá' },
-  { key: 'Frutos do Mar', label: '🦐 Frutos do Mar & Peixes' },
-  { key: 'Caiçara', label: '🏺 Culinária Caiçara' },
-  { key: 'Quiosque', label: '🏖️ Quiosques & Porções' },
-  { key: 'Pizza', label: '🍕 Pizzas & Massas' },
-  { key: 'Hambúrguer', label: '🍔 Lanches Artesanais' },
-  { key: 'Padaria', label: '🥐 Padarias & Cafés' },
+  { key: 'lanches', label: '🍔 Lanches & Burgers' },
+  { key: 'pizza', label: '🍕 Pizzas & Esfihas' },
+  { key: 'sushi', label: '🍣 Sushi & Japonês' },
+  { key: 'combo_familia', label: '👨‍👩‍👧‍👦 Combo Família' },
+  { key: 'marmitas', label: '🍱 Marmitas & Refeições' },
+  { key: 'porcoes', label: '🍟 Porções & Pastéis' },
+  { key: 'frutos_do_mar', label: '🍤 Frutos do Mar' },
+  { key: 'doces_acai', label: '🍨 Açaí & Sobremesas' },
 ] as const;
 
 function formatBRL(value: number): string {
@@ -69,7 +73,7 @@ export default function FavoritesPage() {
     let mounted = true;
     (async () => {
       try {
-        const res = await fetch('/api/restaurants?limit=60', {
+        const res = await fetch('/api/restaurants?limit=120&sort_by=rating', {
           cache: 'no-store',
         });
         if (res.ok) {
@@ -85,7 +89,7 @@ export default function FavoritesPage() {
         // Fallback
       }
       if (mounted) {
-        const local = realDataStore.getRestaurants({ limit: 60 }) as unknown as FavoriteRestaurantItem[];
+        const local = realDataStore.getRestaurants({ limit: 120, sortBy: 'rating' }) as unknown as FavoriteRestaurantItem[];
         setFavorites(local);
         setLoading(false);
       }
@@ -98,6 +102,7 @@ export default function FavoritesPage() {
   const filteredAndSortedFavorites = useMemo(() => {
     const filtered = favorites.filter((item) => {
       if (selectedCategory === 'Todos') return true;
+      if (Array.isArray(item.food_types) && item.food_types.includes(selectedCategory)) return true;
       const needle = selectedCategory.toLowerCase();
       const corpus = [
         item.name,
@@ -118,8 +123,8 @@ export default function FavoritesPage() {
       if (sortCriteria === 'most_reviewed') {
         return (b.total_reviews || 0) - (a.total_reviews || 0);
       }
-      const sA = a.rating_score ?? a.rating_average ?? 4.5;
-      const sB = b.rating_score ?? b.rating_average ?? 4.5;
+      const sA = Number(a.bayesian_rating ?? a.rating_score ?? a.rating_average ?? 0);
+      const sB = Number(b.bayesian_rating ?? b.rating_score ?? b.rating_average ?? 0);
       if (sB !== sA) return sB - sA;
       return (b.total_reviews || 0) - (a.total_reviews || 0);
     });
@@ -168,11 +173,11 @@ export default function FavoritesPage() {
               <ShieldCheck className="w-5 h-5 text-[#135136]" />
             </div>
             <div className="font-heading font-bold text-sm text-stone-900">
-              Super Nota Transparente
+              Nota Bayesiana Oficial (W_R)
             </div>
             <p className="text-xs text-stone-600 leading-relaxed">
-              Combina 50% Google Maps, 30% TripAdvisor e 20% Curadoria Local em uma nota única sem
-              avaliações falsas.
+              Equilibra a nota média real do Google Maps (R) com o volume de avaliações (v) e a média
+              da cidade (C), evitando que casas com 1 ou 2 votos ultrapassem favoritos consolidados.
             </p>
           </div>
 
@@ -298,9 +303,10 @@ export default function FavoritesPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-stone-200">
-                  {filteredAndSortedFavorites.slice(0, 25).map((item, index) => {
+                  {filteredAndSortedFavorites.map((item, index) => {
                     const topDish = item.dishes_preview?.[0];
-                    const score = (item.rating_score ?? item.rating_average ?? 4.8).toFixed(1);
+                    const wrVal = Number(item.bayesian_rating ?? item.rating_score ?? item.rating_average ?? 0);
+                    const score = wrVal > 0 ? wrVal.toFixed(2).replace('.', ',') : 'Novo';
                     return (
                       <tr key={item.id} className="hover:bg-amber-50/40 transition-colors">
                         <td className="px-4 py-4 font-heading font-black text-base text-stone-900">
@@ -358,10 +364,14 @@ export default function FavoritesPage() {
                         <td className="px-4 py-4 text-center">
                           <div
                             className="inline-flex items-center gap-1 font-heading font-black text-sm text-[#135136] bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200"
-                            title="Super Nota calculada com avaliações verificadas"
+                            title={
+                              item.total_reviews > 0
+                                ? `CaráFood W_R: ${score} • Google Maps: ${item.rating_average.toFixed(1)} (${item.total_reviews} avaliações)`
+                                : 'Sem avaliações públicas no Google Maps'
+                            }
                           >
                             <Star className="w-3.5 h-3.5 text-[#FFB703] fill-[#FFB703]" />
-                            <span>{score.replace('.', ',')}</span>
+                            <span>{score}</span>
                             <span className="text-[10px] text-stone-500 font-normal">
                               ({item.total_reviews})
                             </span>

@@ -65,6 +65,8 @@ export interface FeedPost {
   neighborhood: string;
   distanceKm: number;
   postImage: string;
+  postImageWidth?: number;
+  postImageHeight?: number;
   caption: string;
   dishName: string;
   dishPrice: number;

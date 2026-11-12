@@ -9,6 +9,7 @@ import {
   Heart, Navigation, CheckCircle2, Compass, Layers, Cpu, Eye, Zap
 } from 'lucide-react';
 import { FeedPost } from '../data/caraguaData';
+import { SmartFoodImage } from './SmartFoodImage';
 
 /* ============================================================================
    MÊS 3 (SEMANA 10): SPARKLINE VETORIAL DE DECAIMENTO TEMPORAL (λ = ln(2)/30)
@@ -561,12 +562,17 @@ export const DishStoryReelModal: React.FC<{
             transition={{ type: 'spring', stiffness: 360, damping: 28 }}
             className="relative w-full max-w-md h-[88vh] max-h-[780px] rounded-[36px] overflow-hidden border-2 border-[#FFB703]/70 shadow-[0_24px_60px_rgba(0,0,0,0.8)] bg-stone-900 flex flex-col justify-between"
           >
-            {/* Imagem de Fundo Full-Bleed */}
-            <img
-              src={post.postImage}
-              alt={post.dishName}
-              className="absolute inset-0 w-full h-full object-cover"
-            />
+            {/* Imagem de Fundo Full-Bleed (ou destaque 1:1 nítido para fotos compactas) */}
+            <div className="absolute inset-0">
+              <SmartFoodImage
+                src={post.postImage}
+                alt={post.dishName}
+                knownWidth={post.postImageWidth}
+                knownHeight={post.postImageHeight}
+                mode="hero"
+                loading="eager"
+              />
+            </div>
             <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/15 to-black/90" />
 
             {/* Topo: Barras de Progresso de Stories + Header */}

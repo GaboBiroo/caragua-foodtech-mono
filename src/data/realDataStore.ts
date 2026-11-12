@@ -16,6 +16,8 @@ export interface DishPreview {
   last_price_delta_pct: number;
   suggested_sides?: string[];
   image_url?: string;
+  image_width?: number;
+  image_height?: number;
   price_history?: Array<{
     recorded_at: string;
     price: number;
@@ -51,6 +53,8 @@ export interface RestaurantCardData {
   cuisine_types: string[];
   food_types?: string[];
   banner_url?: string;
+  banner_width?: number;
+  banner_height?: number;
   image_url?: string;
   cover_image?: string;
   gallery_photos?: string[];
@@ -93,6 +97,8 @@ export interface DishDetailData {
     price: number;
     category: string;
     image_url?: string;
+    image_width?: number;
+    image_height?: number;
     previous_price?: number | null;
     savings_brl?: number;
     is_vegan: boolean;

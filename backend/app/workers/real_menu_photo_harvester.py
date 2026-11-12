@@ -69,7 +69,7 @@ def is_real_store_name(name: str) -> bool:
 
 
 def normalize_image_url(url: Optional[str]) -> str:
-    """Normalize known CDN hosts (notably aiqfome devimagens -> imagens) and strip placeholders."""
+    """Normalize known CDN hosts (aiqfome, high-res Google Maps crops) and strip placeholders."""
     if not url:
         return ""
     u = str(url).strip()
@@ -78,7 +78,10 @@ def normalize_image_url(url: Optional[str]) -> str:
     low = u.lower()
     if any(bad in low for bad in ("unsplash.com", "default", "no-image", "placeholder")) or u.endswith("/itens/"):
         return ""
-    return u.replace("https://devimagens.aiqfome.com/", "https://imagens.aiqfome.com/")
+    u = u.replace("https://devimagens.aiqfome.com/", "https://imagens.aiqfome.com/")
+    if "googleusercontent.com" in u and "=w900-h600-k-no" in u:
+        u = u.split("=")[0] + "=w1200-no"
+    return u
 
 
 def parse_gmap_coords_from_url(url: str) -> Tuple[Optional[float], Optional[float]]:
@@ -100,7 +103,7 @@ def clean_gmap_photo_url(src: str) -> str:
         return ""
     base = src.split("=")[0]
     if any(seg in base for seg in ("/p/", "/gps-cs-s/", "/grass-cs/", "/geougc/")):
-        return f"{base}=w900-h600-k-no"
+        return f"{base}=w1200-no"
     return ""
 
 
@@ -417,6 +420,62 @@ def verify_image_urls_batch(urls: Set[str], max_workers: int = 16) -> Dict[str, 
         for f in as_completed(futs):
             u, ok = f.result()
             results[u] = ok
+    return results
+
+
+def probe_image_dimensions_batch(
+    urls: Set[str],
+    cache_path: Optional[Path] = None,
+    max_workers: int = 20,
+) -> Dict[str, Tuple[int, int]]:
+    """Measure pixel dimensions (width, height) for live images with a persistent JSON cache."""
+    import io
+    from PIL import Image
+
+    cached: Dict[str, List[int]] = {}
+    if cache_path and cache_path.exists():
+        try:
+            raw = json.loads(cache_path.read_text(encoding="utf-8"))
+            if isinstance(raw, dict):
+                cached = raw
+        except Exception:
+            cached = {}
+
+    results: Dict[str, Tuple[int, int]] = {}
+    pending: List[str] = []
+    for u in sorted(urls):
+        if not u or not u.startswith("http"):
+            continue
+        pair = cached.get(u)
+        if isinstance(pair, list) and len(pair) == 2 and pair[0] > 0 and pair[1] > 0:
+            results[u] = (int(pair[0]), int(pair[1]))
+        else:
+            pending.append(u)
+
+    if pending:
+        headers = {"User-Agent": DEFAULT_UA, "Referer": "https://foddtech.vercel.app/"}
+
+        def _measure(url: str) -> Tuple[str, int, int]:
+            try:
+                with httpx.Client(headers=headers, timeout=12.0, follow_redirects=True) as c:
+                    r = c.get(url)
+                    if r.status_code == 200 and r.content:
+                        im = Image.open(io.BytesIO(r.content))
+                        return url, int(im.size[0]), int(im.size[1])
+            except Exception:
+                pass
+            return url, 0, 0
+
+        with ThreadPoolExecutor(max_workers=max_workers) as pool:
+            for u, w, h in pool.map(_measure, pending):
+                if w > 0 and h > 0:
+                    results[u] = (w, h)
+                    cached[u] = [w, h]
+
+        if cache_path:
+            cache_path.parent.mkdir(parents=True, exist_ok=True)
+            cache_path.write_text(json.dumps(cached, ensure_ascii=False), encoding="utf-8")
+
     return results
 
 

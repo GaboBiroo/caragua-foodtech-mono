@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
 import { CaraguaAIChatDrawer } from '../components/CaraguaAIChatDrawer';
+import { SmartFoodImage } from '../components/SmartFoodImage';
 import { realDataStore, dishMatchesFoodType } from '../data/realDataStore';
 
 interface DishPreview {
@@ -40,6 +41,8 @@ interface DishPreview {
   last_price_delta_pct: number;
   suggested_sides?: string[];
   image_url?: string;
+  image_width?: number;
+  image_height?: number;
 }
 
 interface RestaurantCardData {
@@ -71,6 +74,8 @@ interface RestaurantCardData {
   dishes_preview: DishPreview[];
   dishes: DishPreview[];
   banner_url?: string;
+  banner_width?: number;
+  banner_height?: number;
   image_url?: string;
   gallery_photos?: string[];
 }
@@ -419,6 +424,9 @@ export default function HomePage() {
         const drinkA = (a.food_types || []).includes('bebidas') ? 1 : 0;
         const drinkB = (b.food_types || []).includes('bebidas') ? 1 : 0;
         if (drinkA !== drinkB) return drinkA - drinkB;
+        const hdA = (a.image_width || 0) >= 360 ? 1 : 0;
+        const hdB = (b.image_width || 0) >= 360 ? 1 : 0;
+        if (hdB !== hdA) return hdB - hdA;
         const dropA = (a.last_price_delta_pct || 0) < 0 ? 1 : 0;
         const dropB = (b.last_price_delta_pct || 0) < 0 ? 1 : 0;
         if (dropB !== dropA) return dropB - dropA;
@@ -968,10 +976,13 @@ export default function HomePage() {
 
                   {/* Foto Real do Prato */}
                   <div className="relative aspect-[16/10] overflow-hidden bg-stone-900">
-                    <img
+                    <SmartFoodImage
                       src={dish.image_url!}
                       alt={dish.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      knownWidth={dish.image_width}
+                      knownHeight={dish.image_height}
+                      mode="card"
+                      hoverZoom
                       loading="lazy"
                     />
 
@@ -1084,7 +1095,7 @@ export default function HomePage() {
             {effectiveRestaurants.map((rest) => {
               const wrScore = Number(rest.bayesian_rating ?? rest.rating_score ?? rest.rating_average ?? 0);
               const starScore = wrScore > 0 ? wrScore.toFixed(2).replace('.', ',') : 'Novo';
-              const bannerSrc = rest.banner_url || rest.image_url || rest.gallery_photos?.[0] || '';
+              const bannerSrc = rest.banner_url || rest.gallery_photos?.[0] || rest.image_url || '';
               return (
                 <article
                   key={rest.id}
@@ -1093,10 +1104,13 @@ export default function HomePage() {
                   {/* Banner Fotográfico Real do Restaurante */}
                   <div className="relative aspect-[16/9] overflow-hidden bg-gradient-to-br from-[#135136] to-[#0D3825]">
                     {bannerSrc ? (
-                      <img
+                      <SmartFoodImage
                         src={bannerSrc}
                         alt={rest.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        knownWidth={rest.banner_url === bannerSrc ? rest.banner_width : 0}
+                        knownHeight={rest.banner_url === bannerSrc ? rest.banner_height : 0}
+                        mode="banner"
+                        hoverZoom
                         loading="lazy"
                       />
                     ) : (

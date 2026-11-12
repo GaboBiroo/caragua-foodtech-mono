@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { CaraguaAIChatDrawer } from '@/components/CaraguaAIChatDrawer';
+import { SmartFoodImage } from '@/components/SmartFoodImage';
 import { realDataStore } from '@/data/realDataStore';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
@@ -490,14 +491,15 @@ export default function RestaurantMenuDetailPage() {
                           href={photoUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="shrink-0 w-36 h-28 sm:w-44 sm:h-32 rounded-2xl overflow-hidden border border-stone-200 bg-stone-100 hover:border-[#135136] transition-all group"
+                          className="shrink-0 w-36 h-28 sm:w-44 sm:h-32 rounded-2xl overflow-hidden border border-stone-200 bg-stone-900 hover:border-[#135136] transition-all group"
                           title="Abrir foto real em tamanho original"
                         >
-                          <img
+                          <SmartFoodImage
                             src={photoUrl}
                             alt={`${detail.name} — foto real ${idx + 1}`}
+                            mode="card"
+                            hoverZoom
                             loading="lazy"
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
                         </a>
                       ))}

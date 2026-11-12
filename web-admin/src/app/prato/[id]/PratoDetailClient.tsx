@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { FeedPost } from '../../../data/caraguaData';
 import { Navbar } from '../../../components/Navbar';
+import { SmartFoodImage } from '../../../components/SmartFoodImage';
 import { realDataStore } from '../../../data/realDataStore';
 
 
@@ -95,6 +96,8 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
   const [previousPrice, setPreviousPrice] = useState<number | null>(null);
   const [caption, setCaption] = useState(post.caption);
   const [postImage, setPostImage] = useState(post.postImage);
+  const [postImageWidth, setPostImageWidth] = useState(post.postImageWidth || 0);
+  const [postImageHeight, setPostImageHeight] = useState(post.postImageHeight || 0);
   const [isVegan, setIsVegan] = useState(Boolean(post.isVegan));
   const [isGlutenFree, setIsGlutenFree] = useState(Boolean(post.isGlutenFree));
   const [isLactoseFree, setIsLactoseFree] = useState(false);
@@ -170,7 +173,11 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
           data.dish.previous_price ? Number(data.dish.previous_price) : null
         );
         if (data.dish.description) setCaption(data.dish.description);
-        if (data.dish.image_url) setPostImage(data.dish.image_url);
+        if (data.dish.image_url) {
+          setPostImage(data.dish.image_url);
+          setPostImageWidth(Number(data.dish.image_width || 0));
+          setPostImageHeight(Number(data.dish.image_height || 0));
+        }
         setIsVegan(Boolean(data.dish.is_vegan));
         setIsGlutenFree(Boolean(data.dish.is_gluten_free));
         setIsLactoseFree(Boolean(data.dish.is_lactose_free));
@@ -374,10 +381,13 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
             {/* Coluna Esquerda: Foto Real do Prato */}
             <div className="lg:col-span-7 relative aspect-[4/3] sm:aspect-[16/11] lg:aspect-auto lg:min-h-[500px] bg-stone-900 overflow-hidden flex items-center justify-center">
               {postImage ? (
-                <img
+                <SmartFoodImage
                   src={postImage}
                   alt={dishName}
-                  className="w-full h-full object-cover object-center"
+                  knownWidth={postImageWidth}
+                  knownHeight={postImageHeight}
+                  mode="hero"
+                  loading="eager"
                 />
               ) : (
                 <div className="p-8 text-center text-emerald-100/80 space-y-2">
@@ -809,10 +819,14 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
               >
                 <div className="aspect-[4/3] bg-stone-900 relative overflow-hidden flex items-center justify-center">
                   {item.postImage ? (
-                    <img
+                    <SmartFoodImage
                       src={item.postImage}
                       alt={item.dishName}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      knownWidth={item.postImageWidth}
+                      knownHeight={item.postImageHeight}
+                      mode="card"
+                      hoverZoom
+                      loading="lazy"
                     />
                   ) : (
                     <Utensils className="w-8 h-8 text-emerald-200/60" />

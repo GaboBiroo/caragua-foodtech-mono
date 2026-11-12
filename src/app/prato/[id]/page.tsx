@@ -28,6 +28,10 @@ function resolvePostAndRelated(rawId: string): {
       neighborhood: rest.neighborhood || 'Caraguatatuba',
       distanceKm: Number(rest.distance_km || 0),
       postImage: dish.image_url || rest.banner_url || rest.image_url || '',
+      postImageWidth:
+        Number(dish.image_url ? dish.image_width || 0 : rest.banner_width || 0) || undefined,
+      postImageHeight:
+        Number(dish.image_url ? dish.image_height || 0 : rest.banner_height || 0) || undefined,
       caption: dish.description || `${dish.name} no cardápio real de ${rest.name}.`,
       dishName: dish.name,
       dishPrice: Number(dish.price || 0),
@@ -66,6 +70,8 @@ function resolvePostAndRelated(rawId: string): {
         dishPrice: Number(rd.price || 0),
         dishCategory: rd.category || 'Cardápio',
         postImage: rd.image_url || '',
+        postImageWidth: Number(rd.image_width || 0) || undefined,
+        postImageHeight: Number(rd.image_height || 0) || undefined,
         caption: rd.description || rd.name,
       }));
 

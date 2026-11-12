@@ -38,6 +38,7 @@ from app.workers.real_menu_photo_harvester import (
     GoogleMapsEnricher,
     is_valid_caragua_coords,
     normalize_image_url,
+    probe_image_dimensions_batch,
     verify_image_urls_batch,
 )
 from app.workers.scraper_adapters import DietaryInferenceEngine, slugify_text
@@ -50,6 +51,7 @@ from app.workers.scraper_engine import (
 RAW_DIR = BACKEND_DIR / "data" / "raw"
 AIQFOME_RAW_FILE = RAW_DIR / "aiqfome_caragua_raw.json"
 GMAPS_CACHE_FILE = RAW_DIR / "gmaps_enrichment_cache.json"
+IMG_DIM_CACHE_FILE = RAW_DIR / "image_dimensions_cache.json"
 DEST_FRONTEND = ROOT_DIR / "src" / "data" / "caraguaRealDump.json"
 DEST_ADMIN = ROOT_DIR / "web-admin" / "src" / "data" / "caraguaRealDump.json"
 
@@ -219,17 +221,19 @@ def diversify_store_preview_dishes(menu_by_category: List[Dict[str, Any]], max_i
         if not items:
             continue
 
-        def _item_key(d: Dict[str, Any]) -> Tuple[int, int, int, float]:
+        def _item_key(d: Dict[str, Any]) -> Tuple[int, int, int, int, float]:
             has_img = 1 if d.get("image_url") else 0
+            is_hd = 1 if (d.get("image_width") or 0) >= 360 else 0
             has_drop = 1 if (d.get("last_price_delta_pct") or 0) < 0 else 0
             is_drink = 1 if "bebidas" in (d.get("food_types") or []) else 0
-            return (has_img, -is_drink, has_drop, float(d.get("price") or 0))
+            return (has_img, is_hd, -is_drink, has_drop, float(d.get("price") or 0))
 
         buckets.append(sorted(items, key=_item_key, reverse=True))
 
-    # Order category buckets so photo-rich food categories come first
+    # Order category buckets so high-res photo-rich food categories come first
     buckets.sort(
         key=lambda b: (
+            1 if (b[0].get("image_width") or 0) >= 360 else 0,
             1 if b[0].get("image_url") else 0,
             0 if "bebidas" in (b[0].get("food_types") or []) else 1,
             len(b),
@@ -347,24 +351,32 @@ def run_pipeline(discover_gmaps: bool = False, refresh_aiqfome: bool = False, sk
     elif GMAPS_CACHE_FILE.exists():
         gmaps_cache = json.loads(GMAPS_CACHE_FILE.read_text(encoding="utf-8"))
 
-    # Collect every external image URL & verify HTTP 200 reachability
-    print("[4/5] Verifying reachability of all harvested dish & restaurant photos...")
+    # Collect every external image URL & verify HTTP 200 reachability + pixel resolution
+    print("[4/5] Verifying reachability & resolution of all harvested photos...")
     all_img_urls: Set[str] = set()
     for st in all_stores:
         if st.get("cover"):
-            all_img_urls.add(st["cover"])
+            all_img_urls.add(normalize_image_url(st["cover"]))
         if st.get("logo"):
-            all_img_urls.add(st["logo"])
+            all_img_urls.add(normalize_image_url(st["logo"]))
         for gp in (gmaps_cache.get(st["slug"], {}).get("gallery_photos") or []):
-            all_img_urls.add(gp)
+            ngp = normalize_image_url(gp)
+            if ngp:
+                all_img_urls.add(ngp)
         for sec in st.get("sections", []):
             for it in sec.get("items", []):
                 if it.get("image_url"):
-                    all_img_urls.add(it["image_url"])
+                    nu = normalize_image_url(it["image_url"])
+                    if nu:
+                        all_img_urls.add(nu)
 
+    all_img_urls.discard("")
     img_status = verify_image_urls_batch(all_img_urls, max_workers=20)
-    ok_count = sum(1 for v in img_status.values() if v)
-    print(f"  Verified {ok_count}/{len(all_img_urls)} live images (broken links pruned cleanly)")
+    live_urls = {u for u, ok in img_status.items() if ok}
+    img_dims = probe_image_dimensions_batch(live_urls, cache_path=IMG_DIM_CACHE_FILE, max_workers=20)
+    ok_count = len(live_urls)
+    hd_count = sum(1 for u in live_urls if img_dims.get(u, (0, 0))[0] >= 360)
+    print(f"  Verified {ok_count}/{len(all_img_urls)} live images ({hd_count} HD >=360px wide)")
 
     def _valid_img(u: Optional[str]) -> str:
         nu = normalize_image_url(u)
@@ -456,6 +468,7 @@ def run_pipeline(discover_gmaps: bool = False, refresh_aiqfome: bool = False, sk
                         "delta_percentage": delta_pct,
                     })
 
+                img_w, img_h = img_dims.get(img_u, (0, 0)) if img_u else (0, 0)
                 dish_obj = {
                     "id": dish_id,
                     "restaurant_id": rest_id,
@@ -467,6 +480,8 @@ def run_pipeline(discover_gmaps: bool = False, refresh_aiqfome: bool = False, sk
                     "category": cat_name,
                     "food_types": food_types,
                     "image_url": img_u,
+                    "image_width": img_w,
+                    "image_height": img_h,
                     "is_vegan": bool(diet.get("is_vegan", False)),
                     "is_vegetarian": bool(diet.get("is_vegetarian", False)),
                     "is_gluten_free": bool(diet.get("is_gluten_free", False)),
@@ -483,12 +498,23 @@ def run_pipeline(discover_gmaps: bool = False, refresh_aiqfome: bool = False, sk
         if not all_store_dishes:
             continue
 
-        # Fallback banner strictly to verified restaurant/dish photo (never stock!)
-        banner_url = gallery_photos[0] if gallery_photos else (dish_with_photo_urls[0] if dish_with_photo_urls else logo_url)
-        avatar_url = logo_url or banner_url
-        for du in dish_with_photo_urls[:4]:
+        # Build gallery and select the highest-res landscape/HD banner (never upscale a small logo over HD photos)
+        for du in dish_with_photo_urls:
             if du not in gallery_photos:
                 gallery_photos.append(du)
+
+        def _banner_score(u: str) -> Tuple[int, int, int]:
+            w, h = img_dims.get(u, (0, 0))
+            is_hd = 1 if w >= 380 else 0
+            is_wide = 1 if w >= 480 and w >= h else 0
+            return (is_hd, is_wide, w * h)
+
+        gallery_photos.sort(key=lambda u: _banner_score(u), reverse=True)
+        banner_candidates = [u for u in ([cover_url] + gallery_photos + dish_with_photo_urls) if u]
+        banner_candidates.sort(key=_banner_score, reverse=True)
+        banner_url = banner_candidates[0] if banner_candidates else logo_url
+        banner_w, banner_h = img_dims.get(banner_url, (0, 0)) if banner_url else (0, 0)
+        avatar_url = logo_url or banner_url
 
         preview_dishes = diversify_store_preview_dishes(menu_by_category, max_items=16)
         store_food_types = sorted({
@@ -543,9 +569,11 @@ def run_pipeline(discover_gmaps: bool = False, refresh_aiqfome: bool = False, sk
             "cuisine_types": cuisines,
             "food_types": store_food_types,
             "banner_url": banner_url,
+            "banner_width": banner_w,
+            "banner_height": banner_h,
             "image_url": avatar_url,
             "cover_image": banner_url,
-            "gallery_photos": gallery_photos[:10],
+            "gallery_photos": gallery_photos[:12],
             "opening_hours": normalize_opening_hours(st.get("openingHours")),
             "distance_meters": dist_m,
             "distance_km": dist_km,

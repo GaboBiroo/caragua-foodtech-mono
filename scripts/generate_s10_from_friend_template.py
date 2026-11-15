@@ -23,7 +23,7 @@ from docx.oxml.ns import qn, nsdecls
 BASE_DIR = Path(__file__).resolve().parent.parent
 SCREENSHOTS_DIR = BASE_DIR / "docs" / "screenshots_s10"
 TEMPLATE_DOCX = Path(
-    r"C:\Users\Usuario\.gemini\antigravity\brain\e8161ea4-ba32-45b7-94f8-f61d2ceec0d1\.user_uploaded\media_1793149858719_22691d7b.docx"
+    r"C:\Users\Usuario\.gemini\antigravity\brain\e8161ea4-ba32-45b7-94f8-f61d2ceec0d1\.user_uploaded\media_1794781617297_bbb7c5e3.docx"
 )
 PROTOTIPO_HTML = BASE_DIR / "entregas_aps2" / "S02_Prototipo_Historias_Mapa" / "PROTOTIPO_PARA_PRINT.html"
 PROD_URL = "https://foddtech.vercel.app"
@@ -849,7 +849,7 @@ def build_consolidated_s10():
     add_bullet_line(
         doc,
         "5. Lista principal, gaveta dos 53 bairros e Rankings (/ e /rankings — código: src/app/rankings/page.tsx e src/data/caraguaData.ts): ",
-        "consolida o catálogo da S08 com 15 pratos e 14 estabelecimentos reais de Caraguatatuba. Permite busca textual sem diferenciar acentos, filtragem em tempo real pelos 53 bairros (com mapa vetorial e 4 macro-regiões na gaveta modal) e comparação na página /rankings entre a Nota Histórica e a Super Nota recente dos últimos 30 dias.",
+        "consolida o catálogo da S08 com 61 estabelecimentos e 2.670 pratos reais de Caraguatatuba. Permite busca textual sem diferenciar acentos, filtragem por tipo de comida e pelos 53 bairros (com mapa vetorial e 4 macro-regiões na gaveta modal) e comparação na página /rankings entre a Nota Histórica e a Super Nota ponderada recente.",
         keep_with_next=True,
     )
     # Par lado a lado em paisagem: Rankings Desktop (4.65 pol) + Modal 53 Bairros Desktop (4.65 pol) -> ambos 1366x850, mesma altura (2.89 pol)!

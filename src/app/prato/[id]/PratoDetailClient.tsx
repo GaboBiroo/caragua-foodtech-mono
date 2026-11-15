@@ -194,7 +194,8 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
         }
         if (data.restaurant.source_platform) setSourcePlatform(data.restaurant.source_platform);
         if (typeof data.restaurant.distance_km === 'number') {
-          setDistanceKm(data.restaurant.distance_km);
+          const d = data.restaurant.distance_km;
+          setDistanceKm(d > 25 ? Number((d / 1000).toFixed(2)) : d);
         }
 
         if (data.super_nota) {

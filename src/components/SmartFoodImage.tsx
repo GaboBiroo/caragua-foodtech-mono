@@ -70,8 +70,8 @@ export const SmartFoodImage: React.FC<SmartFoodImageProps> = ({
     // Render near native 1:1 pixel dimensions so sharp small photos stay tack-sharp
     const nativeMaxWidth =
       mode === 'hero'
-        ? Math.min(Math.max(dims.w * 1.15, 220), 280)
-        : Math.min(Math.max(dims.w * 1.08, 190), 240);
+        ? Math.min(Math.max(dims.w * 1.45, 310), 380)
+        : Math.min(Math.max(dims.w * 1.15, 210), 260);
 
     return (
       <div

@@ -410,9 +410,54 @@ export const realDataStore = {
   },
 
   getDishById(idOrIndex: string): DishDetailData | null {
+    const normalizeDishDetail = (item: DishDetailData | null): DishDetailData | null => {
+      if (!item || !item.restaurant) return item;
+      const rawDist = Number(item.restaurant.distance_km || 0);
+      // Se distance_km veio em metros (ex: 464.3m), converte para km (0.5 km)
+      const fixedDistKm =
+        rawDist > 25
+          ? Number((rawDist / 1000).toFixed(2))
+          : rawDist > 0
+          ? Number(rawDist.toFixed(2))
+          : Number(calculateDistanceKm(-23.6226, -45.4124, item.restaurant.latitude, item.restaurant.longitude).toFixed(2));
+      return {
+        ...item,
+        restaurant: {
+          ...item.restaurant,
+          distance_km: Math.min(fixedDistKm, 18.5),
+        },
+      };
+    };
+
     const dishDetails = (dump.dish_details || {}) as unknown as Record<string, DishDetailData>;
     if (dishDetails[idOrIndex]) {
-      return dishDetails[idOrIndex];
+      return normalizeDishDetail(dishDetails[idOrIndex]);
+    }
+
+    // Compatibilidade com links acadêmicos das entregas S09/S10 (ex: "post-1", "post-centro-azul-marinho")
+    const legacyAliases: Record<string, string> = {
+      'post-1': '03f09e72-5c04-508a-bab6-fe753e0fca15',
+      'post-2': 'e218ba40-50af-53a4-b9f2-1602dbe66087',
+      'post-3': 'b53daa33-7f48-5d6c-aeb2-e1ede4d3a4e1',
+      'post-4': 'fe695917-01cc-5a00-9b35-b138757ed90b',
+      'post-centro-azul-marinho': '03f09e72-5c04-508a-bab6-fe753e0fca15',
+    };
+    const mappedAlias = legacyAliases[idOrIndex.toLowerCase()];
+    if (mappedAlias && dishDetails[mappedAlias]) {
+      return normalizeDishDetail(dishDetails[mappedAlias]);
+    }
+    const postMatch = idOrIndex.match(/^post-(\d+)$/i);
+    if (postMatch) {
+      const idx = parseInt(postMatch[1], 10);
+      const keysWithPhotos = Object.keys(dishDetails).filter(
+        (k) => dishDetails[k]?.dish?.image_url && (dishDetails[k]?.reviews?.length || 0) > 0
+      );
+      if (idx >= 1 && idx <= keysWithPhotos.length) {
+        return normalizeDishDetail(dishDetails[keysWithPhotos[idx - 1]]);
+      }
+    }
+    if (idOrIndex.toLowerCase().startsWith('post-') && dishDetails['03f09e72-5c04-508a-bab6-fe753e0fca15']) {
+      return normalizeDishDetail(dishDetails['03f09e72-5c04-508a-bab6-fe753e0fca15']);
     }
 
     // Busca por número de índice explícito (ex: "1", "2")
@@ -420,7 +465,7 @@ export const realDataStore = {
       const num = parseInt(idOrIndex, 10);
       const keys = Object.keys(dishDetails);
       if (num >= 1 && num <= keys.length) {
-        return dishDetails[keys[num - 1]];
+        return normalizeDishDetail(dishDetails[keys[num - 1]]);
       }
     }
 

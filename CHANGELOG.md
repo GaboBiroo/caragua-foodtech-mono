@@ -1,8 +1,26 @@
 # 📋 HISTÓRICO DE MUDANÇAS & DIRETÓRIO TÉCNICO DO PROJETO (CHANGELOG)
 ## CaráFood — Monorepo Oficial (`caragua-foodtech-mono`)
 
-> **Data da Atualização:** 06 de Novembro de 2026  
-> **Objetivo:** Registro central de todas as mudanças de arquitetura, saneamento de dados, limpeza estrutural de diretórios e evolução acadêmica do projeto para fins de governança e avaliação na disciplina de **Análise e Projeto de Sistemas II (APS II)** e **Trabalho de Conclusão de Curso (TCC)** no **Centro Universitário Módulo**, sob orientação do **Prof. Me. Cristiano S. Negrão**.
+> **Data da Atualização:** 15 de Novembro de 2026  
+> **Objetivo:** Registro central de todas as mudanças de arquitetura, saneamento de dados, melhoria contínua (S11), testes de usabilidade (S12), deploy/persistência (S13), configuração de DNS/HTTPS (S14) e evolução acadêmica do projeto na disciplina de **Análise e Projeto de Sistemas II (APS II)** no **Centro Universitário Módulo**, sob orientação do **Prof. Me. Cristiano S. Negrão**.
+
+---
+
+## 0. 🚀 Iterações de Melhoria Contínua e Versionamento (Entrega S11 — "Antes → Depois")
+
+| Item | Antes (Versão Preliminar S01–S09) | Depois (Versão Atualizada S11–S14 em Produção) | O que motivou a mudança (Feedback / Teste / Grupo) |
+| :--- | :--- | :--- | :--- |
+| **1. Layout e Responsividade Mobile Admin (`/moderation` e Portal Prof. Cristiano)** | O botão do Portal Prof. Cristiano ficava oculto no topo em celulares (`hidden sm:flex`), o modal tinha rolagem dupla e o painel `/moderation` usava tabelas de 6 colunas que cortavam os botões em telas de 360px–390px. | Botão **🎓 Prof.** fixo no topo mobile, card administrativo destacado no menu gaveta, abas em grade 2x2 no `AcademicPortalModal` e visualização em **Cartões Mobile (`md:hidden`)** no painel `/moderation`. | Teste prático no celular identificou dificuldade para abrir o Portal do Prof. Cristiano e aprovar pratos na tela estreita. |
+| **2. Melhoria de Fluxo e Descoberta (Ordenação $W_R$ e Filtros Rápidos)** | Vários restaurantes do mesmo ramo apareciam seguidos na listagem e faltava um filtro direto por tipo de prato (Sushi, Pizza, Lanche, Combo Família). | Implementada ponderação Bayesiana ($W_R$), **Janela Deslizante Anti-Agrupamento** (evita repetição seguida de culinária) e pílulas de filtro em 1 clique para **8 tipos de comida**. | Percepção do grupo e feedback de usabilidade (S12): reduzir o número de cliques para encontrar lanches, pizzas ou combos familiares. |
+| **3. Nitidez de Imagens (`SmartFoodImage.tsx`)** | Miniaturas nativas de cardápios (200x133px) eram esticadas para `object-cover` em containers grandes, ficando borradas no site. | Criado o componente `SmartFoodImage.tsx` com auditoria das **1.230 fotos reais**: imagens compactas são exibidas em escala nativa 1:1 nítida sobre fundo ambientado, e fotos do Google Maps são atualizadas para alta definição (`=w1200-no`). | Inspeção visual apontou perda de nitidez quando miniaturas de plataformas de delivery eram ampliadas além da resolução original. |
+| **4. Clareza de Textos, Persistência e Segurança HTTPS Campus** | Algumas telas tentavam conectar em `http://localhost:8000` no cliente, exibindo aviso *"Reconectando..."* no celular e alerta *"Não seguro"* em PCs da rede universitária Cruzeiro do Sul. | Criada a rota `/api/moderation` e persistência `GET/POST` em `/api/restaurants/leads`, removidas 100% das chamadas HTTP locais no navegador e ativados cabeçalhos **HSTS Preload + CSP `upgrade-insecure-requests`**. | Teste nos computadores de laboratório da faculdade Cruzeiro do Sul e validação de fluxo persistido da S13. |
+
+### Lista de Versionamento Recente do Repositório (`git log --oneline`)
+- `feat(mobile-security): responsive mobile UX for Prof. Cristiano portal & moderation, serverless curation API and strict HSTS/CSP headers for campus PCs`
+- `6592004 chore(deploy): trigger Vercel production build for native-resolution SmartFoodImage`
+- `9ca2990 fix(images): prevent upscaling of small menu thumbnails with SmartFoodImage and upgrade Google Maps photos to =w1200-no`
+- `7b4e223 feat(ranking): Bayesian rating W_R, anti-clustering diversity and food type filters (Lanches, Pizzas, Sushi, Combo Familia)`
+- `ff00321 feat(catalog): 100% real Caraguatatuba menu harvester with 61 restaurants, 2670 real dishes and verified Google Maps reviews`
 
 ---
 

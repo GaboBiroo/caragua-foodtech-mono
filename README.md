@@ -324,6 +324,30 @@ A interface foi projetada em estrita conformidade com os padrões internacionais
 
 ---
 
+## 🌐 Ambiente Publicado, URL Amigável, DNS e Limitações (Entrega S14)
+
+- **Link oficial da aplicação (URL amigável):** [https://foddtech.vercel.app/](https://foddtech.vercel.app/)
+- **Tipo de ambiente:** **Produção / Demonstração Acadêmica (Prod/Demo)** hospedado gratuitamente na plataforma **Vercel** (Global Edge Network), conectado por integração contínua (CI/CD) à branch `main` do repositório GitHub (`GaboBiroo/caragua-foodtech-mono`).
+- **Segurança HTTPS, HSTS e Compatibilidade com Rede Universitária (Cruzeiro do Sul / Módulo):**
+  - O domínio `.vercel.app` opera sob o TLD `.app` (mantido com lista oficial **HSTS Preload**), exigindo conexão criptografada **HTTPS (TLS 1.3)**.
+  - A aplicação envia cabeçalhos de segurança estritos (`Strict-Transport-Security`, `Content-Security-Policy: upgrade-insecure-requests`, `X-Content-Type-Options: nosniff`, `X-Frame-Options: SAMEORIGIN`) e realiza 100% das chamadas de API por rotas relativas HTTPS (`/api/restaurants`, `/api/moderation`, `/api/chat`, `/api/restaurants/leads`), eliminando alertas de *Mixed Content* ou *Private Network Access* em computadores de laboratório universitário.
+  - **Dica para acesso nos laboratórios da faculdade:** Sempre digite o endereço completo com **`https://foddtech.vercel.app/`** para evitar que proxies HTTP locais tentem interceptar a porta 80 antes do redirecionamento TLS.
+- **Observação sobre limitações do ambiente gratuito:**
+  - Por operar no plano gratuito (*Hobby Tier*) da Vercel com funções *Serverless*, a primeira requisição às rotas de API (`/api/moderation`, `/api/restaurants/leads`, `/api/reviews`, `/api/chat`) após um período sem acesso pode apresentar um *cold start* inicial de **1 a 2 segundos**.
+  - As gravações em memória das rotas Serverless permanecem ativas durante o ciclo de vida da instância, mantendo o catálogo base persistido de **61 estabelecimentos reais e 2.670 pratos verificados** nos 53 bairros de Caraguatatuba sempre disponível sem risco de queda por inatividade.
+
+---
+
+## 🔄 Changelog Resumido — Melhoria Contínua ("Antes → Depois" — Entrega S11)
+
+| Iteração | O que era ("Antes") | O que mudou ("Depois") | Motivação da Mudança |
+| :--- | :--- | :--- | :--- |
+| **1. Catálogo e Imagens (`SmartFoodImage.tsx`)** | Dados iniciais de teste e miniaturas de cardápios (200x133px) esticadas em containers grandes, causando borrão visual. | Catálogo 100% real (**61 restaurantes e 2.670 pratos reais** de Caraguatatuba) + componente `SmartFoodImage` que preserva nitidez 1:1 nativa sobre fundo ambientado e força `=w1200-no` nas capas do Google Maps. | Feedback de testes visuais: eliminar qualquer dado sintético e impedir interpolação borrada de fotos de pratos. |
+| **2. Ordenação e Filtros (`realDataStore.ts` / `page.tsx`)** | Restaurantes da mesma categoria apareciam agrupados em sequência e a ordenação não ponderava o volume de avaliações. | Algoritmo de ** Nota Bayesiana ($W_R$)** + **Janela Deslizante Anti-Agrupamento** + barra rápida por tipo de comida (*Lanches, Pizzas, Sushi, Combo Família, Marmitas, Frutos do Mar, Porções, Doces & Açaí*). | Melhoria de fluxo: reduzir cliques para achar um tipo de comida e garantir diversidade no topo da vitrine. |
+| **3. Painel Administrativo e Portal Prof. Cristiano no Celular (`Navbar.tsx`, `AcademicPortalModal.tsx`, `/moderation`)** | Botão do Portal TCC oculto em telas `<640px`, tabelas largas com rolagem horizontal em `/moderation` e chamadas `localhost` que falhavam no celular. | Botão **🎓 Prof.** visível na barra superior mobile, abas em grade 2x2 sem scroll oculto, cartões responsivos mobile em `/moderation`, login em 1 clique e API `/api/moderation` 100% online. | Feedback direto de uso mobile e testes nos computadores da faculdade Cruzeiro do Sul. |
+
+---
+
 ## 📜 Licença & Propriedade Intelectual
 
 Este projeto está licenciado sob os termos da **MIT License**.  

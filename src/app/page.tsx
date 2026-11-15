@@ -24,6 +24,7 @@ import { Navbar } from '../components/Navbar';
 import { CaraguaAIChatDrawer } from '../components/CaraguaAIChatDrawer';
 import { SmartFoodImage } from '../components/SmartFoodImage';
 import { realDataStore, dishMatchesFoodType } from '../data/realDataStore';
+import { triggerHapticSelection } from '../utils/nativeBridgeClient';
 
 interface DishPreview {
   id: string;
@@ -163,6 +164,7 @@ export default function HomePage() {
   const [savedPostIds, setSavedPostIds] = useState<Set<string>>(new Set());
 
   const toggleLike = (id: string) => {
+    triggerHapticSelection();
     setLikedPostIds((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
@@ -172,6 +174,7 @@ export default function HomePage() {
   };
 
   const toggleSave = (id: string) => {
+    triggerHapticSelection();
     setSavedPostIds((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
@@ -183,6 +186,7 @@ export default function HomePage() {
   const [selectedNeighborhood, setSelectedNeighborhood] = useState<string>('Todos');
   const [selectedMacroRegion, setSelectedMacroRegion] = useState<'Todas' | 'Norte' | 'Centro' | 'Sul'>('Todas');
   const [neighborhoodDrawerOpen, setNeighborhoodDrawerOpen] = useState<boolean>(false);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState<boolean>(false);
   const [drawerSearch, setDrawerSearch] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [debouncedSearch, setDebouncedSearch] = useState<string>('');
@@ -190,6 +194,9 @@ export default function HomePage() {
   const [selectedFoodType, setSelectedFoodType] = useState<string>('todos');
   const [priceDropOnly, setPriceDropOnly] = useState<boolean>(false);
   const [sortBy, setSortBy] = useState<'recommended' | 'rating' | 'distance'>('recommended');
+
+  const activeAdvancedFiltersCount =
+    selectedDietary.length + (priceDropOnly ? 1 : 0) + (sortBy !== 'recommended' ? 1 : 0);
 
   const [userCoords, setUserCoords] = useState<{ lat: number; lon: number }>({
     lat: -23.6226,
@@ -505,29 +512,29 @@ export default function HomePage() {
     <div className="min-h-screen bg-[#FAF7F2] text-[#1A202C] flex flex-col">
       <Navbar onOpenAIChat={() => openAssistantWithPrompt(undefined)} />
 
-      {/* Banner Principal Acolhedor e Apetitoso */}
+      {/* Banner Principal Acolhedor e Otimizado para App Mobile + Desktop */}
       <header className="relative bg-gradient-to-br from-[#135136] via-[#165E3F] to-[#0D3B27] text-white border-b-4 border-[#FFB703] overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-11 relative z-10">
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-            <div className="max-w-3xl space-y-3">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/15 border border-white/25 text-xs font-extrabold text-[#FFB703]">
-                <span>🍽️ Bateu a fome em Caraguá?</span>
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-9 relative z-10 min-w-0">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-3 sm:gap-6">
+            <div className="max-w-3xl space-y-1.5 sm:space-y-3 min-w-0">
+              <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-0.5 sm:py-1 rounded-full bg-white/15 border border-white/25 text-[11px] sm:text-xs font-extrabold text-[#FFB703] max-w-full">
+                <span className="shrink-0">🍽️ Bateu a fome?</span>
                 <span className="text-white/50">•</span>
-                <span className="text-emerald-100">{populatedZonesCount} bairros com cardápios abertos</span>
+                <span className="text-emerald-100 truncate">{populatedZonesCount} bairros ativos</span>
               </div>
 
-              <h1 className="font-heading font-black text-3xl sm:text-4xl lg:text-5xl tracking-tight leading-[1.08]">
+              <h1 className="font-heading font-black text-2xl sm:text-4xl lg:text-5xl tracking-tight leading-[1.1]">
                 O que vamos comer hoje em{' '}
                 <span className="text-[#FFB703]">Caraguá?</span>
               </h1>
 
-              <p className="text-sm sm:text-base text-emerald-100/95 leading-relaxed max-w-2xl">
+              <p className="hidden sm:block text-sm sm:text-base text-emerald-100/95 leading-relaxed max-w-2xl">
                 Compare cardápios, descubra lugares novos no seu bairro e veja onde o preço
                 baixou de verdade. Escolha seu bairro ou filtre pelo que você pode comer tranquilo!
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+            <div className="hidden sm:flex flex-wrap items-center gap-2.5 shrink-0">
               <button
                 type="button"
                 onClick={() => openAssistantWithPrompt(undefined)}
@@ -548,23 +555,23 @@ export default function HomePage() {
           </div>
 
           {/* Barra de Busca e Seleção dos 53 Bairros */}
-          <div className="mt-6 bg-white rounded-3xl p-3 sm:p-4 shadow-xl border border-stone-200/90 text-stone-900 space-y-3">
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-2.5">
+          <div className="mt-3 sm:mt-6 bg-white rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 shadow-xl border border-stone-200/90 text-stone-900 space-y-2.5 sm:space-y-3 min-w-0">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-2 sm:gap-2.5">
               {/* Campo de busca simples e direto */}
-              <div className="md:col-span-6 relative">
-                <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <div className="md:col-span-6 relative min-w-0">
+                <Search className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Busque por prato, quiosque, pizzaria, padaria ou bairro..."
-                  className="w-full pl-10 pr-9 py-2.5 rounded-2xl bg-stone-100 border border-stone-200 text-sm font-medium text-stone-900 placeholder:text-stone-500 focus:outline-none focus:ring-2 focus:ring-[#135136] focus:bg-white"
+                  placeholder="Buscar prato, burger, pizzaria ou bairro..."
+                  className="w-full min-w-0 pl-9 pr-8 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl bg-stone-100 border border-stone-200 text-sm font-medium text-stone-900 placeholder:text-stone-500 focus:outline-none focus:ring-2 focus:ring-[#135136] focus:bg-white"
                 />
                 {searchQuery && (
                   <button
                     type="button"
                     onClick={() => setSearchQuery('')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700"
                     aria-label="Limpar busca"
                   >
                     <X className="w-4 h-4" />
@@ -573,13 +580,16 @@ export default function HomePage() {
               </div>
 
               {/* Seletor completo dos 53 Bairros de Caraguá */}
-              <div className="md:col-span-4 relative">
-                <MapPin className="w-4 h-4 text-[#135136] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <div className="md:col-span-4 relative min-w-0">
+                <MapPin className="w-4 h-4 text-[#135136] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <select
                   aria-label="Escolher bairro de Caraguatatuba"
                   value={selectedNeighborhood}
-                  onChange={(e) => setSelectedNeighborhood(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-stone-100 border border-stone-200 text-sm font-bold text-stone-800 focus:outline-none focus:ring-2 focus:ring-[#135136] focus:bg-white"
+                  onChange={(e) => {
+                    triggerHapticSelection();
+                    setSelectedNeighborhood(e.target.value);
+                  }}
+                  className="w-full min-w-0 pl-9 pr-3 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl bg-stone-100 border border-stone-200 text-xs sm:text-sm font-bold text-stone-800 focus:outline-none focus:ring-2 focus:ring-[#135136] focus:bg-white truncate"
                 >
                   <option value="Todos">Todos os 53 Bairros de Caraguá</option>
                   {neighborhoods.map((n) => (
@@ -590,30 +600,55 @@ export default function HomePage() {
                 </select>
               </div>
 
-              {/* Botão de proximidade */}
-              <div className="md:col-span-2 flex gap-1.5">
+              {/* Botão de proximidade + Toggle de Filtros Avançados no Mobile */}
+              <div className="md:col-span-2 grid grid-cols-2 md:grid-cols-1 gap-1.5">
                 <button
                   type="button"
-                  onClick={handleRequestGPS}
-                  className={`w-full py-2.5 px-3 rounded-2xl text-xs font-extrabold flex items-center justify-center gap-1.5 border transition-all ${
+                  onClick={() => {
+                    triggerHapticSelection();
+                    handleRequestGPS();
+                  }}
+                  className={`w-full py-2 sm:py-2.5 px-2.5 rounded-xl sm:rounded-2xl text-xs font-extrabold flex items-center justify-center gap-1.5 border transition-all whitespace-nowrap ${
                     gpsActive || sortBy === 'distance'
                       ? 'bg-[#135136] text-white border-[#135136]'
                       : 'bg-stone-100 hover:bg-stone-200 text-stone-800 border-stone-200'
                   }`}
                   title="Ordenar pelos lugares mais pertinho de você"
                 >
-                  <Navigation className="w-3.5 h-3.5 text-[#FFB703]" />
+                  <Navigation className="w-3.5 h-3.5 text-[#FFB703] shrink-0" />
                   <span>Perto de mim</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    triggerHapticSelection();
+                    setMobileFiltersOpen((prev) => !prev);
+                  }}
+                  className={`md:hidden w-full py-2 px-2.5 rounded-xl text-xs font-extrabold flex items-center justify-center gap-1.5 border transition-all whitespace-nowrap ${
+                    mobileFiltersOpen || activeAdvancedFiltersCount > 0
+                      ? 'bg-amber-100 text-amber-950 border-amber-300'
+                      : 'bg-stone-100 text-stone-800 border-stone-200'
+                  }`}
+                >
+                  <SlidersHorizontal className="w-3.5 h-3.5 text-[#135136] shrink-0" />
+                  <span>
+                    Filtros{activeAdvancedFiltersCount > 0 ? ` (${activeAdvancedFiltersCount})` : ''}
+                  </span>
                 </button>
               </div>
             </div>
 
-            {/* Filtros para comer tranquilo + quedas de preço */}
-            <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-stone-100">
+            {/* Filtros para comer tranquilo + quedas de preço (colapsável no mobile para mostrar comida logo!) */}
+            <div
+              className={`${
+                mobileFiltersOpen ? 'flex' : 'hidden'
+              } md:flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-stone-100`}
+            >
               <div className="flex flex-wrap items-center gap-1.5">
                 <span className="text-[11px] font-extrabold text-stone-600 mr-1 inline-flex items-center gap-1">
                   <SlidersHorizontal className="w-3 h-3 text-[#135136]" />
-                  Pode comer sem medo:
+                  Dieta:
                 </span>
 
                 {DIETARY_PILLS.map((pill) => {
@@ -622,8 +657,11 @@ export default function HomePage() {
                     <button
                       key={pill.key}
                       type="button"
-                      onClick={() => toggleDietary(pill.key)}
-                      className={`px-3 py-1 rounded-full text-xs font-bold border transition-all ${
+                      onClick={() => {
+                        triggerHapticSelection();
+                        toggleDietary(pill.key);
+                      }}
+                      className={`px-2.5 sm:px-3 py-1 rounded-full text-xs font-bold border transition-all ${
                         active
                           ? 'bg-[#135136] text-white border-[#135136] shadow-xs'
                           : 'bg-stone-50 hover:bg-stone-100 text-stone-700 border-stone-300'
@@ -636,8 +674,11 @@ export default function HomePage() {
 
                 <button
                   type="button"
-                  onClick={() => setPriceDropOnly((prev) => !prev)}
-                  className={`px-3 py-1 rounded-full text-xs font-bold border inline-flex items-center gap-1 transition-all ${
+                  onClick={() => {
+                    triggerHapticSelection();
+                    setPriceDropOnly((prev) => !prev);
+                  }}
+                  className={`px-2.5 sm:px-3 py-1 rounded-full text-xs font-bold border inline-flex items-center gap-1 transition-all ${
                     priceDropOnly
                       ? 'bg-emerald-700 text-white border-emerald-700 shadow-xs'
                       : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border-emerald-300'
@@ -647,59 +688,68 @@ export default function HomePage() {
                 </button>
               </div>
 
-              <div className="flex items-center gap-1.5 text-xs flex-wrap">
-                <span className="text-stone-500 font-semibold">Ordem:</span>
+              <div className="flex items-center gap-1 text-xs flex-wrap">
+                <span className="text-stone-500 font-semibold mr-0.5">Ordem:</span>
                 <button
                   type="button"
-                  onClick={() => setSortBy('recommended')}
-                  className={`px-2.5 py-1 rounded-lg font-bold ${
+                  onClick={() => {
+                    triggerHapticSelection();
+                    setSortBy('recommended');
+                  }}
+                  className={`px-2 sm:px-2.5 py-1 rounded-lg font-bold ${
                     sortBy === 'recommended'
                       ? 'bg-amber-100 text-amber-950'
                       : 'text-stone-600 hover:bg-stone-100'
                   }`}
                   title="Posicionamento inteligente: Nota Bayesiana W_R + fotos reais + volume + proximidade"
                 >
-                  🎯 Mais recomendados
+                  🎯 Recomendados
                 </button>
                 <button
                   type="button"
-                  onClick={() => setSortBy('rating')}
-                  className={`px-2.5 py-1 rounded-lg font-bold ${
+                  onClick={() => {
+                    triggerHapticSelection();
+                    setSortBy('rating');
+                  }}
+                  className={`px-2 sm:px-2.5 py-1 rounded-lg font-bold ${
                     sortBy === 'rating'
                       ? 'bg-amber-100 text-amber-950'
                       : 'text-stone-600 hover:bg-stone-100'
                   }`}
                   title="Ordenar estritamente pela Nota Bayesiana oficial (W_R)"
                 >
-                  ⭐ Maior nota (W_R)
+                  ⭐ Maior nota
                 </button>
                 <button
                   type="button"
-                  onClick={() => setSortBy('distance')}
-                  className={`px-2.5 py-1 rounded-lg font-bold ${
+                  onClick={() => {
+                    triggerHapticSelection();
+                    setSortBy('distance');
+                  }}
+                  className={`px-2 sm:px-2.5 py-1 rounded-lg font-bold ${
                     sortBy === 'distance'
                       ? 'bg-amber-100 text-amber-950'
                       : 'text-stone-600 hover:bg-stone-100'
                   }`}
                 >
-                  📍 Mais próximos
+                  📍 Próximos
                 </button>
               </div>
             </div>
 
-            {/* Exibir por Tipo de Comida (Sushi, Pizza, Lanche, Combo Família, etc.) */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pt-2 border-t border-stone-100 pb-0.5">
-              <span className="text-[11px] font-extrabold text-stone-500 shrink-0 mr-1">
-                Tipo:
-              </span>
+            {/* Exibir por Tipo de Comida (Carrossel horizontal fluido estilo App) */}
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1.5 border-t border-stone-100 pb-0.5 max-w-full">
               {FOOD_TYPE_TABS.map((tab) => {
                 const active = selectedFoodType === tab.key;
                 return (
                   <button
                     key={tab.key}
                     type="button"
-                    onClick={() => setSelectedFoodType(tab.key)}
-                    className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-extrabold border transition-all inline-flex items-center gap-1.5 ${
+                    onClick={() => {
+                      triggerHapticSelection();
+                      setSelectedFoodType(tab.key);
+                    }}
+                    className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-extrabold border transition-all inline-flex items-center gap-1.5 whitespace-nowrap ${
                       active
                         ? 'bg-[#FFB703] text-stone-950 border-[#FFB703] shadow-xs'
                         : 'bg-stone-50 hover:bg-stone-100 text-stone-700 border-stone-200'
@@ -713,65 +763,66 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Filtro de Macro-Regiões + Atalhos Rápidos + Gaveta dos 53 Bairros */}
-          <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
-              {(['Todas', 'Norte', 'Centro', 'Sul'] as const).map((macro) => {
-                const active = selectedMacroRegion === macro;
-                const labelMap = {
-                  Todas: '🗺️ Todas as Regiões',
-                  Norte: '🏖️ Norte (Cocanha & Massaguaçu)',
-                  Centro: '🏛️ Centro & Martim de Sá',
-                  Sul: '⛵ Sul (Palmeiras & Porto Novo)',
-                };
-                return (
-                  <button
-                    key={macro}
-                    type="button"
-                    onClick={() => {
-                      setSelectedMacroRegion(macro);
-                      if (macro !== 'Todas') setSelectedNeighborhood('Todos');
-                    }}
-                    className={`shrink-0 px-3 py-1 rounded-full text-xs font-extrabold transition-all ${
-                      active
-                        ? 'bg-white text-[#135136] shadow-xs'
-                        : 'bg-emerald-950/50 hover:bg-emerald-950/75 text-emerald-100 border border-white/20'
-                    }`}
-                  >
-                    {labelMap[macro]}
-                  </button>
-                );
-              })}
-            </div>
-
+          {/* Regiões + Atalho Explorar 53 Bairros (faixa horizontal única compacta no mobile) */}
+          <div className="mt-2.5 flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5 max-w-full">
             <button
               type="button"
-              onClick={() => setNeighborhoodDrawerOpen(true)}
-              className="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#FFB703]/20 hover:bg-[#FFB703]/30 border border-[#FFB703]/60 text-xs font-extrabold text-[#FFB703] transition-all"
+              onClick={() => {
+                triggerHapticSelection();
+                setNeighborhoodDrawerOpen(true);
+              }}
+              className="shrink-0 inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#FFB703]/20 hover:bg-[#FFB703]/30 border border-[#FFB703]/60 text-[11px] sm:text-xs font-extrabold text-[#FFB703] transition-all whitespace-nowrap"
             >
-              <MapPin className="w-3.5 h-3.5" />
-              <span>Explorar os 53 Bairros ({populatedZonesCount} ativos)</span>
+              <MapPin className="w-3 h-3 shrink-0" />
+              <span>53 Bairros</span>
             </button>
-          </div>
 
-          <div className="mt-2 flex items-center gap-1.5 overflow-x-auto pb-1">
-            {FEATURED_NEIGHBORHOODS.map((bName) => {
+            {(['Todas', 'Norte', 'Centro', 'Sul'] as const).map((macro) => {
+              const active = selectedMacroRegion === macro;
+              const labelMap = {
+                Todas: '🗺️ Todas',
+                Norte: '🏖️ Norte',
+                Centro: '🏛️ Centro',
+                Sul: '⛵ Sul',
+              };
+              return (
+                <button
+                  key={macro}
+                  type="button"
+                  onClick={() => {
+                    triggerHapticSelection();
+                    setSelectedMacroRegion(macro);
+                    if (macro !== 'Todas') setSelectedNeighborhood('Todos');
+                  }}
+                  className={`shrink-0 px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-extrabold transition-all whitespace-nowrap ${
+                    active
+                      ? 'bg-white text-[#135136] shadow-xs'
+                      : 'bg-emerald-950/50 hover:bg-emerald-950/75 text-emerald-100 border border-white/20'
+                  }`}
+                >
+                  {labelMap[macro]}
+                </button>
+              );
+            })}
+
+            {FEATURED_NEIGHBORHOODS.filter((b) => b !== 'Todos').map((bName) => {
               const isSelected = selectedNeighborhood === bName;
               return (
                 <button
                   key={bName}
                   type="button"
                   onClick={() => {
-                    setSelectedNeighborhood(bName);
-                    if (bName !== 'Todos') setSelectedMacroRegion('Todas');
+                    triggerHapticSelection();
+                    setSelectedNeighborhood(isSelected ? 'Todos' : bName);
+                    setSelectedMacroRegion('Todas');
                   }}
-                  className={`shrink-0 px-3 py-1 rounded-full text-xs font-bold transition-all ${
+                  className={`shrink-0 px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold transition-all whitespace-nowrap ${
                     isSelected
                       ? 'bg-[#FFB703] text-stone-950 shadow-xs'
                       : 'bg-white/10 hover:bg-white/20 text-emerald-50 border border-white/15'
                   }`}
                 >
-                  {bName === 'Todos' ? '🌊 Toda Caraguá' : bName}
+                  {bName}
                 </button>
               );
             })}
@@ -780,46 +831,52 @@ export default function HomePage() {
       </header>
 
       {/* Vitrine Principal de Restaurantes, Quiosques, Pizzarias e Padarias */}
-      <main className="max-w-7xl mx-auto w-full px-4 sm:px-6 py-7 flex-1 space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h2 className="font-heading font-black text-xl sm:text-2xl text-stone-900">
+      <main className="max-w-7xl mx-auto w-full px-3 sm:px-6 py-4 sm:py-7 flex-1 space-y-4 sm:space-y-6 min-w-0">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="min-w-0">
+            <h2 className="font-heading font-black text-lg sm:text-2xl text-stone-900 leading-snug">
               {selectedNeighborhoodLabel !== 'Todos'
                 ? `Onde comer em ${selectedNeighborhoodLabel}`
                 : selectedMacroRegion !== 'Todas'
-                ? `Lugares verificados na Região ${selectedMacroRegion} de Caraguá`
-                : 'Lugares abertos e verificados em Caraguá'}
+                ? `Lugares na Região ${selectedMacroRegion}`
+                : 'Lugares abertos em Caraguá'}
             </h2>
             <p className="text-xs sm:text-sm text-stone-600 mt-0.5">
-              Encontramos <strong>{effectiveRestaurants.length} estabelecimentos</strong> com{' '}
-              <strong>{totalDishesOnScreen} pratos conferidos</strong> para você escolher sem erro.
+              <strong>{effectiveRestaurants.length} estabelecimentos</strong> •{' '}
+              <strong>{totalDishesOnScreen} pratos conferidos</strong>
             </p>
           </div>
 
-          <div className="flex items-center gap-2 flex-wrap">
-            {/* Alternador de Visualização: Feed Estilo Instagram vs Guia de Lugares */}
-            <div className="inline-flex p-1 rounded-2xl bg-stone-200/80 border border-stone-300/80">
+          <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
+            {/* Alternador de Visualização: Feed Estilo App vs Guia de Lugares */}
+            <div className="w-full sm:w-auto grid grid-cols-2 sm:inline-flex p-1 rounded-2xl bg-stone-200/80 border border-stone-300/80">
               <button
                 type="button"
-                onClick={() => setViewMode('feed')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 ${
+                onClick={() => {
+                  triggerHapticSelection();
+                  setViewMode('feed');
+                }}
+                className={`px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1 whitespace-nowrap ${
                   viewMode === 'feed'
                     ? 'bg-white text-[#135136] shadow-sm'
                     : 'text-stone-600 hover:text-stone-900'
                 }`}
               >
-                <span>📸 Fotos & Pratos (Feed)</span>
+                <span>📸 Pratos (Feed)</span>
               </button>
               <button
                 type="button"
-                onClick={() => setViewMode('places')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 ${
+                onClick={() => {
+                  triggerHapticSelection();
+                  setViewMode('places');
+                }}
+                className={`px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1 whitespace-nowrap ${
                   viewMode === 'places'
                     ? 'bg-white text-[#135136] shadow-sm'
                     : 'text-stone-600 hover:text-stone-900'
                 }`}
               >
-                <span>🏪 Lista de Lugares</span>
+                <span>🏪 Restaurantes</span>
               </button>
             </div>
 
@@ -848,7 +905,7 @@ export default function HomePage() {
             <button
               type="button"
               onClick={() => void fetchCatalog()}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-stone-300 hover:border-[#135136] text-xs font-bold text-stone-700 transition-colors shadow-xs"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-stone-300 hover:border-[#135136] text-xs font-bold text-stone-700 transition-colors shadow-xs"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
               <span>Atualizar cardápios</span>
@@ -917,7 +974,7 @@ export default function HomePage() {
               </button>
             </div>
           ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 min-w-0">
             {feedDishCards.map(({ dish, restaurant }) => {
               const wrScore = Number(restaurant.bayesian_rating ?? restaurant.rating_score ?? restaurant.rating_average ?? 0);
               const starScore = wrScore > 0 ? wrScore.toFixed(2).replace('.', ',') : 'Novo';
@@ -926,10 +983,10 @@ export default function HomePage() {
               return (
                 <article
                   key={`${restaurant.id}-${dish.id}`}
-                  className="bg-white rounded-[28px] border border-stone-200/90 shadow-xs hover:shadow-xl hover:border-[#135136]/50 transition-all duration-300 flex flex-col justify-between overflow-hidden group"
+                  className="min-w-0 bg-white rounded-2xl sm:rounded-[28px] border border-stone-200/90 shadow-xs hover:shadow-xl hover:border-[#135136]/50 transition-all duration-300 flex flex-col justify-between overflow-hidden group"
                 >
                   {/* Cabeçalho do Restaurante */}
-                  <div className="p-4 flex items-center justify-between border-b border-stone-100">
+                  <div className="p-3 sm:p-4 flex items-center justify-between gap-2 border-b border-stone-100">
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="w-10 h-10 rounded-2xl bg-[#135136] text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-xs overflow-hidden">
                         {restaurant.image_url ? (
@@ -1017,9 +1074,9 @@ export default function HomePage() {
                   </div>
 
                   {/* Informações do Prato */}
-                  <div className="p-4 space-y-2.5 flex-1 flex flex-col justify-between">
-                    <div className="space-y-1">
-                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#135136] block">
+                  <div className="p-3 sm:p-4 space-y-2.5 flex-1 flex flex-col justify-between min-w-0">
+                    <div className="space-y-1 min-w-0">
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#135136] block truncate">
                         {dish.category || 'Especialidade da Casa'}
                       </span>
                       <h4 className="font-heading font-bold text-stone-900 text-base leading-snug group-hover:text-[#135136] transition-colors line-clamp-1">
@@ -1033,23 +1090,28 @@ export default function HomePage() {
                     </div>
 
                     {/* Ações Diretas: Checar Cardápio + Ver Prato */}
-                    <div className="pt-3 border-t border-stone-100 space-y-2">
+                    <div className="pt-2.5 sm:pt-3 border-t border-stone-100 space-y-2">
                       <div className="grid grid-cols-2 gap-2">
                         <button
                           type="button"
-                          onClick={() => setQuickModalRest(restaurant)}
-                          className="py-2.5 px-3 rounded-xl bg-amber-100/90 hover:bg-amber-200 text-amber-950 font-extrabold text-xs flex items-center justify-center gap-1.5 transition-colors border border-amber-300/80"
+                          onClick={() => {
+                            triggerHapticSelection();
+                            setQuickModalRest(restaurant);
+                          }}
+                          className="py-2.5 px-2.5 sm:px-3 rounded-xl bg-amber-100/90 hover:bg-amber-200 active:scale-[0.98] text-amber-950 font-extrabold text-xs flex items-center justify-center gap-1.5 transition-all border border-amber-300/80 whitespace-nowrap min-w-0"
                         >
-                          <Utensils className="w-3.5 h-3.5 text-amber-900" />
-                          <span>📖 Checar Cardápio</span>
+                          <Utensils className="w-3.5 h-3.5 text-amber-900 shrink-0" />
+                          <span className="sm:hidden">Cardápio</span>
+                          <span className="hidden sm:inline">Checar Cardápio</span>
                         </button>
 
                         <Link
                           href={`/prato/${dish.id}`}
-                          className="py-2.5 px-3 rounded-xl bg-[#135136] hover:bg-[#0D3825] text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-colors shadow-xs"
+                          onClick={() => triggerHapticSelection()}
+                          className="py-2.5 px-2.5 sm:px-3 rounded-xl bg-[#135136] hover:bg-[#0D3825] active:scale-[0.98] text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-xs whitespace-nowrap min-w-0"
                         >
                           <span>Ver Prato</span>
-                          <ArrowRight className="w-3.5 h-3.5 text-[#FFB703]" />
+                          <ArrowRight className="w-3.5 h-3.5 text-[#FFB703] shrink-0" />
                         </Link>
                       </div>
 
@@ -1091,7 +1153,7 @@ export default function HomePage() {
           )
         ) : (
           /* Modo 2: Lista dos Estabelecimentos com Banners e Destaques Reais */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 min-w-0">
             {effectiveRestaurants.map((rest) => {
               const wrScore = Number(rest.bayesian_rating ?? rest.rating_score ?? rest.rating_average ?? 0);
               const starScore = wrScore > 0 ? wrScore.toFixed(2).replace('.', ',') : 'Novo';
@@ -1099,7 +1161,7 @@ export default function HomePage() {
               return (
                 <article
                   key={rest.id}
-                  className="bg-white rounded-3xl border border-stone-200/90 shadow-xs hover:shadow-xl hover:border-[#135136]/45 transition-all flex flex-col justify-between overflow-hidden group"
+                  className="min-w-0 bg-white rounded-2xl sm:rounded-3xl border border-stone-200/90 shadow-xs hover:shadow-xl hover:border-[#135136]/45 transition-all flex flex-col justify-between overflow-hidden group"
                 >
                   {/* Banner Fotográfico Real do Restaurante */}
                   <div className="relative aspect-[16/9] overflow-hidden bg-gradient-to-br from-[#135136] to-[#0D3825]">
@@ -1225,22 +1287,28 @@ export default function HomePage() {
                   </div>
 
                   {/* Rodapé com Dois Botões Claros */}
-                  <div className="p-4 pt-0 grid grid-cols-2 gap-2">
+                  <div className="p-3 sm:p-4 pt-0 grid grid-cols-2 gap-2">
                     <button
                       type="button"
-                      onClick={() => setQuickModalRest(rest)}
-                      className="py-2.5 px-3 rounded-xl bg-amber-100/90 hover:bg-amber-200 text-amber-950 font-extrabold text-xs flex items-center justify-center gap-1.5 transition-colors border border-amber-300/80"
+                      onClick={() => {
+                        triggerHapticSelection();
+                        setQuickModalRest(rest);
+                      }}
+                      className="py-2.5 px-2.5 sm:px-3 rounded-xl bg-amber-100/90 hover:bg-amber-200 active:scale-[0.98] text-amber-950 font-extrabold text-xs flex items-center justify-center gap-1.5 transition-all border border-amber-300/80 whitespace-nowrap min-w-0"
                     >
-                      <Utensils className="w-3.5 h-3.5 text-amber-900" />
-                      <span>📖 Checar Cardápio</span>
+                      <Utensils className="w-3.5 h-3.5 text-amber-900 shrink-0" />
+                      <span className="sm:hidden">Cardápio</span>
+                      <span className="hidden sm:inline">Checar Cardápio</span>
                     </button>
 
                     <Link
                       href={`/restaurants/${rest.slug}`}
-                      className="py-2.5 px-3 rounded-xl bg-[#135136] hover:bg-[#0D3825] text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-colors shadow-xs"
+                      onClick={() => triggerHapticSelection()}
+                      className="py-2.5 px-2.5 sm:px-3 rounded-xl bg-[#135136] hover:bg-[#0D3825] active:scale-[0.98] text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-xs whitespace-nowrap min-w-0"
                     >
-                      <span>Ver Restaurante</span>
-                      <ArrowRight className="w-3.5 h-3.5 text-[#FFB703]" />
+                      <span className="sm:hidden">Ver Local</span>
+                      <span className="hidden sm:inline">Ver Restaurante</span>
+                      <ArrowRight className="w-3.5 h-3.5 text-[#FFB703] shrink-0" />
                     </Link>
                   </div>
                 </article>
@@ -1250,37 +1318,43 @@ export default function HomePage() {
         )}
       </main>
 
-      {/* Janela Rápida para Espiar o Cardápio */}
+      {/* Janela Rápida / Bottom Sheet Mobile para Espiar o Cardápio */}
       {quickModalRest && (
         <div
-          className="fixed inset-0 z-50 bg-stone-950/60 backdrop-blur-xs flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-stone-950/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4"
           role="dialog"
           aria-modal="true"
           aria-label={`Cardápio de ${quickModalRest.name}`}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setQuickModalRest(null);
+          }}
         >
-          <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] overflow-hidden shadow-2xl border border-stone-200 flex flex-col">
-            <div className="bg-[#135136] text-white px-6 py-4 flex items-center justify-between">
-              <div>
-                <span className="text-[11px] font-bold text-[#FFB703] uppercase tracking-wider">
-                  {quickModalRest.neighborhood} • ⭐{' '}
-                  {Number(quickModalRest.rating_score ?? quickModalRest.rating_average ?? 0) > 0
-                    ? Number(quickModalRest.rating_score ?? quickModalRest.rating_average).toFixed(1)
-                    : 'Novo'}
-                </span>
-                <h3 className="font-heading font-black text-xl">{quickModalRest.name}</h3>
-                <p className="text-xs text-emerald-100">{quickModalRest.address}</p>
+          <div className="bg-white rounded-t-3xl sm:rounded-3xl max-w-2xl w-full max-h-[88dvh] overflow-hidden shadow-2xl border border-stone-200 flex flex-col">
+            <div className="bg-[#135136] text-white px-4 sm:px-6 py-3.5 sm:py-4">
+              <div className="w-10 h-1 rounded-full bg-white/35 mx-auto mb-2.5 sm:hidden" />
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <span className="text-[11px] font-bold text-[#FFB703] uppercase tracking-wider block truncate">
+                    {quickModalRest.neighborhood} • ⭐{' '}
+                    {Number(quickModalRest.rating_score ?? quickModalRest.rating_average ?? 0) > 0
+                      ? Number(quickModalRest.rating_score ?? quickModalRest.rating_average).toFixed(1)
+                      : 'Novo'}
+                  </span>
+                  <h3 className="font-heading font-black text-lg sm:text-xl truncate">{quickModalRest.name}</h3>
+                  <p className="text-xs text-emerald-100 truncate">{quickModalRest.address}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setQuickModalRest(null)}
+                  className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white shrink-0"
+                  aria-label="Fechar prévia do cardápio"
+                >
+                  <X className="w-5 h-5" />
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={() => setQuickModalRest(null)}
-                className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white"
-                aria-label="Fechar prévia do cardápio"
-              >
-                <X className="w-5 h-5" />
-              </button>
             </div>
 
-            <div className="p-6 overflow-y-auto space-y-3 flex-1">
+            <div className="p-4 sm:p-6 overflow-y-auto space-y-2.5 sm:space-y-3 flex-1">
               {(quickModalRest.dishes && quickModalRest.dishes.length > 0
                 ? quickModalRest.dishes
                 : quickModalRest.dishes_preview || []
@@ -1289,11 +1363,11 @@ export default function HomePage() {
                   key={d.id}
                   href={`/prato/${d.id}`}
                   onClick={() => setQuickModalRest(null)}
-                  className="rounded-2xl border border-stone-200 hover:border-[#135136] p-3 flex items-center justify-between gap-3 transition-colors group"
+                  className="rounded-2xl border border-stone-200 hover:border-[#135136] p-2.5 sm:p-3 flex items-center justify-between gap-2.5 sm:gap-3 transition-colors group"
                 >
-                  <div className="flex items-center gap-3 min-w-0">
+                  <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
                     {d.image_url && (
-                      <div className="w-14 h-14 rounded-xl overflow-hidden bg-stone-200 shrink-0">
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl overflow-hidden bg-stone-200 shrink-0">
                         <img
                           src={d.image_url}
                           alt={d.name}
@@ -1332,7 +1406,7 @@ export default function HomePage() {
               ))}
             </div>
 
-            <div className="px-6 py-3.5 bg-stone-50 border-t border-stone-200 flex flex-wrap items-center justify-between gap-2">
+            <div className="px-4 sm:px-6 py-3 sm:py-3.5 pb-safe-bottom bg-stone-50 border-t border-stone-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
               <button
                 type="button"
                 onClick={() => {
@@ -1342,32 +1416,32 @@ export default function HomePage() {
                     `Quais são os pratos mais gostosos hoje no ${restName}?`
                   );
                 }}
-                className="inline-flex items-center gap-1.5 text-xs font-extrabold text-[#135136] hover:underline"
+                className="inline-flex items-center justify-center sm:justify-start gap-1.5 text-xs font-extrabold text-[#135136] hover:underline py-1"
               >
-                <ChefHat className="w-4 h-4" />
+                <ChefHat className="w-4 h-4 shrink-0" />
                 <span>Perguntar ao Chef sobre este lugar</span>
               </button>
 
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="grid grid-cols-1 sm:flex sm:flex-wrap items-center gap-2">
                 {(quickModalRest.menu_url || quickModalRest.website) && (
                   <a
                     href={(quickModalRest.menu_url || quickModalRest.website)!}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-950 font-bold text-xs border border-amber-300"
+                    className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 sm:py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-950 font-bold text-xs border border-amber-300"
                   >
                     <span>Conferir na Fonte ({quickModalRest.source_platform})</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <ArrowRight className="w-3.5 h-3.5 shrink-0" />
                   </a>
                 )}
 
                 <Link
                   href={`/restaurants/${quickModalRest.slug}`}
                   onClick={() => setQuickModalRest(null)}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#135136] text-white font-bold text-xs"
+                  className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 sm:py-2 rounded-xl bg-[#135136] text-white font-bold text-xs"
                 >
-                  <span>Abrir Cardápio Completo e Avaliações</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-[#FFB703]" />
+                  <span>Abrir Cardápio Completo</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-[#FFB703] shrink-0" />
                 </Link>
               </div>
             </div>
@@ -1375,59 +1449,66 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* Gaveta Exploradora dos 53 Bairros Oficiais de Caraguatatuba (Progressive Disclosure) */}
+      {/* Gaveta Exploradora dos 53 Bairros Oficiais de Caraguatatuba (Bottom Sheet no Mobile) */}
       {neighborhoodDrawerOpen && (
         <div
-          className="fixed inset-0 z-50 bg-stone-950/60 backdrop-blur-xs flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-stone-950/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4"
           role="dialog"
           aria-modal="true"
           aria-label="Explorador dos 53 Bairros de Caraguatatuba"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setNeighborhoodDrawerOpen(false);
+          }}
         >
-          <div className="bg-white rounded-3xl max-w-4xl w-full max-h-[85vh] overflow-hidden shadow-2xl border border-stone-200 flex flex-col">
-            <div className="bg-[#135136] text-white px-6 py-4 flex items-center justify-between gap-4">
-              <div>
-                <span className="text-[11px] font-extrabold text-[#FFB703] uppercase tracking-wider">
-                  Mapa Oficial • 53 Bairros de Caraguatatuba
-                </span>
-                <h3 className="font-heading font-black text-xl">
-                  Escolha seu bairro na Região Norte, Central ou Sul
-                </h3>
+          <div className="bg-white rounded-t-3xl sm:rounded-3xl max-w-4xl w-full max-h-[88dvh] overflow-hidden shadow-2xl border border-stone-200 flex flex-col">
+            <div className="bg-[#135136] text-white px-4 sm:px-6 py-3.5 sm:py-4">
+              <div className="w-10 h-1 rounded-full bg-white/35 mx-auto mb-2.5 sm:hidden" />
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <span className="text-[11px] font-extrabold text-[#FFB703] uppercase tracking-wider block">
+                    Mapa Oficial • 53 Bairros de Caraguatatuba
+                  </span>
+                  <h3 className="font-heading font-black text-base sm:text-xl leading-snug">
+                    Escolha seu bairro (Norte, Centro ou Sul)
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setNeighborhoodDrawerOpen(false)}
+                  className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white shrink-0"
+                  aria-label="Fechar explorador de bairros"
+                >
+                  <X className="w-5 h-5" />
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={() => setNeighborhoodDrawerOpen(false)}
-                className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white"
-                aria-label="Fechar explorador de bairros"
-              >
-                <X className="w-5 h-5" />
-              </button>
             </div>
 
-            <div className="px-6 py-3 bg-stone-50 border-b border-stone-200 flex flex-wrap items-center justify-between gap-3">
-              <div className="relative flex-1 min-w-[220px]">
+            <div className="px-4 sm:px-6 py-3 bg-stone-50 border-b border-stone-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+              <div className="relative flex-1 min-w-0">
                 <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   value={drawerSearch}
                   onChange={(e) => setDrawerSearch(e.target.value)}
-                  placeholder="Filtrar entre os 53 bairros (ex.: Cocanha, Martim de Sá, Tinga, Perequê)..."
-                  className="w-full pl-10 pr-4 py-2 rounded-xl bg-white border border-stone-300 text-xs font-bold text-stone-900 focus:outline-none focus:ring-2 focus:ring-[#135136]"
+                  placeholder="Filtrar bairro (ex.: Cocanha, Martim de Sá, Tinga)..."
+                  className="w-full min-w-0 pl-10 pr-4 py-2 rounded-xl bg-white border border-stone-300 text-xs font-bold text-stone-900 focus:outline-none focus:ring-2 focus:ring-[#135136]"
                 />
               </div>
               <button
                 type="button"
                 onClick={() => {
+                  triggerHapticSelection();
                   setSelectedNeighborhood('Todos');
                   setSelectedMacroRegion('Todas');
                   setNeighborhoodDrawerOpen(false);
                 }}
-                className="px-3.5 py-2 rounded-xl bg-[#FFB703] text-stone-950 text-xs font-extrabold"
+                className="px-3.5 py-2 rounded-xl bg-[#FFB703] text-stone-950 text-xs font-extrabold whitespace-nowrap"
               >
                 Ver Todos os 53 Bairros
               </button>
             </div>
 
-            <div className="p-6 overflow-y-auto space-y-6 flex-1">
+            <div className="p-4 sm:p-6 pb-safe-bottom overflow-y-auto space-y-5 flex-1">
               {(['Norte', 'Centro', 'Sul'] as const).map((regionName) => {
                 const regionItems = neighborhoods.filter(
                   (n) =>

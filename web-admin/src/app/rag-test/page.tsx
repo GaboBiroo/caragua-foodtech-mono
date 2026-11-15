@@ -15,45 +15,21 @@ export default function RAGTestPage() {
     setOutput("");
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://192.168.100.67:8000/api/v1";
-      const response = await fetch(`${apiUrl}/search/rag`, {
+      const response = await fetch(`/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           query,
-          latitude: -23.6226,
-          longitude: -45.4124,
+          user_lat: -23.6226,
+          user_lon: -45.4124,
           is_celiac: isCeliac,
           is_vegan: isVegan,
-          banned_allergens: []
         })
       });
-
-      if (!response.body) {
-        setOutput("Erro: resposta sem corpo de streaming.");
-        setLoading(false);
-        return;
-      }
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder("utf-8");
-      let done = false;
-
-      while (!done) {
-        const { value, done: streamDone } = await reader.read();
-        done = streamDone;
-        if (value) {
-          const chunk = decoder.decode(value);
-          const lines = chunk.split("\n");
-          for (const line of lines) {
-            if (line.startsWith("data: ") && !line.includes("[DONE]")) {
-              setOutput(prev => prev + line.replace("data: ", ""));
-            }
-          }
-        }
-      }
+      const data = await response.json();
+      setOutput(data.answer || data.reply || JSON.stringify(data, null, 2));
     } catch (e: any) {
-      setOutput(`Erro ao conectar com a API FastAPI (certifique-se de que uvicorn está rodando na porta 8000): ${e.message}`);
+      setOutput(`Erro ao consultar o pipeline RAG: ${e.message}`);
     } finally {
       setLoading(false);
     }

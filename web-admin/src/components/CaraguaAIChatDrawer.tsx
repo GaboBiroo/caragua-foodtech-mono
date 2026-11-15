@@ -57,8 +57,6 @@ export interface CaraguaAIChatDrawerProps {
   userLon?: number;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
-
 const QUICK_SUGGESTIONS: string[] = [
   '🏖️ Porção de camarão ou peixe perto da praia',
   '🌱 Opções veganas ou sem lactose gostosas',
@@ -135,26 +133,6 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
     }
   }, [messages, isOpen]);
 
-  useEffect(() => {
-    if (!isOpen) return;
-    let active = true;
-    (async () => {
-      try {
-        const res = await fetch(`${API_BASE}/chat/llm-status`, { cache: 'no-store' });
-        if (!res.ok) return;
-        const data = await res.json();
-        if (active && data.ollama_online) {
-          setLocalPcActive(true);
-        }
-      } catch {
-        // Segue normalmente se o check demorar
-      }
-    })();
-    return () => {
-      active = false;
-    };
-  }, [isOpen]);
-
   const sendQuery = useCallback(
     async (rawQuery: string) => {
       const trimmed = rawQuery.trim();
@@ -183,7 +161,7 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
         activeNeighborhood && activeNeighborhood !== 'Todos' ? activeNeighborhood : undefined;
 
       try {
-        const response = await fetch(`${API_BASE}/chat/stream`, {
+        const syncRes = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -194,109 +172,35 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
             limit: 6,
           }),
         });
-
-        if (!response.ok || !response.body) {
-          throw new Error(`Resposta inesperada (${response.status})`);
-        }
-
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder('utf-8');
-        let buffer = '';
-
-        while (true) {
-          const { value, done } = await reader.read();
-          if (done) break;
-
-          buffer += decoder.decode(value, { stream: true });
-          const frames = buffer.split('\n\n');
-          buffer = frames.pop() || '';
-
-          for (const frame of frames) {
-            const lines = frame.split('\n');
-            for (const line of lines) {
-              if (!line.startsWith('data:')) continue;
-              const rawJson = line.slice(5).trim();
-              if (!rawJson) continue;
-
-              const parsed = JSON.parse(rawJson);
-              if (parsed.type === 'metadata') {
-                if (parsed.llm_mode === 'local_pc') {
-                  setLocalPcActive(true);
+        const syncJson = await syncRes.json();
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === assistantTurnId
+              ? {
+                  ...m,
+                  content:
+                    syncJson.answer ||
+                    syncJson.reply ||
+                    'Dei uma olhada nos cardápios de hoje! Veja as sugestões logo abaixo.',
+                  recommendations: syncJson.recommendations || syncJson.dishes || [],
+                  isStreaming: false,
                 }
-                setMessages((prev) =>
-                  prev.map((m) =>
-                    m.id === assistantTurnId
-                      ? {
-                          ...m,
-                          recommendations: parsed.recommendations || [],
-                        }
-                      : m
-                  )
-                );
-              } else if (parsed.type === 'token') {
-                setMessages((prev) =>
-                  prev.map((m) =>
-                    m.id === assistantTurnId
-                      ? { ...m, content: m.content + (parsed.content || '') }
-                      : m
-                  )
-                );
-              } else if (parsed.type === 'done') {
-                if (parsed.llm_mode === 'local_pc') {
-                  setLocalPcActive(true);
-                }
-                setMessages((prev) =>
-                  prev.map((m) =>
-                    m.id === assistantTurnId ? { ...m, isStreaming: false } : m
-                  )
-                );
-              }
-            }
-          }
-        }
+              : m
+          )
+        );
       } catch {
-        try {
-          const syncRes = await fetch('/api/chat', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              query: cleanQuery,
-              user_lat: userLat,
-              user_lon: userLon,
-              neighborhood: neighborhoodParam,
-              limit: 6,
-            }),
-          });
-          const syncJson = await syncRes.json();
-          setMessages((prev) =>
-            prev.map((m) =>
-              m.id === assistantTurnId
-                ? {
-                    ...m,
-                    content:
-                      syncJson.answer ||
-                      syncJson.reply ||
-                      'Dei uma olhada nos cardápios de hoje! Veja as sugestões logo abaixo.',
-                    recommendations: syncJson.recommendations || syncJson.dishes || [],
-                    isStreaming: false,
-                  }
-                : m
-            )
-          );
-        } catch {
-          setMessages((prev) =>
-            prev.map((m) =>
-              m.id === assistantTurnId
-                ? {
-                    ...m,
-                    content:
-                      'Puxa, tive um pequeno tropeço para consultar os cardápios agora. Tente perguntar de novo em alguns segundos!',
-                    isStreaming: false,
-                  }
-                : m
-            )
-          );
-        }
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === assistantTurnId
+              ? {
+                  ...m,
+                  content:
+                    'Puxa, tive um pequeno tropeço para consultar os cardápios agora. Tente perguntar de novo em alguns segundos!',
+                  isStreaming: false,
+                }
+              : m
+          )
+        );
       } finally {
         setIsLoading(false);
       }
@@ -324,27 +228,27 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
       aria-modal="true"
       aria-label="Chef CaráFood - Dicas de onde comer em Caraguá"
     >
-      <div className="flex-1" onClick={onClose} />
+      <div className="hidden sm:block sm:flex-1" onClick={onClose} />
 
-      <aside className="relative w-full max-w-xl bg-[#FAF7F2] h-full shadow-2xl border-l-4 border-[#FFB703] flex flex-col overflow-hidden">
+      <aside className="relative w-full sm:max-w-xl bg-[#FAF7F2] h-[100dvh] sm:h-full shadow-2xl sm:border-l-4 border-[#FFB703] flex flex-col overflow-hidden">
         {/* Cabeçalho acolhedor do Chef CaráFood */}
-        <header className="bg-[#135136] text-white px-5 py-4 border-b border-white/15 flex items-center justify-between gap-3 shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-[#FFB703] text-stone-950 flex items-center justify-center shadow-md shrink-0">
-              <ChefHat className="w-6 h-6" />
+        <header className="bg-[#135136] text-white px-4 sm:px-5 py-3.5 sm:py-4 border-b border-white/15 flex items-center justify-between gap-2.5 shrink-0">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-[#FFB703] text-stone-950 flex items-center justify-center shadow-md shrink-0">
+              <ChefHat className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <h2 className="font-heading font-black text-lg leading-tight">
+                <h2 className="font-heading font-black text-base sm:text-lg leading-tight truncate">
                   Chef CaráFood
                 </h2>
-                <span className="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-400/20 text-emerald-100 border border-emerald-300/40">
+                <span className="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-400/20 text-emerald-100 border border-emerald-300/40">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse" />
-                  {localPcActive ? 'Online • IA rodando no seu PC' : 'Online agora • No ar'}
+                  {localPcActive ? 'Online • IA Local' : 'Online agora'}
                 </span>
               </div>
-              <p className="text-xs text-emerald-100/95 mt-0.5 leading-snug">
-                Dicas sinceras de cardápios reais abertos hoje em Caraguá
+              <p className="text-[11px] sm:text-xs text-emerald-100/95 mt-0.5 leading-snug truncate">
+                Dicas de cardápios reais em Caraguá
               </p>
             </div>
           </div>
@@ -352,7 +256,7 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors"
+            className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors shrink-0"
             aria-label="Fechar conversa"
           >
             <X className="w-5 h-5" />
@@ -542,23 +446,24 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
             e.preventDefault();
             void sendQuery(inputValue);
           }}
-          className="p-3.5 bg-white border-t border-stone-200 flex items-center gap-2 shrink-0"
+          className="p-3 sm:p-3.5 pb-safe-bottom bg-white border-t border-stone-200 flex items-center gap-2 shrink-0"
         >
           <input
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Ex: o que pedir hoje no Quiosque Baleia Branca ou lanche até R$ 40..."
+            placeholder="Ex: camarão ou lanche até R$ 40..."
             disabled={isLoading}
-            className="flex-1 px-4 py-2.5 rounded-2xl bg-stone-100 border border-stone-300 text-sm text-stone-900 placeholder:text-stone-500 focus:outline-none focus:ring-2 focus:ring-[#135136] focus:bg-white disabled:opacity-60"
+            className="flex-1 min-w-0 px-3.5 sm:px-4 py-2.5 rounded-2xl bg-stone-100 border border-stone-300 text-sm text-stone-900 placeholder:text-stone-500 focus:outline-none focus:ring-2 focus:ring-[#135136] focus:bg-white disabled:opacity-60"
           />
           <button
             type="submit"
             disabled={isLoading || !inputValue.trim()}
-            className="px-4 py-2.5 rounded-2xl bg-[#135136] hover:bg-[#1E6B47] text-white font-bold text-sm flex items-center gap-1.5 shadow-sm transition-all disabled:opacity-50"
+            className="shrink-0 px-3.5 sm:px-4 py-2.5 rounded-2xl bg-[#135136] hover:bg-[#1E6B47] active:scale-95 text-white font-bold text-xs sm:text-sm flex items-center gap-1.5 shadow-sm transition-all disabled:opacity-50 whitespace-nowrap"
           >
             <Send className="w-4 h-4 text-[#FFB703]" />
-            <span>Pedir dica</span>
+            <span className="hidden sm:inline">Pedir dica</span>
+            <span className="sm:hidden">Enviar</span>
           </button>
         </form>
       </aside>

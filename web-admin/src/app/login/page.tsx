@@ -151,51 +151,67 @@ export default function LoginPage() {
                 const prof = DEMO_PROFILES[roleKey];
                 const isSelected = selectedRole === roleKey;
                 return (
-                  <button
+                  <div
                     key={roleKey}
-                    type="button"
-                    onClick={() => handleSelectRole(roleKey)}
-                    className={`w-full p-3.5 rounded-2xl border text-left transition-all flex items-start justify-between gap-3 ${
+                    className={`w-full p-3.5 rounded-2xl border text-left transition-all ${
                       isSelected
                         ? 'bg-[#135136] text-white border-[#FFB703] shadow-lg ring-2 ring-[#FFB703]/40'
                         : 'bg-white hover:bg-amber-50/50 text-stone-900 border-stone-200'
                     }`}
                   >
-                    <div className="flex items-start gap-3">
-                      <div
-                        className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${
-                          isSelected
-                            ? 'bg-[#FFB703] text-stone-900'
-                            : 'bg-stone-100 text-[#135136]'
-                        }`}
-                      >
-                        {roleKey === 'comensal' && <UserCheck className="w-5 h-5" />}
-                        {roleKey === 'gestor' && <Store className="w-5 h-5" />}
-                        {roleKey === 'curador' && <Award className="w-5 h-5" />}
-                      </div>
-                      <div>
-                        <div className="font-heading font-black text-sm flex items-center gap-2">
-                          <span>{prof.title}</span>
-                        </div>
-                        <p
-                          className={`text-[11px] ${
-                            isSelected ? 'text-emerald-100' : 'text-stone-500'
-                          }`}
-                        >
-                          {prof.subtitle}
-                        </p>
-                        <span
-                          className={`inline-block mt-1 text-[10px] font-mono px-2 py-0.5 rounded-full ${
+                    <button
+                      type="button"
+                      onClick={() => handleSelectRole(roleKey)}
+                      className="w-full text-left flex items-start justify-between gap-3"
+                    >
+                      <div className="flex items-start gap-3 min-w-0">
+                        <div
+                          className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${
                             isSelected
-                              ? 'bg-white/15 text-[#FFB703]'
-                              : 'bg-stone-100 text-stone-600'
+                              ? 'bg-[#FFB703] text-stone-900'
+                              : 'bg-stone-100 text-[#135136]'
                           }`}
                         >
-                          {prof.email}
-                        </span>
+                          {roleKey === 'comensal' && <UserCheck className="w-5 h-5" />}
+                          {roleKey === 'gestor' && <Store className="w-5 h-5" />}
+                          {roleKey === 'curador' && <Award className="w-5 h-5" />}
+                        </div>
+                        <div className="min-w-0">
+                          <div className="font-heading font-black text-sm flex items-center gap-2">
+                            <span className="truncate">{prof.title}</span>
+                          </div>
+                          <p
+                            className={`text-[11px] truncate ${
+                              isSelected ? 'text-emerald-100' : 'text-stone-500'
+                            }`}
+                          >
+                            {prof.subtitle}
+                          </p>
+                          <span
+                            className={`inline-block mt-1 text-[10px] font-mono px-2 py-0.5 rounded-full ${
+                              isSelected
+                                ? 'bg-white/15 text-[#FFB703]'
+                                : 'bg-stone-100 text-stone-600'
+                            }`}
+                          >
+                            {prof.email}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  </button>
+                    </button>
+
+                    {isSelected && (
+                      <div className="mt-3 pt-2.5 border-t border-white/15 flex items-center justify-between gap-2">
+                        <Link
+                          href={prof.redirectHref}
+                          className="w-full py-2 px-3 rounded-xl bg-[#FFB703] hover:bg-amber-400 text-stone-950 font-black text-xs flex items-center justify-between shadow-xs transition-all"
+                        >
+                          <span className="truncate">{prof.redirectLabel}</span>
+                          <ArrowRight className="w-4 h-4 shrink-0 ml-1.5" />
+                        </Link>
+                      </div>
+                    )}
+                  </div>
                 );
               })}
             </div>
@@ -363,7 +379,7 @@ export default function LoginPage() {
         </div>
       </main>
 
-      <footer className="bg-[#135136] text-white py-6 px-4 border-t-4 border-[#FFB703] text-center text-xs">
+      <footer className="bg-[#135136] text-white py-6 pb-24 lg:pb-6 px-4 border-t-4 border-[#FFB703] text-center text-xs">
         <span className="font-bold">CaráFood</span> • Guia Gastronômico dos 53 Bairros de
         Caraguatatuba • Centro Universitário Módulo
       </footer>

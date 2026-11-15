@@ -359,16 +359,16 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
       </div>
 
       {/* Container Master-Detail */}
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+      <main className="max-w-5xl mx-auto px-3 sm:px-6 py-4 sm:py-8 space-y-6 sm:space-y-8">
         {shareToast && (
-          <div className="fixed top-20 right-4 z-50 px-4 py-2.5 rounded-2xl bg-stone-900 text-white text-xs font-bold shadow-2xl border border-white/20">
+          <div className="fixed top-16 sm:top-20 right-3 sm:right-4 z-50 px-4 py-2.5 rounded-2xl bg-stone-900 text-white text-xs font-bold shadow-2xl border border-white/20">
             Link do prato copiado para a área de transferência!
           </div>
         )}
 
         {reviewSubmittedToast && (
-          <div className="fixed top-20 right-4 z-50 px-5 py-3 rounded-2xl bg-[#135136] text-white text-xs font-bold shadow-2xl border-2 border-[#FFB703] flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-[#FFB703]" />
+          <div className="fixed top-16 sm:top-20 right-3 sm:right-4 z-50 px-4 py-3 rounded-2xl bg-[#135136] text-white text-xs font-bold shadow-2xl border-2 border-[#FFB703] flex items-center gap-2 max-w-[calc(100vw-24px)]">
+            <CheckCircle2 className="w-4 h-4 text-[#FFB703] shrink-0" />
             <span>
               Cédula salva com sucesso no banco de dados! Protocolo {lastProtocol}.
             </span>
@@ -376,7 +376,7 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
         )}
 
         {/* 1. Seção Principal: Imagem + Ficha Completa + Quadro da Super Nota */}
-        <section className="bg-white rounded-[32px] overflow-hidden border border-stone-200/90 shadow-md">
+        <section className="bg-white rounded-2xl sm:rounded-[32px] overflow-hidden border border-stone-200/90 shadow-md">
           <div className="grid grid-cols-1 lg:grid-cols-12">
             {/* Coluna Esquerda: Foto Real do Prato */}
             <div className="lg:col-span-7 relative aspect-[4/3] sm:aspect-[16/11] lg:aspect-auto lg:min-h-[500px] bg-stone-900 overflow-hidden flex items-center justify-center">
@@ -397,94 +397,98 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
                 </div>
               )}
 
-              <div className="absolute top-4 left-4 flex flex-col gap-2 z-10 max-w-[85%]">
-                {post.caraguaGostoAward && (
-                  <span className="px-3.5 py-1.5 rounded-full text-xs font-black bg-stone-950/85 text-[#FFB703] shadow-lg flex items-center gap-1.5 border border-white/20 backdrop-blur-md">
-                    <Award className="w-4 h-4 text-[#FFB703] shrink-0" />
-                    <span>{post.caraguaGostoAward}</span>
-                  </span>
-                )}
-
-                {(neighborhood.toLowerCase().includes('cocanha') ||
-                  caption.toLowerCase().includes('cocanha')) && (
-                  <span className="px-3.5 py-1 rounded-full text-xs font-bold bg-[#023E8A]/90 text-cyan-200 border border-cyan-300/30 shadow-md backdrop-blur-md flex items-center gap-1.5">
-                    <span>🦪</span>
-                    <span>Mexilhão AMAPEC • Fazenda Marinha da Cocanha</span>
-                  </span>
-                )}
-
-                {dishName.toLowerCase().includes('azul-marinho') && (
-                  <span className="px-3.5 py-1 rounded-full text-xs font-bold bg-[#135136]/90 text-emerald-200 border border-emerald-300/30 shadow-md backdrop-blur-md flex items-center gap-1.5">
-                    <span>🏺</span>
-                    <span>Patrimônio Caiçara • Panela de Ferro Tradicional</span>
-                  </span>
-                )}
-
-                {(caption.toLowerCase().includes('camaroeiro') ||
-                  caption.toLowerCase().includes('enseada')) &&
-                  !dishName.toLowerCase().includes('azul-marinho') && (
-                    <span className="px-3.5 py-1 rounded-full text-xs font-bold bg-[#1E6B47]/90 text-emerald-100 border border-emerald-300/30 shadow-md backdrop-blur-md flex items-center gap-1.5">
-                      <span>🐟</span>
-                      <span>Pescado Fresco do Camaroeiro • Colônia Z-8</span>
+              {/* Linha superior unificada: Badges à esquerda + Ações à direita (sem colisão no mobile) */}
+              <div className="absolute top-3 left-3 right-3 flex items-start justify-between gap-2 z-10 pointer-events-none">
+                <div className="flex flex-col gap-1.5 flex-1 min-w-0 items-start">
+                  {post.caraguaGostoAward && (
+                    <span className="px-2.5 sm:px-3.5 py-1 rounded-full text-[10px] sm:text-xs font-black bg-stone-950/85 text-[#FFB703] shadow-lg inline-flex items-center gap-1.5 border border-white/20 backdrop-blur-md max-w-full truncate">
+                      <Award className="w-3.5 h-3.5 text-[#FFB703] shrink-0" />
+                      <span className="truncate">{post.caraguaGostoAward}</span>
                     </span>
                   )}
 
-                {post.isPromotion && (
-                  <span className="px-3 py-1 rounded-full text-xs font-black bg-rose-600/90 text-white shadow-lg flex items-center gap-1 backdrop-blur-xs border border-white/20">
-                    <Flame className="w-3.5 h-3.5" />
-                    <span>{post.promoBadge || 'Especial da Semana'}</span>
-                  </span>
-                )}
-              </div>
+                  {(neighborhood.toLowerCase().includes('cocanha') ||
+                    caption.toLowerCase().includes('cocanha')) && (
+                    <span className="px-2.5 sm:px-3.5 py-1 rounded-full text-[10px] sm:text-xs font-bold bg-[#023E8A]/90 text-cyan-200 border border-cyan-300/30 shadow-md backdrop-blur-md inline-flex items-center gap-1.5 max-w-full truncate">
+                      <span>🦪</span>
+                      <span className="truncate">Mexilhão AMAPEC • Cocanha</span>
+                    </span>
+                  )}
 
-              <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
-                <button
-                  type="button"
-                  onClick={handleToggleLike}
-                  className={`p-3 rounded-full backdrop-blur-md shadow-lg transition-transform hover:scale-110 ${
-                    isLiked ? 'bg-rose-500 text-white' : 'bg-black/50 text-white hover:bg-black/70'
-                  }`}
-                  title={isLiked ? 'Descurtir' : 'Curtir prato'}
-                >
-                  <Heart className={`w-5 h-5 ${isLiked ? 'fill-white' : ''}`} />
-                </button>
+                  {dishName.toLowerCase().includes('azul-marinho') && (
+                    <span className="px-2.5 sm:px-3.5 py-1 rounded-full text-[10px] sm:text-xs font-bold bg-[#135136]/90 text-emerald-200 border border-emerald-300/30 shadow-md backdrop-blur-md inline-flex items-center gap-1.5 max-w-full truncate">
+                      <span>🏺</span>
+                      <span className="truncate">Patrimônio Caiçara</span>
+                    </span>
+                  )}
 
-                <button
-                  type="button"
-                  onClick={handleToggleSave}
-                  className={`p-3 rounded-full backdrop-blur-md shadow-lg transition-transform hover:scale-110 ${
-                    isSaved
-                      ? 'bg-[#FFB703] text-stone-900'
-                      : 'bg-black/50 text-white hover:bg-black/70'
-                  }`}
-                  title={isSaved ? 'Remover do Roteiro' : 'Salvar no Roteiro de Caraguá'}
-                >
-                  <Bookmark className={`w-5 h-5 ${isSaved ? 'fill-stone-900' : ''}`} />
-                </button>
+                  {(caption.toLowerCase().includes('camaroeiro') ||
+                    caption.toLowerCase().includes('enseada')) &&
+                    !dishName.toLowerCase().includes('azul-marinho') && (
+                      <span className="px-2.5 sm:px-3.5 py-1 rounded-full text-[10px] sm:text-xs font-bold bg-[#1E6B47]/90 text-emerald-100 border border-emerald-300/30 shadow-md backdrop-blur-md inline-flex items-center gap-1.5 max-w-full truncate">
+                        <span>🐟</span>
+                        <span className="truncate">Pescado Fresco • Camaroeiro</span>
+                      </span>
+                    )}
 
-                <button
-                  type="button"
-                  onClick={handleShare}
-                  className="p-3 rounded-full bg-black/50 hover:bg-black/70 text-white backdrop-blur-md shadow-lg transition-transform hover:scale-110"
-                  title="Compartilhar"
-                >
-                  <Share2 className="w-5 h-5" />
-                </button>
-              </div>
-
-              <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-2 flex-wrap">
-                <div className="px-3 py-1 rounded-full bg-black/75 backdrop-blur-md text-[11px] text-emerald-300 font-semibold flex items-center gap-1.5">
-                  <ShieldCheck className="w-3.5 h-3.5 text-[#FFB703]" />
-                  <span>Cardápio e preço conferidos em Caraguatatuba</span>
+                  {post.isPromotion && (
+                    <span className="px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-black bg-rose-600/90 text-white shadow-lg inline-flex items-center gap-1 backdrop-blur-xs border border-white/20">
+                      <Flame className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
+                      <span>{post.promoBadge || 'Especial da Semana'}</span>
+                    </span>
+                  )}
                 </div>
-                <div className="px-3 py-1 rounded-full bg-black/75 backdrop-blur-md text-[11px] text-white font-bold">
-                  ❤️ {likesCount} moradores recomendaram
+
+                <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 pointer-events-auto">
+                  <button
+                    type="button"
+                    onClick={handleToggleLike}
+                    className={`p-2 sm:p-3 rounded-full backdrop-blur-md shadow-lg transition-transform active:scale-95 hover:scale-105 ${
+                      isLiked ? 'bg-rose-500 text-white' : 'bg-black/55 text-white hover:bg-black/75'
+                    }`}
+                    title={isLiked ? 'Descurtir' : 'Curtir prato'}
+                  >
+                    <Heart className={`w-4 h-4 sm:w-5 sm:h-5 ${isLiked ? 'fill-white' : ''}`} />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleToggleSave}
+                    className={`p-2 sm:p-3 rounded-full backdrop-blur-md shadow-lg transition-transform active:scale-95 hover:scale-105 ${
+                      isSaved
+                        ? 'bg-[#FFB703] text-stone-900'
+                        : 'bg-black/55 text-white hover:bg-black/75'
+                    }`}
+                    title={isSaved ? 'Remover do Roteiro' : 'Salvar no Roteiro de Caraguá'}
+                  >
+                    <Bookmark className={`w-4 h-4 sm:w-5 sm:h-5 ${isSaved ? 'fill-stone-900' : ''}`} />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleShare}
+                    className="p-2 sm:p-3 rounded-full bg-black/55 hover:bg-black/75 text-white backdrop-blur-md shadow-lg transition-transform active:scale-95 hover:scale-105"
+                    title="Compartilhar"
+                  >
+                    <Share2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-2 flex-wrap">
+                <div className="px-2.5 sm:px-3 py-1 rounded-full bg-black/75 backdrop-blur-md text-[10px] sm:text-[11px] text-emerald-300 font-semibold flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#FFB703] shrink-0" />
+                  <span className="hidden sm:inline">Cardápio e preço conferidos em Caraguatatuba</span>
+                  <span className="sm:hidden">Conferido em Caraguá</span>
+                </div>
+                <div className="px-2.5 sm:px-3 py-1 rounded-full bg-black/75 backdrop-blur-md text-[10px] sm:text-[11px] text-white font-bold">
+                  ❤️ {likesCount} <span className="hidden sm:inline">moradores recomendaram</span>
                 </div>
               </div>
             </div>
 
             {/* Coluna Direita: Informações do Prato, Super Nota e Rotas */}
-            <div className="lg:col-span-5 p-6 sm:p-8 flex flex-col justify-between space-y-5">
+            <div className="lg:col-span-5 p-4 sm:p-8 flex flex-col justify-between space-y-4 sm:space-y-5 min-w-0">
               <div className="space-y-4">
                 {/* Restaurante & Bairro */}
                 <div className="flex items-center justify-between gap-3">

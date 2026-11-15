@@ -38,7 +38,7 @@ export default function RootLayout({
           rel="stylesheet" 
         />
       </head>
-      <body className="min-h-screen bg-[#FAF7F2] text-[#1A202C] antialiased selection:bg-[#FFB703]/30 selection:text-[#135136]">
+      <body className="min-h-screen bg-[#FAF7F2] text-[#1A202C] antialiased pb-[calc(4.5rem+env(safe-area-inset-bottom))] lg:pb-0 selection:bg-[#FFB703]/30 selection:text-[#135136]">
         {children}
       </body>
     </html>

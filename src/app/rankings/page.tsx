@@ -134,7 +134,7 @@ export default function FavoritesPage() {
     <div className="min-h-screen bg-[#FAF7F2] text-[#1A202C] flex flex-col">
       <Navbar onOpenAIChat={() => setAiDrawerOpen(true)} />
 
-      <header className="relative bg-[#135136] text-white pt-10 pb-10 px-6 overflow-hidden border-b-4 border-[#FFB703]">
+      <header className="relative bg-[#135136] text-white pt-5 pb-6 px-4 sm:pt-10 sm:pb-10 sm:px-6 overflow-hidden border-b-4 border-[#FFB703]">
         <div className="max-w-5xl mx-auto relative z-10 space-y-3 text-center md:text-left">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs font-bold text-[#FFB703]">
             <Sparkles className="w-3.5 h-3.5 text-[#FFB703]" />
@@ -152,7 +152,7 @@ export default function FavoritesPage() {
         </div>
       </header>
 
-      <main className="max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 space-y-7 flex-1">
+      <main className="max-w-5xl w-full mx-auto px-3 sm:px-6 py-5 sm:py-8 space-y-7 flex-1 min-w-0">
         {/* Pilares de Confiança */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="p-5 rounded-3xl bg-white border border-stone-200/90 shadow-xs space-y-2">

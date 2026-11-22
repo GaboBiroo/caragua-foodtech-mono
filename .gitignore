@@ -1,5 +1,5 @@
-# ==============================================================================
-# CARAGUÁ FOODTECH — .gitignore Consolidado Monorepo
+﻿# ==============================================================================
+# CARAGUÃ FOODTECH â€” .gitignore Consolidado Monorepo
 # ==============================================================================
 
 # Python
@@ -14,7 +14,11 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+/lib/
+!src/lib/
+!src/lib/**
+!web-admin/src/lib/
+!web-admin/src/lib/**
 lib64/
 parts/
 sdist/
@@ -32,7 +36,7 @@ env/
 env.bak/
 venv.bak/
 
-# Ambientes Virtuais e Variáveis de Ambiente
+# Ambientes Virtuais e VariÃ¡veis de Ambiente
 .env
 .env.local
 .env.development.local
@@ -87,7 +91,7 @@ redis_data/
 *.sqlite3
 *.db
 
-# Logs e Relatórios
+# Logs e RelatÃ³rios
 logs/
 *.log
 coverage/
@@ -113,3 +117,4 @@ Thumbs.db
 desktop.ini
 !docker/Dockerfile.db
 !Dockerfile.db
+

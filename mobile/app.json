@@ -1,14 +1,19 @@
 {
   "expo": {
-    "name": "Caraguá FoodTech",
+    "name": "CaráFood",
     "slug": "caragua-foodtech",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "caragua",
-    "userInterfaceStyle": "dark",
+    "userInterfaceStyle": "light",
+    "androidStatusBar": {
+      "backgroundColor": "#0F382C",
+      "barStyle": "light-content",
+      "translucent": false
+    },
     "splash": {
-      "backgroundColor": "#0f172a"
+      "backgroundColor": "#0F382C"
     },
     "ios": {
       "supportsTablet": true,
@@ -19,7 +24,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#0f172a"
+        "backgroundColor": "#0F382C"
       },
       "package": "br.edu.modulo.caraguafoodtech",
       "permissions": [

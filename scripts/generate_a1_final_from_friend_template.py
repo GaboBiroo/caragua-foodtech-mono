@@ -898,7 +898,8 @@ def build_a1_final_docx():
     )
 
     add_section_title(doc, "6.2 Tecnologias Utilizadas")
-    add_bullet(doc, "Front-end: ", "Next.js 14.2 (App Router), React 18, TypeScript 5, Tailwind CSS 3.4 e biblioteca de ícones Lucide React.")
+    add_bullet(doc, "Front-end Web e Casca Nativa Mobile (Híbrido): ", "Next.js 14.2 (App Router), React 18, TypeScript 5, Tailwind CSS 3.4 e Casca Nativa em React Native / Expo (mobile/src/components/NativeWebViewShell.tsx).")
+    add_bullet(doc, "Integração da Casca Nativa (Intents Externas, BackHandler e Safe Area): ", "(1) Interceptação de Intents Externas em /prato/[id]: os botões 'Traçar Rota no Maps' e 'Chamar no WhatsApp' disparam links externos (maps.google.com, waze.com, wa.me), que o método onShouldStartLoadWithRequest da WebView intercepta e abre fora do app via Linking.openURL para acionar o GPS e o WhatsApp nativos do celular; (2) Botão Voltar Físico (Android) e Safe Area: conexão do BackHandler ao histórico interno da WebView (canGoBack / goBack) e aplicação do SafeAreaView no topo verde (#0F382C) para não sobrepor o relógio e a bateria do aparelho.")
     add_bullet(doc, "Back-end: ", "Next.js Serverless API Routes (Node.js / TypeScript em src/app/api/*) e scripts de coleta/higienização em Python 3.13.")
     add_bullet(doc, "Banco de Dados e Persistência: ", "PostgreSQL 15 (modelagem relacional e DDL em backend/sql/init.sql via Docker Compose) + Store JSON Real Auditado (caraguaRealDump.json e realDataStore.ts).")
     add_bullet(doc, "Ferramentas de Deploy e Infraestrutura: ", "Vercel (hospedagem cloud, build automatizado, funções Serverless e certificado SSL/TLS HTTPS com cabeçalhos HSTS/CSP).")

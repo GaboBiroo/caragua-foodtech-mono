@@ -17,17 +17,7 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarStyle: styles.tabBar,
-        tabBarBackground: () => (
-          <BlurView
-            intensity={Platform.OS === 'ios' ? 70 : 95}
-            tint="dark"
-            style={StyleSheet.absoluteFill}
-          />
-        ),
-        tabBarActiveTintColor: '#2dd4bf', // teal-400
-        tabBarInactiveTintColor: 'rgba(255, 255, 255, 0.40)',
-        tabBarLabelStyle: styles.tabLabel,
+        tabBarStyle: { display: 'none' },
       }}
     >
       <Tabs.Screen

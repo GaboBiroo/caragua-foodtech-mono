@@ -26,6 +26,7 @@ import { FeedPost } from '../../../data/caraguaData';
 import { Navbar } from '../../../components/Navbar';
 import { SmartFoodImage } from '../../../components/SmartFoodImage';
 import { realDataStore } from '../../../data/realDataStore';
+import { openExternalIntent, shareViaNativeSheet } from '../../../utils/nativeBridgeClient';
 
 
 
@@ -318,15 +319,17 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
     setTimeout(() => setReviewSubmittedToast(false), 5000);
   };
 
-  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+  const mapsUrl = `https://maps.google.com/maps?q=${encodeURIComponent(
     `${restaurantName} ${neighborhood} Caraguatatuba SP`
   )}`;
   const cleanDigits = phone.replace(/\D/g, '');
-  const whatsappUrl = cleanDigits.length >= 10
-    ? `https://wa.me/55${cleanDigits.startsWith('55') ? cleanDigits.slice(2) : cleanDigits}?text=${encodeURIComponent(
-        `Olá! Vi o prato "${dishName}" (${restaurantName}) no guia CaráFood e gostaria de saber mais!`
-      )}`
-    : null;
+  const whatsappText = encodeURIComponent(
+    `Olá! Vi o prato "${dishName}" (${restaurantName} - ${neighborhood}) no CaráFood e gostaria de mais informações!`
+  );
+  const whatsappUrl =
+    cleanDigits.length >= 10
+      ? `https://wa.me/55${cleanDigits.startsWith('55') ? cleanDigits.slice(2) : cleanDigits}?text=${whatsappText}`
+      : `https://wa.me/?text=${whatsappText}`;
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] text-[#1A202C] selection:bg-[#FFB703]/30 selection:text-[#135136]">
@@ -620,6 +623,7 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
                     href={menuUrl}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={(e) => openExternalIntent(menuUrl, e)}
                     className="p-3.5 rounded-2xl bg-emerald-50/80 border border-emerald-200/90 flex items-center justify-between gap-3 hover:bg-emerald-100/70 transition-colors"
                   >
                     <div className="text-xs">
@@ -635,30 +639,30 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
                 )}
               </div>
 
-              {/* Botões de Ação Direta */}
+              {/* Botões de Ação Direta (Interceptados pela Casca Nativa via onShouldStartLoadWithRequest -> Linking.openURL) */}
               <div className="space-y-2 pt-2">
-                <div className={`grid grid-cols-1 ${whatsappUrl ? 'sm:grid-cols-2' : ''} gap-2`}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <a
                     href={mapsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={(e) => openExternalIntent(mapsUrl, e)}
                     className="py-3 px-4 rounded-2xl bg-[#135136] hover:bg-[#0D3825] text-white font-bold text-xs shadow-sm flex items-center justify-center gap-1.5 transition-all"
                   >
                     <Navigation className="w-4 h-4 text-[#FFB703]" />
                     <span>Traçar Rota no Maps</span>
                   </a>
 
-                  {whatsappUrl && (
-                    <a
-                      href={whatsappUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="py-3 px-4 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-sm flex items-center justify-center gap-1.5 transition-all"
-                    >
-                      <Phone className="w-4 h-4 text-[#FFB703]" />
-                      <span>Chamar no WhatsApp</span>
-                    </a>
-                  )}
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => openExternalIntent(whatsappUrl, e)}
+                    className="py-3 px-4 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-sm flex items-center justify-center gap-1.5 transition-all"
+                  >
+                    <Phone className="w-4 h-4 text-[#FFB703]" />
+                    <span>Chamar no WhatsApp</span>
+                  </a>
                 </div>
 
                 {restaurantSlug && (

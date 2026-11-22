@@ -112,7 +112,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAcademicModal, onOpenAICha
     <>
       <nav
         aria-label="Navegação Principal CaráFood"
-        className="sticky top-0 z-40 w-full bg-[#135136]/95 backdrop-blur-md border-b-2 border-[#FFB703]/85 text-white shadow-[0_8px_25px_-6px_rgba(19,81,54,0.45)] transition-all"
+        className="sticky top-0 z-40 w-full bg-[#0F382C] pt-[env(safe-area-inset-top,0px)] backdrop-blur-md border-b-2 border-[#FFB703]/85 text-white shadow-[0_8px_25px_-6px_rgba(15,56,44,0.45)] transition-all"
       >
         <div className="max-w-7xl mx-auto px-3 sm:px-6 h-14 sm:h-16 lg:h-20 flex items-center justify-between gap-2 sm:gap-3">
           <Link

@@ -4,6 +4,7 @@ import {
   BackHandler,
   Linking,
   Platform,
+  Share,
   StatusBar as RNStatusBar,
   StyleSheet,
   Text,
@@ -11,20 +12,24 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { WebView, WebViewNavigation } from 'react-native-webview';
-import type { ShouldStartLoadRequest } from 'react-native-webview/lib/WebViewTypes';
+import { WebView, WebViewMessageEvent, WebViewNavigation } from 'react-native-webview';
+import type {
+  ShouldStartLoadRequest,
+  WebViewOpenWindowEvent,
+} from 'react-native-webview/lib/WebViewTypes';
 
 // ==============================================================================
 // Casca Nativa Híbrida (React Native WebView Shell) — CaráFood
 // 1. Interceptação de Intents Externas (onShouldStartLoadWithRequest -> Linking.openURL):
 //    Em /prato/[id], os botões "Traçar Rota no Maps" e "Chamar no WhatsApp"
-//    disparam links para maps.google.com, waze.com, wa.me, api.whatsapp.com,
-//    tel:, mailto:, geo: e cardápios externos. A WebView intercepta esses esquemas
-//    e aciona os aplicativos nativos de GPS e WhatsApp do celular.
+//    disparam links externos (maps.google.com, waze.com, wa.me). O método
+//    onShouldStartLoadWithRequest (aliado ao bridge CaraFoodNative e onOpenWindow)
+//    abre esses esquemas fora do app via Linking.openURL para acionar o GPS e o
+//    WhatsApp nativos do celular.
 // 2. Botão Voltar Físico (Android BackHandler) & Safe Area (#0F382C):
-//    Conecta o BackHandler ao histórico interno da WebView (canGoBack / goBack)
-//    e aplica SafeAreaView com topo verde escuro (#0F382C) para nunca sobrepor
-//    o relógio, o notch ou o indicador de bateria do aparelho.
+//    Conecta o BackHandler ao histórico interno da WebView (incluindo rotas SPA
+//    do Next.js) e respeita o SafeAreaView no topo verde (#0F382C) para não
+//    sobrepor o relógio e a bateria do aparelho.
 // ==============================================================================
 
 const PRODUCTION_WEB_URL =
@@ -60,26 +65,27 @@ const EXTERNAL_INTENT_HOSTS = [
   'chat.whatsapp.com',
 ];
 
-function isExternalIntentUrl(rawUrl: string): boolean {
+export function isExternalIntentUrl(rawUrl: string): boolean {
   if (!rawUrl) return false;
   const lower = rawUrl.trim().toLowerCase();
 
-  // Ignora URLs internas do navegador/WebView
-  if (lower.startsWith('about:') || lower.startsWith('javascript:') || lower.startsWith('data:')) {
+  if (
+    lower.startsWith('about:') ||
+    lower.startsWith('javascript:') ||
+    lower.startsWith('data:') ||
+    lower.startsWith('blob:')
+  ) {
     return false;
   }
 
-  // 1. Esquemas nativos diretos (whatsapp://, geo:, tel:, mailto:, waze://, intent://)
   if (EXTERNAL_INTENT_SCHEMES.some((scheme) => lower.startsWith(scheme))) {
     return true;
   }
 
-  // 2. Domínios de GPS (Google Maps / Waze), WhatsApp (wa.me) ou links fora da aplicação CaráFood
   if (EXTERNAL_INTENT_HOSTS.some((host) => lower.includes(host))) {
     return true;
   }
 
-  // 3. Qualquer link HTTP/HTTPS externo ao domínio principal da aplicação (ex.: cardápio original Anota AI / Goomer / Instagram)
   try {
     const parsed = new URL(rawUrl);
     const appHost = new URL(PRODUCTION_WEB_URL).hostname.toLowerCase();
@@ -100,6 +106,61 @@ function isExternalIntentUrl(rawUrl: string): boolean {
   return false;
 }
 
+const INJECTED_NATIVE_BRIDGE_JS = `
+(function() {
+  window.isNativeApp = true;
+  window.isCarFoodApp = true;
+  window.CARAFOOD_NATIVE_VERSION = '2.4.0';
+
+  function postToNative(type, payload) {
+    if (window.ReactNativeWebView && window.ReactNativeWebView.postMessage) {
+      window.ReactNativeWebView.postMessage(JSON.stringify({ type: type, payload: payload }));
+    }
+  }
+
+  window.CaraFoodNative = {
+    isAvailable: true,
+    version: '2.4.0',
+    hapticSuccess: function() { postToNative('HAPTIC', { kind: 'success' }); },
+    hapticError: function() { postToNative('HAPTIC', { kind: 'error' }); },
+    hapticWarning: function() { postToNative('HAPTIC', { kind: 'warning' }); },
+    hapticSelection: function() { postToNative('HAPTIC', { kind: 'selection' }); },
+    hapticImpact: function(style) { postToNative('HAPTIC', { kind: 'impact', style: style || 'medium' }); },
+    share: function(data) { postToNative('SHARE', data || {}); },
+    openExternal: function(url) { postToNative('OPEN_EXTERNAL_URL', { url: url }); },
+    postMessage: postToNative
+  };
+
+  function notifyHistoryState() {
+    var canGoBack = window.history.length > 1 || (window.location.pathname && window.location.pathname !== '/');
+    postToNative('NAV_STATE', {
+      canGoBack: Boolean(canGoBack),
+      pathname: window.location.pathname,
+      href: window.location.href
+    });
+  }
+
+  var origPushState = history.pushState;
+  history.pushState = function() {
+    var ret = origPushState.apply(this, arguments);
+    notifyHistoryState();
+    return ret;
+  };
+
+  var origReplaceState = history.replaceState;
+  history.replaceState = function() {
+    var ret = origReplaceState.apply(this, arguments);
+    notifyHistoryState();
+    return ret;
+  };
+
+  window.addEventListener('popstate', notifyHistoryState);
+  window.addEventListener('DOMContentLoaded', notifyHistoryState);
+  setTimeout(notifyHistoryState, 300);
+})();
+true;
+`;
+
 export interface NativeWebViewShellProps {
   initialPath?: string;
 }
@@ -116,16 +177,23 @@ export const NativeWebViewShell: React.FC<NativeWebViewShellProps> = ({
     initialPath.startsWith('/') ? initialPath : `/${initialPath}`
   }`;
 
-  // Botão Voltar Físico (Android): navega no histórico interno da WebView antes de fechar o app
+  const openExternalNative = useCallback((url: string) => {
+    if (!url) return;
+    Linking.openURL(url).catch((err) => {
+      console.warn('[CaráFood Casca Nativa] Falha ao abrir intent externa:', url, err);
+    });
+  }, []);
+
+  // Botão Voltar Físico (Android): conectado ao histórico interno da WebView
   useEffect(() => {
     if (Platform.OS !== 'android') return;
 
     const onHardwareBackPress = (): boolean => {
       if (canGoBack && webViewRef.current) {
         webViewRef.current.goBack();
-        return true; // Evento consumido pela WebView
+        return true;
       }
-      return false; // Comportamento padrão do SO na tela raiz
+      return false;
     };
 
     const subscription = BackHandler.addEventListener(
@@ -137,30 +205,79 @@ export const NativeWebViewShell: React.FC<NativeWebViewShellProps> = ({
   }, [canGoBack]);
 
   const handleNavigationStateChange = useCallback((navState: WebViewNavigation) => {
-    setCanGoBack(Boolean(navState.canGoBack));
+    let isSubRoute = false;
+    try {
+      const parsed = new URL(navState.url);
+      isSubRoute = parsed.pathname !== '/' && parsed.pathname !== '';
+    } catch {
+      isSubRoute = false;
+    }
+    setCanGoBack(Boolean(navState.canGoBack || isSubRoute));
   }, []);
 
-  // Interceptação de Intents Externas (Maps, Waze, WhatsApp, Telefone, Cardápio Original)
+  // Interceptação de Intents Externas via onShouldStartLoadWithRequest -> Linking.openURL
   const handleShouldStartLoadWithRequest = useCallback(
     (request: ShouldStartLoadRequest): boolean => {
       const { url } = request;
       if (!url) return false;
 
       if (isExternalIntentUrl(url)) {
-        Linking.openURL(url).catch((err) => {
-          console.warn('[CaráFood Casca Nativa] Falha ao abrir intent externa:', url, err);
-        });
-        return false; // Impede a WebView de carregar o link externo internamente
+        openExternalNative(url);
+        return false;
       }
 
       return true;
     },
-    []
+    [openExternalNative]
+  );
+
+  // Intercepta links com target="_blank" ou window.open na WebView
+  const handleOpenWindow = useCallback(
+    (syntheticEvent: WebViewOpenWindowEvent) => {
+      const targetUrl = syntheticEvent.nativeEvent?.targetUrl;
+      if (!targetUrl) return;
+      if (isExternalIntentUrl(targetUrl)) {
+        openExternalNative(targetUrl);
+      } else {
+        webViewRef.current?.injectJavaScript(
+          `window.location.href = ${JSON.stringify(targetUrl)}; true;`
+        );
+      }
+    },
+    [openExternalNative]
+  );
+
+  // Recebe eventos da bridge injetada (OPEN_EXTERNAL_URL, NAV_STATE, SHARE)
+  const handleMessage = useCallback(
+    (event: WebViewMessageEvent) => {
+      try {
+        const raw = event.nativeEvent.data;
+        if (!raw) return;
+        const msg = JSON.parse(raw);
+        const type = msg?.type;
+        const payload = msg?.payload || msg;
+
+        if (type === 'OPEN_EXTERNAL_URL' && payload?.url) {
+          openExternalNative(String(payload.url));
+        } else if (type === 'NAV_STATE') {
+          setCanGoBack(Boolean(payload?.canGoBack));
+        } else if (type === 'SHARE' && payload) {
+          Share.share({
+            title: payload.title || 'CaráFood',
+            message: [payload.message, payload.url].filter(Boolean).join(' '),
+            url: payload.url,
+          }).catch(() => {});
+        }
+      } catch {
+        // Ignora mensagens não-JSON
+      }
+    },
+    [openExternalNative]
   );
 
   return (
     <SafeAreaProvider>
-      {/* Safe Area Superior no verde oficial (#0F382C) protegendo relógio, notch e bateria */}
+      {/* Safe Area Superior no verde (#0F382C) para não sobrepor relógio e bateria */}
       <SafeAreaView style={styles.topSafeArea} edges={['top', 'left', 'right']}>
         <RNStatusBar
           barStyle="light-content"
@@ -198,8 +315,11 @@ export const NativeWebViewShell: React.FC<NativeWebViewShellProps> = ({
               allowsBackForwardNavigationGestures
               pullToRefreshEnabled
               setSupportMultipleWindows={false}
+              injectedJavaScriptBeforeContentLoaded={INJECTED_NATIVE_BRIDGE_JS}
               onNavigationStateChange={handleNavigationStateChange}
               onShouldStartLoadWithRequest={handleShouldStartLoadWithRequest}
+              onOpenWindow={handleOpenWindow}
+              onMessage={handleMessage}
               onLoadStart={() => setIsLoading(true)}
               onLoadEnd={() => setIsLoading(false)}
               onError={() => {

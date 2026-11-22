@@ -17,10 +17,15 @@ import {
   ShieldCheck,
   LogIn,
   ChefHat,
+  UserCheck,
+  Award,
 } from 'lucide-react';
 import { AcademicPortalModal } from './AcademicPortalModal';
 import { CaraguaAIChatDrawer } from './CaraguaAIChatDrawer';
+import { UserProfileModal } from './UserProfileModal';
 import { triggerHapticSelection } from '../utils/nativeBridgeClient';
+import { useAuth } from '../context/AuthContext';
+import { formatUserDisplayWithPronoun } from '../lib/security';
 
 interface NavbarProps {
   onOpenAcademicModal?: () => void;
@@ -61,8 +66,10 @@ export const CaraguaWaveEmblem: React.FC<{ className?: string }> = ({ className 
 
 export const Navbar: React.FC<NavbarProps> = ({ onOpenAcademicModal, onOpenAIChat }) => {
   const pathname = usePathname();
+  const { user, isAuthenticated } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [internalAcademicOpen, setInternalAcademicOpen] = useState(false);
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
   const [internalChatOpen, setInternalChatOpen] = useState(false);
   const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
   const [isJumping, setIsJumping] = useState(false);
@@ -204,18 +211,44 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAcademicModal, onOpenAICha
               <span className="hidden sm:inline">Portal TCC</span>
             </button>
 
-            <Link
-              href="/login"
-              className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-extrabold border transition-all whitespace-nowrap ${
-                pathname === '/login'
-                  ? 'bg-white text-stone-900 border-white shadow-sm'
-                  : 'bg-white/10 hover:bg-white/20 text-white border-white/25'
-              }`}
-              title="Acesso de Avaliador, Gestor ou Curador"
-            >
-              <LogIn className="w-3.5 h-3.5 text-[#FFB703] shrink-0" />
-              <span>Entrar</span>
-            </Link>
+            {isAuthenticated && user ? (
+              <button
+                type="button"
+                onClick={() => {
+                  triggerHapticSelection();
+                  setProfileModalOpen(true);
+                }}
+                data-testid="navbar-user-badge"
+                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-extrabold bg-emerald-500/20 hover:bg-emerald-500/30 text-white border border-emerald-300/45 transition-all whitespace-nowrap"
+                title="Abrir Meu Perfil, Nome Social e Privacidade LGPD"
+              >
+                <UserCheck className="w-3.5 h-3.5 text-[#FFB703] shrink-0" />
+                <span className="max-w-[115px] sm:max-w-[180px] truncate">
+                  {formatUserDisplayWithPronoun(user)}
+                </span>
+                <span
+                  data-testid="navbar-user-points"
+                  className="hidden md:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-[#FFB703] text-stone-950 text-[10px] font-black"
+                >
+                  <Award className="w-2.5 h-2.5" />
+                  {user.points} pts
+                </span>
+              </button>
+            ) : (
+              <Link
+                href="/login"
+                data-testid="navbar-login-link"
+                className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-extrabold border transition-all whitespace-nowrap ${
+                  pathname === '/login'
+                    ? 'bg-white text-stone-900 border-white shadow-sm'
+                    : 'bg-white/10 hover:bg-white/20 text-white border-white/25'
+                }`}
+                title="Entrar ou Criar Conta com Nome Social e Pronome"
+              >
+                <LogIn className="w-3.5 h-3.5 text-[#FFB703] shrink-0" />
+                <span>Entrar / Criar Conta</span>
+              </Link>
+            )}
 
             <button
               type="button"
@@ -403,6 +436,11 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAcademicModal, onOpenAICha
       <AcademicPortalModal
         isOpen={internalAcademicOpen}
         onClose={() => setInternalAcademicOpen(false)}
+      />
+
+      <UserProfileModal
+        isOpen={profileModalOpen}
+        onClose={() => setProfileModalOpen(false)}
       />
 
       {!onOpenAIChat && (

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { realDataStore } from '@/data/realDataStore';
+import { serverIdentityStore } from '@/lib/serverIdentityStore';
 
 const approvedDishIds = new Set<string>();
 const rejectedDishIds = new Set<string>();
@@ -26,6 +27,7 @@ export async function GET() {
         pending: pendingFiltered,
         price_changes: base.price_changes,
         neighborhoods: base.neighborhoods,
+        copyright_claims: serverIdentityStore.getCopyrightClaims(),
       },
       { status: 200 }
     );
@@ -95,6 +97,21 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({
         success: true,
         searchable_dishes_updated: base.status.approved_dishes_db + approvedDishIds.size,
+      });
+    }
+
+    if (action === 'resolve-copyright-claim' && body.protocol) {
+      const newStatus =
+        body.new_status === 'Mídia Removida'
+          ? 'Mídia Removida'
+          : 'Aprovado e Atualizado';
+      const updated = serverIdentityStore.resolveCopyrightClaim(
+        String(body.protocol),
+        newStatus
+      );
+      return NextResponse.json({
+        success: Boolean(updated),
+        claim: updated,
       });
     }
 

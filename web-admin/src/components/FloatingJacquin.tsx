@@ -115,7 +115,7 @@ export const FloatingJacquin: React.FC<FloatingJacquinProps> = ({
       <aside 
         ref={mascotRef}
         aria-label="Assistente Central Chef Jacquin Praiano CaráFood"
-        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 md:bottom-6 md:right-6 z-30 flex flex-col items-end pointer-events-auto select-none"
+        className="fixed bottom-20 right-3 sm:right-6 lg:bottom-6 lg:right-6 z-30 flex flex-col items-end pointer-events-auto select-none"
       >
         <AnimatePresence mode="wait">
           {isMinimized ? (

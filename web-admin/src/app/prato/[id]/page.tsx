@@ -26,7 +26,10 @@ function resolvePostAndRelated(rawId: string): {
       restaurantName: rest.name,
       restaurantAvatar: rest.image_url || rest.banner_url || '',
       neighborhood: rest.neighborhood || 'Caraguatatuba',
-      distanceKm: Number(rest.distance_km || 0),
+      distanceKm:
+        Number(rest.distance_km || 0) > 25
+          ? Number((Number(rest.distance_km) / 1000).toFixed(2))
+          : Number(rest.distance_km || 0.8),
       postImage: dish.image_url || rest.banner_url || rest.image_url || '',
       postImageWidth:
         Number(dish.image_url ? dish.image_width || 0 : rest.banner_width || 0) || undefined,

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { sanitizeUserInput } from '@/lib/security';
 
 const BACKEND_API_BASE = process.env.NEXT_PUBLIC_API_URL;
 
@@ -89,13 +90,13 @@ export async function POST(req: NextRequest) {
     const newLead: StoredLead = {
       id: `lead-${Date.now()}`,
       protocol,
-      restaurant_name: String(body.restaurant_name || body.nome || 'Estabelecimento Parceiro').trim(),
-      contact_name: String(body.contact_name || body.nome || 'Responsável Local').trim(),
-      email: String(body.email || '').trim(),
-      phone: String(body.phone || '').trim(),
-      neighborhood: String(body.neighborhood || 'Centro').trim(),
-      subject: String(body.subject || 'credenciamento').trim(),
-      message: String(body.message || '').trim(),
+      restaurant_name: sanitizeUserInput(String(body.restaurant_name || body.nome || 'Estabelecimento Parceiro')),
+      contact_name: sanitizeUserInput(String(body.contact_name || body.nome || 'Responsável Local')),
+      email: sanitizeUserInput(String(body.email || '')),
+      phone: sanitizeUserInput(String(body.phone || '')),
+      neighborhood: sanitizeUserInput(String(body.neighborhood || 'Centro')),
+      subject: sanitizeUserInput(String(body.subject || 'credenciamento')),
+      message: sanitizeUserInput(String(body.message || '')),
       status: 'received',
       created_at: new Date().toISOString(),
     };

@@ -25,8 +25,12 @@ import {
 import { FeedPost } from '../../../data/caraguaData';
 import { Navbar } from '../../../components/Navbar';
 import { SmartFoodImage } from '../../../components/SmartFoodImage';
+import { CopyrightClaimModal } from '../../../components/CopyrightClaimModal';
 import { realDataStore } from '../../../data/realDataStore';
-import { openExternalIntent, shareViaNativeSheet } from '../../../utils/nativeBridgeClient';
+import { openExternalIntent } from '../../../utils/nativeBridgeClient';
+import { useAuth } from '../../../context/AuthContext';
+import { formatUserDisplayWithPronoun, maskSensitivePII } from '../../../lib/security';
+import { Scale } from 'lucide-react';
 
 
 
@@ -118,11 +122,13 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
   const [googleScore, setGoogleScore] = useState<number>(Number(post.superRating || 0));
   const [totalReviews, setTotalReviews] = useState<number>(post.totalReviews || 0);
 
+  const { user, isAuthenticated, addPoints, toggleSavedDish } = useAuth();
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(post.likes);
   const [isSaved, setIsSaved] = useState(false);
   const [shareToast, setShareToast] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [isCopyrightModalOpen, setIsCopyrightModalOpen] = useState(false);
   const [reviewSubmittedToast, setReviewSubmittedToast] = useState(false);
   const [lastProtocol, setLastProtocol] = useState<string>('');
   const [submittingReview, setSubmittingReview] = useState(false);
@@ -268,6 +274,11 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
     if (!reviewComment.trim()) return;
     setSubmittingReview(true);
 
+    const resolvedAuthor = isAuthenticated && user
+      ? formatUserDisplayWithPronoun(user)
+      : authorName.trim() || 'Avaliador Local';
+    const sanitizedComment = maskSensitivePII(reviewComment.trim());
+
     let savedProtocol = `CF-2026-${Math.floor(100000 + Math.random() * 900000)}`;
     try {
       const res = await fetch('/api/restaurants/reviews', {
@@ -276,14 +287,16 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
         body: JSON.stringify({
           restaurant_id: restaurantId || restaurantSlug || undefined,
           dish_id: dishIdParam || post.id,
-          author_name: authorName.trim() || 'Avaliador Local',
+          author_name: resolvedAuthor,
+          nome_social: user?.nomeSocial,
+          pronome_social: user?.pronomeSocial,
           table_voucher: tableVoucher.trim() || undefined,
           flavor_score: flavorScore,
           presentation_score: presentationScore,
           originality_score: originalityScore,
           service_score: serviceScore,
           ambiance_score: ambianceScore,
-          comment_text: reviewComment.trim(),
+          comment_text: sanitizedComment,
         }),
       });
       if (res.ok) {
@@ -302,10 +315,14 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
       setSubmittingReview(false);
     }
 
+    if (isAuthenticated) {
+      addPoints(50);
+    }
+
     setComments((prev) => [
       {
-        author: `${authorName.trim() || 'Você'} (Cédula Verificada • ${savedProtocol})`,
-        text: reviewComment.trim(),
+        author: `${resolvedAuthor} (Cédula Verificada • ${savedProtocol})`,
+        text: sanitizedComment,
         rating: Number(calculatedWeightedScore),
         date: 'Agora mesmo',
       },
@@ -675,13 +692,61 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
                   </Link>
                 )}
 
+                {!isAuthenticated ? (
+                  <div
+                    data-testid="guest-mode-notice"
+                    className="p-3 rounded-2xl bg-amber-50/90 border border-amber-200 text-xs text-stone-700 flex items-center justify-between gap-2"
+                  >
+                    <span>
+                      <strong>Modo Visitante:</strong> Entre na sua conta para registrar votos com seu Nome Social, Pronome e ganhar <strong>+50 pts</strong>.
+                    </span>
+                    <Link
+                      href="/login"
+                      className="px-2.5 py-1.5 rounded-xl bg-[#135136] text-white font-bold text-[11px] whitespace-nowrap"
+                    >
+                      Entrar
+                    </Link>
+                  </div>
+                ) : (
+                  <div
+                    data-testid="logged-in-ballot-ready"
+                    className="p-2.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-950 font-semibold flex items-center justify-between"
+                  >
+                    <span>
+                      Avaliando como <strong>{formatUserDisplayWithPronoun(user)}</strong>
+                    </span>
+                    <span className="text-[11px] font-black text-[#135136]">
+                      +50 pts por voto
+                    </span>
+                  </div>
+                )}
+
                 <button
                   type="button"
-                  onClick={() => setIsReviewModalOpen(true)}
+                  data-testid="open-ballot-modal-btn"
+                  onClick={() => {
+                    if (isAuthenticated && user && !authorName) {
+                      setAuthorName(formatUserDisplayWithPronoun(user));
+                    }
+                    setIsReviewModalOpen(true);
+                  }}
                   className="w-full py-3 rounded-2xl bg-[#FFB703] hover:bg-[#E5A502] text-stone-900 font-black text-xs sm:text-sm shadow-sm flex items-center justify-center gap-2 transition-all"
                 >
                   <Award className="w-4 h-4 text-stone-900" />
-                  <span>Avaliar Prato na Cédula de 5 Critérios</span>
+                  <span>Avaliar Prato na Cédula de 5 Critérios (+50 Pontos)</span>
+                </button>
+
+                {/* Canal de Direitos Autorais e Reivindicação de Titularidade (Lei 9.610/98) */}
+                <button
+                  type="button"
+                  data-testid="open-copyright-claim-btn"
+                  onClick={() => setIsCopyrightModalOpen(true)}
+                  className="w-full py-2.5 px-3 rounded-2xl bg-stone-100 hover:bg-stone-200/80 text-stone-700 font-bold text-[11px] flex items-center justify-center gap-1.5 transition-colors border border-stone-200"
+                >
+                  <Scale className="w-3.5 h-3.5 text-[#135136] shrink-0" />
+                  <span>
+                    É dono deste estabelecimento? Reivindicar perfil ou reportar foto (Direitos Autorais)
+                  </span>
                 </button>
               </div>
             </div>
@@ -1057,9 +1122,17 @@ export const PratoDetailClient: React.FC<PratoDetailClientProps> = ({
         </div>
       )}
 
-      <footer className="mt-16 bg-[#135136] text-white py-8 px-4 text-center border-t-2 border-[#FFB703]/80">
+      <CopyrightClaimModal
+        isOpen={isCopyrightModalOpen}
+        onClose={() => setIsCopyrightModalOpen(false)}
+        defaultRestaurantName={restaurantName}
+        defaultDishId={dishIdParam || post.id}
+        defaultDishName={dishName}
+      />
+
+      <footer className="mt-16 bg-[#0F382C] text-white py-8 px-4 text-center border-t-2 border-[#FFB703]/80">
         <p className="text-xs text-emerald-200">
-          CaráFood • Guia Gastronômico e Curadoria dos 53 Bairros de Caraguatatuba.
+          CaráFood • Guia Gastronômico e Curadoria dos 53 Bairros de Caraguatatuba • Conformidade LGPD (Lei 13.709/18) e Direitos Autorais (Lei 9.610/98).
         </p>
       </footer>
     </div>

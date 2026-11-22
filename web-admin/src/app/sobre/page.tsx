@@ -15,6 +15,7 @@ import {
   Star,
 } from 'lucide-react';
 import { Navbar } from '../../components/Navbar';
+import { SAAS_REVENUE_PILLARS } from '../../lib/resilienceEngine';
 
 export default function SobreNosPage() {
   return (
@@ -218,6 +219,78 @@ export default function SobreNosPage() {
                 <strong className="text-white">Conexão direta com o comércio local:</strong> cada
                 prato exibe sua composição de nota, histórico recente de preço e botões diretos para
                 Google Maps e WhatsApp do restaurante.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* 4.B Modelo de Sustentabilidade SaaS (0% Taxa) & Força Vital (Resiliência Sem SPOF) */}
+        <section
+          data-testid="saas-sustainability-section"
+          className="bg-white rounded-[28px] p-6 sm:p-8 border border-stone-200/90 shadow-xs space-y-6"
+        >
+          <div>
+            <span className="text-[11px] font-black uppercase tracking-wider text-[#135136]">
+              Modelo de Negócio &amp; Engenharia de Resiliência
+            </span>
+            <h2 className="font-heading font-black text-2xl sm:text-3xl text-stone-900 mt-1">
+              Como o CaráFood se Sustenta com 0% de Comissão e Qual é Sua Força Vital?
+            </h2>
+            <p className="text-xs sm:text-sm text-stone-600 mt-1.5 leading-relaxed">
+              Diferente de plataformas que cobram até 30% sobre cada venda do comerciante local, o CaráFood opera sob um modelo <strong>Freemium SaaS Regional</strong> com 4 fontes sustentáveis de receita e arquitetura autônoma sem ponto único de falha.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {SAAS_REVENUE_PILLARS.map((pillar) => (
+              <div
+                key={pillar.id}
+                className="p-4 rounded-2xl bg-stone-50 border border-stone-200/90 space-y-2"
+              >
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <h3 className="font-heading font-black text-sm text-stone-900">
+                    {pillar.title}
+                  </h3>
+                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#135136] font-bold text-[11px]">
+                    {pillar.priceTag}
+                  </span>
+                </div>
+                <p className="text-xs text-stone-600 leading-relaxed">
+                  {pillar.description}
+                </p>
+                <p className="text-[11px] font-bold text-[#135136]">
+                  ✓ {pillar.ethicalGuardrail}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Independência de Serviços Externos (Força Vital) & Conformidade Legal */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+            <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200 space-y-1.5">
+              <span className="font-heading font-black text-xs text-[#135136] uppercase block">
+                Força Vital Autônoma (Sem SPOF)
+              </span>
+              <p className="text-xs text-stone-700 leading-relaxed">
+                O WhatsApp é apenas um canal auxiliar de contato. Se o WhatsApp ou uma API externa cair, o CaráFood continua 100% operacional com catálogo próprio de <strong>2.670 pratos e preços auditados</strong>, rotas GPS multi-provedor (Maps, Waze e OpenStreetMap), telefone direto e Cédula Oficial.
+              </p>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200 space-y-1.5">
+              <span className="font-heading font-black text-xs text-amber-950 uppercase block">
+                LGPD, Nome Social &amp; Pronome Social
+              </span>
+              <p className="text-xs text-stone-700 leading-relaxed">
+                Conformidade com a <strong>Lei nº 13.709/2018</strong>: respeito ao Nome Social e Pronome Social em toda a interface, consentimento granular, exportação dos dados em JSON (Art. 18) e anonimização de conta.
+              </p>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-stone-100 border border-stone-200 space-y-1.5">
+              <span className="font-heading font-black text-xs text-stone-900 uppercase block">
+                Direitos Autorais (Lei nº 9.610/98)
+              </span>
+              <p className="text-xs text-stone-700 leading-relaxed">
+                Separação rigorosa entre dados factuais públicos (endereço e preços de balcão) e fotografias autorais, com canal oficial de reivindicação de perfil e remoção prioritária (Notice &amp; Takedown • protocolo <code>CG-DA</code>).
               </p>
             </div>
           </div>

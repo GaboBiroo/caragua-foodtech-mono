@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { maskSensitivePII, sanitizeUserInput } from '@/lib/security';
 
 const BACKEND_API_BASE = process.env.NEXT_PUBLIC_API_URL;
 
@@ -23,9 +24,16 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const comment = (body.comment || '')
-      .replace(/\d{3}\.?\d{3}\.?\d{3}-?\d{2}/g, '[DOCUMENTO_PROTEGIDO]')
-      .replace(/\(?\d{2}\)?\s?\d{4,5}-?\d{4}/g, '[TELEFONE_PROTEGIDO]');
+    const rawComment = String(body.comment_text || body.comment || '');
+    const comment = maskSensitivePII(rawComment);
+    const authorName = sanitizeUserInput(
+      String(body.nome_social || body.author_name || 'Avaliador de Caraguá')
+    );
+    const pronoun = sanitizeUserInput(String(body.pronome_social || ''));
+    const displayAuthor =
+      pronoun && pronoun !== 'Não informado'
+        ? `${authorName} (${pronoun})`
+        : authorName;
 
     const protocol = `CF-2026-${Math.floor(100000 + Math.random() * 900000)}`;
     return NextResponse.json({
@@ -34,9 +42,9 @@ export async function POST(req: NextRequest) {
       message: 'Avaliação auditada e registrada com sucesso.',
       review: {
         id: `rev-${Date.now()}`,
-        author: body.author_name || 'Avaliador de Caraguá',
+        author: displayAuthor,
         comment,
-        rating: body.overall_rating || 5,
+        rating: Number(body.overall_rating || 5),
         created_at: new Date().toISOString(),
       },
     }, { status: 201 });

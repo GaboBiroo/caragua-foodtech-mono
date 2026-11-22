@@ -53,17 +53,31 @@
     outline: none;
     box-shadow: 0 0 0 2px #FFB703, 0 0 0 4px #135136;
   }
+
+  .pb-safe-bottom {
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  }
 }
 
 html {
-  font-size: 18px;
+  font-size: 16px;
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: contain;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+@media (min-width: 1024px) {
+  html {
+    font-size: 17.5px;
+  }
 }
 
 @media (min-width: 1440px) {
   html {
-    font-size: 19px;
+    font-size: 18.5px;
   }
 }
 
@@ -73,7 +87,8 @@ body {
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 h1, h2, h3, h4, h5, h6 {

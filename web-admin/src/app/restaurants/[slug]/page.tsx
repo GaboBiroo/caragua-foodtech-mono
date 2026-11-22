@@ -23,8 +23,6 @@ import { CaraguaAIChatDrawer } from '@/components/CaraguaAIChatDrawer';
 import { SmartFoodImage } from '@/components/SmartFoodImage';
 import { realDataStore } from '@/data/realDataStore';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
-
 interface DishPriceStep {
   previous_price: number;
   new_price: number;
@@ -291,7 +289,7 @@ export default function RestaurantMenuDetailPage() {
         }}
       />
 
-      <main className="max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 space-y-7 flex-1">
+      <main className="max-w-6xl w-full mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-5 sm:space-y-7 flex-1 min-w-0">
         {/* Navegação Superior */}
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Link
@@ -332,9 +330,9 @@ export default function RestaurantMenuDetailPage() {
         ) : (
           <>
             {/* Apresentação Acolhedora do Estabelecimento */}
-            <header className="bg-white rounded-3xl border border-stone-200/90 p-6 sm:p-8 shadow-xs space-y-5">
-              <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-5">
-                <div className="space-y-3">
+            <header className="bg-white rounded-2xl sm:rounded-3xl border border-stone-200/90 p-4 sm:p-8 shadow-xs space-y-5 min-w-0">
+              <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-5 min-w-0">
+                <div className="space-y-3 min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     {detail.cuisine_types.map((c) => (
                       <span
@@ -421,7 +419,7 @@ export default function RestaurantMenuDetailPage() {
 
                 {/* Nota Real dos Clientes + Dica do Chef */}
                 <div
-                  className="bg-amber-50/85 border border-amber-200 rounded-3xl p-4 sm:p-5 min-w-[250px] flex flex-col justify-between gap-3"
+                  className="bg-amber-50/85 border border-amber-200 rounded-2xl sm:rounded-3xl p-4 sm:p-5 w-full lg:w-auto lg:min-w-[250px] min-w-0 flex flex-col justify-between gap-3"
                   title="Nota real calculada com avaliações verificadas"
                 >
                   <div>

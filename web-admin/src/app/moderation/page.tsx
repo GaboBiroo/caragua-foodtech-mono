@@ -116,7 +116,22 @@ interface PartnerLeadItem {
   created_at?: string;
 }
 
-type ActiveTab = 'pending' | 'prices' | 'neighborhoods' | 'leads';
+interface CopyrightClaimItem {
+  protocol: string;
+  claimType: 'claim_ownership' | 'replace_media' | 'takedown_request';
+  restaurantName: string;
+  dishId?: string;
+  dishName?: string;
+  claimantName: string;
+  claimantRole: string;
+  email: string;
+  whatsapp: string;
+  justification: string;
+  status: 'Em Análise Prioritária' | 'Aprovado e Atualizado' | 'Mídia Removida';
+  createdAt: string;
+}
+
+type ActiveTab = 'pending' | 'prices' | 'neighborhoods' | 'leads' | 'copyright';
 
 function formatBRL(value: number): string {
   return `R$ ${value.toFixed(2).replace('.', ',')}`;
@@ -219,6 +234,7 @@ export default function TeamCuratorshipPanelPage() {
     initialDashboard.neighborhoods
   );
   const [partnerLeads, setPartnerLeads] = useState<PartnerLeadItem[]>([]);
+  const [copyrightClaims, setCopyrightClaims] = useState<CopyrightClaimItem[]>([]);
   const [isOnline, setIsOnline] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<ActiveTab>('pending');
 
@@ -264,6 +280,7 @@ export default function TeamCuratorshipPanelPage() {
         if (Array.isArray(modJson.pending)) setPendingList(modJson.pending);
         if (Array.isArray(modJson.price_changes)) setPriceChangesList(modJson.price_changes);
         if (Array.isArray(modJson.neighborhoods)) setNeighborhoods(modJson.neighborhoods);
+        if (Array.isArray(modJson.copyright_claims)) setCopyrightClaims(modJson.copyright_claims);
       }
 
       if (leadsRes.ok) {
@@ -786,6 +803,18 @@ export default function TeamCuratorshipPanelPage() {
               >
                 Credenciamentos ({partnerLeads.length})
               </button>
+              <button
+                type="button"
+                data-testid="moderation-tab-copyright"
+                onClick={() => setActiveTab('copyright')}
+                className={`px-3 sm:px-4 py-2 rounded-2xl text-xs font-extrabold transition-all text-center ${
+                  activeTab === 'copyright'
+                    ? 'bg-[#135136] text-white shadow-xs'
+                    : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+                }`}
+              >
+                Direitos Autorais ({copyrightClaims.length})
+              </button>
             </div>
 
             {activeTab === 'pending' && (
@@ -1263,6 +1292,126 @@ export default function TeamCuratorshipPanelPage() {
                     <div className="pt-1 flex items-center justify-between text-[11px] text-stone-500">
                       <span>Assunto: {lead.subject}</span>
                       <span className="text-emerald-700 font-bold">● Salvo na API</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ABA 5: Direitos Autorais & Titularidade (Lei 9.610/98 — Notice & Takedown) */}
+          {activeTab === 'copyright' && (
+            <div data-testid="moderation-copyright-panel" className="p-4 sm:p-6 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-stone-200">
+                <div>
+                  <h3 className="font-heading font-black text-base text-stone-900">
+                    Governança de Direitos Autorais &amp; Titularidade (Lei nº 9.610/1998)
+                  </h3>
+                  <p className="text-xs text-stone-600">
+                    Protocolos de reivindicação de perfil gratuito (0% taxa), atualização de foto autoral e solicitações de remoção imediata (Notice &amp; Takedown).
+                  </p>
+                </div>
+                <span className="self-start sm:self-auto px-3 py-1 rounded-full bg-emerald-100 text-emerald-950 font-bold text-xs">
+                  SLA Prioritário: &lt; 24h
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                {copyrightClaims.map((claim) => (
+                  <div
+                    key={claim.protocol}
+                    data-testid={`copyright-claim-card-${claim.protocol}`}
+                    className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-2.5"
+                  >
+                    <div className="flex items-center justify-between gap-2 flex-wrap">
+                      <span className="font-mono font-black text-xs px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-950 border border-amber-300">
+                        {claim.protocol}
+                      </span>
+                      <span
+                        className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${
+                          claim.status === 'Aprovado e Atualizado'
+                            ? 'bg-emerald-100 text-emerald-900'
+                            : claim.status === 'Mídia Removida'
+                            ? 'bg-rose-100 text-rose-900'
+                            : 'bg-sky-100 text-sky-900'
+                        }`}
+                      >
+                        {claim.status}
+                      </span>
+                    </div>
+
+                    <div>
+                      <div className="font-heading font-black text-sm text-stone-900">
+                        {claim.restaurantName}{' '}
+                        {claim.dishName ? `• ${claim.dishName}` : ''}
+                      </div>
+                      <div className="text-[11px] text-stone-500">
+                        Solicitante: <strong>{claim.claimantName}</strong> ({claim.claimantRole}) • {claim.email}
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-stone-700 leading-relaxed bg-white p-2.5 rounded-xl border border-stone-200">
+                      {claim.justification}
+                    </p>
+
+                    <div className="flex flex-wrap gap-2 pt-1">
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          await fetch('/api/moderation', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                              action: 'resolve-copyright-claim',
+                              protocol: claim.protocol,
+                              new_status: 'Aprovado e Atualizado',
+                            }),
+                          });
+                          setCopyrightClaims((prev) =>
+                            prev.map((c) =>
+                              c.protocol === claim.protocol
+                                ? { ...c, status: 'Aprovado e Atualizado' }
+                                : c
+                            )
+                          );
+                          showToast(
+                            'success',
+                            `Titularidade/mídia do protocolo ${claim.protocol} aprovada e atualizada!`
+                          );
+                        }}
+                        className="py-1.5 px-3 rounded-xl bg-[#135136] hover:bg-[#0D3825] text-white font-bold text-xs transition-colors"
+                      >
+                        Aprovar Titularidade / Foto
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          await fetch('/api/moderation', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                              action: 'resolve-copyright-claim',
+                              protocol: claim.protocol,
+                              new_status: 'Mídia Removida',
+                            }),
+                          });
+                          setCopyrightClaims((prev) =>
+                            prev.map((c) =>
+                              c.protocol === claim.protocol
+                                ? { ...c, status: 'Mídia Removida' }
+                                : c
+                            )
+                          );
+                          showToast(
+                            'warning',
+                            `Mídia referente ao protocolo ${claim.protocol} removida imediatamente (Takedown).`
+                          );
+                        }}
+                        className="py-1.5 px-3 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-800 font-bold text-xs transition-colors"
+                      >
+                        Executar Takedown (Remover Foto)
+                      </button>
                     </div>
                   </div>
                 ))}

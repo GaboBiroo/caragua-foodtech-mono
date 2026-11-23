@@ -3,7 +3,7 @@
 // ==============================================================================
 
 export const API_BASE_URL =
-  process.env.EXPO_PUBLIC_API_URL || 'https://foddtech.vercel.app/api';
+  process.env.EXPO_PUBLIC_API_URL || 'https://carafood.vercel.app/api';
 
 export interface RAGSearchPayload {
   query: string;

@@ -118,3 +118,7 @@ desktop.ini
 !docker/Dockerfile.db
 !Dockerfile.db
 
+
+!mobile/src/lib/
+!mobile/src/lib/**
+

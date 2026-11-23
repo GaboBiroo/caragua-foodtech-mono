@@ -33,7 +33,7 @@ import type {
 // ==============================================================================
 
 const PRODUCTION_WEB_URL =
-  process.env.EXPO_PUBLIC_WEB_URL || 'https://foddtech.vercel.app';
+  process.env.EXPO_PUBLIC_WEB_URL || 'https://carafood.vercel.app';
 
 const HEADER_GREEN = '#0F382C';
 const SURFACE_CREAM = '#FAF7F2';

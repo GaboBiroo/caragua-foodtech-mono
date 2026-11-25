@@ -9,9 +9,9 @@ import {
   MapPin,
   TrendingDown,
   ShieldCheck,
-  ChefHat,
   ArrowUpRight,
   Loader2,
+  Utensils,
 } from 'lucide-react';
 
 export interface DishSuggestionCard {
@@ -19,6 +19,7 @@ export interface DishSuggestionCard {
   dish_name: string;
   description: string;
   price: number;
+  image_url?: string;
   category: string;
   is_vegan: boolean;
   is_vegetarian: boolean;
@@ -44,6 +45,7 @@ interface ChatTurn {
   id: string;
   role: 'user' | 'assistant';
   content: string;
+  chefMood?: string;
   recommendations?: DishSuggestionCard[];
   isStreaming?: boolean;
 }
@@ -58,10 +60,12 @@ export interface CaraguaAIChatDrawerProps {
 }
 
 const QUICK_SUGGESTIONS: string[] = [
+  '🍱 Marmita perto do Shopping Serramar',
   '🏖️ Porção de camarão ou peixe perto da praia',
+  '🍔 Melhor hambúrguer artesanal com muito tompero',
+  '🍣 Sushi fresquinho (com freezer ligado!)',
+  '💸 Onde comer bem gastando até R$ 35?',
   '🌱 Opções veganas ou sem lactose gostosas',
-  '💸 Onde comer bem gastando até R$ 45?',
-  '📉 Pratos que baixaram de preço essa semana',
 ];
 
 function formatPriceBRL(val: number): string {
@@ -73,29 +77,35 @@ function formatFriendlyDistance(card: DishSuggestionCard): string {
     return card.distance_label;
   }
   if (card.distance_meters < 1000) {
-    return `A ${Math.max(50, Math.round(card.distance_meters / 10) * 10)}m de você • ${card.neighborhood}`;
+    return `A ${Math.max(50, Math.round(card.distance_meters / 10) * 10)}m • ${card.neighborhood}`;
   }
   return `A ${card.distance_km.toFixed(1).replace('.', ',')} km • ${card.neighborhood}`;
 }
 
 /**
- * Converte marcações simples (**negrito** e *itálico*) em tipografia limpa,
- * impedindo que asteriscos crus apareçam na conversa.
+ * Converte marcações simples (**negrito** e *itálico*) em tipografia limpa.
  */
 function renderCleanChatMessage(rawText: string): React.ReactNode {
   if (!rawText) return null;
   const paragraphs = rawText.split(/\n{2,}/);
   return paragraphs.map((para, pIdx) => {
     const cleanPara = para.replace(/^\s*[-*]\s+/gm, '• ');
-    const segments = cleanPara.split(/(\*\*[^*]+\*\*)/g);
+    const segments = cleanPara.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g);
     return (
-      <p key={pIdx} className={pIdx > 0 ? 'mt-2.5' : ''}>
+      <p key={pIdx} className={pIdx > 0 ? 'mt-2' : ''}>
         {segments.map((seg, sIdx) => {
           if (seg.startsWith('**') && seg.endsWith('**') && seg.length > 4) {
             return (
               <strong key={sIdx} className="font-extrabold text-stone-950">
                 {seg.slice(2, -2)}
               </strong>
+            );
+          }
+          if (seg.startsWith('*') && seg.endsWith('*') && seg.length > 2) {
+            return (
+              <em key={sIdx} className="italic font-semibold text-[#135136]">
+                {seg.slice(1, -1)}
+              </em>
             );
           }
           return <React.Fragment key={sIdx}>{seg.replace(/\*/g, '')}</React.Fragment>;
@@ -117,13 +127,13 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
     {
       id: 'welcome-chef',
       role: 'assistant',
+      chefMood: 'Le Chef de Caraguá • Freezer Ligado',
       content:
-        'Oi! Bateu a fome? Me conta o que você está com vontade de comer, quanto quer gastar ou se tem alguma restrição alimentar que eu garimpo os melhores pratos perto de você!',
+        '**Bonjour, mon ami!** Eu sou o **Chef Érick Jacquin Praiano**, fiscal oficial das panelas dos 53 bairros de Caraguatatuba! Aqui não tem *vergonha da profission*: eu já inspecionei os **61 restaurantes** e **2.670 pratos reais** da cidade.\n\nMe conta o que você quer comer hoje: uma **marmita perto do Shopping Serramar**, um **peixe na praia**, um **hambúrguer com muito tompero** ou algo que caiba no seu bolso?',
     },
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [localPcActive, setLocalPcActive] = useState<boolean>(false);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const lastInitialPromptSent = useRef<string>('');
 
@@ -139,7 +149,8 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
       if (!trimmed || isLoading) return;
 
       const firstLetterIdx = trimmed.search(/[A-Za-zÀ-ÿ0-9]/);
-      const cleanQuery = firstLetterIdx >= 0 ? trimmed.slice(firstLetterIdx).trim() : trimmed;
+      const cleanQuery =
+        firstLetterIdx >= 0 ? trimmed.slice(firstLetterIdx).trim() : trimmed;
 
       const userTurnId = `user-${Date.now()}`;
       const assistantTurnId = `assistant-${Date.now() + 1}`;
@@ -151,6 +162,7 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
           id: assistantTurnId,
           role: 'assistant',
           content: '',
+          chefMood: 'Provando o Tompero nas Panelas...',
           isStreaming: true,
         },
       ]);
@@ -158,7 +170,9 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
       setIsLoading(true);
 
       const neighborhoodParam =
-        activeNeighborhood && activeNeighborhood !== 'Todos' ? activeNeighborhood : undefined;
+        activeNeighborhood && activeNeighborhood !== 'Todos'
+          ? activeNeighborhood
+          : undefined;
 
       try {
         const syncRes = await fetch('/api/chat', {
@@ -166,10 +180,11 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             query: cleanQuery,
+            message: cleanQuery,
             user_lat: userLat,
             user_lon: userLon,
             neighborhood: neighborhoodParam,
-            limit: 6,
+            limit: 5,
           }),
         });
         const syncJson = await syncRes.json();
@@ -181,8 +196,11 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
                   content:
                     syncJson.answer ||
                     syncJson.reply ||
-                    'Dei uma olhada nos cardápios de hoje! Veja as sugestões logo abaixo.',
-                  recommendations: syncJson.recommendations || syncJson.dishes || [],
+                    '**Mon ami**, olha as sugestões com muito *tompero* que eu separei para você aqui embaixo!',
+                  chefMood:
+                    syncJson.chefMood || 'Tompero Aprovado pelo Chef Jacquin',
+                  recommendations:
+                    syncJson.recommendations || syncJson.dishes || [],
                   isStreaming: false,
                 }
               : m
@@ -195,7 +213,8 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
               ? {
                   ...m,
                   content:
-                    'Puxa, tive um pequeno tropeço para consultar os cardápios agora. Tente perguntar de novo em alguns segundos!',
+                    '**Mon Dieu!** Deu uma pequena fumaça na cozinha agora, *mon ami*. Me pergunta de novo que eu já abro a panela para você!',
+                  chefMood: 'Chef Reorganizando a Cozinha',
                   isStreaming: false,
                 }
               : m
@@ -223,32 +242,39 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex justify-end bg-stone-950/55 backdrop-blur-xs transition-opacity"
+      className="fixed inset-0 z-50 flex justify-end bg-stone-950/60 backdrop-blur-xs transition-opacity"
       role="dialog"
       aria-modal="true"
-      aria-label="Chef CaráFood - Dicas de onde comer em Caraguá"
+      aria-label="Chef Érick Jacquin Praiano - Curadoria Gastronômica de Caraguatatuba"
     >
       <div className="hidden sm:block sm:flex-1" onClick={onClose} />
 
       <aside className="relative w-full sm:max-w-xl bg-[#FAF7F2] h-[100dvh] sm:h-full shadow-2xl sm:border-l-4 border-[#FFB703] flex flex-col overflow-hidden">
-        {/* Cabeçalho acolhedor do Chef CaráFood */}
-        <header className="bg-[#135136] text-white px-4 sm:px-5 py-3.5 sm:py-4 border-b border-white/15 flex items-center justify-between gap-2.5 shrink-0">
-          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-[#FFB703] text-stone-950 flex items-center justify-center shadow-md shrink-0">
-              <ChefHat className="w-5 h-5 sm:w-6 sm:h-6" />
+        {/* Cabeçalho com Identidade Oficial do Chef Érick Jacquin Praiano */}
+        <header className="bg-[#0F382C] text-white px-4 sm:px-5 py-3.5 sm:py-4 border-b-2 border-[#FFB703]/80 flex items-center justify-between gap-2.5 shrink-0">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#FFB703]/20 border-2 border-[#FFB703] p-0.5 flex items-center justify-center shadow-lg shrink-0 overflow-hidden">
+              <img
+                src="/jacquin-praiano.png"
+                alt="Chef Érick Jacquin Praiano"
+                className="w-full h-full object-contain drop-shadow-md"
+              />
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <h2 className="font-heading font-black text-base sm:text-lg leading-tight truncate">
-                  Chef CaráFood
+                <h2
+                  data-testid="jacquin-chat-header-title"
+                  className="font-heading font-black text-base sm:text-lg leading-tight truncate text-white"
+                >
+                  Chef Jacquin Praiano
                 </h2>
-                <span className="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-400/20 text-emerald-100 border border-emerald-300/40">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse" />
-                  {localPcActive ? 'Online • IA Local' : 'Online agora'}
+                <span className="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#FFB703] text-stone-950">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-700 animate-pulse" />
+                  Freezer Ligado
                 </span>
               </div>
               <p className="text-[11px] sm:text-xs text-emerald-100/95 mt-0.5 leading-snug truncate">
-                Dicas de cardápios reais em Caraguá
+                &ldquo;Aqui não tem vergonha da profission: só prato com tompero!&rdquo;
               </p>
             </div>
           </div>
@@ -257,22 +283,22 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
             type="button"
             onClick={onClose}
             className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors shrink-0"
-            aria-label="Fechar conversa"
+            aria-label="Fechar conversa com Chef Jacquin"
           >
             <X className="w-5 h-5" />
           </button>
         </header>
 
-        {/* Sugestões rápidas do dia a dia */}
-        <div className="px-4 py-3 bg-emerald-950/5 border-b border-stone-200/80 shrink-0">
-          <div className="flex items-center justify-between gap-2 mb-2">
-            <span className="text-[11px] font-bold text-stone-600 flex items-center gap-1">
+        {/* Sugestões rápidas do Chef Jacquin */}
+        <div className="px-4 py-2.5 bg-emerald-950/5 border-b border-stone-200/80 shrink-0">
+          <div className="flex items-center justify-between gap-2 mb-1.5">
+            <span className="text-[11px] font-bold text-stone-700 flex items-center gap-1">
               <Sparkles className="w-3.5 h-3.5 text-[#135136]" />
-              Ideias rápidas para pedir agora:
+              Pergunte ao Chef Jacquin agora:
             </span>
             {activeNeighborhood && activeNeighborhood !== 'Todos' && (
               <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#135136] text-[#FFB703]">
-                📍 Perto de {activeNeighborhood}
+                📍 Filtro: {activeNeighborhood}
               </span>
             )}
           </div>
@@ -283,7 +309,7 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
                 type="button"
                 disabled={isLoading}
                 onClick={() => void sendQuery(chip)}
-                className="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full bg-white hover:bg-[#FFB703]/25 text-stone-800 border border-stone-300 transition-colors disabled:opacity-50"
+                className="shrink-0 text-xs font-bold px-3 py-1.5 rounded-full bg-white hover:bg-[#FFB703]/25 text-stone-800 border border-stone-300 transition-colors disabled:opacity-50"
               >
                 {chip}
               </button>
@@ -303,19 +329,42 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
                 turn.role === 'user' ? 'items-end' : 'items-start'
               }`}
             >
+              {turn.role === 'assistant' && (
+                <div className="flex items-center gap-2 mb-1.5 px-1">
+                  <img
+                    src="/jacquin-praiano.png"
+                    alt="Chef Jacquin"
+                    className="w-6 h-6 rounded-full bg-[#0F382C] border border-[#FFB703] object-contain p-0.5"
+                  />
+                  <span className="text-[11px] font-heading font-black text-[#0F382C]">
+                    Chef Érick Jacquin Praiano
+                  </span>
+                  {turn.chefMood && (
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-950 border border-amber-300">
+                      {turn.chefMood}
+                    </span>
+                  )}
+                </div>
+              )}
+
               <div
-                className={`max-w-[92%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-xs ${
+                data-testid={
+                  turn.role === 'assistant'
+                    ? 'jacquin-assistant-bubble'
+                    : 'jacquin-user-bubble'
+                }
+                className={`max-w-[94%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-xs ${
                   turn.role === 'user'
                     ? 'bg-[#135136] text-white rounded-br-sm font-medium'
-                    : 'bg-white text-stone-800 border border-stone-200/90 rounded-bl-sm'
+                    : 'bg-white text-stone-800 border-2 border-[#FFB703]/45 rounded-tl-sm'
                 }`}
               >
                 {turn.role === 'assistant' ? (
                   turn.content ? (
                     renderCleanChatMessage(turn.content)
                   ) : turn.isStreaming ? (
-                    <span className="text-stone-500">
-                      Pensando na melhor sugestão para você...
+                    <span className="text-stone-600 font-medium">
+                      <em>&ldquo;Un moment, mon ami... Estou olhando as panelas e conferindo o tompero!&rdquo;</em>
                     </span>
                   ) : null
                 ) : (
@@ -328,7 +377,7 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
                 )}
               </div>
 
-              {/* Cartões clicáveis dos pratos encontrados */}
+              {/* Cartões ricos e clicáveis dos pratos selecionados pelo Chef Jacquin */}
               {turn.role === 'assistant' &&
                 turn.recommendations &&
                 turn.recommendations.length > 0 && (
@@ -338,75 +387,66 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
                         <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
                         {turn.recommendations.length}{' '}
                         {turn.recommendations.length === 1
-                          ? 'prato separado para você'
-                          : 'pratos separados para você'}
+                          ? 'prato aprovado pelo Chef Jacquin'
+                          : 'pratos aprovados pelo Chef Jacquin'}
                       </span>
-                      <span className="text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded-full">
-                        Cardápio verificado hoje
+                      <span className="text-stone-900 bg-[#FFB703]/35 px-2 py-0.5 rounded-full font-extrabold">
+                        Selo Tompero Real
                       </span>
                     </div>
 
                     {turn.recommendations.slice(0, 5).map((rec) => {
-                      const scoreDisplay = (rec.rating_score ?? rec.rating_average ?? 4.8).toFixed(1);
-                      const matchBadge = rec.friendly_match_label || 'Combina com você';
+                      const scoreDisplay = (
+                        rec.rating_score ??
+                        rec.rating_average ??
+                        4.8
+                      ).toFixed(1);
+                      const matchBadge =
+                        rec.friendly_match_label || 'Aprovado pelo Chef';
                       return (
                         <div
                           key={rec.dish_id}
-                          className="bg-white rounded-2xl p-3.5 border border-stone-200/90 shadow-xs hover:border-[#135136]/50 transition-all"
+                          data-testid="jacquin-recommendation-card"
+                          className="bg-white rounded-2xl p-3.5 border border-stone-200/90 shadow-xs hover:border-[#135136]/60 transition-all"
                         >
-                          <div className="flex items-start justify-between gap-2">
-                            <div>
-                              <div className="flex items-center gap-1.5 flex-wrap mb-1">
-                                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#FFB703]/25 text-stone-900">
-                                  ✨ {matchBadge}
-                                </span>
-                              </div>
-                              <div className="font-heading font-extrabold text-stone-900 text-sm leading-snug">
-                                {rec.dish_name}
+                          <div className="flex items-start gap-3">
+                            {rec.image_url && (
+                              <img
+                                src={rec.image_url}
+                                alt={rec.dish_name}
+                                className="w-16 h-16 rounded-xl object-cover shrink-0 border border-stone-200 bg-stone-100"
+                              />
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="min-w-0">
+                                  <span className="inline-block text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#FFB703]/30 text-stone-900 mb-1">
+                                    👨‍🍳 {matchBadge}
+                                  </span>
+                                  <div className="font-heading font-extrabold text-stone-900 text-sm leading-snug">
+                                    {rec.dish_name}
+                                  </div>
+                                </div>
+                                <div className="text-right shrink-0">
+                                  <span className="font-heading font-black text-base text-[#135136] block">
+                                    {formatPriceBRL(rec.price)}
+                                  </span>
+                                  {rec.last_price_delta_pct < 0 && (
+                                    <span className="inline-flex items-center gap-0.5 text-[10px] font-extrabold text-emerald-800 bg-emerald-100 px-1.5 py-0.5 rounded-full">
+                                      <TrendingDown className="w-3 h-3" />
+                                      Baixou
+                                    </span>
+                                  )}
+                                </div>
                               </div>
                               <p className="text-xs text-stone-600 line-clamp-2 mt-0.5">
                                 {rec.description}
                               </p>
                             </div>
-                            <div className="text-right shrink-0">
-                              <span className="font-heading font-black text-base text-[#135136] block">
-                                {formatPriceBRL(rec.price)}
-                              </span>
-                              {rec.last_price_delta_pct < 0 && (
-                                <span className="inline-flex items-center gap-0.5 text-[10px] font-extrabold text-emerald-800 bg-emerald-100 px-1.5 py-0.5 rounded-full">
-                                  <TrendingDown className="w-3 h-3" />
-                                  Baixou de preço
-                                </span>
-                              )}
-                            </div>
                           </div>
 
-                          {/* Selos de dieta para comer tranquilo */}
-                          <div className="flex flex-wrap gap-1.5 mt-2">
-                            {rec.is_vegan && (
-                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300">
-                                🌱 Vegano
-                              </span>
-                            )}
-                            {rec.is_vegetarian && !rec.is_vegan && (
-                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-lime-100 text-lime-900 border border-lime-300">
-                                🥗 Vegetariano
-                              </span>
-                            )}
-                            {rec.is_gluten_free && (
-                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-950 border border-amber-300">
-                                🌾 Sem Glúten
-                              </span>
-                            )}
-                            {rec.is_lactose_free && (
-                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-100 text-sky-900 border border-sky-300">
-                                🥛 Sem Lactose
-                              </span>
-                            )}
-                          </div>
-
-                          <div className="mt-2.5 pt-2 border-t border-stone-100 flex items-center justify-between gap-2 text-xs">
-                            <div className="flex items-center gap-2 text-stone-700 truncate">
+                          <div className="mt-2.5 pt-2 border-t border-stone-100 flex items-center justify-between gap-2 flex-wrap text-xs">
+                            <div className="flex items-center gap-2 text-stone-700 min-w-0">
                               <span className="font-bold text-stone-900 truncate">
                                 {rec.restaurant_name}
                               </span>
@@ -414,22 +454,29 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
                                 <MapPin className="w-3 h-3 text-[#135136]" />
                                 {formatFriendlyDistance(rec)}
                               </span>
-                              <span
-                                className="inline-flex items-center gap-0.5 font-bold text-amber-700 shrink-0"
-                                title="Nota real calculada com avaliações verificadas"
-                              >
+                              <span className="inline-flex items-center gap-0.5 font-bold text-amber-700 shrink-0">
                                 ⭐ {scoreDisplay}
                               </span>
                             </div>
 
-                            <Link
-                              href={`/restaurants/${rec.restaurant_slug}`}
-                              onClick={onClose}
-                              className="shrink-0 inline-flex items-center gap-1 text-xs font-extrabold text-[#135136] hover:text-emerald-900 underline-offset-2 hover:underline"
-                            >
-                              <span>Ver cardápio</span>
-                              <ArrowUpRight className="w-3.5 h-3.5" />
-                            </Link>
+                            <div className="flex items-center gap-2 shrink-0">
+                              <Link
+                                href={`/prato/${rec.dish_id}`}
+                                onClick={onClose}
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-[#135136] hover:bg-[#0F382C] text-white text-[11px] font-bold transition-colors"
+                              >
+                                <Utensils className="w-3 h-3 text-[#FFB703]" />
+                                <span>Ver Prato</span>
+                              </Link>
+                              <Link
+                                href={`/restaurants/${rec.restaurant_slug}`}
+                                onClick={onClose}
+                                className="inline-flex items-center gap-0.5 text-xs font-extrabold text-[#135136] hover:underline"
+                              >
+                                <span>Cardápio</span>
+                                <ArrowUpRight className="w-3.5 h-3.5" />
+                              </Link>
+                            </div>
                           </div>
                         </div>
                       );
@@ -440,7 +487,7 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
           ))}
         </div>
 
-        {/* Campo de conversa */}
+        {/* Campo de conversa com o Chef Jacquin */}
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -452,17 +499,19 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Ex: camarão ou lanche até R$ 40..."
+            data-testid="jacquin-chat-input"
+            placeholder="Pergunte ao Jacquin: ex. marmita perto do shopping serramar..."
             disabled={isLoading}
             className="flex-1 min-w-0 px-3.5 sm:px-4 py-2.5 rounded-2xl bg-stone-100 border border-stone-300 text-sm text-stone-900 placeholder:text-stone-500 focus:outline-none focus:ring-2 focus:ring-[#135136] focus:bg-white disabled:opacity-60"
           />
           <button
             type="submit"
             disabled={isLoading || !inputValue.trim()}
-            className="shrink-0 px-3.5 sm:px-4 py-2.5 rounded-2xl bg-[#135136] hover:bg-[#1E6B47] active:scale-95 text-white font-bold text-xs sm:text-sm flex items-center gap-1.5 shadow-sm transition-all disabled:opacity-50 whitespace-nowrap"
+            data-testid="jacquin-chat-submit"
+            className="shrink-0 px-3.5 sm:px-4 py-2.5 rounded-2xl bg-[#135136] hover:bg-[#0F382C] active:scale-95 text-white font-bold text-xs sm:text-sm flex items-center gap-1.5 shadow-sm transition-all disabled:opacity-50 whitespace-nowrap"
           >
             <Send className="w-4 h-4 text-[#FFB703]" />
-            <span className="hidden sm:inline">Pedir dica</span>
+            <span className="hidden sm:inline">Perguntar ao Chef</span>
             <span className="sm:hidden">Enviar</span>
           </button>
         </form>

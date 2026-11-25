@@ -193,11 +193,16 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAcademicModal, onOpenAICha
             <button
               type="button"
               onClick={handleChatClick}
+              data-testid="navbar-open-jacquin-chat"
               className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-full bg-[#FFB703] hover:bg-amber-400 active:scale-95 text-stone-950 text-[11px] sm:text-xs font-extrabold shadow-md transition-all whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
             >
-              <Sparkles className="w-3.5 h-3.5 text-stone-950 shrink-0" />
-              <span className="hidden sm:inline">Chef CaráFood</span>
-              <span className="sm:hidden">Chef</span>
+              <img
+                src="/jacquin-praiano.png"
+                alt="Chef Jacquin"
+                className="w-4 h-4 rounded-full object-contain shrink-0"
+              />
+              <span className="hidden sm:inline">Chef Jacquin</span>
+              <span className="sm:hidden">Jacquin</span>
             </button>
 
             <button

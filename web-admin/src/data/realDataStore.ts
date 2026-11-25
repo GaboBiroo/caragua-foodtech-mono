@@ -1,4 +1,5 @@
 import dump from './caraguaRealDump.json';
+import { generateJacquinChatResponse } from '../lib/jacquinAiEngine';
 
 export interface DishPreview {
   id: string;
@@ -554,79 +555,17 @@ export const realDataStore = {
     return results;
   },
 
-  generateAIChatReply(message: string): { reply: string; dishes: any[]; recommendations: any[] } {
-    const q = normalizeStr(message);
-    const allRests = (dump.restaurants || []) as unknown as RestaurantCardData[];
-    
-    // Identificar pratos e estabelecimentos que batem com a pergunta
-    let matchedDishes: Array<{ dish: DishPreview; restaurant: RestaurantCardData }> = [];
-
-    for (const r of allRests) {
-      for (const d of r.dishes_preview || []) {
-        const text = normalizeStr(`${d.name} ${d.description} ${d.category} ${r.name} ${r.neighborhood}`);
-        if (q.split(/\s+/).some((token) => token.length > 2 && text.includes(token))) {
-          matchedDishes.push({ dish: d, restaurant: r });
-        }
-      }
-    }
-
-    if (matchedDishes.length === 0) {
-      matchedDishes = allRests.slice(0, 3).map((r) => ({
-        dish: r.dishes_preview[0],
-        restaurant: r,
-      })).filter((x) => x.dish);
-    }
-
-    const topMatches = matchedDishes.slice(0, 4);
-    if (topMatches.length === 0) {
-      return {
-        reply: 'Ainda estamos sincronizando mais cardápios reais para essa busca em Caraguatatuba. Tente buscar por pizza, hambúrguer, sushi, açaí ou marmita!',
-        dishes: [],
-        recommendations: [],
-      };
-    }
-
-    const recommendations = topMatches.map((m) => ({
-      id: m.dish.id,
-      dish_id: m.dish.id,
-      name: m.dish.name,
-      dish_name: m.dish.name,
-      description: m.dish.description || `Prato autêntico do cardápio de ${m.restaurant.name} em ${m.restaurant.neighborhood}.`,
-      price: m.dish.price,
-      image_url: m.dish.image_url,
-      restaurant_id: m.restaurant.id,
-      restaurant_name: m.restaurant.name,
-      restaurant_slug: m.restaurant.slug,
-      restaurant_address: m.restaurant.address,
-      neighborhood: m.restaurant.neighborhood,
-      category: m.dish.category,
-      rating_score: m.restaurant.bayesian_rating ?? m.restaurant.rating_score ?? m.restaurant.rating_average,
-      rating_average: m.restaurant.rating_average,
-      distance_meters: m.restaurant.distance_meters,
-      distance_km: m.restaurant.distance_km,
-      distance_label: `A ${m.restaurant.distance_km < 1 ? Math.max(50, Math.round(m.restaurant.distance_meters / 10) * 10) + 'm' : m.restaurant.distance_km.toFixed(1) + ' km'} de você • ${m.restaurant.neighborhood}`,
-      friendly_match_label: 'Cardápio real verificado',
-      last_price_delta_pct: m.dish.last_price_delta_pct ?? 0,
-      dietary_tags: [],
-      is_real_osm: m.restaurant.is_real_osm ?? true,
-      is_vegan: m.dish.is_vegan,
-      is_vegetarian: m.dish.is_vegetarian,
-      is_gluten_free: m.dish.is_gluten_free,
-      is_lactose_free: m.dish.is_lactose_free,
-    }));
-
-    const first = topMatches[0];
-    const ratingBadge = (val: number) => (val > 0 ? ` • ⭐ **${val.toFixed(1)}**` : '');
-    const reply = `Olha só, separei ${topMatches.length} opções reais dos cardápios de Caraguá para você! Minha primeira dica é **${first.dish.name}** lá no **${first.restaurant.name}** (${first.restaurant.neighborhood}), por **R$ ${first.dish.price.toFixed(2).replace('.', ',')}**!\n\n` +
-      topMatches
-        .map(
-          (m, idx) =>
-            `${idx + 1}. **${m.dish.name}** — **R$ ${m.dish.price.toFixed(2).replace('.', ',')}**\n📍 *${m.restaurant.name}* (${m.restaurant.neighborhood})${ratingBadge(m.restaurant.rating_average)}`
-        )
-        .join('\n\n') +
-      `\n\nTodos esses pratos e preços foram extraídos de cardápios reais ativos em Caraguatatuba!`;
-
-    return { reply, dishes: recommendations, recommendations };
+  generateAIChatReply(
+    message: string,
+    options?: { neighborhood?: string; userLat?: number; userLon?: number; limit?: number }
+  ): { reply: string; dishes: any[]; recommendations: any[] } {
+    return generateJacquinChatResponse({
+      query: message,
+      neighborhood: options?.neighborhood,
+      userLat: options?.userLat,
+      userLon: options?.userLon,
+      limit: options?.limit,
+    });
   },
 
   getModerationDashboardData() {

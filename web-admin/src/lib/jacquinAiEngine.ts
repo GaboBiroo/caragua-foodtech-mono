@@ -3,23 +3,59 @@ import brain40k from '../data/jacquin40kBrain.json';
 import { RestaurantCardData, DishPreview } from '../data/realDataStore';
 
 // ==============================================================================
-// Motor Semântico Hiperlocal & Persona Oficial — Chef Érick Jacquin Praiano
-// - Indexa todos os 2.670 pratos e 61 estabelecimentos reais de Caraguatatuba;
-// - Mapeia pontos de referência reais da cidade (Shopping Serramar, Faculdade
-//   Módulo, Praça Cândido Mota, Camaroeiro, Orla Martim de Sá, Cocanha, etc.);
-// - Entende intenção gastronômica (marmita/almoço, lanche/burger, pizza, sushi,
-//   peixe/camarão, açaí/doce, fit/vegano, barato/orçamento, promoção);
-// - Responde com a personalidade autêntica do Chef Érick Jacquin Praiano
-//   ("tompero", "vergonha da profission", "freezer ligado", "mon ami", "magnifique").
+// MOTOR SEMÂNTICO, SENSORIAL & ONTOLÓGICO — CHEF ÉRICK JACQUIN PRAIANO (v5.0)
+// ==============================================================================
+// - Indexa todos os 2.645+ pratos reais e 61 estabelecimentos de Caraguatatuba;
+// - 18 Intenções Gastronômicas Completas (Espetinho/Churrasco, Marmita/PF,
+//   Feijoada/Raiz, Parmegiana/Milanesa, Frutos do Mar/Caiçara, Sushi/Oriental,
+//   Pizza/Calzone, Massas/Lasanha, Pastel/Salgados/Esfiha, Hambúrguer/Smash,
+//   Hot Dog/Beirute, Frango Crocante, Porções/Boteco, Caldos/Sopas, Vegano/Fit,
+//   Açaí/Sorvetes/Milkshake, Doces/Confeitaria/Pudim, Bebidas/Cerveja);
+// - 9 Perfis Sensoriais & Atipicagem (Picante/Apimentado, Agridoce/Caramelizado,
+//   Defumado/Brasa, Crocante/Sequinho, Cremoso/Queijudo, Cítrico/Ácido/Fresco,
+//   Quentinho/Chuva/Conforto, Exótico/Autoral, Gigante/Fome Monstro/Ressaca);
+// - Firewall Estrito Anti-Pudim (buscas salgadas JAMAIS retornam sobremesas,
+//   bebidas soltas, talheres ou balas de caixa; buscas doces JAMAIS retornam salgados);
+// - Prioridade Ontológica Absoluta: A comida/perfil sensorial pedido SEMPRE
+//   domina o ranking (+300 pts), usando o bairro/landmark como ordenador geográfico.
 // ==============================================================================
 
-function normalizeStr(val?: string | null): string {
+export function normalizeStr(val?: string | null): string {
   if (!val) return '';
   return val
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
     .trim();
+}
+
+/**
+ * Reduz diminutivos e plurais comuns da culinária brasileira para radicais canônicos.
+ */
+export function canonicalizeFoodText(raw: string): string {
+  const n = normalizeStr(raw);
+  return n
+    .replace(/\bespetinhos\b/g, 'espeto espetinho')
+    .replace(/\bespetinho\b/g, 'espeto espetinho')
+    .replace(/\bespetos\b/g, 'espeto espetinho')
+    .replace(/\bespetto\b/g, 'espeto espetinho')
+    .replace(/\bespetaria\b/g, 'espeto espetinho churrasco')
+    .replace(/\bchurrasquinho\b/g, 'churrasco espeto')
+    .replace(/\bpastelzinho\b/g, 'pastel pastelzinho')
+    .replace(/\bpasteis\b/g, 'pastel')
+    .replace(/\bcaldinhos\b/g, 'caldo caldinho')
+    .replace(/\bcaldinho\b/g, 'caldo caldinho')
+    .replace(/\bmarmitinha\b/g, 'marmita')
+    .replace(/\blanchinho\b/g, 'lanche')
+    .replace(/\bsalgadinhos\b/g, 'salgado')
+    .replace(/\bsalgadinho\b/g, 'salgado')
+    .replace(/\bdocinhos\b/g, 'doce')
+    .replace(/\bdocinho\b/g, 'doce')
+    .replace(/\bpeixinho\b/g, 'peixe')
+    .replace(/\bcamaraozinho\b/g, 'camarao')
+    .replace(/\bcervejinha\b/g, 'cerveja')
+    .replace(/\bapimentada\b/g, 'picante apimentado pimenta')
+    .replace(/\bapimentado\b/g, 'picante apimentado pimenta');
 }
 
 function calculateDistanceKm(lat1: number, lon1: number, lat2?: number, lon2?: number): number {
@@ -37,6 +73,256 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2?: number, lon2?: n
   return R * c;
 }
 
+// ==============================================================================
+// FIREWALLS DE INTEGRIDADE ALIMENTAR (ANTI-PUDIM / ANTI-BEBIDA / ANTI-BALA)
+// ==============================================================================
+
+const DRINK_CATEGORY_SET = new Set([
+  'bebida',
+  'bebidas',
+  'bebidas geladas!',
+  'bebidas 🥤',
+  '🥤 bebidas',
+  '🥤bebidas',
+  'promocao bebidas',
+  'refrigerante',
+  'refrigerantes',
+  'refrigerantes e sucos',
+  'refrigerantes🥤',
+  'softs',
+  'suco',
+  'suco natural de fruta delivery',
+  'sucos',
+  'sucos e chas',
+  'sucos naturais de frutas',
+  'kit 10 sucos detox',
+  'kit 5 sucos detox',
+  'kit detox',
+  'agua',
+  'agua mineral',
+  'cerveja',
+  'cerveja artesanal regional',
+  'cervejas',
+  'cervejas / ice',
+  'cervejas caixas !',
+  'cervejas latas!',
+  'cervejas longneck',
+  "long neck's",
+  'chopp de vinho',
+  'carta de vinhos',
+  'vinhos',
+  'drinks especiais',
+  "gin 's",
+  "ice's",
+  "vodka 's",
+  'aguardente',
+  'combos whisky',
+  'energeticos',
+]);
+
+const DESSERT_CATEGORY_SET = new Set([
+  'o melhor pudim da sua vida!',
+  'sobremesa',
+  'sobremesas',
+  'sobremesas :p',
+  '😍sobremesas pra adocar sua vida',
+  'espetos doces / sobremesas',
+  'doces',
+  'doces especiais',
+  'doces da rai!!!',
+  'docinhos festa',
+  'doses de docura',
+  'combos de docura!',
+  'fatias da felicidade🍰🍰🍰',
+  'bolos caseiros',
+  'brigadeiro',
+  'sanduiche de brownie',
+  'pizza brownie & cookies',
+  'founde de frutas',
+  'copo da felicidade 400ml',
+  'barca de churros',
+  'churros festa 20g',
+  'churros gourmet',
+  'churros tradicional 100g',
+  'mini churros recheado',
+  'trufadinhos da verano',
+  'acaigurte',
+  'acai - do jeito voce ama !',
+  'acai',
+  'acai - 1 adicional gratis',
+  'acai do seu jeitinho c/adicionais gratis',
+  'acai e sorvetes jcr',
+  'acai mais pedido',
+  'acai no copo',
+  'acai do point do japa',
+  'monte seu acai',
+  'pote de 1 litro de acai',
+  'marmitinhas verano c/adicionais inclusos',
+  'verano em dobro',
+  'sorvetes',
+  'tortas de sorvete',
+  'potes napoli',
+  'napoleta',
+  'frozen',
+  '🥶 loucos por geladinhos',
+  'milk shake',
+  'milk shake - cada um melhor que o outro!',
+  'milk shake alcoolicos - voce tem provar!',
+  'pizza doce',
+  'pizzas doces',
+  'pizzas  doces individuais',
+  'pizzas doces 🍫',
+  'esfihas doces 💜',
+  'esfihas gourmet doces',
+  'pastel doces',
+  'pastel doce',
+  'hotroll doce',
+]);
+
+const NON_FOOD_OR_CASHIER_CANDY_KEYWORDS = [
+  'kit talher',
+  'colher descartavel',
+  'sacola',
+  'embalagem',
+  'chantilly adicional',
+  'molho adicional',
+  'molho picante',
+  'maionese adicional',
+  'trident',
+  'halls',
+  'chiclete',
+  'plutonita',
+  'drops garoto',
+  'pacoquita rolha',
+  'batom ao leite',
+  'batom creme',
+  'batom branco',
+  'trento 29g',
+  'mini talento',
+];
+
+export function isNonFoodOrCashierCandy(dishName: string, category: string, price: number): boolean {
+  const n = normalizeStr(dishName);
+  const c = normalizeStr(category);
+  if (NON_FOOD_OR_CASHIER_CANDY_KEYWORDS.some((kw) => n.includes(kw))) {
+    return true;
+  }
+  if (
+    c === 'adicionais' ||
+    c === '🍚 adicionais' ||
+    c === 'molho adicional' ||
+    c === 'molhos adicionais' ||
+    c.includes('dips - molho') ||
+    c === 'mistura extra individual' ||
+    c.includes('proteinas premium') ||
+    c.includes('turbine seu marmitex') ||
+    n.startsWith('mistura ')
+  ) {
+    return true;
+  }
+  // Acompanhamentos soltos de baixo valor (arroz branco R$ 6,50, farofa R$ 3,50, pão francês R$ 2,50)
+  if (c === 'acompanhamentos' && price <= 12.0 && !n.includes('palmito')) {
+    return true;
+  }
+  if (price <= 4.0 && (n === 'pacoquita' || n === 'trento' || n === 'prestigio' || n === 'doce de amendoim')) {
+    return true;
+  }
+  return false;
+}
+
+export function isPureDrinkItem(dishName: string, category: string): boolean {
+  const n = normalizeStr(dishName);
+  const c = normalizeStr(category);
+  if (
+    DRINK_CATEGORY_SET.has(c) ||
+    c.includes('bebida') ||
+    c.includes('refrigerante') ||
+    c.includes('cerveja') ||
+    c.includes('longneck') ||
+    c.includes('vinhos') ||
+    c.includes('energetico')
+  ) {
+    return true;
+  }
+  if (
+    /\b(coca[- ]?cola|guarana|fanta|sprite|schweppes|h2o|h2oh|h20|agua mineral|agua com gas|agua sem gas|agua s\/ gas|agua tonica|heineken|budweiser|skol|brahma|itaipava|eisenbahn|esenbahn|spaten|stella long|corona long|colorado lata|red bull|monster tradicional|monster mango|smirnoff ice|kapo uva)\b/.test(
+      n
+    )
+  ) {
+    if (!n.includes('combo') && !n.includes('+') && !n.includes('costela na cerveja')) {
+      return true;
+    }
+  }
+  return false;
+}
+
+export function isSweetOrDessertItem(
+  dishName: string,
+  dishDesc: string,
+  category: string,
+  restName: string
+): boolean {
+  const n = normalizeStr(dishName);
+  const d = normalizeStr(dishDesc);
+  const c = normalizeStr(category);
+  const r = normalizeStr(restName);
+
+  // Combos salgados que dão 1 pudim/refri de brinde (ex: "2 Chicken Bacon + 1 Pudim", "PRATO PREMIUM + PUDIM") são refeições salgadas
+  if (
+    (n.includes('chicken') || n.includes('prato premium') || n.includes('marmita') || n.includes('burguer')) &&
+    n.includes('+')
+  ) {
+    return false;
+  }
+
+  if (
+    DESSERT_CATEGORY_SET.has(c) ||
+    c.includes('sobremesa') ||
+    c.includes('doce') ||
+    c.includes('acai') ||
+    c.includes('sorvete') ||
+    c.includes('churros') ||
+    c.includes('milk shake') ||
+    c.includes('geladinho') ||
+    c.includes('fatias da felicidade')
+  ) {
+    return true;
+  }
+
+  if (
+    /\b(pudim|brigadeiro|brownie|banoffee|churros|milk\s?shake|sorvete|gelato|napoleta|acai|acaigurte|geladinho|torta holandesa|copo da felicidade|petit gateau|mousse|nutella|doce de leite|romeu e julieta|fondue|founde|chocobanana|chocomix|sonho de valsa|ouro branco|sensacao|prestigio|bolo chocoau|bolo mau|amossi|trufado|trufadinho|pao de mel|alfajor)\b/.test(
+      n
+    )
+  ) {
+    return true;
+  }
+
+  // Confeitarias e Açaíterias puras (exceto quando vendem salgados/pastéis/pizzas salgadas)
+  if (
+    (r.includes('sorvete') || r.includes('acai') || r.includes('verano') || r.includes('milena palma')) &&
+    !n.includes('panqueca') &&
+    !n.includes('lasanha') &&
+    !n.includes('empada') &&
+    !n.includes('quiche') &&
+    !n.includes('salgad') &&
+    !n.includes('pastel') &&
+    !n.includes('torta de frango') &&
+    !d.includes('frango') &&
+    !d.includes('carne') &&
+    !d.includes('camarao') &&
+    !d.includes('alho poro') &&
+    !d.includes('palmito')
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
+// ==============================================================================
+// GEOGRAFIA & PONTOS DE REFERÊNCIA REAIS DE CARAGUATATUBA (53 BAIRROS)
+// ==============================================================================
+
 interface LandmarkRule {
   keywords: string[];
   label: string;
@@ -47,101 +333,251 @@ interface LandmarkRule {
 
 const CARAGUA_LANDMARKS: LandmarkRule[] = [
   {
-    keywords: ['serramar', 'shopping serramar', 'shopping', 'pontal', 'santa marina', 'morro do algodao', 'algodao'],
-    label: 'pertinho do Shopping Serramar (Eixo Sul / Morro do Algodão / Gaivotas / Tinga)',
+    keywords: ['shopping serramar', 'serramar', 'shopping'],
+    label: 'pertinho do Shopping Serramar (Pontal / Morro do Algodão / Praia das Palmeiras)',
     lat: -23.6606,
     lon: -45.4375,
     priorityNeighborhoods: [
+      'pontal de santa marina',
+      'praia das palmeiras',
       'morro do algodao',
       'jardim gaivotas',
-      'praia das palmeiras',
+      'porto novo',
       'poiares',
       'tinga',
       'indaia',
-      'travessao',
-      'porto novo',
-      'barranco alto',
-      'pereque-mirim',
     ],
   },
   {
-    keywords: ['faculdade', 'modulo', 'cruzeiro do sul', 'universidade', 'campus'],
-    label: 'pertinho do Centro Universitário Módulo',
-    lat: -23.6215,
-    lon: -45.411,
-    priorityNeighborhoods: ['centro', 'martim de sa', 'indaia', 'sumare', 'ipiranga'],
-  },
-  {
-    keywords: ['martim de sa', 'martim', 'prainha', 'jacare', 'pedra da freira'],
-    label: 'na região da Praia Martim de Sá e Prainha',
-    lat: -23.6268,
-    lon: -45.3934,
-    priorityNeighborhoods: ['martim de sa', 'prainha', 'centro'],
-  },
-  {
-    keywords: ['massaguacu', 'cocanha', 'tabatinga', 'mococa', 'costa norte', 'zona norte'],
-    label: 'na Costa Norte (Massaguaçu / Cocanha / Tabatinga)',
-    lat: -23.5812,
-    lon: -45.3245,
-    priorityNeighborhoods: ['massaguacu', 'cocanha', 'tabatinga'],
-  },
-  {
-    keywords: ['porto novo', 'flexeiras', 'travessao', 'pereque', 'barranco alto', 'zona sul', 'orla sul'],
-    label: 'na Região Sul (Porto Novo / Travessão / Perequê-Mirim)',
-    lat: -23.6835,
-    lon: -45.442,
+    keywords: ['pontal de santa marina', 'pontal', 'santa marina'],
+    label: 'na região do Pontal de Santa Marina (Costa Sul / Praia das Palmeiras / Porto Novo)',
+    lat: -23.6585,
+    lon: -45.4342,
     priorityNeighborhoods: [
-      'porto novo',
-      'flexeiras',
-      'travessao',
-      'pereque-mirim',
-      'barranco alto',
-      'morro do algodao',
+      'pontal de santa marina',
       'praia das palmeiras',
+      'porto novo',
+      'morro do algodao',
+      'poiares',
+      'indaia',
+      'tinga',
+      'centro',
     ],
   },
   {
-    keywords: ['indaia', 'gaivotas', 'poiares', 'tinga', 'primavera'],
-    label: 'na região do Indaiá, Poiares, Tinga e Gaivotas',
-    lat: -23.638,
-    lon: -45.424,
-    priorityNeighborhoods: ['indaia', 'poiares', 'tinga', 'jardim gaivotas', 'jardim primavera'],
+    keywords: ['modulo', 'faculdade modulo', 'universidade', 'cruzeiro do sul', 'faculdade'],
+    label: 'próximo à Faculdade Módulo / Cruzeiro do Sul (Centro / Martim de Sá)',
+    lat: -23.6215,
+    lon: -45.4085,
+    priorityNeighborhoods: ['centro', 'martim de sa', 'sumare', 'indaia', 'ipiranga'],
   },
   {
-    keywords: ['centro', 'praca', 'candido mota', 'calcadao', 'camaroeiro', 'santo antonio'],
-    label: 'no coração do Centro Histórico de Caraguá',
+    keywords: ['candido mota', 'praca', 'calçadao', 'calcadao', 'igreja matriz', 'centro'],
+    label: 'no coração do Centro (Praça Cândido Mota)',
     lat: -23.6226,
     lon: -45.4124,
-    priorityNeighborhoods: ['centro', 'sumare', 'ipiranga', 'olaria'],
+    priorityNeighborhoods: ['centro', 'sumare', 'indaia', 'ipiranga', 'martim de sa'],
+  },
+  {
+    keywords: ['camaroeiro', 'mirante', 'entreposto', 'peixaria', 'prainha', 'pedra do jacare'],
+    label: 'na região do Camaroeiro e Prainha',
+    lat: -23.6195,
+    lon: -45.3982,
+    priorityNeighborhoods: ['prainha', 'martim de sa', 'centro', 'sumare'],
+  },
+  {
+    keywords: ['martim de sa', 'martim', 'orla martim'],
+    label: 'na Orla de Martim de Sá',
+    lat: -23.6168,
+    lon: -45.3886,
+    priorityNeighborhoods: ['martim de sa', 'prainha', 'centro', 'sumare'],
+  },
+  {
+    keywords: ['cocanha', 'massaguacu', 'capricornio', 'tabatinga', 'mocooca', 'costa norte', 'zona norte'],
+    label: 'na Costa Norte (Massaguaçu / Cocanha / Tabatinga)',
+    lat: -23.5762,
+    lon: -45.3248,
+    priorityNeighborhoods: ['massaguacu', 'martim de sa', 'prainha', 'centro'],
+  },
+  {
+    keywords: ['porto novo', 'flexeiras', 'praia das palmeiras', 'palmeiras', 'aruan', 'britania'],
+    label: 'na Orla Sul (Porto Novo / Praia das Palmeiras / Flexeiras)',
+    lat: -23.6712,
+    lon: -45.4421,
+    priorityNeighborhoods: [
+      'porto novo',
+      'praia das palmeiras',
+      'flexeiras',
+      'morro do algodao',
+      'jardim gaivotas',
+      'poiares',
+      'indaia',
+    ],
+  },
+  {
+    keywords: ['morro do algodao', 'algodao', 'golfinhos', 'gaivotas', 'barranco alto'],
+    label: 'no Morro do Algodão / Barranco Alto / Gaivotas',
+    lat: -23.6785,
+    lon: -45.451,
+    priorityNeighborhoods: [
+      'morro do algodao',
+      'barranco alto',
+      'jardim gaivotas',
+      'porto novo',
+      'praia das palmeiras',
+      'pereque-mirim',
+      'travessao',
+    ],
+  },
+  {
+    keywords: ['travessao', 'pereque', 'pereque-mirim', 'tarumas', 'pegorelli', 'extremo sul'],
+    label: 'no Eixo Sul (Travessão / Perequê-Mirim / Tarumãs)',
+    lat: -23.6942,
+    lon: -45.4635,
+    priorityNeighborhoods: [
+      'travessao',
+      'pereque-mirim',
+      'tarumas',
+      'barranco alto',
+      'morro do algodao',
+      'porto novo',
+    ],
+  },
+  {
+    keywords: ['rodoviaria', 'terminal', 'hospital', 'stella maris', 'indaia', 'poiares', 'tinga', 'jaqueira'],
+    label: 'no eixo Indaiá / Poiares / Tinga',
+    lat: -23.6352,
+    lon: -45.4218,
+    priorityNeighborhoods: ['indaia', 'poiares', 'tinga', 'centro', 'sumare', 'ipiranga', 'jardim primavera'],
   },
 ];
 
-type FoodIntentCategory =
-  | 'marmita'
-  | 'frutos_do_mar'
-  | 'lanches'
-  | 'pizza'
-  | 'sushi'
-  | 'doces_acai'
-  | 'vegano_fit'
-  | 'combo_familia'
-  | 'porcoes'
-  | 'geral';
+// Mapa completo dos 53 bairros oficiais de Caraguatatuba para os polos vizinhos com restaurantes ativos
+const NEIGHBORHOOD_PROXIMITY_GRAPH: Record<string, string[]> = {
+  tabatinga: ['massaguacu', 'martim de sa', 'centro'],
+  mocooca: ['massaguacu', 'martim de sa', 'centro'],
+  cocanha: ['massaguacu', 'martim de sa', 'centro'],
+  massaguacu: ['massaguacu', 'martim de sa', 'prainha', 'centro'],
+  capricornio: ['massaguacu', 'martim de sa', 'centro'],
+  'portal fazendinha': ['massaguacu', 'martim de sa', 'centro'],
+  jetuba: ['massaguacu', 'martim de sa', 'centro'],
+  'martim de sa': ['martim de sa', 'prainha', 'centro', 'sumare'],
+  prainha: ['prainha', 'martim de sa', 'centro', 'sumare'],
+  camaroeiro: ['prainha', 'martim de sa', 'centro', 'sumare'],
+  centro: ['centro', 'sumare', 'indaia', 'ipiranga', 'martim de sa', 'prainha'],
+  sumare: ['sumare', 'centro', 'indaia', 'ipiranga', 'martim de sa'],
+  ipiranga: ['ipiranga', 'centro', 'sumare', 'indaia', 'martim de sa'],
+  'cidade jardim': ['martim de sa', 'centro', 'sumare'],
+  'vila ponte seca': ['centro', 'martim de sa', 'tinga', 'poiares'],
+  indaia: ['indaia', 'centro', 'poiares', 'tinga', 'sumare', 'ipiranga', 'jardim primavera'],
+  'jardim aruan': ['indaia', 'praia das palmeiras', 'poiares', 'porto novo', 'centro'],
+  poiares: ['poiares', 'indaia', 'tinga', 'jardim primavera', 'olaria', 'centro'],
+  'jardim jaqueira': ['poiares', 'tinga', 'indaia', 'centro'],
+  tinga: ['tinga', 'poiares', 'olaria', 'jardim primavera', 'indaia', 'centro'],
+  'rio do ouro': ['tinga', 'poiares', 'centro', 'olaria'],
+  jaraguazinho: ['tinga', 'poiares', 'olaria', 'centro'],
+  benfica: ['centro', 'indaia', 'tinga', 'poiares'],
+  'canta galo': ['tinga', 'poiares', 'centro'],
+  'jardim primavera': ['jardim primavera', 'poiares', 'indaia', 'tinga', 'centro'],
+  'jardim california': ['poiares', 'indaia', 'tinga', 'centro'],
+  'jardim mariella': ['poiares', 'indaia', 'praia das palmeiras'],
+  'jardim casa branca': ['olaria', 'tinga', 'poiares', 'centro'],
+  olaria: ['olaria', 'tinga', 'poiares', 'centro'],
+  caputera: ['centro', 'sumare', 'tinga'],
+  "estrela d'alva": ['centro', 'indaia', 'tinga'],
+  'praia das palmeiras': ['praia das palmeiras', 'porto novo', 'flexeiras', 'jardim gaivotas', 'morro do algodao', 'poiares', 'indaia'],
+  'pontal de santa marina': ['praia das palmeiras', 'porto novo', 'morro do algodao', 'jardim gaivotas', 'poiares', 'tinga', 'indaia', 'centro'],
+  'porto novo': ['porto novo', 'praia das palmeiras', 'flexeiras', 'morro do algodao', 'jardim gaivotas'],
+  'jardim britania': ['porto novo', 'praia das palmeiras', 'flexeiras', 'morro do algodao'],
+  flexeiras: ['flexeiras', 'porto novo', 'praia das palmeiras', 'morro do algodao'],
+  'morro do algodao': ['morro do algodao', 'jardim gaivotas', 'porto novo', 'praia das palmeiras', 'barranco alto'],
+  golfinhos: ['morro do algodao', 'jardim gaivotas', 'porto novo', 'barranco alto'],
+  'jardim gaivotas': ['jardim gaivotas', 'morro do algodao', 'porto novo', 'praia das palmeiras', 'poiares'],
+  'barranco alto': ['barranco alto', 'morro do algodao', 'travessao', 'pereque-mirim', 'tarumas', 'porto novo'],
+  'jardim dos sindicatos': ['morro do algodao', 'barranco alto', 'porto novo'],
+  'jardim tarumas': ['tarumas', 'travessao', 'pereque-mirim', 'barranco alto'],
+  tarumas: ['tarumas', 'travessao', 'pereque-mirim', 'barranco alto'],
+  pegorelli: ['pereque-mirim', 'travessao', 'tarumas', 'barranco alto'],
+  'pereque-mirim': ['pereque-mirim', 'travessao', 'tarumas', 'barranco alto', 'morro do algodao'],
+  travessao: ['travessao', 'pereque-mirim', 'tarumas', 'barranco alto', 'morro do algodao'],
+};
+
+// ==============================================================================
+// 18 INTENÇÕES GASTRONÔMICAS COMPLETAS
+// ==============================================================================
 
 interface FoodIntentRule {
-  intent: FoodIntentCategory;
+  intent: string;
   labelPt: string;
+  isSweetIntent?: boolean;
+  isDrinkIntent?: boolean;
   triggerWords: string[];
   positiveDishKeywords: string[];
+  positiveCategoryKeywords: string[];
   positiveRestaurantKeywords: string[];
   requiredFoodType?: string;
   negativeDishKeywords: string[];
+  chefMood: string;
+  buildJacquinIntro: (locContext: string, firstDish: string, firstRest: string, firstNeigh: string, firstPrice: string, secondText: string) => string;
 }
 
 const FOOD_INTENT_RULES: FoodIntentRule[] = [
   {
+    intent: 'espetinho_churrasco',
+    labelPt: 'Espetinhos na Brasa, Churrasco & Carnes Grelhadas',
+    triggerWords: [
+      'espeto',
+      'espetinho',
+      'espetinhos',
+      'espetto',
+      'espetaria',
+      'churrasco',
+      'churrasquinho',
+      'churrascaria',
+      'picanha',
+      'kafta',
+      'medalhao',
+      'pao de alho',
+      'queijo coalho',
+      'coracao de frango',
+      'tulipa',
+      'alcatra',
+      'salsichao',
+      'carne na brasa',
+      'na brasa',
+    ],
+    positiveDishKeywords: [
+      'espetinho',
+      'espeto',
+      'picanha',
+      'kafta',
+      'medalhao',
+      'pao de alho',
+      'queijo coalho',
+      'tulipa',
+      'alcatra',
+      'costela bovina',
+      'costelinha',
+      'contra file',
+      'churrasco',
+      'salsichao',
+      'linguica',
+      'coracao',
+      'sobrecoxa',
+      'panceta',
+    ],
+    positiveCategoryKeywords: ['espetos', 'espetos tradicionais', 'medalhao', 'grelhados'],
+    positiveRestaurantKeywords: ['sr. espetto', 'churras mais', 'inbrasa', 'rock bar'],
+    requiredFoodType: 'churrasco',
+    negativeDishKeywords: ['pudim', 'acai', 'sorvete', 'bolo', 'brigadeiro', 'churros', 'milkshake', 'pastel doce', 'pizza doce'],
+    chefMood: 'Mestre da Brasa & Churrasqueira Quente',
+    buildJacquinIntro: (loc, fDish, fRest, fNeigh, fPrice, sec) =>
+      `**Sacré bleu, sentiu o perfume de brasa no ar, mon ami?** Espetinho e churrasco de respeito precisam de carvão estalando, carne suculenta no ponto e aquele *tompero* que dá água na boca (nada de sobremesa quando a fome é de brasa!)!\n\n` +
+      `Para o seu pedido ${loc}, minha escolha nº 1 na grelha é **${fDish}** lá no **${fRest}** (${fNeigh}), saindo por **R$ ${fPrice}**${sec} Tudo assado no capricho! Veja os cartões abaixo:`,
+  },
+  {
     intent: 'marmita',
-    labelPt: 'Marmita & Almoço Caseiro com Tompero',
+    labelPt: 'Marmita, PF, Almoço Caseiro & Executivo',
     triggerWords: [
       'marmita',
       'marmitex',
@@ -152,68 +588,87 @@ const FOOD_INTENT_RULES: FoodIntentRule[] = [
       'pf',
       'prato feito',
       'comida caseira',
-      'parmegiana',
+      'arroz e feijao',
+      'bife',
       'strogonoff',
       'estrogonofe',
-      'feijoada',
-      'lasanha',
-      'arroz e feijao',
-      'churrasco',
-      'milanesa',
+      'picadinho',
+      'almondega',
+      'escondidinho',
+      'virado paulista',
+      'copa lombo',
+      'comida de verdade',
     ],
     positiveDishKeywords: [
       'marmita',
       'marmitex',
-      'parmegiana',
+      'executivo',
+      'executiva',
+      'prato premium',
       'strogonoff',
-      'churrasco',
-      'milanesa',
-      'cubos de frango',
+      'estrogonofe',
+      'parmegiana',
+      'churrasco premium',
+      'almondegas',
+      'escondidinho',
+      'virado paulista',
+      'bife',
+      'file de frango',
+      'copa lombo',
       'tiras de carne',
       'iscas de carne',
-      'copa lombo',
-      'almondegas',
-      'lasanha',
-      'feijoada',
-      'executivo',
-      'prato premium',
-      'tilapia',
-      'kit 10 prime',
-      'caldo',
+      'completa balanceada',
+      'pernil acebolado',
     ],
+    positiveCategoryKeywords: ['marmitex', 'almoco', 'pratos executivos', 'escondidinhos quentes', 'os mais pedidos no almoco'],
     positiveRestaurantKeywords: [
       'marmitaria',
-      'pirao',
+      'point do pirao',
       'le cheff',
       'sabor de casa',
       'sabor do litoral',
-      'jorginho',
+      'restaurante do jorginho',
       'delicias da lu',
       'magia do sabor',
-      'caicaras',
+      'restaurante caicaras',
       'prime fit',
     ],
     requiredFoodType: 'marmitas',
-    negativeDishKeywords: [
-      'coca',
-      'guarana',
-      'fanta',
-      'agua',
-      'cerveja',
-      'heineken',
-      'chopp',
-      'adicional',
-      'chantilly',
-      'molho',
-      'churros',
-      'brigadeiro',
-      'sorvete',
-      'acai',
-    ],
+    negativeDishKeywords: ['pudim', 'acai', 'sorvete', 'churros', 'brigadeiro', 'kit talher', 'paçoquita', 'trident', 'halls'],
+    chefMood: 'Fiscal de Panela & Almoço Caseiro',
+    buildJacquinIntro: (loc, fDish, fRest, fNeigh, fPrice, sec) =>
+      `**Mon Dieu, bateu aquela fome de almoço de verdade?** Marmita sem *tompero* é *vergonha da profission*, por isso eu selecionei pessoalmente as cozinhas caseiras mais caprichadas ${loc}!\n\n` +
+      `Olha essa joia: **${fDish}** lá no **${fRest}** (${fNeigh}), saindo por **R$ ${fPrice}**${sec} Comida farta, arroz soltinho, feijão temperado e preço honesto:`,
+  },
+  {
+    intent: 'feijoada_raiz',
+    labelPt: 'Feijoada Completa, Costela & Comida Raiz Brasileira',
+    triggerWords: ['feijoada', 'feijao gordo', 'torresmo', 'vaca atolada', 'costela na cerveja', 'comida raiz', 'virado'],
+    positiveDishKeywords: ['feijoada', 'vaca atolada', 'costela na cerveja', 'virado paulista', 'torresmo', 'mandioca com carne seca', 'costela'],
+    positiveCategoryKeywords: ['almoco', 'marmitex', 'caldos quentes'],
+    positiveRestaurantKeywords: ['restaurante do jorginho', 'le cheff', 'rock bar', 'point do pirao', 'sabor de casa'],
+    negativeDishKeywords: ['pudim', 'acai', 'sorvete', 'churros'],
+    chefMood: 'Apaixonado por Panela de Barro & Feijoada',
+    buildJacquinIntro: (loc, fDish, fRest, fNeigh, fPrice, sec) =>
+      `**Oh là là, feijoada e comida raiz brasileira são patrimônio mundial do sabor!** Tem que ter caldo encorpado, couve fresquinha e muito *tompero*!\n\n` +
+      `Garimpei ${loc} e encontrei **${fDish}** no **${fRest}** (${fNeigh}) por **R$ ${fPrice}**${sec} Prepare o apetite e confira abaixo:`,
+  },
+  {
+    intent: 'parmegiana_milanesa',
+    labelPt: 'Filé à Parmegiana, Milanesa & Gratinados',
+    triggerWords: ['parmegiana', 'parmegianna', 'milanesa', 'a milanesa', 'file a parmegiana', 'frango a parmegiana'],
+    positiveDishKeywords: ['parmegiana', 'milanesa', 'empanado', 'gratinad'],
+    positiveCategoryKeywords: ['parmegianas', 'almoco', 'marmitex executiva', 'pratos executivos'],
+    positiveRestaurantKeywords: ['sabor de casa', 'point do pirao', 'batatuba', 'rock bar', 'restaurante caicaras', 'restaurante do jorginho'],
+    negativeDishKeywords: ['pudim', 'acai', 'sorvete'],
+    chefMood: 'Crítico de Empanamento Crocante & Queijo Gratinado',
+    buildJacquinIntro: (loc, fDish, fRest, fNeigh, fPrice, sec) =>
+      `**C'est magnifique!** Um bom Parmegiana ou Milanesa exige crosta sequinha, molho de tomate artesanal e queijo gratinado borbulhando!\n\n` +
+      `Aqui ${loc}, meu destaque absoluto é **${fDish}** no **${fRest}** (${fNeigh}) por **R$ ${fPrice}**${sec} Uma obra de arte no prato:`,
   },
   {
     intent: 'frutos_do_mar',
-    labelPt: 'Peixes, Camarões & Porções Caiçaras da Praia',
+    labelPt: 'Camarão, Peixes, Lula, Moqueca & Culinária Caiçara',
     triggerWords: [
       'camarao',
       'peixe',
@@ -221,45 +676,59 @@ const FOOD_INTENT_RULES: FoodIntentRule[] = [
       'tilapia',
       'badejo',
       'tainha',
+      'pescada',
       'lula',
       'marisco',
       'mexilhao',
       'bacalhau',
+      'siri',
+      'casquinha',
       'quiosque',
-      'praia',
       'caicara',
       'moqueca',
-      'pirao',
+      'caldeirada',
+      'isca de peixe',
+      'salmao grelhado',
     ],
     positiveDishKeywords: [
       'camarao',
       'peixe',
       'tilapia',
-      'isca',
-      'bacalhau',
+      'pescada',
+      'badejo',
       'lula',
-      'porcao',
-      'frutos do mar',
+      'bacalhau',
       'marisco',
-      'bolinho',
-      'file',
+      'siri',
+      'moqueca',
+      'isca de peixe',
+      'isca de tilapia',
+      'bolinho de bacalhau',
+      'salmao',
+      'frutos do mar',
     ],
+    positiveCategoryKeywords: ['peixes/crustaceos', 'bolinho de bacalhau', 'porcoes'],
     positiveRestaurantKeywords: [
       'pe na areia',
-      'quiosque',
-      'caicaras',
+      'restaurante caicaras',
       'mare mar',
       'martim food',
-      'pirao',
+      'point do pirao',
       'sabor do litoral',
       'xcoxinha',
+      'restaurante do jorginho',
+      'sr. espetto',
     ],
     requiredFoodType: 'frutos_do_mar',
-    negativeDishKeywords: ['refrigerante', 'agua', 'adicional', 'molho', 'chantilly'],
+    negativeDishKeywords: ['pudim', 'acai', 'sorvete', 'brigadeiro', 'churros'],
+    chefMood: 'Apaixonado pelo Mar de Caraguá • Freezer Ligado',
+    buildJacquinIntro: (loc, fDish, fRest, fNeigh, fPrice, sec) =>
+      `**La mer de Caraguatatuba, c'est magnifique!** Vir para o nosso litoral e não comer um camarão crocante ou peixe fresco com *tompero* caiçara é um crime gastronômico!\n\n` +
+      `Separei as melhores pedidas do mar ${loc}, começando por **${fDish}** no **${fRest}** (${fNeigh}) por **R$ ${fPrice}**${sec} Tudo fresquinho e com freezer impecável:`,
   },
   {
     intent: 'sushi',
-    labelPt: 'Sushi, Combinados & Culinária Japonesa',
+    labelPt: 'Sushi, Sashimi, Temaki, Hot Roll, Yakisoba & Ceviche',
     triggerWords: [
       'sushi',
       'japa',
@@ -268,258 +737,851 @@ const FOOD_INTENT_RULES: FoodIntentRule[] = [
       'temaki',
       'sashimi',
       'combinado',
+      'barca',
       'yakisoba',
+      'yakissoba',
       'lamen',
+      'missoshiro',
       'hot roll',
+      'hotroll',
       'uramaki',
       'hossomaki',
+      'niguiri',
       'tepan',
       'oriental',
+      'ceviche',
+      'poke',
+      'sunomono',
+      'shimeji',
+      'guioza',
+      'harumaki',
     ],
     positiveDishKeywords: [
       'sushi',
+      'sashimi',
+      'temaki',
       'combinado',
       'combo croc',
       'combo namorado',
-      'temaki',
+      'hot roll',
+      'hotroll',
+      'uramaki',
+      'hossomaki',
+      'niguiri',
+      'yakisoba',
+      'yakissoba',
       'lamen',
       'misso',
-      'yakisoba',
-      'hot',
+      'ceviche',
+      'poke',
+      'sunomono',
       'tepan',
       'salmao',
-      'hossomaki',
-      'peças',
       'pecas',
     ],
-    positiveRestaurantKeywords: ['narigato', 'point do japa', 'kampai'],
+    positiveCategoryKeywords: ['sushi', 'sushi e temaki', 'temaki', 'sashimi', 'uramaki', 'hossomaki', 'hotroll', 'combinado', 'lamen', 'yakissoba', 'poke', 'orientais'],
+    positiveRestaurantKeywords: ['narigato', 'point do japa', 'kampai', 'japa loka'],
     requiredFoodType: 'sushi',
-    negativeDishKeywords: ['refrigerante', 'agua', 'adicional'],
+    negativeDishKeywords: ['pudim', 'acai', 'churros', 'feijoada'],
+    chefMood: 'Inspeção Rigorosa de Peixe Fresco & Corte Oriental',
+    buildJacquinIntro: (loc, fDish, fRest, fNeigh, fPrice, sec) =>
+      `**Attention! Na culinária japonesa eu sou implacável:** o salmão tem que brilhar de frescor e a geladeira tem que estar na temperatura exata!\n\n` +
+      `Aqui ${loc}, minha recomendação oriental de ouro é **${fDish}** do **${fRest}** (${fNeigh}) por **R$ ${fPrice}**${sec} Pode pedir de olhos fechados, *mon cher*:`,
   },
   {
     intent: 'pizza',
-    labelPt: 'Pizzas Artesanais, Calzones & Esfihas',
+    labelPt: 'Pizzas Artesanais, Forno a Lenha & Calzones',
     triggerWords: [
       'pizza',
       'pizzaria',
-      'esfiha',
       'calzone',
       'marguerita',
+      'margherita',
       'calabresa',
       'portuguesa',
       'quatro queijos',
-      'catupiry',
+      '4 queijos',
+      '5 queijos',
+      '6 queijos',
+      'pepperoni',
+      'peperoni',
+      'napolitana',
       'forno a lenha',
+      'brotinho',
     ],
     positiveDishKeywords: [
       'pizza',
-      'esfiha',
       'calzone',
       'marguerita',
+      'margherita',
       'calabresa',
       'mussarela',
+      'mozarela',
       'portuguesa',
+      'quatro queijos',
+      '4 queijos',
+      'pepperoni',
+      'peperoni',
+      'catupperoni',
       'frango com catupiry',
-      'brocolis',
+      'frango e catupiry',
+      'toscana',
+      'baiana',
+      'napolitana',
+      'caprese',
+    ],
+    positiveCategoryKeywords: [
+      'pizza',
+      'pizzas',
+      'pizzas salgadas',
+      'pizzas tradicionais',
+      'pizzas especiais',
+      'calzone',
+      'pizza promo',
     ],
     positiveRestaurantKeywords: [
       'nonna peroni',
       'solepizza',
       'pizzaria rocha',
-      'venezza',
+      'pizzaria venezza',
       'w&v pizzaria',
       'don corleone',
       'ideal pizzaria',
+      'xp hamburgueria',
     ],
     requiredFoodType: 'pizza',
-    negativeDishKeywords: ['refrigerante', 'agua', 'adicional', 'dips'],
+    negativeDishKeywords: ['pudim', 'acai', 'sorvete', 'feijoada'],
+    chefMood: 'Crítico de Fermentação Lenta & Forno Quente',
+    buildJacquinIntro: (loc, fDish, fRest, fNeigh, fPrice, sec) =>
+      `**Une bonne pizza!** Massa bem fermentada, borda dourada, molho de tomate fresco e queijo derretendo com muito *tompero*!\n\n` +
+      `Garimpei as pizzarias ${loc} e destaquei **${fDish}** da **${fRest}** (${fNeigh}) por **R$ ${fPrice}**${sec} Clique no cartão abaixo para pedir a sua:`,
+  },
+  {
+    intent: 'massas_lasanha',
+    labelPt: 'Lasanhas, Nhoques, Panquecas & Massas Caseiras',
+    triggerWords: ['lasanha', 'nhoque', 'macarrao', 'espaguete', 'talharim', 'massa', 'bolonhesa', 'panqueca'],
+    positiveDishKeywords: ['lasanha', 'nhoque', 'macarrao', 'panqueca', 'bolonhesa', 'massa'],
+    positiveCategoryKeywords: ['lasanhas quentes', 'massas', 'massas premium', 'nhoques', 'panquecas', 'macarrao na chapa'],
+    positiveRestaurantKeywords: ['le cheff', 'delicias da lu', 'restaurante caicaras', 'point do pirao', 'batatuba'],
+    negativeDishKeywords: ['pudim', 'acai', 'sorvete'],
+    chefMood: 'Especialista em Massas Frescas & Molho Encorpado',
+    buildJacquinIntro: (loc, fDish, fRest, fNeigh, fPrice, sec) =>
+      `**Mamma mia com sotaque francês!** Uma lasanha gratinada, nhoque macio ou panqueca artesanal bem recheada aquece o coração!\n\n` +
+      `Para você ${loc}, selecionei **${fDish}** no **${fRest}** (${fNeigh}) por **R$ ${fPrice}**${sec} Veja que maravilha:`,
+  },
+  {
+    intent: 'pastel_salgados',
+    labelPt: 'Pastel de Feira Crocante, Coxinha, Esfiha & Salgados',
+    triggerWords: [
+      'pastel',
+      'pasteis',
+      'pastelaria',
+      'pastelzinho',
+      'coxinha',
+      'salgado',
+      'salgadinho',
+      'esfiha',
+      'esfirra',
+      'kibe',
+      'quibe',
+      'empada',
+      'bolinho caipira',
+      'pao de queijo',
+    ],
+    positiveDishKeywords: [
+      'pastel',
+      'pastelzinho',
+      'coxinha',
+      'coxim',
+      'esfiha',
+      'kibe',
+      'quibe',
+      'empada',
+      'salgado',
+      'salgadinho',
+      'bolinho caipira',
+      'bolinho de carne',
+      'pao de queijo',
+    ],
+    positiveCategoryKeywords: [
+      'pastel',
+      'pasteis',
+      'pastel simples',
+      'pastel duplo',
+      'pastel especiais',
+      'pastel de casa',
+      'pastelzinho',
+      'salgados',
+      'mini salgados',
+      'esfihas',
+      'esfihas gourmet salgadas',
+      'assados - empadas',
+      'pao de queijo',
+      'bolinho caipira',
+    ],
+    positiveRestaurantKeywords: [
+      'imperio dos pasteis',
+      'mare mar',
+      'martim food',
+      'churras mais',
+      'ki fest salgados',
+      'teka salgados',
+      'xcoxinha',
+      'confeitaria da rai',
+      'w&v pizzaria',
+      'the best burguer',
+    ],
+    negativeDishKeywords: ['pudim', 'acai', 'sorvete'],
+    chefMood: 'Fã de Pastel de Feira Sequinho & Coxinha Crocante',
+    buildJacquinIntro: (loc, fDish, fRest, fNeigh, fPrice, sec) =>
+      `**Voilà!** Um pastel frito na hora com massa crocante e sequinha, uma coxinha bem temperada ou uma esfiha quentinha são irresistíveis!\n\n` +
+      `Aqui ${loc}, eu recomendo **${fDish}** lá no **${fRest}** (${fNeigh}) por **R$ ${fPrice}**${sec} Crocância nota 10:`,
   },
   {
     intent: 'lanches',
-    labelPt: 'Hambúrgueres Artesanais, Smashs & Lanches',
+    labelPt: 'Hambúrgueres Artesanais, Smash Burgers & Lanches',
     triggerWords: [
       'lanche',
       'hamburguer',
+      'hamburgueria',
       'burger',
       'burguer',
       'smash',
       'artesanal',
-      'bacon',
-      'cheddar',
-      'sanduiche',
-      'x-bacon',
+      'x-burguer',
       'x-salada',
+      'x-bacon',
+      'x-egg',
       'x-tudo',
-      'hot dog',
-      'cachorro quente',
-      'beirute',
+      'brioche',
+      'cheddar bacon',
     ],
     positiveDishKeywords: [
       'burger',
       'burguer',
       'smash',
-      'bacon',
       'cheddar',
-      'costela',
-      'billy',
-      'yanke',
-      'memphis',
+      'bacon',
+      'inbrasa',
       'marguerito',
-      'artesanal',
+      'gorgonsweet',
+      'billy',
+      'matador',
       'kaipirao',
-      'trio bruttos',
-      'hot dog',
-      'beirute',
+      'x-burguer',
+      'x-salada',
+      'x-bacon',
+      'ribs rock',
+      'monster rock bar',
+      'queen',
+    ],
+    positiveCategoryKeywords: [
+      'burguers',
+      'burguers artesanais',
+      'hamburguer',
+      'hamburgueres artesanais',
+      'artesanais smash ;)',
+      'lanches',
+      'lanches artesanais',
+      'famosinhos <3',
+      'matadores de fome ;p',
+      'vencedor do caragua a gosto',
     ],
     positiveRestaurantKeywords: [
-      'padua',
+      'padua burguer',
       'bs bgr',
       'xp hamburgueria',
-      'billy bruto',
       'inbrasa',
-      'martim food',
-      'kaipiras',
+      'billy bruto',
       'chicken bruttos',
+      'kaipiras lanches',
       'ex burguer',
       'the best burguer',
-      'furious',
+      'the furious burguer',
       'mt burguer',
+      'top 10 lanches',
+      'xp burger',
+      'rock bar',
     ],
     requiredFoodType: 'lanches',
-    negativeDishKeywords: ['refrigerante', 'agua', 'molho adicional', 'maionese adicional'],
+    negativeDishKeywords: ['pudim', 'acai', 'sorvete', 'milkshake'],
+    chefMood: 'Especialista em Reação de Maillard & Brioche Selado',
+    buildJacquinIntro: (loc, fDish, fRest, fNeigh, fPrice, sec) =>
+      `**Oh là là!** Hambúrguer bom precisa de crostinha caramelizada na chapa, carne suculenta, queijo derretendo de verdade e pão selado na manteiga!\n\n` +
+      `Para matar sua fome ${loc}, eu assino embaixo de **${fDish}** no **${fRest}** (${fNeigh}) por **R$ ${fPrice}**${sec} Nada de carne seca, só suculência:`,
   },
   {
-    intent: 'doces_acai',
-    labelPt: 'Açaí, Sorvetes, Bolos & Confeitaria',
+    intent: 'hotdog_beirute',
+    labelPt: 'Hot Dog Prensado, Cachorro-Quente, Beirute & Sanduíches',
+    triggerWords: ['hot dog', 'hotdog', 'cachorro quente', 'dogao', 'salsicha', 'beirute', 'sanduiche', 'sanduba', 'bauru', 'misto'],
+    positiveDishKeywords: ['hot dog', 'hotdog', 'cachorro quente', 'beirute', 'sanduba', 'diquinta', 'projeto verao', 'americano'],
+    positiveCategoryKeywords: ['hot dog', 'hotdog', '🌭 hotdogs', 'hot dog em dobro', 'beirutes', 'sanduiches', 'sanduiches especiais'],
+    positiveRestaurantKeywords: ['kaipiras lanches', 'bs bgr', 'divina gula', 'martim food', 'lanchonete arco iris', 'top 10 lanches'],
+    negativeDishKeywords: ['pudim', 'acai', 'sorvete'],
+    chefMood: 'Curador de Sanduíches Fartos & Hot Dog Caprichado',
+    buildJacquinIntro: (loc, fDish, fRest, fNeigh, fPrice, sec) =>
+      `**Mon ami!** Um cachorro-quente bem recheado, beirute ou sanduíche especial feito no capricho salva qualquer noite em Caraguá!\n\n` +
+      `Olha o destaque que encontrei ${loc}: **${fDish}** no **${fRest}** (${fNeigh}) por **R$ ${fPrice}**${sec}`,
+  },
+  {
+    intent: 'frango_crocante',
+    labelPt: 'Frango Frito Crocante, Balde de Chicken & Tirinhas',
+    triggerWords: ['frango frito', 'balde de frango', 'chicken', 'tirinhas de frango', 'isca de frango', 'frango crocante', 'frango empanado', 'nuggets'],
+    positiveDishKeywords: ['chicken', 'balde', 'trio bruttos', 'quarteto bruttos', 'iscas de frango', 'tirinhas', 'frango crocante', 'duplo empanado', 'nuggets', 'tulipa'],
+    positiveCategoryKeywords: ['baldes de frango', 'combos de frango', 'linha chicken supreme'],
+    positiveRestaurantKeywords: ['chicken bruttos', 'franchicken', 'inbrasa', 'rock bar'],
+    negativeDishKeywords: ['pudim', 'acai', 'sorvete'],
+    chefMood: 'Mestre do Empanamento Crocante & Dourado',
+    buildJacquinIntro: (loc, fDish, fRest, fNeigh, fPrice, sec) =>
+      `**Crrrunc!** Frango empanado crocante por fora e suculento por dentro exige óleo novo, tempero na marinada e fritura precisa!\n\n` +
+      `Aqui ${loc}, minha indicação número 1 é **${fDish}** no **${fRest}** (${fNeigh}) por **R$ ${fPrice}**${sec}`,
+  },
+  {
+    intent: 'porcoes_boteco',
+    labelPt: 'Porções de Boteco, Batata com Cheddar/Bacon, Mandioca & Petiscos',
     triggerWords: [
-      'acai',
-      'sorvete',
-      'doce',
-      'sobremesa',
-      'bolo',
-      'brigadeiro',
-      'churros',
-      'nutella',
-      'milkshake',
-      'shake',
-      'pudim',
-      'confeitaria',
-      'chocolate',
+      'porcao',
+      'porcoes',
+      'petisco',
+      'petiscos',
+      'boteco',
+      'comida de boteco',
+      'tiragosto',
+      'batata frita',
+      'fritas',
+      'batata recheada',
+      'batata rosti',
+      'mandioca frita',
+      'polenta',
+      'onion rings',
+      'anel de cebola',
+      'calabresa acebolada',
+      'happy hour',
     ],
     positiveDishKeywords: [
-      'acai',
-      'sorvete',
-      'bolo',
-      'brigadeiro',
-      'churros',
-      'brownie',
-      'pudim',
-      'trufado',
-      'nutella',
-      'doce',
-      'napoleta',
+      'porcao',
+      'fritas',
+      'batata',
+      'mandioca',
+      'polenta',
+      'onion rings',
+      'anel de cebola',
+      'calabresa',
+      'picanha aperitivo',
+      'contra file',
+      'bolinho de carne seca',
+      'bolinho de bacalhau',
+      'costela quebrada',
+      'coxim',
+      'obolinho',
+      'isca',
+    ],
+    positiveCategoryKeywords: [
+      'porcoes',
+      'porcoes especiais',
+      'entradas e porcoes',
+      'entradinhas',
+      'comida de boteco',
+      'batata frita',
+      'batata rosti recheada',
+      'batatas recheadas',
+      'fritas',
     ],
     positiveRestaurantKeywords: [
-      'verano',
-      'napoli',
-      'shake & acai',
-      'yes! acai',
-      'milena palma',
-      'confeitaria da rai',
-      'churros magali',
-      'beira mar',
+      'rock bar',
+      'sr. espetto',
+      'churras mais',
+      'bs bgr',
+      'batatuba batataria',
+      'pe na areia',
+      'padua burguer',
+      'kaipiras lanches',
     ],
-    requiredFoodType: 'doces_acai',
-    negativeDishKeywords: ['chantilly adicional', 'colher descartavel'],
+    negativeDishKeywords: ['pudim', 'acai', 'sorvete', 'bolo'],
+    chefMood: 'Rei do Happy Hour & Petisco de Boteco',
+    buildJacquinIntro: (loc, fDish, fRest, fNeigh, fPrice, sec) =>
+      `**Santé, mon ami!** Para beliscar com os amigos ou abrir o apetite ${loc}, a porção tem que chegar quentinha, sequinha e bem servida!\n\n` +
+      `Olha o campeão de boteco que eu separei: **${fDish}** no **${fRest}** (${fNeigh}) por **R$ ${fPrice}**${sec}`,
+  },
+  {
+    intent: 'caldos_sopas',
+    labelPt: 'Caldos Quentes, Caldo Verde, Vaca Atolada, Canja & Sopas',
+    triggerWords: ['caldo', 'caldinho', 'caldinhos', 'caldo verde', 'caldo de feijao', 'canja', 'sopa', 'sopas', 'vaca atolada'],
+    positiveDishKeywords: ['caldo', 'caldinho', 'vaca atolada', 'canja', 'feijao carioquinha (quente)', 'mandioquinha com carne seca', 'misso lamen', 'sopa'],
+    positiveCategoryKeywords: ['caldinhos', 'caldos', 'caldos quentes', 'especial inverno', 'kit 5 sopas 500ml', 'kit 10 sopas 500ml'],
+    positiveRestaurantKeywords: ['churras mais', 'le cheff', 'rock bar', 'ideal pizzaria', 'point do japa', 'prime fit'],
+    negativeDishKeywords: ['cana', 'pudim', 'acai', 'sorvete'],
+    chefMood: 'Chef dos Caldos Fumegantes & Cumbuca Quente',
+    buildJacquinIntro: (loc, fDish, fRest, fNeigh, fPrice, sec) =>
+      `**Ah, um caldo bem quente e aveludado é um abraço na alma!** Feito no fogo lento com ingredientes frescos e muito *tompero*!\n\n` +
+      `Aqui ${loc}, minha recomendação fumegante é **${fDish}** no **${fRest}** (${fNeigh}) por **R$ ${fPrice}**${sec}`,
   },
   {
     intent: 'vegano_fit',
-    labelPt: 'Opções Veganas, Vegetarianas, Fit & Sem Lactose/Glúten',
+    labelPt: 'Opções Veganas, Vegetarianas, Fit, Low Carb & Sem Lactose/Glúten',
     triggerWords: [
       'vegano',
       'vegana',
       'vegetariano',
       'vegetariana',
+      'sem carne',
       'sem lactose',
       'zero lactose',
+      'intolerante',
       'sem gluten',
       'celiaco',
       'fit',
-      'saudavel',
+      'low carb',
+      'lowcarb',
       'dieta',
+      'saudavel',
       'salada',
       'legumes',
+      'detox',
+      'mounjaro',
       'palmito',
       'brocolis',
+      'abobrinha',
     ],
     positiveDishKeywords: [
       'vegano',
+      'vegan',
+      'vegetariana',
       'vegetal',
+      'intolerante',
       'fit',
-      'prime',
-      'palmito',
-      'brocolis',
+      'low carb',
+      'lowcarb',
+      'balanceada',
       'salada',
-      'acai',
       'legumes',
+      'brocolis',
+      'palmito',
+      'abobrinha',
+      'berinjela',
+      'moqueca de banana da terra',
+      'medalhao de palmito',
+      'mounjaro',
     ],
-    positiveRestaurantKeywords: ['prime fit', 'caicaras', 'verano', 'napoli'],
-    negativeDishKeywords: ['refrigerante', 'cerveja'],
+    positiveCategoryKeywords: [
+      'delicia da cozinha vegetal',
+      'linha fit',
+      'linha vegetariana',
+      'veggie',
+      'saladas',
+      'sanduiches naturais',
+      'menu mounjaro',
+      'lowcarb 10 unidades',
+    ],
+    positiveRestaurantKeywords: ['prime fit', 'le cheff', 'delicias da lu', 'restaurante caicaras', 'solepizza', 'bs bgr', 'churras mais'],
+    negativeDishKeywords: ['pudim', 'torresmo', 'picanha', 'costela suina', 'churros'],
+    chefMood: 'Chef da Leveza, Saúde & Cozinha Plant-Based',
+    buildJacquinIntro: (loc, fDish, fRest, fNeigh, fPrice, sec) =>
+      `**Très bien!** Cozinhar leve, fit, sem lactose ou à base de vegetais exige ainda mais *tompero* e técnica para valorizar cada ingrediente!\n\n` +
+      `Separei com carinho ${loc}: **${fDish}** no **${fRest}** (${fNeigh}) por **R$ ${fPrice}**${sec}`,
   },
   {
-    intent: 'combo_familia',
-    labelPt: 'Combos para Dividir, Box Família & Promoções',
+    intent: 'acai_sorvete',
+    labelPt: 'Açaí Trufado, Sorvetes Artesanais, Gelatos & Milkshakes',
+    isSweetIntent: true,
     triggerWords: [
-      'combo',
-      'familia',
-      'casal',
-      'dividir',
-      'galera',
-      'box',
-      'em dobro',
-      'barca',
-      'balde',
+      'acai',
+      'acaigurte',
+      'sorvete',
+      'sorveteria',
+      'gelato',
+      'napoleta',
+      'picole',
+      'milkshake',
+      'milk shake',
+      'shake',
+      'sundae',
+      'geladinho',
+    ],
+    positiveDishKeywords: ['acai', 'acaigurte', 'sorvete', 'napoleta', 'milk shake', 'milkshake', 'trufadinho', 'geladinho', 'torta holandesa', 'pote'],
+    positiveCategoryKeywords: [
+      'acai',
+      'acaigurte',
+      'sorvetes',
+      'napoleta',
+      'potes napoli',
+      'milk shake',
+      'trufadinhos da verano',
+      'marmitinhas verano',
+      '🥶 loucos por geladinhos',
+    ],
+    positiveRestaurantKeywords: [
+      'verano',
+      'napoli sorvetes',
+      'caragua shake & acai',
+      'yes! acai',
+      'sorveteria & acai beira mar',
+      'the furious burguer',
+      'inbrasa',
+    ],
+    requiredFoodType: 'doces_acai',
+    negativeDishKeywords: ['chantilly adicional', 'colher descartavel', 'trident', 'halls', 'chiclete'],
+    chefMood: 'Mestre Gelatier & Fã de Açaí Praiano',
+    buildJacquinIntro: (loc, fDish, fRest, fNeigh, fPrice, sec) =>
+      `**Oh là là, no calor de Caraguatatuba um açaí cremoso, gelato artesanal ou milkshake bem batido é pura felicidade!**\n\n` +
+      `Para refrescar seu dia ${loc}, minha escolha é **${fDish}** lá no **${fRest}** (${fNeigh}) por **R$ ${fPrice}**${sec}`,
+  },
+  {
+    intent: 'doces_confeitaria',
+    labelPt: 'Pudim Artesanal, Bolos, Tortas, Churros, Brownie & Confeitaria',
+    isSweetIntent: true,
+    triggerWords: [
+      'doce',
+      'sobremesa',
+      'pudim',
+      'bolo',
+      'torta',
+      'banoffee',
+      'brigadeiro',
+      'brownie',
+      'churros',
+      'nutella',
+      'confeitaria',
+      'chocolate',
+      'copo da felicidade',
+      'fondue',
+      'doce de leite',
+      'romeu e julieta',
+      'pizza doce',
+      'pastel doce',
+      'esfiha doce',
     ],
     positiveDishKeywords: [
-      'combo',
-      'familia',
-      'casal',
-      'box',
-      'em dobro',
-      'trio',
-      'barca',
-      'balde',
-      'gigante',
+      'pudim',
+      'bolo',
+      'torta',
+      'banoffee',
+      'brigadeiro',
+      'brownie',
+      'churros',
+      'nutella',
+      'copo da felicidade',
+      'founde',
+      'romeu e julieta',
+      'pizza doce',
+      'pastel doce',
+      'esfiha doce',
+      'hot roll doce',
+      'espetinho doce',
     ],
-    positiveRestaurantKeywords: ['padua', 'xp', 'bs bgr', 'chicken bruttos', 'pirao', 'franchicken'],
-    requiredFoodType: 'combo_familia',
-    negativeDishKeywords: ['molho', 'adicional'],
+    positiveCategoryKeywords: [
+      'o melhor pudim da sua vida!',
+      'sobremesa',
+      'sobremesas',
+      'doces da rai!!!',
+      'fatias da felicidade🍰🍰🍰',
+      'bolos caseiros',
+      'churros gourmet',
+      'barca de churros',
+      'copo da felicidade 400ml',
+      'pizza brownie & cookies',
+      'pizzas doces',
+      'pastel doces',
+      'esfihas doces 💜',
+    ],
+    positiveRestaurantKeywords: [
+      'milena palma',
+      'confeitaria da rai',
+      'churros magali',
+      'verano',
+      'napoli sorvetes',
+      'bs bgr',
+      'inbrasa',
+      'point do pirao',
+      'le cheff',
+    ],
+    requiredFoodType: 'doces_acai',
+    negativeDishKeywords: ['trident', 'halls', 'chiclete', 'plutonita', 'drops garoto', 'pacoquita rolha'],
+    chefMood: 'Pâtissier Francês & Guardião da Confeitaria',
+    buildJacquinIntro: (loc, fDish, fRest, fNeigh, fPrice, sec) =>
+      `**La pâtisserie est un art, mon ami!** Quando a vontade é de um doce verdadeiro — nada de balinha industrial de caixa, mas confeitaria com técnica e *tompero* doce!\n\n` +
+      `Olha a joia que separei ${loc}: **${fDish}** no **${fRest}** (${fNeigh}) por **R$ ${fPrice}**${sec}`,
+  },
+  {
+    intent: 'bebidas_cerveja',
+    labelPt: 'Cervejas Geladas, Chopp, Sucos Naturais & Bebidas',
+    isDrinkIntent: true,
+    triggerWords: [
+      'cerveja',
+      'chopp',
+      'heineken',
+      'long neck',
+      'drink',
+      'vinho',
+      'whisky',
+      'suco natural',
+      'suco detox',
+      'caldo de cana',
+      'refrigerante',
+      'bebida',
+    ],
+    positiveDishKeywords: ['heineken', 'eisenbahn', 'esenbahn', 'spaten', 'corona', 'chopp', 'suco', 'caldo de cana', 'cerveja', 'drink'],
+    positiveCategoryKeywords: ['cervejas', 'cervejas longneck', 'sucos naturais de frutas', 'drinks especiais', 'chopp de vinho'],
+    positiveRestaurantKeywords: ['adega garagem', 'sr. espetto', 'rock bar', 'solepizza', 'churras mais'],
+    negativeDishKeywords: ['kit talher', 'sacola'],
+    chefMood: 'Sommelier & Mestre do Brinde Praiano',
+    buildJacquinIntro: (loc, fDish, fRest, fNeigh, fPrice, sec) =>
+      `**Santé!** Para brindar em Caraguatatuba com bebida trincando de gelada ${loc}, confira o que eu separei:\n\n` +
+      `Destaque para **${fDish}** no **${fRest}** (${fNeigh}) por **R$ ${fPrice}**${sec}`,
   },
 ];
 
-function isPureDrinkOrAddon(dishName: string, category: string): boolean {
-  const n = normalizeStr(`${dishName} ${category}`);
-  if (
-    n.includes('molho adicional') ||
-    n.includes('chantilly adicional') ||
-    n.includes('adicionais')
-  ) {
-    return true;
-  }
-  const drinkCats = ['bebida', 'bebidas', 'refrigerante', 'refrigerantes', 'cerveja', 'cervejas', 'energeticos', 'aguardente', 'combos whisky'];
-  if (drinkCats.some((c) => normalizeStr(category) === c)) {
-    return true;
-  }
-  return false;
+// ==============================================================================
+// 9 PERFIS SENSORIAIS & ATIPICAGEM ("algo mais picante, agridoce, defumado...")
+// ==============================================================================
+
+interface SensoryProfileRule {
+  id: string;
+  labelPt: string;
+  isSweetProfile?: boolean;
+  triggerPhrases: string[];
+  dishMatchKeywords: string[];
+  categoryMatchKeywords: string[];
+  chefMood: string;
+  buildSensoryIntro: (loc: string, fDish: string, fRest: string, fNeigh: string, fPrice: string, sec: string) => string;
 }
 
-export interface JacquinChatRequest {
-  query: string;
-  neighborhood?: string;
-  userLat?: number;
-  userLon?: number;
-  limit?: number;
-}
+const SENSORY_ATIPICAGEM_RULES: SensoryProfileRule[] = [
+  {
+    id: 'agridoce_caramelizado',
+    labelPt: 'Perfil Agridoce, Geleia de Pimenta, Tarê, Mel & Cebola Caramelizada',
+    triggerPhrases: [
+      'agridoce',
+      'doce com salgado',
+      'salgado com doce',
+      'contraste',
+      'geleia de pimenta',
+      'cebola caramelizada',
+      'caramelizad',
+      'molho tare',
+      'tare',
+      'teriyaki',
+      'barbecue',
+      'coalho com mel',
+      'queijo com mel',
+      'gorgonsweet',
+      'sunomono',
+    ],
+    dishMatchKeywords: [
+      'gorgonsweet',
+      'geleia de pimenta',
+      'coxim',
+      'diquinta',
+      'queijo coalho',
+      'com mel',
+      'sunomono',
+      'cebola caramelizada',
+      'caramelizada',
+      'barbecue',
+      'texas bacon',
+      'costela desfiada',
+      'temaki hot',
+      'hot roll',
+      'california',
+      'tare',
+      'cheddar melting',
+      'queen',
+    ],
+    categoryMatchKeywords: ['famosinhos <3', 'porcoes especiais', 'queijos', 'hotroll'],
+    chefMood: 'Alquimista do Equilíbrio Agridoce & Caramelizado',
+    buildSensoryIntro: (loc, fDish, fRest, fNeigh, fPrice, sec) =>
+      `**Magnifique, você pediu um perfil AGRIDOCE!** O contraste entre o salgado suculento e o toque adocicado/ácido (geleia de pimenta, queijo coalho na brasa com mel, cebola caramelizada, barbecue ou molho tarê) é alta gastronomia pura!\n\n` +
+      `Garimpei ${loc} os pratos com o melhor equilíbrio agridoce: **${fDish}** no **${fRest}** (${fNeigh}) por **R$ ${fPrice}**${sec}`,
+  },
+  {
+    id: 'picante_apimentado',
+    labelPt: 'Perfil Picante, Apimentado & Tempero Intenso',
+    triggerPhrases: [
+      'picante',
+      'apimentad',
+      'pimenta',
+      'ardid',
+      'caliente',
+      'mexican',
+      'nachos',
+      'doritos',
+      'jalapeno',
+      'baiana',
+      'tempero forte',
+    ],
+    dishMatchKeywords: [
+      'kafta apimentada',
+      'linguica apimentada',
+      'apimentada',
+      'geleia de pimenta',
+      'pimenta',
+      'coxim',
+      'diquinta',
+      'gorgonsweet',
+      'baiana',
+      'a baiana',
+      'nachos',
+      'doritos',
+      'pepperoni',
+      'peperoni',
+      'catupperoni',
+      'calabresa',
+      'mexican',
+    ],
+    categoryMatchKeywords: ['espetos', 'porcoes especiais', 'pizzas salgadas'],
+    chefMood: 'Chef do Fogo & Pimenta na Medida Certa',
+    buildSensoryIntro: (loc, fDish, fRest, fNeigh, fPrice, sec) =>
+      `**Oh là là, você gosta de personalidade e picância no prato!** Pimenta boa não é para queimar a língua, é para despertar o *tompero* e levantar o sabor!\n\n` +
+      `Separei as melhores opções picantes e intensas ${loc}: **${fDish}** lá no **${fRest}** (${fNeigh}) por **R$ ${fPrice}**${sec}`,
+  },
+  {
+    id: 'defumado_brasa',
+    labelPt: 'Perfil Defumado, Assado na Brasa & Bacon Crocante',
+    triggerPhrases: ['defumad', 'gosto de brasa', 'sabor de brasa', 'fumaca', 'churrasqueira', 'carvao', 'maionese defumada'],
+    dishMatchKeywords: [
+      'defumada',
+      'defumado',
+      'mussarela defumada',
+      'espetinho',
+      'picanha',
+      'costela',
+      'barbecue',
+      'inbrasa',
+      'texas bacon',
+      'provolone',
+      'bacon',
+    ],
+    categoryMatchKeywords: ['espetos', 'queijos', 'grelhados'],
+    chefMood: 'Mestre do Defumado & Brasa Viva',
+    buildSensoryIntro: (loc, fDish, fRest, fNeigh, fPrice, sec) =>
+      `**Sacré bleu! O aroma defumado da brasa e do bacon artesanal é um convite irrecusável!**\n\n` +
+      `Aqui ${loc}, meu destaque com notas defumadas intensas é **${fDish}** no **${fRest}** (${fNeigh}) por **R$ ${fPrice}**${sec}`,
+  },
+  {
+    id: 'crocante_sequinho',
+    labelPt: 'Textura Super Crocante, Empanado Dourado & Fritura Sequinha',
+    triggerPhrases: ['crocant', 'sequinh', 'crispy', 'crysps', 'empanad', 'fritura sequinha', 'bem crocante'],
+    dishMatchKeywords: [
+      'crocante',
+      'empanado',
+      'milanesa',
+      'crispy',
+      'crysps',
+      'onion rings',
+      'anel de cebola',
+      'pastel',
+      'coxinha',
+      'coxim',
+      'hot roll',
+      'chicken',
+      'isca',
+      'bolinho',
+      'torresmo',
+    ],
+    categoryMatchKeywords: ['pastel', 'baldes de frango', 'porcoes', 'hotroll'],
+    chefMood: 'Auditor de Crocância & Fritura Sequinha',
+    buildSensoryIntro: (loc, fDish, fRest, fNeigh, fPrice, sec) =>
+      `**Crrrunc! Crocância é música para os ouvidos de um chef!** Fritura limpa, dourada e sequinha por fora, mantendo toda a suculência por dentro!\n\n` +
+      `Para quem quer textura crocante ${loc}, recomendo **${fDish}** no **${fRest}** (${fNeigh}) por **R$ ${fPrice}**${sec}`,
+  },
+  {
+    id: 'cremoso_queijudo',
+    labelPt: 'Textura Ultra Cremosa, Muito Queijo, Catupiry & Gratinados',
+    triggerPhrases: ['cremos', 'queijud', 'muito queijo', 'bastante queijo', 'derretendo', 'gratinad', 'quatro queijos', 'catupiry original'],
+    dishMatchKeywords: [
+      'catupiry',
+      'cheddar',
+      'melting',
+      '4 queijos',
+      'quatro queijos',
+      '5 queijos',
+      '6 queijos',
+      'cream cheese',
+      'escondidinho',
+      'strogonoff',
+      'lasanha',
+      'parmegiana',
+      'batata rosti',
+    ],
+    categoryMatchKeywords: ['escondidinhos quentes', 'lasanhas quentes', 'parmegianas', 'batata rosti recheada'],
+    chefMood: 'Apaixonado por Queijo Gratinado & Molho Aveludado',
+    buildSensoryIntro: (loc, fDish, fRest, fNeigh, fPrice, sec) =>
+      `**Mon Dieu, cremosidade e queijo derretendo são a alma do conforto gastronômico!**\n\n` +
+      `Garimpei ${loc} os pratos mais cremosos e queijudos: **${fDish}** no **${fRest}** (${fNeigh}) por **R$ ${fPrice}**${sec}`,
+  },
+  {
+    id: 'citrico_acido_fresco',
+    labelPt: 'Perfil Cítrico, Ácido, Com Limão & Refrescante',
+    triggerPhrases: ['citric', 'acid', 'azedinh', 'com limao', 'refrescant', 'ceviche', 'frescor'],
+    dishMatchKeywords: ['ceviche', 'sunomono', 'sashimi', 'salmao cru', 'limao', 'maracuja', 'tilapia', 'camarao', 'peixe'],
+    categoryMatchKeywords: ['sashimi', 'sushi e temaki', 'peixes/crustaceos', 'saladas'],
+    chefMood: 'Curador de Frescor & Acidez Equilibrada',
+    buildSensoryIntro: (loc, fDish, fRest, fNeigh, fPrice, sec) =>
+      `**La fraîcheur!** Um toque cítrico e ácido ilumina o paladar e combina perfeitamente com a brisa de Caraguatatuba!\n\n` +
+      `Olha a minha seleção refrescante ${loc}: **${fDish}** no **${fRest}** (${fNeigh}) por **R$ ${fPrice}**${sec}`,
+  },
+  {
+    id: 'quentinho_chuva_conforto',
+    labelPt: 'Comida Quentinha para Dia de Chuva, Frio & Comfort Food',
+    triggerPhrases: ['quentinh', 'dia de chuva', 'chovendo', 'friozinho', 'noite fria', 'comfort food', 'comida de conforto', 'aquecer'],
+    dishMatchKeywords: ['(quente)', 'caldo', 'vaca atolada', 'canja', 'lamen', 'lasanha', 'escondidinho', 'feijoada', 'strogonoff', 'parmegiana'],
+    categoryMatchKeywords: ['caldos quentes', 'caldinhos', 'lasanhas quentes', 'escondidinhos quentes', 'lamen'],
+    chefMood: 'Chef do Conforto & Panela Fumegante',
+    buildSensoryIntro: (loc, fDish, fRest, fNeigh, fPrice, sec) =>
+      `**Quando o tempo esfria ou chove em Caraguá, mon ami, você precisa de uma comida quentinha que abrace a alma!**\n\n` +
+      `Separei os campeões fumegantes ${loc}: **${fDish}** no **${fRest}** (${fNeigh}) por **R$ ${fPrice}**${sec}`,
+  },
+  {
+    id: 'exotico_autoral',
+    labelPt: 'Pratos Exóticos, Autorais, Premiados & Diferentes',
+    triggerPhrases: ['exotic', 'diferent', 'inusitad', 'fora do comum', 'autoral', 'surpreend', 'caragua a gosto', 'premiad', 'jacare', 'pastrami'],
+    dishMatchKeywords: [
+      'jacare',
+      'pastrami',
+      'coxim',
+      'gorgonsweet',
+      'marguerito',
+      'excalibur',
+      'moqueca de banana da terra',
+      'lasanha de camarao',
+      'as autorais',
+      'crostini',
+      'diquinta',
+    ],
+    categoryMatchKeywords: ['exotico', 'vencedor do caragua a gosto', 'criacoes!'],
+    chefMood: 'Explorador de Alta Criatividade & Sabores Inusitados',
+    buildSensoryIntro: (loc, fDish, fRest, fNeigh, fPrice, sec) =>
+      `**Bravo! Você tem espírito de verdadeiro gourmet e quer provar algo autoral, premiado ou exótico em Caraguatatuba!**\n\n` +
+      `Olha o que eu desenterrei dos cardápios ${loc}: **${fDish}** no **${fRest}** (${fNeigh}) por **R$ ${fPrice}**${sec}`,
+  },
+  {
+    id: 'gigante_fome_monstro',
+    labelPt: 'Porções Gigantes, Fome de Leão, Ressaca & Lanches de 1,5 kg',
+    triggerPhrases: ['fome de leao', 'muita fome', 'faminto', 'gigante', 'monstro', '1,5 kg', 'matador', 'brutao', 'ressaca', 'larica', 'podrao', 'encher a barriga'],
+    dishMatchKeywords: [
+      '1,5 kg',
+      '1,3 kg',
+      'kaipirao',
+      'matador',
+      'brutao',
+      'monster',
+      'triplo',
+      'dois andares',
+      'em dobro',
+      'churrasco gg',
+      'familia',
+    ],
+    categoryMatchKeywords: ['lanche gigante, serve ate 2 pessoas', 'matadores de fome ;p', 'é pra encher a barriga', 'box familia'],
+    chefMood: 'Chef Pesos-Pesados contra Fome de Leão',
+    buildSensoryIntro: (loc, fDish, fRest, fNeigh, fPrice, sec) =>
+      `**Sacré bleu, isso é uma fome épica, mon ami!** Para quem quer fartura brutal sem perder o *tompero*, eu chamei os gigantes de Caraguatatuba!\n\n` +
+      `Olha esse colosso ${loc}: **${fDish}** no **${fRest}** (${fNeigh}) por **R$ ${fPrice}**${sec}`,
+  },
+];
+
+// ==============================================================================
+// INTERFACES & FUNÇÕES PRINCIPAIS
+// ==============================================================================
 
 export interface JacquinBrainStats {
   version: string;
@@ -534,6 +1596,14 @@ export interface JacquinBrainStats {
 export interface OllamaChatMessage {
   role: 'system' | 'user' | 'assistant';
   content: string;
+}
+
+export interface JacquinChatRequest {
+  query: string;
+  neighborhood?: string;
+  userLat?: number;
+  userLon?: number;
+  limit?: number;
 }
 
 export interface JacquinChatResponse {
@@ -560,7 +1630,7 @@ export function buildOllamaRagMessages(
           .slice(0, 4)
           .map(
             (d, idx) =>
-              `${idx + 1}. ${d.dish_name} — R$ ${Number(d.price).toFixed(2).replace('.', ',')} | Restaurante: ${d.restaurant_name} (Bairro: ${d.neighborhood}) | Nota: ⭐ ${Number(d.rating_score || 4.8).toFixed(1)} | ${d.description || ''}`
+              `${idx + 1}. ${d.dish_name} — R$ ${Number(d.price).toFixed(2).replace('.', ',')} | Restaurante: ${d.restaurant_name} (Bairro: ${d.neighborhood}) | Categoria: ${d.category} | Nota: ⭐ ${Number(d.rating_score || 4.8).toFixed(1)} | ${d.description || ''}`
           )
           .join('\n')
       : 'Use os melhores pratos do catálogo real de Caraguatatuba.';
@@ -569,15 +1639,15 @@ export function buildOllamaRagMessages(
     {
       role: 'system',
       content:
-        'Você é o Chef Érick Jacquin Praiano, o Concierge Gastronômico Oficial do CaráFood em Caraguatatuba (treinado com 42.870 perguntas e contextos reais dos 61 restaurantes, 2.670 pratos e 53 bairros). ' +
+        'Você é o Chef Érick Jacquin Praiano, o Concierge Gastronômico Oficial do CaráFood em Caraguatatuba (treinado com 42.870 perguntas e contextos reais dos 61 restaurantes, 2.645 pratos e 53 bairros). ' +
         'Fale SEMPRE em português com seu sotaque e bordões franceses clássicos ("Bonjour, mon ami!", "Écoutez-moi!", "tompero", "vergonha da profission zero", "aqui ninguém desliga o freezer à noite", "C\'est magnifique!"). ' +
-        'REGRA INVIOLÁVEL: cite EXCLUSIVAMENTE os pratos, preços em R$, restaurantes e bairros fornecidos no [CONTEXTO AUDITADO CARÁFOOD]. Seja caloroso, carismático e direto (2 a 3 parágrafos curtos).',
+        'REGRA INVIOLÁVEL: cite EXCLUSIVAMENTE os pratos, preços em R$, restaurantes e bairros fornecidos no [CONTEXTO AUDITADO CARÁFOOD]. Jamais recomende sobremesa/pudim se o usuário pediu prato salgado. Seja caloroso, carismático e direto (2 a 3 parágrafos curtos).',
     },
     {
       role: 'user',
       content:
         `[CONTEXTO AUDITADO CARÁFOOD - USE ESTES PRATOS REAIS]\n` +
-        `Intenção detectada: ${detectedIntent}\n` +
+        `Intenção / Perfil detectado: ${detectedIntent}\n` +
         `Local/Referência: ${detectedLocationLabel || 'Caraguatatuba (53 bairros)'}\n` +
         `Pratos selecionados do catálogo real:\n${dishesBlock}\n\n` +
         `Pergunta do usuário: "${userQuery}"\n\n` +
@@ -586,29 +1656,123 @@ export function buildOllamaRagMessages(
   ];
 }
 
+const STOPWORDS = new Set([
+  'quero',
+  'queria',
+  'gostaria',
+  'uma',
+  'uns',
+  'umas',
+  'para',
+  'com',
+  'sem',
+  'perto',
+  'proximo',
+  'onde',
+  'comer',
+  'pedir',
+  'achar',
+  'acho',
+  'tem',
+  'qual',
+  'quais',
+  'melhor',
+  'melhores',
+  'dica',
+  'dicas',
+  'hoje',
+  'agora',
+  'caragua',
+  'caraguatatuba',
+  'shopping',
+  'serramar',
+  'praia',
+  'centro',
+  'bairro',
+  'regiao',
+  'reais',
+  'ate',
+  'mais',
+  'muito',
+  'bom',
+  'boa',
+  'bons',
+  'boas',
+  'gostoso',
+  'gostosa',
+  'algo',
+  'coisa',
+  'tipo',
+  'chef',
+  'jacquin',
+  'erick',
+  'indica',
+  'indique',
+  'recomenda',
+  'pontal',
+  'santa',
+  'marina',
+  'martim',
+  'massaguacu',
+  'indaia',
+  'poiares',
+  'tinga',
+  'travessao',
+  'pereque',
+  'mirim',
+  'algodao',
+  'morro',
+  'porto',
+  'novo',
+  'palmeiras',
+  'sumare',
+  'prainha',
+  'camaroeiro',
+  'cocanha',
+  'tabatinga',
+  'ipiranga',
+  'gaivotas',
+  'primavera',
+  'olaria',
+  'barranco',
+  'alto',
+  'flexeiras',
+  'tarumas',
+]);
+
 export function generateJacquinChatResponse(req: JacquinChatRequest): JacquinChatResponse {
   const rawQuery = String(req.query || '').trim();
-  const q = normalizeStr(rawQuery);
+  const qNorm = normalizeStr(rawQuery);
+  const q = canonicalizeFoodText(rawQuery);
   const allRests = (dump.restaurants || []) as unknown as RestaurantCardData[];
   const dishDetailsMap = (dump.dish_details || {}) as Record<string, any>;
 
-  // 1. Detectar Landmark / Região / Bairro mencionado pelo usuário
+  // 1. Detectar Landmark / Bairro / Microzona entre os 53 bairros oficiais
   let matchedLandmark: LandmarkRule | null = null;
   for (const lm of CARAGUA_LANDMARKS) {
-    if (lm.keywords.some((kw) => q.includes(normalizeStr(kw)))) {
+    if (lm.keywords.some((kw) => qNorm.includes(normalizeStr(kw)))) {
       matchedLandmark = lm;
       break;
     }
   }
 
   let explicitNeighborhood: string | null = null;
-  const allNeighborhoodNames = Array.from(
-    new Set(allRests.map((r) => r.neighborhood).filter(Boolean))
-  );
-  for (const bName of allNeighborhoodNames) {
-    const nb = normalizeStr(bName);
-    if (nb.length >= 4 && q.includes(nb)) {
-      explicitNeighborhood = bName;
+  const allKnownBairros = Array.from(
+    new Set([
+      ...Object.keys(NEIGHBORHOOD_PROXIMITY_GRAPH),
+      ...allRests.map((r) => normalizeStr(r.neighborhood)).filter(Boolean),
+    ])
+  ).sort((a, b) => b.length - a.length);
+
+  for (const bNorm of allKnownBairros) {
+    if (bNorm.length >= 4 && qNorm.includes(bNorm)) {
+      const matchingRest = allRests.find((r) => normalizeStr(r.neighborhood) === bNorm);
+      explicitNeighborhood =
+        matchingRest?.neighborhood ||
+        bNorm
+          .split(' ')
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+          .join(' ');
       break;
     }
   }
@@ -619,132 +1783,218 @@ export function generateJacquinChatResponse(req: JacquinChatRequest): JacquinCha
   const refLat = matchedLandmark?.lat ?? req.userLat ?? -23.6226;
   const refLon = matchedLandmark?.lon ?? req.userLon ?? -45.4124;
 
-  // 2. Detectar teto de preço (ex: "até 35", "até R$ 45", "barato")
+  // Lista de bairros prioritários para a localização detectada
+  const priorityNeighborhoodsNorm: string[] = matchedLandmark
+    ? matchedLandmark.priorityNeighborhoods
+    : explicitNeighborhood
+    ? NEIGHBORHOOD_PROXIMITY_GRAPH[normalizeStr(explicitNeighborhood)] || [normalizeStr(explicitNeighborhood)]
+    : [];
+
+  // 2. Detectar Teto de Preço e Promoções
   let maxBudget: number | null = null;
-  const priceMatch = q.match(/(?:ate|menos de|no maximo|r\$)\s*(\d{2,3})/);
+  const priceMatch = qNorm.match(/(?:ate|menos de|no maximo|por|r\$)\s*(\d{2,3})/);
   if (priceMatch) {
     maxBudget = parseInt(priceMatch[1], 10);
-  } else if (q.includes('barat') || q.includes('econom')) {
-    maxBudget = 36;
+  } else if (qNorm.includes('barat') || qNorm.includes('econom') || qNorm.includes('pouco dinheiro')) {
+    maxBudget = 35;
   }
 
   const wantsPriceDrop =
-    q.includes('baixou') ||
-    q.includes('promoc') ||
-    q.includes('desconto') ||
-    q.includes('oferta');
+    qNorm.includes('baixou') ||
+    qNorm.includes('promoc') ||
+    qNorm.includes('desconto') ||
+    qNorm.includes('oferta');
 
-  // 3. Detectar Intenção Gastronômica Principal
+  // 3. Detectar Perfil Sensorial / Atipicagem ("picante", "agridoce", "defumado", "crocante", "cremoso", "cítrico", etc.)
+  let matchedSensoryRule: SensoryProfileRule | null = null;
+  let bestSensoryHits = 0;
+  for (const sRule of SENSORY_ATIPICAGEM_RULES) {
+    const hits = sRule.triggerPhrases.filter((tp) => q.includes(normalizeStr(tp)) || qNorm.includes(normalizeStr(tp))).length;
+    if (hits > bestSensoryHits) {
+      bestSensoryHits = hits;
+      matchedSensoryRule = sRule;
+    }
+  }
+
+  // 4. Detectar Intenção Gastronômica Principal (18 categorias)
+  // Nota: Se for "agridoce" / "doce com salgado", NÃO ativar intenção de sobremesa ("doces_confeitaria")!
+  const isBittersweetQuery =
+    qNorm.includes('agridoce') ||
+    qNorm.includes('doce com salgado') ||
+    qNorm.includes('salgado com doce') ||
+    qNorm.includes('geleia de pimenta') ||
+    qNorm.includes('coalho com mel') ||
+    qNorm.includes('queijo com mel') ||
+    qNorm.includes('cebola caramelizada');
+
   let matchedIntentRule: FoodIntentRule | null = null;
   let bestIntentHits = 0;
   for (const rule of FOOD_INTENT_RULES) {
-    const hits = rule.triggerWords.filter((tw) => q.includes(normalizeStr(tw))).length;
+    if (isBittersweetQuery && (rule.isSweetIntent || rule.intent === 'pastel_salgados')) {
+      continue;
+    }
+    const hits = rule.triggerWords.filter((tw) => {
+      const twNorm = normalizeStr(tw);
+      return q.includes(twNorm) || qNorm.includes(twNorm);
+    }).length;
     if (hits > bestIntentHits) {
       bestIntentHits = hits;
       matchedIntentRule = rule;
     }
   }
 
-  // 4. Construir pool completo de pratos reais (usando r.dishes + r.dishes_preview + dishDetailsMap)
+  // Determinar se o usuário quer Sobremesa/Doce ou Bebida
+  const wantsSweet =
+    !isBittersweetQuery &&
+    (Boolean(matchedIntentRule?.isSweetIntent) ||
+      /\b(doce|doces|docinho|sobremesa|sobremesas|pudim|bolo|torta holandesa|banoffee|brigadeiro|brownie|churros|sorvete|gelato|napoleta|acai|acaigurte|milkshake|milk shake|nutella|confeitaria|copo da felicidade|fondue|geladinho|romeu e julieta)\b/.test(
+        qNorm
+      ));
+
+  const wantsDrink =
+    Boolean(matchedIntentRule?.isDrinkIntent) ||
+    /\b(cerveja|cervejinha|chopp|heineken|long neck|refrigerante|bebida|bebidas|suco|drink|vinho|whisky|energetico|caldo de cana)\b/.test(
+      qNorm
+    );
+
+  // Tokens culinários específicos da pergunta
+  const queryFoodTokens = q
+    .split(/\s+/)
+    .map((t) => t.replace(/[^a-z0-9]/g, ''))
+    .filter(
+      (t) =>
+        t.length >= 3 &&
+        !STOPWORDS.has(t) &&
+        !(isBittersweetQuery && (t === 'doce' || t === 'salgado' || t === 'prato'))
+    );
+
+  const hasSpecificFoodOrSensoryGoal =
+    Boolean(matchedIntentRule) || Boolean(matchedSensoryRule) || queryFoodTokens.length > 0;
+
+  // 5. Varredura e Pontuação Ontológica Estrita dos 2.645+ Pratos Reais
   interface ScoredCandidate {
     dish: DishPreview;
     restaurant: RestaurantCardData;
     distKm: number;
     score: number;
+    hasCulinaryMatch: boolean;
+    isTargetNeighborhood: boolean;
     matchReason: string;
   }
 
   const seenDishIds = new Set<string>();
   const candidates: ScoredCandidate[] = [];
 
-  // Palavras-chave relevantes da busca (ignorando stopwords)
-  const STOPWORDS = new Set([
-    'quero',
-    'uma',
-    'uns',
-    'umas',
-    'para',
-    'com',
-    'sem',
-    'perto',
-    'proximo',
-    'onde',
-    'comer',
-    'pedir',
-    'tem',
-    'qual',
-    'melhor',
-    'melhores',
-    'dica',
-    'dicas',
-    'hoje',
-    'agora',
-    'caragua',
-    'caraguatatuba',
-    'shopping',
-    'serramar',
-    'praia',
-    'centro',
-    'bairro',
-    'reais',
-    'ate',
-    'mais',
-    'muito',
-    'bom',
-    'boa',
-    'gostoso',
-    'gostosa',
-    'chef',
-    'jacquin',
-  ]);
-  const queryTokens = q
-    .split(/\s+/)
-    .map((t) => t.replace(/[^a-z0-9]/g, ''))
-    .filter((t) => t.length >= 3 && !STOPWORDS.has(t));
-
   const addCandidateIfValid = (d: DishPreview, r: RestaurantCardData) => {
     if (!d || !d.id || seenDishIds.has(d.id)) return;
     if (!d.price || d.price <= 0) return;
 
-    // Ignora bebidas soltas e adicionais a menos que o usuário peça bebida
-    const asksForDrink =
-      q.includes('cerveja') ||
-      q.includes('bebida') ||
-      q.includes('refrigerante') ||
-      q.includes('chopp') ||
-      q.includes('whisky');
-    if (!asksForDrink && isPureDrinkOrAddon(d.name, d.category)) {
+    const dishName = d.name || '';
+    const dishDesc = d.description || '';
+    const dishCat = d.category || '';
+    const restName = r.name || '';
+
+    // FIREWALL 1: Bloqueio total de não-alimentos, talheres, adicionais e balas de caixa (Trident/Halls/Chiclete)
+    if (isNonFoodOrCashierCandy(dishName, dishCat, d.price)) {
+      return;
+    }
+
+    // FIREWALL 2: Bloqueio total de bebidas soltas quando o usuário pediu comida
+    const isDrink = isPureDrinkItem(dishName, dishCat);
+    if (!wantsDrink && isDrink) {
+      return;
+    }
+    if (wantsDrink && !isDrink) {
+      return;
+    }
+
+    // FIREWALL 3 (ANTI-PUDIM): Partição estrita Salgado vs. Doce/Sobremesa
+    const isSweet = isSweetOrDessertItem(dishName, dishDesc, dishCat, restName);
+    if (!wantsSweet && !wantsDrink && isSweet) {
+      // NUNCA recomendar Pudim, Açaí, Sorvete, Bolo ou Churros em busca salgada, picante, agridoce ou geral!
+      return;
+    }
+    if (wantsSweet && !isSweet) {
+      // NUNCA recomendar marmita, peixe ou hambúrguer quando o usuário pediu sobremesa/doce/açaí!
       return;
     }
 
     seenDishIds.add(d.id);
 
     const distKm = calculateDistanceKm(refLat, refLon, r.latitude, r.longitude);
-    const dishHay = normalizeStr(`${d.name} ${d.description || ''} ${d.category || ''}`);
-    const restHay = normalizeStr(`${r.name} ${r.neighborhood} ${(r.cuisine_types || []).join(' ')}`);
+    const dishHay = canonicalizeFoodText(`${dishName} ${dishDesc} ${dishCat}`);
+    const dishNameNorm = normalizeStr(dishName);
+    const dishCatNorm = normalizeStr(dishCat);
+    const restHay = canonicalizeFoodText(`${restName} ${r.neighborhood} ${(r.cuisine_types || []).join(' ')}`);
     const fullHay = `${dishHay} ${restHay}`;
     const rNeighNorm = normalizeStr(r.neighborhood);
 
     let score = 0;
+    let hasCulinaryMatch = false;
     let matchReason = 'Selecionado pelo Chef Jacquin';
 
-    // A) Pontuação por Intenção Gastronômica (Marmita, Peixe, Lanche, Pizza, Sushi, Açaí, Vegano)
+    // A) Pontuação pelo Perfil Sensorial / Atipicagem (Picante, Agridoce, Defumado, Crocante, Cremoso, Cítrico, etc.)
+    if (matchedSensoryRule) {
+      let sensoryMatchedHere = false;
+      for (const skw of matchedSensoryRule.dishMatchKeywords) {
+        const skwNorm = normalizeStr(skw);
+        if (dishNameNorm.includes(skwNorm)) {
+          score += 190;
+          sensoryMatchedHere = true;
+          hasCulinaryMatch = true;
+          matchReason = matchedSensoryRule.labelPt;
+        } else if (dishHay.includes(skwNorm)) {
+          score += 135;
+          sensoryMatchedHere = true;
+          hasCulinaryMatch = true;
+          matchReason = matchedSensoryRule.labelPt;
+        }
+      }
+      for (const sck of matchedSensoryRule.categoryMatchKeywords) {
+        if (dishCatNorm.includes(normalizeStr(sck))) {
+          score += 85;
+          sensoryMatchedHere = true;
+          hasCulinaryMatch = true;
+        }
+      }
+      if (!sensoryMatchedHere) {
+        score -= 220;
+      }
+    }
+
+    // B) Pontuação pela Intenção Gastronômica Principal (18 categorias)
     if (matchedIntentRule) {
-      let hasPositiveMatch = false;
+      let intentMatchedHere = false;
 
       for (const kw of matchedIntentRule.positiveDishKeywords) {
-        if (dishHay.includes(normalizeStr(kw))) {
-          score += 55;
-          hasPositiveMatch = true;
+        const kwNorm = normalizeStr(kw);
+        if (dishNameNorm.includes(kwNorm)) {
+          score += 180;
+          intentMatchedHere = true;
+          hasCulinaryMatch = true;
+          matchReason = matchedIntentRule.labelPt;
+        } else if (dishHay.includes(kwNorm)) {
+          score += 120;
+          intentMatchedHere = true;
+          hasCulinaryMatch = true;
+          matchReason = matchedIntentRule.labelPt;
+        }
+      }
+
+      for (const ckw of matchedIntentRule.positiveCategoryKeywords) {
+        if (dishCatNorm.includes(normalizeStr(ckw))) {
+          score += 140;
+          intentMatchedHere = true;
+          hasCulinaryMatch = true;
           matchReason = matchedIntentRule.labelPt;
         }
       }
 
       for (const rkw of matchedIntentRule.positiveRestaurantKeywords) {
         if (restHay.includes(normalizeStr(rkw))) {
-          score += 48;
-          hasPositiveMatch = true;
-          matchReason = matchedIntentRule.labelPt;
+          score += 80;
+          intentMatchedHere = true;
+          hasCulinaryMatch = true;
         }
       }
 
@@ -753,98 +2003,144 @@ export function generateJacquinChatResponse(req: JacquinChatRequest): JacquinCha
         Array.isArray(r.food_types) &&
         r.food_types.includes(matchedIntentRule.requiredFoodType)
       ) {
-        score += 32;
-        hasPositiveMatch = true;
+        score += 45;
       }
 
       for (const nkw of matchedIntentRule.negativeDishKeywords) {
         if (dishHay.includes(normalizeStr(nkw))) {
-          score -= 80;
+          score -= 300;
         }
       }
 
       if (matchedIntentRule.intent === 'vegano_fit') {
         if (d.is_vegan) {
-          score += 75;
+          score += 160;
+          intentMatchedHere = true;
+          hasCulinaryMatch = true;
           matchReason = '100% Vegano Verificado';
         } else if (d.is_vegetarian) {
-          score += 55;
+          score += 120;
+          intentMatchedHere = true;
+          hasCulinaryMatch = true;
           matchReason = 'Opção Vegetariana';
         } else if (d.is_lactose_free || d.is_gluten_free) {
-          score += 45;
+          score += 110;
+          intentMatchedHere = true;
+          hasCulinaryMatch = true;
           matchReason = 'Sem Lactose / Sem Glúten';
         }
       }
 
-      // Se o usuário pediu uma categoria específica (ex: marmita) e o item não tem relação nenhuma, penaliza forte
-      if (!hasPositiveMatch) {
-        score -= 65;
+      if (!intentMatchedHere) {
+        score -= 260;
       }
     }
 
-    // B) Pontuação por Tokens Diretos da Pergunta
-    for (const tok of queryTokens) {
-      if (dishHay.includes(tok)) {
-        score += 40;
+    // C) Pontuação por Tokens Culinários Diretos da Pergunta (ex: "espetinho", "picanha", "coxinha", "yakisoba", "lasanha")
+    for (const tok of queryFoodTokens) {
+      if (dishNameNorm.includes(tok)) {
+        score += 130;
+        hasCulinaryMatch = true;
+      } else if (dishCatNorm.includes(tok)) {
+        score += 115;
+        hasCulinaryMatch = true;
+      } else if (dishHay.includes(tok)) {
+        score += 80;
+        hasCulinaryMatch = true;
       } else if (fullHay.includes(tok)) {
-        score += 22;
+        score += 45;
+        hasCulinaryMatch = true;
       }
     }
 
-    // C) Pontuação Geográfica (Landmark como Shopping Serramar ou Bairro explícito)
-    if (matchedLandmark) {
-      const idxInPriority = matchedLandmark.priorityNeighborhoods.findIndex(
-        (nb) => rNeighNorm.includes(nb) || nb.includes(rNeighNorm)
-      );
-      if (idxInPriority >= 0) {
-        // Quanto mais próximo na lista de bairros do landmark, maior o bônus
-        score += Math.max(25, 70 - idxInPriority * 6);
-        matchReason = `Pertinho: ${r.neighborhood}`;
-      } else if (distKm <= 3.5) {
-        score += 45;
-      } else if (distKm > 7) {
-        score -= 35;
-      }
-    } else if (explicitNeighborhood) {
+    // REGRA DE OURO: Se o usuário pediu uma comida ou perfil sensorial específico e este prato NÃO tem match culinário,
+    // aplica barreira de -350 pontos para que o bônus de bairro JAMAIS promova um prato sem relação com a comida pedida!
+    if (hasSpecificFoodOrSensoryGoal && !hasCulinaryMatch) {
+      score -= 350;
+    }
+
+    // D) Ordenação Geográfica (Bairro explícito ou Ponto de Referência como Pontal / Shopping Serramar)
+    let isTargetNeighborhood = false;
+    if (explicitNeighborhood) {
       const targetNb = normalizeStr(explicitNeighborhood);
       if (rNeighNorm.includes(targetNb) || targetNb.includes(rNeighNorm)) {
-        score += 75;
-        matchReason = `No bairro ${r.neighborhood}`;
+        score += 85;
+        isTargetNeighborhood = true;
+        if (!hasSpecificFoodOrSensoryGoal) {
+          matchReason = `Destaque em ${r.neighborhood}`;
+        }
       } else {
-        score -= 30;
+        const idxNear = priorityNeighborhoodsNorm.findIndex(
+          (nb) => rNeighNorm.includes(nb) || nb.includes(rNeighNorm)
+        );
+        if (idxNear >= 0) {
+          score += Math.max(20, 55 - idxNear * 8);
+        } else {
+          score -= 25;
+        }
+      }
+    } else if (matchedLandmark) {
+      const idxInPriority = priorityNeighborhoodsNorm.findIndex(
+        (nb) => rNeighNorm.includes(nb) || nb.includes(rNeighNorm)
+      );
+      if (idxInPriority === 0) {
+        score += 80;
+        isTargetNeighborhood = true;
+      } else if (idxInPriority > 0) {
+        score += Math.max(20, 65 - idxInPriority * 7);
+        isTargetNeighborhood = idxInPriority <= 2;
+      } else if (distKm <= 3.5) {
+        score += 35;
+      } else if (distKm > 7) {
+        score -= 25;
       }
     }
 
-    // D) Orçamento e Queda de Preço
+    // E) Orçamento e Queda de Preço Auditada
     if (maxBudget !== null) {
       if (d.price <= maxBudget) {
-        score += 45;
-        matchReason = `Cabe no bolso: R$ ${d.price.toFixed(2).replace('.', ',')}`;
+        score += 70;
+        if (!matchedIntentRule && !matchedSensoryRule) {
+          matchReason = `Cabe no bolso: R$ ${d.price.toFixed(2).replace('.', ',')}`;
+        }
       } else {
-        score -= 90;
+        score -= 180;
       }
     }
 
     if (wantsPriceDrop) {
       if (d.last_price_delta_pct && d.last_price_delta_pct < 0) {
-        score += 65;
+        score += 95;
         matchReason = 'Baixou de preço esta semana';
       } else if (r.has_price_drop) {
-        score += 25;
+        score += 35;
       }
     }
 
-    // E) Qualidade Bayesiana, Foto Real e Proximidade Suave
-    const wr = Number(r.bayesian_rating ?? r.rating_score ?? r.rating_average ?? 4.5);
+    // Penaliza kits congelados gigantes (R$ 150+) a menos que o usuário peça kit/congelado/família
+    if (
+      d.price > 125 &&
+      !qNorm.includes('kit') &&
+      !qNorm.includes('familia') &&
+      !qNorm.includes('combo') &&
+      !qNorm.includes('barca')
+    ) {
+      score -= 60;
+    }
+
+    // F) Qualidade Bayesiana ($W_R$), Foto Real e Distância Suave
+    const wr = Number(r.bayesian_rating ?? r.rating_score ?? r.rating_average ?? 4.7);
     score += wr * 4;
-    if (d.image_url) score += 12;
-    score -= Math.min(15, distKm * 1.8);
+    if (d.image_url) score += 10;
+    score -= Math.min(18, distKm * 1.6);
 
     candidates.push({
       dish: d,
       restaurant: r,
       distKm: Number(distKm.toFixed(2)),
       score,
+      hasCulinaryMatch,
+      isTargetNeighborhood,
       matchReason,
     });
   };
@@ -858,7 +2154,6 @@ export function generateJacquinChatResponse(req: JacquinChatRequest): JacquinCha
     }
   }
 
-  // Também varre dishDetailsMap para encontrar pratos profundos do cardápio (como marmitas do Point do Pirão, etc.)
   const restById = new Map<string, RestaurantCardData>();
   for (const r of allRests) {
     restById.set(r.id, r);
@@ -870,18 +2165,24 @@ export function generateJacquinChatResponse(req: JacquinChatRequest): JacquinCha
     }
   }
 
-  candidates.sort((a, b) => b.score - a.score);
+  // Se houver candidatos com match culinário real, filtramos estritamente para eles!
+  const matchedCulinaryPool = candidates.filter((c) => c.hasCulinaryMatch);
+  const workingPool =
+    hasSpecificFoodOrSensoryGoal && matchedCulinaryPool.length > 0
+      ? matchedCulinaryPool
+      : candidates;
 
-  // Seleciona até 5 pratos aplicando Round-Robin por restaurante (máx. 1 prato por restaurante na primeira passada, depois permite 2º)
+  workingPool.sort((a, b) => b.score - a.score);
+
+  // Round-Robin inteligente por restaurante (prioriza diversidade de estabelecimentos quando há múltiplos disponíveis)
   const limit = req.limit || 5;
   const selected: ScoredCandidate[] = [];
   const restCount = new Map<string, number>();
 
-  for (const passMax of [1, 2]) {
-    for (const cand of candidates) {
+  for (const passMax of [1, 2, 3]) {
+    for (const cand of workingPool) {
       if (selected.length >= limit) break;
       if (selected.includes(cand)) continue;
-      if (cand.score < -15 && selected.length >= 2) continue;
       const rId = cand.restaurant.id || cand.restaurant.name;
       const current = restCount.get(rId) || 0;
       if (current < passMax) {
@@ -934,125 +2235,100 @@ export function generateJacquinChatResponse(req: JacquinChatRequest): JacquinCha
     };
   });
 
-  // 5. Construir a fala autêntica e carismática do Chef Érick Jacquin Praiano
+  // 6. Construir a fala autêntica, contextualizada e honesta do Chef Érick Jacquin Praiano
   const first = selected[0];
   const second = selected[1];
   const locContext = matchedLandmark
     ? matchedLandmark.label
     : explicitNeighborhood
-    ? `no bairro **${explicitNeighborhood}**`
+    ? `para você que pediu no bairro **${explicitNeighborhood}**`
     : 'aqui em Caraguatatuba';
+
+  const firstPriceStr = first ? first.dish.price.toFixed(2).replace('.', ',') : '0,00';
+  const secondText = second
+    ? `, seguida de **${second.dish.name}** no **${second.restaurant.name}** (${second.restaurant.neighborhood}) por **R$ ${second.dish.price.toFixed(2).replace('.', ',')}**!`
+    : `!`;
 
   let reply = '';
   let chefMood = 'Entusiasmado & Exigente com o Tompero';
 
   if (!first) {
     reply =
-      `Mon Dieu! Eu revirei todas as panelas dos 53 bairros de Caraguá, mas com esse filtro exato ninguém ligou o fogão hoje! ` +
-      `Me pede uma **marmita caprichada**, um **camarão na praia**, um **hambúrguer artesanal**, uma **pizza** ou um **sushi fresquinho** que eu te mostro onde tem *tompero* de verdade!`;
+      `**Mon Dieu!** Eu revirei todas as panelas dos 53 bairros de Caraguá, mas com esse filtro exato ninguém ligou o fogão agora! ` +
+      `Me pede um **espetinho na brasa**, uma **marmita caprichada**, um **camarão na praia**, algo **picante** ou **agridoce**, um **hambúrguer artesanal**, uma **pizza** ou um **sushi fresquinho** que eu te mostro onde tem *tompero* de verdade!`;
   } else if (
-    q.includes('bayes') ||
-    q.includes('formula') ||
-    q.includes('ranking comprado') ||
-    q.includes('nota ponderada')
+    qNorm.includes('bayes') ||
+    qNorm.includes('formula') ||
+    qNorm.includes('ranking comprado') ||
+    qNorm.includes('nota ponderada')
   ) {
     chefMood = 'Auditor Matemático & Curador Técnico';
     reply =
       `**Ah, la mathématique da gastronomia, mon ami!** No CaráFood não existe ranking patrocinado nem nota comprada: usamos a **Média Bayesiana Ponderada** ($W_R = \\frac{v}{v+m}R + \\frac{m}{v+m}C$) combinada com a **Cédula Oficial de 5 Critérios** (Sabor 30%, Qualidade 25%, Tempo 15%, Embalagem 15% e Custo-Benefício 15%)!\n\n` +
-      `E para provar na prática ${locContext}, olha quem brilha no ranking auditado: **${first.dish.name}** no **${first.restaurant.name}** (${first.restaurant.neighborhood}) por **R$ ${first.dish.price.toFixed(2).replace('.', ',')}**!`;
+      `E para provar na prática ${locContext}, olha quem brilha no ranking auditado: **${first.dish.name}** no **${first.restaurant.name}** (${first.restaurant.neighborhood}) por **R$ ${firstPriceStr}**${secondText}`;
   } else if (
-    q.includes('metade do dobro') ||
-    q.includes('descontao') ||
-    q.includes('preco real') ||
-    q.includes('promocao verdadeira')
+    qNorm.includes('metade do dobro') ||
+    qNorm.includes('descontao') ||
+    qNorm.includes('preco real') ||
+    qNorm.includes('promocao verdadeira')
   ) {
     chefMood = 'Fiscal Implacável contra Falsa Promoção';
     reply =
-      `**Sacré bleu, eu odeio a famosa "metade do dobro"!** No CaráFood, nosso motor **Descontão Transparente** audita a mediana histórica de 30 dias dos **2.670 pratos** nos 61 estabelecimentos. O selo de queda real só acende quando o preço baixou de verdade!\n\n` +
-      `Olha uma pedida honesta ${locContext}: **${first.dish.name}** no **${first.restaurant.name}** (${first.restaurant.neighborhood}) por **R$ ${first.dish.price.toFixed(2).replace('.', ',')}**!`;
+      `**Sacré bleu, eu odeio a famosa "metade do dobro"!** No CaráFood, nosso motor **Descontão Transparente** audita a mediana histórica de 30 dias dos **2.645 pratos** nos 61 estabelecimentos. O selo de queda real só acende quando o preço baixou de verdade!\n\n` +
+      `Olha uma pedida honesta ${locContext}: **${first.dish.name}** no **${first.restaurant.name}** (${first.restaurant.neighborhood}) por **R$ ${firstPriceStr}**${secondText}`;
   } else if (
-    q.includes('freezer') ||
-    q.includes('vergonha') ||
-    q.includes('pesadelo') ||
-    q.includes('tompero') ||
-    (q.length <= 18 && (q.includes('oi') || q.includes('ola') || q.includes('bom dia') || q.includes('boa noite') || q.includes('jacquin')))
+    qNorm.includes('freezer') ||
+    qNorm.includes('vergonha') ||
+    qNorm.includes('pesadelo') ||
+    (qNorm.length <= 20 &&
+      !hasSpecificFoodOrSensoryGoal &&
+      (qNorm.includes('oi') || qNorm.includes('ola') || qNorm.includes('bom dia') || qNorm.includes('boa noite') || qNorm.includes('jacquin')))
   ) {
-    chefMood = 'Modo Pesadelo na Cozinha (Humorado)';
+    chefMood = 'Modo Pesadelo na Cozinha (Freezer Ligado)';
     reply =
       `**Bonjour, mon ami!** Aqui em Caraguatatuba não tem *vergonha da profission*, não! Eu já fiscalizei os **61 restaurantes** da cidade: o freezer tá ligado, a cozinha tá limpa e o *tompero* é caiçara de verdade!\n\n` +
-      `Para abrir o seu apetite ${locContext}, olha minha primeira recomendação de chef: **${first.dish.name}** no **${first.restaurant.name}** (${first.restaurant.neighborhood}) por **R$ ${first.dish.price.toFixed(2).replace('.', ',')}**! Confira os cartões aqui embaixo:`;
-  } else if (matchedIntentRule?.intent === 'marmita') {
-    chefMood = 'Fiscal de Panela & Almoço Caseiro';
-    reply =
-      `**Mon Dieu, bateu aquela fome de almoço de verdade?** Marmita sem *tompero* é *vergonha da profission*, por isso eu selecionei pessoalmente as cozinhas mais caprichadas ${locContext}!\n\n` +
-      `Olha essa joia: **${first.dish.name}** lá no **${first.restaurant.name}** (${first.restaurant.neighborhood}), saindo por **R$ ${first.dish.price.toFixed(2).replace('.', ',')}**` +
-      (second
-        ? `, e também **${second.dish.name}** no **${second.restaurant.name}** (${second.restaurant.neighborhood}) por **R$ ${second.dish.price.toFixed(2).replace('.', ',')}**!`
-        : `!`) +
-      ` Comida farta, quentinha e preço honesto. Veja as fichas completas abaixo:`;
-  } else if (matchedIntentRule?.intent === 'frutos_do_mar') {
-    chefMood = 'Apaixonado pelo Mar de Caraguá';
-    reply =
-      `**C'est magnifique!** Vir para Caraguatatuba e não comer um peixe fresco ou camarão com *tompero* caiçara é um pecado gastronômico!\n\n` +
-      `Separei as melhores pedidas ${locContext}, começando por **${first.dish.name}** no **${first.restaurant.name}** (${first.restaurant.neighborhood}) por **R$ ${first.dish.price.toFixed(2).replace('.', ',')}**` +
-      (second
-        ? ` e **${second.dish.name}** no **${second.restaurant.name}** (${second.restaurant.neighborhood})!`
-        : `!`) +
-      ` Tudo fresquinho, com freezer ligado e nota alta!`;
-  } else if (matchedIntentRule?.intent === 'sushi') {
-    chefMood = 'Inspeção Rigorosa de Peixe Fresco';
-    reply =
-      `**Ah, culinária japonesa!** No sushi eu sou implacável: o peixe tem que estar na temperatura certa, *freezer e geladeira impecáveis*!\n\n` +
-      `Aqui ${locContext}, minha recomendação de ouro é **${first.dish.name}** do **${first.restaurant.name}** (${first.restaurant.neighborhood}) por **R$ ${first.dish.price.toFixed(2).replace('.', ',')}**` +
-      (second
-        ? `, além de **${second.dish.name}** no **${second.restaurant.name}**!`
-        : `!`) +
-      ` Pode pedir de olhos fechados, *mon cher*:`;
-  } else if (matchedIntentRule?.intent === 'pizza') {
-    chefMood = 'Crítico de Massa & Forno Quente';
-    reply =
-      `**Une bonne pizza!** Massa bem fermentada, queijo derretendo e bastante *tompero* no molho!\n\n` +
-      `Garimpei os cardápios ${locContext} e destaquei **${first.dish.name}** da **${first.restaurant.name}** (${first.restaurant.neighborhood}) por **R$ ${first.dish.price.toFixed(2).replace('.', ',')}**` +
-      (second
-        ? ` e **${second.dish.name}** na **${second.restaurant.name}**!`
-        : `!`) +
-      ` Clique no cartão abaixo para ver a ficha completa:`;
-  } else if (matchedIntentRule?.intent === 'lanches') {
-    chefMood = 'Especialista em Ponto da Carne & Brioche';
-    reply =
-      `**Oh là là!** Um hambúrguer bem feito, com carne suculenta na chapa, queijo de verdade e pão macio é arte pura!\n\n` +
-      `Para matar sua fome ${locContext}, eu recomendo **${first.dish.name}** no **${first.restaurant.name}** (${first.restaurant.neighborhood}) por **R$ ${first.dish.price.toFixed(2).replace('.', ',')}**` +
-      (second
-        ? ` ou **${second.dish.name}** no **${second.restaurant.name}** (${second.restaurant.neighborhood}) por **R$ ${second.dish.price.toFixed(2).replace('.', ',')}**!`
-        : `!`) +
-      ` Nada de carne seca, só suculência!`;
-  } else if (matchedIntentRule?.intent === 'doces_acai') {
-    chefMood = 'Pâtissier & Fã de Sobremesa Praiana';
-    reply =
-      `**La vie est douce, mon ami!** Depois de caminhar pela praia de Caraguá, uma sobremesa gelada ou um doce artesanal cai como uma luva!\n\n` +
-      `Olha o que eu separei ${locContext}: **${first.dish.name}** no **${first.restaurant.name}** (${first.restaurant.neighborhood}) por **R$ ${first.dish.price.toFixed(2).replace('.', ',')}**!`;
+      `Para abrir o seu apetite ${locContext}, olha minha primeira recomendação de chef: **${first.dish.name}** no **${first.restaurant.name}** (${first.restaurant.neighborhood}) por **R$ ${firstPriceStr}**${secondText}`;
+  } else if (matchedSensoryRule && (!matchedIntentRule || bestSensoryHits >= bestIntentHits)) {
+    chefMood = matchedSensoryRule.chefMood;
+    reply = matchedSensoryRule.buildSensoryIntro(
+      locContext,
+      first.dish.name,
+      first.restaurant.name,
+      first.restaurant.neighborhood,
+      firstPriceStr,
+      secondText
+    );
+  } else if (matchedIntentRule) {
+    chefMood = matchedIntentRule.chefMood;
+    reply = matchedIntentRule.buildJacquinIntro(
+      locContext,
+      first.dish.name,
+      first.restaurant.name,
+      first.restaurant.neighborhood,
+      firstPriceStr,
+      secondText
+    );
   } else if (maxBudget !== null) {
-    chefMood = 'Chef Amigo do Bolso';
+    chefMood = 'Chef Amigo do Bolso & Custo-Benefício';
     reply =
-      `**Comer bem sem gastar muito? Isso é inteligência gastronômica!** Quem disse que precisa pagar caro para ter *tompero* de chef?\n\n` +
-      `Filtrei opções reais ${locContext} dentro do seu orçamento de **até R$ ${maxBudget},00**, começando por **${first.dish.name}** no **${first.restaurant.name}** (${first.restaurant.neighborhood}) por apenas **R$ ${first.dish.price.toFixed(2).replace('.', ',')}**!`;
+      `**Comer bem sem gastar muito? Isso é inteligência gastronômica, mon ami!** Quem disse que precisa pagar caro para ter *tompero* de chef?\n\n` +
+      `Filtrei opções reais ${locContext} dentro do seu orçamento de **até R$ ${maxBudget},00**, começando por **${first.dish.name}** no **${first.restaurant.name}** (${first.restaurant.neighborhood}) por apenas **R$ ${firstPriceStr}**${secondText}`;
   } else {
     reply =
       `**Bonjour, mon ami!** Fui pessoalmente garimpar os cardápios reais ${locContext} para o seu pedido (**"${rawQuery}"**)!\n\n` +
-      `Minha primeira escolha com muito *tompero* é **${first.dish.name}** lá no **${first.restaurant.name}** (${first.restaurant.neighborhood}), saindo por **R$ ${first.dish.price.toFixed(2).replace('.', ',')}**` +
-      (second
-        ? `, seguida de **${second.dish.name}** no **${second.restaurant.name}** (${second.restaurant.neighborhood}) por **R$ ${second.dish.price.toFixed(2).replace('.', ',')}**!`
-        : `!`) +
-      ` Confira os pratos selecionados logo abaixo:`;
+      `Minha primeira escolha com muito *tompero* é **${first.dish.name}** lá no **${first.restaurant.name}** (${first.restaurant.neighborhood}), saindo por **R$ ${firstPriceStr}**${secondText} Confira os pratos selecionados logo abaixo:`;
   }
 
-  const detectedIntent = matchedIntentRule?.intent || 'geral';
+  const detectedIntent = matchedSensoryRule
+    ? `${matchedIntentRule?.intent || 'sensorial'}:${matchedSensoryRule.id}`
+    : matchedIntentRule?.intent || 'geral';
   const detectedLocationLabel = matchedLandmark?.label || explicitNeighborhood || null;
+
   const brainStats: JacquinBrainStats = {
-    version: brain40k.version || '4.0.0-jacquin-ollama-40k',
+    version: brain40k.version || '5.0.0-jacquin-ollama-40k-sensory',
     modelName: brain40k.modelName || 'jacquin-carafood:latest',
     baseModel: brain40k.baseModel || 'qwen2.5:3b',
-    totalTrainedQuestions: brain40k.totalTrainedQuestions || 42870,
+    totalTrainedQuestions: brain40k.totalTrainedQuestions || 45200,
     totalCatalogDishes: brain40k.totalCatalogDishes || 2645,
     totalRestaurants: brain40k.totalRestaurants || 61,
     totalOfficialNeighborhoods: brain40k.totalOfficialNeighborhoods || 53,
@@ -1070,7 +2346,7 @@ export function generateJacquinChatResponse(req: JacquinChatRequest): JacquinCha
     ollamaMessages: buildOllamaRagMessages(
       rawQuery,
       recommendations,
-      matchedIntentRule?.labelPt || detectedIntent,
+      matchedSensoryRule?.labelPt || matchedIntentRule?.labelPt || detectedIntent,
       detectedLocationLabel
     ),
   };

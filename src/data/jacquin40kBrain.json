@@ -2,7 +2,7 @@
   "version": "4.0.0-jacquin-ollama-40k",
   "modelName": "jacquin-carafood:latest",
   "baseModel": "qwen2.5:3b",
-  "totalTrainedQuestions": 42870,
+  "totalTrainedQuestions": 45380,
   "totalCatalogDishes": 2645,
   "totalRestaurants": 61,
   "totalOfficialNeighborhoods": 53,
@@ -611,8 +611,10 @@
       ]
     },
     "churrasco_carnes": {
-      "label": "Churrasco, Picanha, Costela, Espetinhos & Carnes",
+      "label": "Espetinhos na Brasa, Churrasco, Picanha, Costela & Carnes",
       "dish_keywords": [
+        "espetinho",
+        "espeto",
         "picanha",
         "costela",
         "churrasco",
@@ -621,39 +623,140 @@
         "alcatra",
         "maminha",
         "cupim",
-        "espetinho",
-        "espeto",
         "parrilla",
         "chorizo",
         "ancho",
         "fraldinha",
-        "linguiça",
+        "linguica",
         "medalhao",
         "carne assada",
-        "brasa"
+        "brasa",
+        "kafta",
+        "queijo coalho",
+        "tulipa",
+        "salsichao"
       ],
       "rest_categories": [
         "Churrascaria",
         "Carnes",
         "Espetinhos",
-        "Brasileira"
+        "Brasileira",
+        "Churrasco & Grelhados"
       ],
       "exclude_keywords": [
         "acai",
         "sorvete",
-        "shake"
+        "shake",
+        "pudim",
+        "bolo",
+        "brigadeiro",
+        "churros",
+        "espetinho doce"
       ],
       "jacquin_intros": [
-        "Saignant ou à point! Carne na brasa exige respeito ao ponto e suculência — passar demais a picanha é um pecado mortal!",
-        "Regardez! Para quem quer proteína nobre, brasa viva e acompanhamento farto em {loc_label}:",
-        "Bravo! Os mestres da grelha e da brasa em {loc_label} que passaram pelo meu crivo:"
+        "Sacré bleu, sentiu o perfume de brasa no ar, mon ami? Espetinho e churrasco exigem carvão vivo, suculência e respeito ao ponto da carne!",
+        "Regardez! Para quem quer espetinho assado na hora, picanha e brasa viva em {loc_label}:",
+        "Bravo! Os mestres da churrasqueira e dos espetinhos em {loc_label} que passaram pelo meu crivo:"
       ],
       "sample_questions": [
-        "onde comer picanha ou churrasco bom em {loc}?",
+        "espetinho no {loc}",
+        "onde comer espetinho ou churrasco bom em {loc}?",
         "quero costela desmanchando ou carne na brasa em {loc}",
         "espetinho caprichado perto de {loc} ate R$ {budget}",
-        "melhor carne grelhada na regiao de {loc}",
-        "jacquin onde fazem carne no ponto certo em {loc}?"
+        "melhor picanha ou espeto na regiao de {loc}",
+        "jacquin onde fazem espetinho e carne no ponto certo em {loc}?"
+      ]
+    },
+    "picante_apimentado": {
+      "label": "Perfil Sensorial Picante, Apimentado & Tempero Forte",
+      "dish_keywords": [
+        "apimentad",
+        "picante",
+        "pimenta",
+        "geleia de pimenta",
+        "coxim",
+        "diquinta",
+        "gorgonsweet",
+        "baiana",
+        "nachos",
+        "doritos",
+        "pepperoni",
+        "peperoni",
+        "catupperoni",
+        "kafta apimentada",
+        "linguica apimentada"
+      ],
+      "rest_categories": [
+        "Hambúrguer",
+        "Churrasco",
+        "Pizzaria"
+      ],
+      "exclude_keywords": [
+        "pudim",
+        "acai",
+        "sorvete",
+        "bolo",
+        "milk shake",
+        "agua",
+        "refrigerante"
+      ],
+      "jacquin_intros": [
+        "Oh là là, você gosta de emoção e picância no paladar, mon ami! Pimenta na medida certa levanta o *tompero* sem anestesiar a língua!",
+        "Écoutez! Para quem pediu algo mais picante e cheio de personalidade em {loc_label}:"
+      ],
+      "sample_questions": [
+        "quero algo mais picante em {loc}",
+        "tem comida apimentada boa perto de {loc}?",
+        "prato com pimenta ou geleia de pimenta em {loc}",
+        "jacquin me indica algo picante e com personalidade em {loc}",
+        "lanche ou espetinho apimentado ate R$ {budget} em {loc}"
+      ]
+    },
+    "agridoce_caramelizado": {
+      "label": "Perfil Sensorial Agridoce, Caramelizado, Geleia de Pimenta, Mel & Tarê",
+      "dish_keywords": [
+        "gorgonsweet",
+        "geleia de pimenta",
+        "coxim",
+        "diquinta",
+        "queijo coalho",
+        "com mel",
+        "sunomono",
+        "cebola caramelizada",
+        "caramelizada",
+        "barbecue",
+        "texas bacon",
+        "costela desfiada",
+        "temaki hot",
+        "hot roll",
+        "tare",
+        "cheddar melting",
+        "queen"
+      ],
+      "rest_categories": [
+        "Hambúrguer",
+        "Culinária Japonesa",
+        "Churrasco"
+      ],
+      "exclude_keywords": [
+        "pudim",
+        "brigadeiro",
+        "bolo",
+        "sorvete",
+        "acai",
+        "agua",
+        "refrigerante"
+      ],
+      "jacquin_intros": [
+        "Magnifique! O equilíbrio agridoce — aquele contraste entre o salgado suculento, a cebola caramelizada, o mel, a geleia de pimenta ou o molho tarê — é alta gastronomia!",
+        "Voilà! Para quem busca notas agridoces sofisticadas (sem confundir com sobremesa!) em {loc_label}:"
+      ],
+      "sample_questions": [
+        "quero comer algo agridoce em {loc}",
+        "tem prato com contraste doce e salgado perto de {loc}?",
+        "lanche com cebola caramelizada, barbecue ou geleia de pimenta em {loc}",
+        "jacquin me recomenda algo agridoce em {loc} ate R$ {budget}",
+        "queijo coalho com mel ou oriental com molho tare em {loc}"
       ]
     },
     "cafe_padaria_lanche_tarde": {
@@ -819,7 +922,7 @@
       },
       {
         "id": "e1b97db7-f693-50f7-8fda-1e6b0314da2c",
-        "name": "tônica",
+        "name": "Tônica",
         "price": 3.0,
         "restaurantName": "Restaurante do Jorginho",
         "neighborhood": "Travessão",
@@ -843,7 +946,7 @@
       },
       {
         "id": "7b23cb1e-199f-5e1c-9e5f-ea235720ec49",
-        "name": "água com gás",
+        "name": "Água com Gás",
         "price": 3.5,
         "restaurantName": "Restaurante do Jorginho",
         "neighborhood": "Travessão",
@@ -859,7 +962,7 @@
       },
       {
         "id": "b5423222-03f6-5200-a198-16e7f0e3c3a6",
-        "name": "coca cola",
+        "name": "Coca Cola",
         "price": 6.0,
         "restaurantName": "Restaurante do Jorginho",
         "neighborhood": "Travessão",
@@ -867,7 +970,7 @@
       },
       {
         "id": "4b65dd2e-f05e-548a-93aa-8d3b240d6f19",
-        "name": "guaraná",
+        "name": "Guaraná",
         "price": 6.0,
         "restaurantName": "Restaurante do Jorginho",
         "neighborhood": "Travessão",
@@ -875,7 +978,7 @@
       },
       {
         "id": "d470430c-f40b-5e5d-90d8-0c88a8888490",
-        "name": "fanta laranja",
+        "name": "Fanta Laranja",
         "price": 6.0,
         "restaurantName": "Restaurante do Jorginho",
         "neighborhood": "Travessão",
@@ -883,7 +986,7 @@
       },
       {
         "id": "4e3410ca-b128-5a9b-8b58-e03d624a2dc9",
-        "name": "fanta uva",
+        "name": "Fanta Uva",
         "price": 6.0,
         "restaurantName": "Restaurante do Jorginho",
         "neighborhood": "Travessão",
@@ -949,7 +1052,7 @@
     "seafood_caiçara": [
       {
         "id": "e1b97db7-f693-50f7-8fda-1e6b0314da2c",
-        "name": "tônica",
+        "name": "Tônica",
         "price": 3.0,
         "restaurantName": "Restaurante do Jorginho",
         "neighborhood": "Travessão",
@@ -973,7 +1076,7 @@
       },
       {
         "id": "7b23cb1e-199f-5e1c-9e5f-ea235720ec49",
-        "name": "água com gás",
+        "name": "Água com Gás",
         "price": 3.5,
         "restaurantName": "Restaurante do Jorginho",
         "neighborhood": "Travessão",
@@ -989,7 +1092,7 @@
       },
       {
         "id": "b5423222-03f6-5200-a198-16e7f0e3c3a6",
-        "name": "coca cola",
+        "name": "Coca Cola",
         "price": 6.0,
         "restaurantName": "Restaurante do Jorginho",
         "neighborhood": "Travessão",
@@ -997,7 +1100,7 @@
       },
       {
         "id": "4b65dd2e-f05e-548a-93aa-8d3b240d6f19",
-        "name": "guaraná",
+        "name": "Guaraná",
         "price": 6.0,
         "restaurantName": "Restaurante do Jorginho",
         "neighborhood": "Travessão",
@@ -1005,7 +1108,7 @@
       },
       {
         "id": "d470430c-f40b-5e5d-90d8-0c88a8888490",
-        "name": "fanta laranja",
+        "name": "Fanta Laranja",
         "price": 6.0,
         "restaurantName": "Restaurante do Jorginho",
         "neighborhood": "Travessão",
@@ -1013,7 +1116,7 @@
       },
       {
         "id": "4e3410ca-b128-5a9b-8b58-e03d624a2dc9",
-        "name": "fanta uva",
+        "name": "Fanta Uva",
         "price": 6.0,
         "restaurantName": "Restaurante do Jorginho",
         "neighborhood": "Travessão",
@@ -1077,7 +1180,7 @@
       },
       {
         "id": "b10132dd-7bb5-52ff-b936-02270e1cc4f9",
-        "name": "filé de peixe'",
+        "name": "Filé de Peixe'",
         "price": 16.0,
         "restaurantName": "Restaurante do Jorginho",
         "neighborhood": "Travessão",
@@ -1085,7 +1188,7 @@
       },
       {
         "id": "9051246c-02b0-5f5b-8826-4d5312b618eb",
-        "name": "peixe c/ molho de camarão",
+        "name": "Peixe c/ Molho de Camarão",
         "price": 26.0,
         "restaurantName": "Restaurante do Jorginho",
         "neighborhood": "Travessão",
@@ -1093,7 +1196,7 @@
       },
       {
         "id": "249aecc8-ec17-50c6-a3a1-2c8eff9233a9",
-        "name": "bobó de camarão",
+        "name": "Bobó de Camarão",
         "price": 26.0,
         "restaurantName": "Restaurante do Jorginho",
         "neighborhood": "Travessão",
@@ -1117,7 +1220,7 @@
       },
       {
         "id": "0ccbde82-fc01-51bb-b9e9-7afabb595445",
-        "name": "camarão",
+        "name": "Pizza de Camarão",
         "price": 42.9,
         "restaurantName": "Pizzaria Rocha",
         "neighborhood": "Centro",
@@ -1125,7 +1228,7 @@
       },
       {
         "id": "1f4e608c-dad8-52d0-ab89-192d3e7e0afc",
-        "name": "camarão",
+        "name": "Pizza de Camarão",
         "price": 54.9,
         "restaurantName": "Pizzaria Venezza",
         "neighborhood": "Centro",
@@ -1133,7 +1236,7 @@
       },
       {
         "id": "61e27bd2-364c-5311-b3d8-8f83040ce3db",
-        "name": "beirute de linguiça bragantina",
+        "name": "Beirute de Linguiça Bragantina",
         "price": 65.0,
         "restaurantName": "Divina Gula Sanduicheria",
         "neighborhood": "Ipiranga",
@@ -1141,7 +1244,7 @@
       },
       {
         "id": "c17a8a3a-ed3a-5a89-9808-8720031acd79",
-        "name": "beirute de lombo",
+        "name": "Beirute de Lombo",
         "price": 65.0,
         "restaurantName": "Divina Gula Sanduicheria",
         "neighborhood": "Ipiranga",
@@ -1457,7 +1560,7 @@
       },
       {
         "id": "1dce2ce6-d63b-58ad-9ab4-807c7806ef51",
-        "name": "guaraná pet 273 ml",
+        "name": "Guaraná Pet 273 Ml",
         "price": 3.0,
         "restaurantName": "Pizzaria Rocha",
         "neighborhood": "Centro",
@@ -1465,7 +1568,7 @@
       },
       {
         "id": "f6a7bdb6-58aa-5c5d-832b-173b50c7f85b",
-        "name": "soda pet 200 ml",
+        "name": "Soda Pet 200 Ml",
         "price": 3.0,
         "restaurantName": "Pizzaria Rocha",
         "neighborhood": "Centro",
@@ -1473,7 +1576,7 @@
       },
       {
         "id": "c4280cb0-556f-5a5f-a158-2c372419130e",
-        "name": "suco del valle kapo laranja",
+        "name": "Suco Del Valle Kapo Laranja",
         "price": 3.0,
         "restaurantName": "Pizzaria Rocha",
         "neighborhood": "Centro",
@@ -1481,7 +1584,7 @@
       },
       {
         "id": "d25091b4-37f2-5c55-ab01-d2a2ac0adb90",
-        "name": "suco del valle kapo morango",
+        "name": "Suco Del Valle Kapo Morango",
         "price": 3.0,
         "restaurantName": "Pizzaria Rocha",
         "neighborhood": "Centro",
@@ -1489,7 +1592,7 @@
       },
       {
         "id": "3eda29d7-2228-514a-971e-e86e54ef5161",
-        "name": "sukita laranja pet 200 ml",
+        "name": "Sukita Laranja Pet 200 Ml",
         "price": 3.0,
         "restaurantName": "Pizzaria Rocha",
         "neighborhood": "Centro",
@@ -1497,7 +1600,7 @@
       },
       {
         "id": "8d86dbf1-8979-5aa6-a0b4-71ec41f317ea",
-        "name": "sukita uva pet 200 ml",
+        "name": "Sukita Uva Pet 200 Ml",
         "price": 3.0,
         "restaurantName": "Pizzaria Rocha",
         "neighborhood": "Centro",
@@ -1505,7 +1608,7 @@
       },
       {
         "id": "cc65dc75-1a11-5601-ad8f-3de7497d5417",
-        "name": "água mineral sapucaí 510ml",
+        "name": "Água Mineral Sapucaí 510ml",
         "price": 3.0,
         "restaurantName": "Pizzaria Rocha",
         "neighborhood": "Centro",
@@ -1513,7 +1616,7 @@
       },
       {
         "id": "02ff17ae-48bf-55a0-b333-cc629080cf60",
-        "name": "suco del valle kapo uva",
+        "name": "Suco Del Valle Kapo Uva",
         "price": 3.0,
         "restaurantName": "Pizzaria Rocha",
         "neighborhood": "Centro",
@@ -1521,7 +1624,7 @@
       },
       {
         "id": "a935e5c8-1aa5-5d02-bf60-793b5f75600b",
-        "name": "água mineral lindóia 500ml com gás",
+        "name": "Água Mineral Lindóia 500ml com Gás",
         "price": 3.5,
         "restaurantName": "Pizzaria Rocha",
         "neighborhood": "Centro",
@@ -1529,7 +1632,7 @@
       },
       {
         "id": "df52b2b6-6496-50af-8202-a2f2cad92dfd",
-        "name": "catupiry",
+        "name": "Catupiry",
         "price": 5.0,
         "restaurantName": "Divina Gula Sanduicheria",
         "neighborhood": "Ipiranga",
@@ -1537,7 +1640,7 @@
       },
       {
         "id": "10fbeec9-eebe-5b13-9b83-05a0dedb4bdc",
-        "name": "coca - cola zero lata 350ml",
+        "name": "Coca - Cola Zero Lata 350ml",
         "price": 5.0,
         "restaurantName": "Pizzaria Rocha",
         "neighborhood": "Centro",
@@ -1545,7 +1648,7 @@
       },
       {
         "id": "4498e69e-73d6-5424-862e-67f30fb9b7f4",
-        "name": "fanta guaraná lata 350ml",
+        "name": "Fanta Guaraná Lata 350ml",
         "price": 5.0,
         "restaurantName": "Pizzaria Rocha",
         "neighborhood": "Centro",
@@ -1853,7 +1956,7 @@
       },
       {
         "id": "b9e31c38-7ee5-5440-81b4-a0b38f055f79",
-        "name": "fanta laranja 200ml",
+        "name": "Fanta Laranja 200ml",
         "price": 2.0,
         "restaurantName": "Xcoxinha massaguacu",
         "neighborhood": "Massaguaçu",
@@ -1861,7 +1964,7 @@
       },
       {
         "id": "3f166b25-03d4-55b6-8afa-8aa1f0efabec",
-        "name": "guarana caçula 237ml",
+        "name": "Guarana Caçula 237ml",
         "price": 2.0,
         "restaurantName": "Xcoxinha massaguacu",
         "neighborhood": "Massaguaçu",
@@ -1869,7 +1972,7 @@
       },
       {
         "id": "8a9d7c83-d0da-512b-af89-a4df992d43a5",
-        "name": "pepsi caçula 237ml",
+        "name": "Pepsi Caçula 237ml",
         "price": 2.0,
         "restaurantName": "Xcoxinha massaguacu",
         "neighborhood": "Massaguaçu",
@@ -1877,7 +1980,7 @@
       },
       {
         "id": "2d4ee22f-bdb3-54bd-954a-e07ac73b67d0",
-        "name": "soda antarctica 237ml caçula",
+        "name": "Soda Antarctica 237ml Caçula",
         "price": 2.0,
         "restaurantName": "Xcoxinha massaguacu",
         "neighborhood": "Massaguaçu",
@@ -1885,7 +1988,7 @@
       },
       {
         "id": "c1daac96-af42-571e-9104-90d83b9d9295",
-        "name": "coca cola caçula 200ml",
+        "name": "Coca Cola Caçula 200ml",
         "price": 2.5,
         "restaurantName": "Xcoxinha massaguacu",
         "neighborhood": "Massaguaçu",
@@ -1893,7 +1996,7 @@
       },
       {
         "id": "1dce2ce6-d63b-58ad-9ab4-807c7806ef51",
-        "name": "guaraná pet 273 ml",
+        "name": "Guaraná Pet 273 Ml",
         "price": 3.0,
         "restaurantName": "Pizzaria Rocha",
         "neighborhood": "Centro",
@@ -1901,7 +2004,7 @@
       },
       {
         "id": "f6a7bdb6-58aa-5c5d-832b-173b50c7f85b",
-        "name": "soda pet 200 ml",
+        "name": "Soda Pet 200 Ml",
         "price": 3.0,
         "restaurantName": "Pizzaria Rocha",
         "neighborhood": "Centro",
@@ -1909,7 +2012,7 @@
       },
       {
         "id": "c4280cb0-556f-5a5f-a158-2c372419130e",
-        "name": "suco del valle kapo laranja",
+        "name": "Suco Del Valle Kapo Laranja",
         "price": 3.0,
         "restaurantName": "Pizzaria Rocha",
         "neighborhood": "Centro",
@@ -1917,7 +2020,7 @@
       },
       {
         "id": "d25091b4-37f2-5c55-ab01-d2a2ac0adb90",
-        "name": "suco del valle kapo morango",
+        "name": "Suco Del Valle Kapo Morango",
         "price": 3.0,
         "restaurantName": "Pizzaria Rocha",
         "neighborhood": "Centro",
@@ -1925,7 +2028,7 @@
       },
       {
         "id": "3eda29d7-2228-514a-971e-e86e54ef5161",
-        "name": "sukita laranja pet 200 ml",
+        "name": "Sukita Laranja Pet 200 Ml",
         "price": 3.0,
         "restaurantName": "Pizzaria Rocha",
         "neighborhood": "Centro",
@@ -1933,7 +2036,7 @@
       },
       {
         "id": "8d86dbf1-8979-5aa6-a0b4-71ec41f317ea",
-        "name": "sukita uva pet 200 ml",
+        "name": "Sukita Uva Pet 200 Ml",
         "price": 3.0,
         "restaurantName": "Pizzaria Rocha",
         "neighborhood": "Centro",
@@ -1941,7 +2044,7 @@
       },
       {
         "id": "cc65dc75-1a11-5601-ad8f-3de7497d5417",
-        "name": "água mineral sapucaí 510ml",
+        "name": "Água Mineral Sapucaí 510ml",
         "price": 3.0,
         "restaurantName": "Pizzaria Rocha",
         "neighborhood": "Centro",
@@ -1949,7 +2052,7 @@
       },
       {
         "id": "02ff17ae-48bf-55a0-b333-cc629080cf60",
-        "name": "suco del valle kapo uva",
+        "name": "Suco Del Valle Kapo Uva",
         "price": 3.0,
         "restaurantName": "Pizzaria Rocha",
         "neighborhood": "Centro",
@@ -2071,7 +2174,7 @@
       },
       {
         "id": "10fbeec9-eebe-5b13-9b83-05a0dedb4bdc",
-        "name": "coca - cola zero lata 350ml",
+        "name": "Coca - Cola Zero Lata 350ml",
         "price": 5.0,
         "restaurantName": "Pizzaria Rocha",
         "neighborhood": "Centro",
@@ -2079,7 +2182,7 @@
       },
       {
         "id": "7802a033-2336-5749-8e92-d3f590acbf79",
-        "name": "tõnica zero lata 350ml",
+        "name": "Tõnica Zero Lata 350ml",
         "price": 5.0,
         "restaurantName": "Pizzaria Rocha",
         "neighborhood": "Centro",
@@ -2087,7 +2190,7 @@
       },
       {
         "id": "a060fa96-7ec3-5442-bb34-bdf857adde60",
-        "name": "guaraná antarctica zero",
+        "name": "Guaraná Antarctica Zero",
         "price": 5.0,
         "restaurantName": "Pizzaria Rocha",
         "neighborhood": "Centro",
@@ -2095,7 +2198,7 @@
       },
       {
         "id": "378100f8-82ad-5344-9c6b-97ab58309ae4",
-        "name": "laranja natural",
+        "name": "Laranja Natural",
         "price": 6.0,
         "restaurantName": "Divina Gula Sanduicheria",
         "neighborhood": "Ipiranga",
@@ -2119,7 +2222,7 @@
       },
       {
         "id": "02c355bd-3ef9-56c8-b65c-49a5198c1880",
-        "name": "coca -cola zero 600ml",
+        "name": "Coca -cola Zero 600ml",
         "price": 7.0,
         "restaurantName": "Pizzaria Rocha",
         "neighborhood": "Centro",
@@ -2127,7 +2230,7 @@
       },
       {
         "id": "06b9ddb4-892b-5a1c-ac3c-85f20b31f739",
-        "name": "naturalle maracujá",
+        "name": "Naturalle Maracujá",
         "price": 7.5,
         "restaurantName": "Pizzaria Rocha",
         "neighborhood": "Centro",
@@ -2135,7 +2238,7 @@
       },
       {
         "id": "1099c73c-50f7-5d1f-a448-d0d7d03d1a85",
-        "name": "naturalle abacaxi",
+        "name": "Naturalle Abacaxi",
         "price": 7.5,
         "restaurantName": "Pizzaria Rocha",
         "neighborhood": "Centro",
@@ -2143,7 +2246,7 @@
       },
       {
         "id": "7d3d7a65-9eb6-593f-b044-559fe7671894",
-        "name": "naturalle goiaba",
+        "name": "Naturalle Goiaba",
         "price": 7.5,
         "restaurantName": "Pizzaria Rocha",
         "neighborhood": "Centro",
@@ -2450,6 +2553,14 @@
         "rating": 4.89
       },
       {
+        "id": "40050e19-80ab-5004-b276-5f2a9f7785e6",
+        "name": "Porco Espinho",
+        "price": 30.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
         "id": "9e4931c4-e22f-5860-844f-acc001cb727e",
         "name": "Mandioca & Costela",
         "price": 31.0,
@@ -2498,8 +2609,16 @@
         "rating": 4.89
       },
       {
+        "id": "741758c6-ba47-5972-b658-f076b5d17664",
+        "name": "Diquinta",
+        "price": 45.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
         "id": "e1b97db7-f693-50f7-8fda-1e6b0314da2c",
-        "name": "tônica",
+        "name": "Tônica",
         "price": 3.0,
         "restaurantName": "Restaurante do Jorginho",
         "neighborhood": "Travessão",
@@ -2523,7 +2642,7 @@
       },
       {
         "id": "7b23cb1e-199f-5e1c-9e5f-ea235720ec49",
-        "name": "água com gás",
+        "name": "Água com Gás",
         "price": 3.5,
         "restaurantName": "Restaurante do Jorginho",
         "neighborhood": "Travessão",
@@ -2539,26 +2658,414 @@
       },
       {
         "id": "b5423222-03f6-5200-a198-16e7f0e3c3a6",
-        "name": "coca cola",
+        "name": "Coca Cola",
         "price": 6.0,
         "restaurantName": "Restaurante do Jorginho",
         "neighborhood": "Travessão",
         "rating": 4.8
+      }
+    ],
+    "picante_apimentado": [
+      {
+        "id": "64d94819-8730-57e0-8238-db83205424b6",
+        "name": "Coxim!",
+        "price": 35.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
       },
       {
-        "id": "4b65dd2e-f05e-548a-93aa-8d3b240d6f19",
-        "name": "guaraná",
-        "price": 6.0,
-        "restaurantName": "Restaurante do Jorginho",
-        "neighborhood": "Travessão",
+        "id": "abffc4f1-8f27-5683-99fe-4a228dffa021",
+        "name": "Projeto Verão",
+        "price": 36.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "741758c6-ba47-5972-b658-f076b5d17664",
+        "name": "Diquinta",
+        "price": 45.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "d9352050-1b22-5c9f-850d-86ebe105aeba",
+        "name": "Molho Picante",
+        "price": 3.0,
+        "restaurantName": "Divina Gula Sanduicheria",
+        "neighborhood": "Ipiranga",
         "rating": 4.8
       },
       {
-        "id": "d470430c-f40b-5e5d-90d8-0c88a8888490",
-        "name": "fanta laranja",
-        "price": 6.0,
-        "restaurantName": "Restaurante do Jorginho",
-        "neighborhood": "Travessão",
+        "id": "78154dc8-f1e7-5ee0-942c-e4136ed35c58",
+        "name": "Dadinho tapioca queijo qualho",
+        "price": 18.0,
+        "restaurantName": "XP Hamburgueria Caraguá",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "5a8c4975-c848-5fb7-8ef9-698699d243c0",
+        "name": "Pizza de Baiana",
+        "price": 31.9,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "93a51085-a61f-529d-9387-321233429d29",
+        "name": "Pizza de Caliente",
+        "price": 32.9,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "a5aecf96-2d9d-5c7f-850a-e78bcbb20962",
+        "name": "Pizza de Litoral",
+        "price": 38.9,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "7ef64cad-5527-58d5-be24-fdd488f61893",
+        "name": "Oregon | Catupiry e Gorgonzola",
+        "price": 39.0,
+        "restaurantName": "XP Hamburgueria Caraguá",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "d5af2f49-4d8f-5c79-9965-a93c07dde458",
+        "name": "Pizza de Pepperoni",
+        "price": 40.9,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "af2c1fb7-441c-567b-bd36-8c86b48ac353",
+        "name": "Pizza de Caliente",
+        "price": 40.9,
+        "restaurantName": "Pizzaria Venezza",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "25dab650-b36c-5f9b-8a28-366249a73da8",
+        "name": "Pizza de Baiana",
+        "price": 42.9,
+        "restaurantName": "Pizzaria Venezza",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "0f0f0740-fbe5-54c3-a8d4-13167aca24af",
+        "name": "Pizza de Peperoni Individual - 4 fatias",
+        "price": 43.35,
+        "restaurantName": "SolePizza",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "98d86fb4-dc60-5b2c-973d-e7f2b32f268e",
+        "name": "Pizza de Litoral",
+        "price": 48.9,
+        "restaurantName": "Pizzaria Venezza",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "6c377a71-1719-58c1-9b84-34913da10822",
+        "name": "Pizza de Pepperoni",
+        "price": 51.9,
+        "restaurantName": "Pizzaria Venezza",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "bed5f06b-ad43-5601-9a20-1a0935f83d99",
+        "name": "Lombinho Broto | Broto (4 Pedaços)",
+        "price": 55.0,
+        "restaurantName": "XP Hamburgueria Caraguá",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "9f66626c-57f6-5276-80ac-d45ee83c053f",
+        "name": "Pizza de Lombinho GRANDE (8 pedaços)",
+        "price": 93.0,
+        "restaurantName": "XP Hamburgueria Caraguá",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "8f09e993-355a-588f-ab8c-57b1136cb1a7",
+        "name": "Gorgonsweet",
+        "price": 38.0,
+        "restaurantName": "INBRASA CARAGUA",
+        "neighborhood": "Centro",
+        "rating": 4.79
+      },
+      {
+        "id": "82854d54-f573-5291-9124-632fa2a4a87d",
+        "name": "Pizza de Calabresa Paulistana",
+        "price": 31.9,
+        "restaurantName": "Nonna Peroni",
+        "neighborhood": "Centro",
+        "rating": 4.78
+      },
+      {
+        "id": "0dc23171-5254-5f23-ba0c-9832fbb2b2df",
+        "name": "Pizza de Pepperoni",
+        "price": 38.9,
+        "restaurantName": "Nonna Peroni",
+        "neighborhood": "Centro",
+        "rating": 4.78
+      },
+      {
+        "id": "f2d7ea37-a57a-5eb2-ac1f-c3c54a8631e5",
+        "name": "Pizza de Baiana",
+        "price": 39.9,
+        "restaurantName": "Nonna Peroni",
+        "neighborhood": "Centro",
+        "rating": 4.78
+      },
+      {
+        "id": "37341f1a-21b1-5a7f-9c3b-7854b92506f7",
+        "name": "Pizza de Catupperoni",
+        "price": 44.9,
+        "restaurantName": "Nonna Peroni",
+        "neighborhood": "Centro",
+        "rating": 4.78
+      },
+      {
+        "id": "35b5da69-665f-5eeb-8337-f72fd6fa8e47",
+        "name": "Pizza de Paulista",
+        "price": 45.9,
+        "restaurantName": "Nonna Peroni",
+        "neighborhood": "Centro",
+        "rating": 4.78
+      },
+      {
+        "id": "7bcda8aa-3fb6-5e29-bc1a-0864d0d91a41",
+        "name": "Pastelzinho de Cru",
+        "price": 11.5,
+        "restaurantName": "Narigatô Sushi Delivery",
+        "neighborhood": "Barranco Alto",
+        "rating": 4.74
+      },
+      {
+        "id": "15cb231f-ba7d-5567-8aa3-99e340996871",
+        "name": "Joy Geleia",
+        "price": 20.0,
+        "restaurantName": "Narigatô Sushi Delivery",
+        "neighborhood": "Barranco Alto",
+        "rating": 4.74
+      }
+    ],
+    "agridoce_caramelizado": [
+      {
+        "id": "72676f23-abf0-5adf-8c27-8d12316199d6",
+        "name": "Texas Bacon",
+        "price": 39.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "c7817a2b-fa40-5eb2-bb5b-299177e5d25b",
+        "name": "Cheddar Melting 2.0 (Nova Versão)",
+        "price": 41.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "9c2fabf8-e841-5577-859e-a1892634508c",
+        "name": "Batata & Costela ao Meio",
+        "price": 24.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "64d94819-8730-57e0-8238-db83205424b6",
+        "name": "Coxim!",
+        "price": 35.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "4dcd82b2-ab17-5d94-8bd0-0a0920f96e26",
+        "name": "Chedd@r",
+        "price": 37.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "abb08751-0e38-5f62-b1d1-7a00ddceaacb",
+        "name": "Abraço de Costela",
+        "price": 40.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "366e3454-13b5-5cd7-beb8-aa9b74b50828",
+        "name": "Batata & Costela (A Mais Vendida)",
+        "price": 42.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "0f71dc99-f031-50a9-911e-ea7f5394c376",
+        "name": "Batata & Costela",
+        "price": 42.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "741758c6-ba47-5972-b658-f076b5d17664",
+        "name": "Diquinta",
+        "price": 45.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "b189d028-c322-5231-bfeb-d28e80e07a3e",
+        "name": "Clássico Burguer",
+        "price": 38.9,
+        "restaurantName": "Chicken Bruttos",
+        "neighborhood": "Poiares",
+        "rating": 4.83
+      },
+      {
+        "id": "78154dc8-f1e7-5ee0-942c-e4136ed35c58",
+        "name": "Dadinho tapioca queijo qualho",
+        "price": 18.0,
+        "restaurantName": "XP Hamburgueria Caraguá",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "856f8f9f-e3f6-540d-b1ce-ebad6a9e30c3",
+        "name": "São Sebastião | Costela desfiada ao barbecue",
+        "price": 27.0,
+        "restaurantName": "XP Hamburgueria Caraguá",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "3b3e07f3-31e3-5130-bb66-c7efb38889bf",
+        "name": "Pizza Doce de Banana",
+        "price": 30.9,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "eb92836e-83cf-5958-99b3-887341fea889",
+        "name": "Nova York | Cebola empanada e BBQ",
+        "price": 34.0,
+        "restaurantName": "XP Hamburgueria Caraguá",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "15f8706c-38fe-53b5-955a-e99b1b6ecb17",
+        "name": "Batata Smoke House 300g",
+        "price": 35.0,
+        "restaurantName": "XP Hamburgueria Caraguá",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "a5001598-a5bf-5923-aff1-b6ec6419025a",
+        "name": "California | Cebola Caramelizada",
+        "price": 36.0,
+        "restaurantName": "XP Hamburgueria Caraguá",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "7ef64cad-5527-58d5-be24-fdd488f61893",
+        "name": "Oregon | Catupiry e Gorgonzola",
+        "price": 39.0,
+        "restaurantName": "XP Hamburgueria Caraguá",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "204115ae-a8cc-57a2-9b8c-fb3e795a4a59",
+        "name": "Florida | Queijo Coalho",
+        "price": 41.0,
+        "restaurantName": "XP Hamburgueria Caraguá",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "7bddfa99-0557-5947-8561-cdc288f47235",
+        "name": "Orlando | Costela com barbecue",
+        "price": 42.0,
+        "restaurantName": "XP Hamburgueria Caraguá",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "6114db28-3d91-5a0a-bbb7-7fc81335ec9f",
+        "name": "Memphis | Costela com Catupiry Empanado",
+        "price": 43.9,
+        "restaurantName": "XP Hamburgueria Caraguá",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "e7d81099-a903-5948-81f6-3bf310affc7c",
+        "name": "Pizza de Frango Cream Individual - 4 fatias",
+        "price": 44.2,
+        "restaurantName": "SolePizza",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "bed5f06b-ad43-5601-9a20-1a0935f83d99",
+        "name": "Lombinho Broto | Broto (4 Pedaços)",
+        "price": 55.0,
+        "restaurantName": "XP Hamburgueria Caraguá",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "2b178b9f-439e-56fa-9547-9a39d23dbdd8",
+        "name": "Costela Desfiada | BROTO 4 PEDAÇOS",
+        "price": 62.0,
+        "restaurantName": "XP Hamburgueria Caraguá",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "9f66626c-57f6-5276-80ac-d45ee83c053f",
+        "name": "Pizza de Lombinho GRANDE (8 pedaços)",
+        "price": 93.0,
+        "restaurantName": "XP Hamburgueria Caraguá",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "668438d6-c360-5595-8b58-412a711c58d8",
+        "name": "Pizza de Costela Desfiada Grande (8 pedaços)",
+        "price": 102.9,
+        "restaurantName": "XP Hamburgueria Caraguá",
+        "neighborhood": "Centro",
         "rating": 4.8
       }
     ],
@@ -2581,7 +3088,7 @@
       },
       {
         "id": "b9e31c38-7ee5-5440-81b4-a0b38f055f79",
-        "name": "fanta laranja 200ml",
+        "name": "Fanta Laranja 200ml",
         "price": 2.0,
         "restaurantName": "Xcoxinha massaguacu",
         "neighborhood": "Massaguaçu",
@@ -2589,7 +3096,7 @@
       },
       {
         "id": "3f166b25-03d4-55b6-8afa-8aa1f0efabec",
-        "name": "guarana caçula 237ml",
+        "name": "Guarana Caçula 237ml",
         "price": 2.0,
         "restaurantName": "Xcoxinha massaguacu",
         "neighborhood": "Massaguaçu",
@@ -2597,7 +3104,7 @@
       },
       {
         "id": "8a9d7c83-d0da-512b-af89-a4df992d43a5",
-        "name": "pepsi caçula 237ml",
+        "name": "Pepsi Caçula 237ml",
         "price": 2.0,
         "restaurantName": "Xcoxinha massaguacu",
         "neighborhood": "Massaguaçu",
@@ -2605,7 +3112,7 @@
       },
       {
         "id": "2d4ee22f-bdb3-54bd-954a-e07ac73b67d0",
-        "name": "soda antarctica 237ml caçula",
+        "name": "Soda Antarctica 237ml Caçula",
         "price": 2.0,
         "restaurantName": "Xcoxinha massaguacu",
         "neighborhood": "Massaguaçu",
@@ -2613,7 +3120,7 @@
       },
       {
         "id": "c1daac96-af42-571e-9104-90d83b9d9295",
-        "name": "coca cola caçula 200ml",
+        "name": "Coca Cola Caçula 200ml",
         "price": 2.5,
         "restaurantName": "Xcoxinha massaguacu",
         "neighborhood": "Massaguaçu",
@@ -2621,7 +3128,7 @@
       },
       {
         "id": "c4280cb0-556f-5a5f-a158-2c372419130e",
-        "name": "suco del valle kapo laranja",
+        "name": "Suco Del Valle Kapo Laranja",
         "price": 3.0,
         "restaurantName": "Pizzaria Rocha",
         "neighborhood": "Centro",
@@ -2629,7 +3136,7 @@
       },
       {
         "id": "d25091b4-37f2-5c55-ab01-d2a2ac0adb90",
-        "name": "suco del valle kapo morango",
+        "name": "Suco Del Valle Kapo Morango",
         "price": 3.0,
         "restaurantName": "Pizzaria Rocha",
         "neighborhood": "Centro",
@@ -2637,7 +3144,7 @@
       },
       {
         "id": "02ff17ae-48bf-55a0-b333-cc629080cf60",
-        "name": "suco del valle kapo uva",
+        "name": "Suco Del Valle Kapo Uva",
         "price": 3.0,
         "restaurantName": "Pizzaria Rocha",
         "neighborhood": "Centro",
@@ -2645,7 +3152,7 @@
       },
       {
         "id": "6b4d4d06-9a1e-5cfa-8073-b9f587e44c78",
-        "name": "agua mineral 510ml",
+        "name": "Agua Mineral 510ml",
         "price": 3.0,
         "restaurantName": "Xcoxinha massaguacu",
         "neighborhood": "Massaguaçu",
@@ -2653,7 +3160,7 @@
       },
       {
         "id": "0788757a-9f3b-5041-916b-9a4825b43a6c",
-        "name": "agua com gas",
+        "name": "Agua com Gas",
         "price": 3.5,
         "restaurantName": "Xcoxinha massaguacu",
         "neighborhood": "Massaguaçu",
@@ -2661,7 +3168,7 @@
       },
       {
         "id": "eae1cc07-1e34-5e64-bec1-b8991a23e693",
-        "name": "suco del vale",
+        "name": "Suco Del Vale",
         "price": 3.5,
         "restaurantName": "The Best Burguer",
         "neighborhood": "Centro",
@@ -2669,7 +3176,7 @@
       },
       {
         "id": "71f00062-903e-5455-8ae7-c5c9c7b1f139",
-        "name": "empada frango",
+        "name": "Empada Frango",
         "price": 4.0,
         "restaurantName": "Xcoxinha massaguacu",
         "neighborhood": "Massaguaçu",
@@ -2693,7 +3200,7 @@
       },
       {
         "id": "27a85f98-61b2-5661-a756-891fa1eb2841",
-        "name": "brahma chopp 269ml",
+        "name": "Brahma Chopp 269ml",
         "price": 4.5,
         "restaurantName": "Xcoxinha massaguacu",
         "neighborhood": "Massaguaçu",
@@ -2701,7 +3208,7 @@
       },
       {
         "id": "d281159d-a019-5f07-b9e5-c9bd9aab9cb5",
-        "name": "suco goiaba",
+        "name": "Suco Goiaba",
         "price": 5.0,
         "restaurantName": "Divina Gula Sanduicheria",
         "neighborhood": "Ipiranga",
@@ -2709,7 +3216,7 @@
       },
       {
         "id": "e40af4e0-d19b-54ba-872e-ab70744ef95f",
-        "name": "coca-cola lata",
+        "name": "Coca-cola Lata",
         "price": 5.0,
         "restaurantName": "The Best Burguer",
         "neighborhood": "Centro",
@@ -2717,7 +3224,7 @@
       },
       {
         "id": "e63ec31f-2f69-5091-af25-84699126b070",
-        "name": "guaraná antártica lata",
+        "name": "Guaraná Antártica Lata",
         "price": 5.0,
         "restaurantName": "The Best Burguer",
         "neighborhood": "Centro",
@@ -2725,7 +3232,7 @@
       },
       {
         "id": "ee2b23f5-c1e9-5601-9bd7-387f256c9dde",
-        "name": "enrolado de pizza",
+        "name": "Enrolado de Pizza",
         "price": 5.0,
         "restaurantName": "Xcoxinha massaguacu",
         "neighborhood": "Massaguaçu",
@@ -2733,7 +3240,7 @@
       },
       {
         "id": "5fd3491c-58a0-5f63-baec-0a5d5620476b",
-        "name": "enrolado de salsicha com cheddar",
+        "name": "Enrolado de Salsicha com Cheddar",
         "price": 5.0,
         "restaurantName": "Xcoxinha massaguacu",
         "neighborhood": "Massaguaçu",
@@ -2741,7 +3248,7 @@
       },
       {
         "id": "80f29879-f434-5df5-8611-bf9ffb7d23d8",
-        "name": "esfiha carne",
+        "name": "Esfiha Carne",
         "price": 5.0,
         "restaurantName": "Xcoxinha massaguacu",
         "neighborhood": "Massaguaçu",
@@ -2749,7 +3256,7 @@
       },
       {
         "id": "d4ff71c9-bad2-555b-8b31-87728faa641e",
-        "name": "coca cola lata 350ml",
+        "name": "Coca Cola Lata 350ml",
         "price": 5.0,
         "restaurantName": "Xcoxinha massaguacu",
         "neighborhood": "Massaguaçu",
@@ -2757,7 +3264,7 @@
       },
       {
         "id": "c03a470d-ddc5-590e-a54d-e1935af4cfce",
-        "name": "guarana antarctica lata 350ml",
+        "name": "Guarana Antarctica Lata 350ml",
         "price": 5.0,
         "restaurantName": "Xcoxinha massaguacu",
         "neighborhood": "Massaguaçu",

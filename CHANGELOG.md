@@ -1,8 +1,30 @@
 # 📋 HISTÓRICO DE MUDANÇAS & DIRETÓRIO TÉCNICO DO PROJETO (CHANGELOG)
 ## CaráFood — Monorepo Oficial (`caragua-foodtech-mono`)
 
-> **Data da Atualização:** 15 de Novembro de 2026  
-> **Objetivo:** Registro central de todas as mudanças de arquitetura, saneamento de dados, melhoria contínua (S11), testes de usabilidade (S12), deploy/persistência (S13), configuração de DNS/HTTPS (S14) e evolução acadêmica do projeto na disciplina de **Análise e Projeto de Sistemas II (APS II)** no **Centro Universitário Módulo**, sob orientação do **Prof. Me. Cristiano S. Negrão**.
+> **Data da Atualização:** 25 de Novembro de 2026  
+> **Objetivo:** Registro central de todas as mudanças de arquitetura, saneamento de dados, documentação mestre ponta a ponta, arquivamento de documentos antigos e evolução acadêmica do projeto na disciplina de **Análise e Projeto de Sistemas II (APS II)** e **TCC** no **Centro Universitário Módulo**, sob orientação do **Prof. Me. Cristiano S. Negrão**.
+
+---
+
+## 🌟 Ciclo 25/11/2026 — Documento Mestre Ponta a Ponta & Arquivamento Histórico
+
+### 1. Documento Técnico Mestre Unificado
+- **Gerado:** [`docs/DOCUMENTO_MESTRE_PONTA_A_PONTA_CARAFOOD.md`](docs/DOCUMENTO_MESTRE_PONTA_A_PONTA_CARAFOOD.md)
+- **Escopo Exaustivo:**
+  - Contexto institucional (Módulo, Prof. Me. Cristiano S. Negrão, papéis Scrum da equipe: Gabriel Rodrigues, Matheus Vicente, Pedro Simone);
+  - Visão de produto, dor de Caraguatatuba e 5 pilares de solução;
+  - Arquitetura Three-Tier corporativa (Next.js 14 App Router, FastAPI, PostgreSQL + PostGIS + pgvector, Expo Native Shell);
+  - Inventário completo das 17 rotas estáticas e dinâmicas e endpoints serverless;
+  - Motor RAG de 5 Estágios com IA local e filtro sanitário de veto alimentar;
+  - Pipeline de extração Playwright no Google Maps e purgação de dados sintéticos;
+  - Suíte completa de entregas da APS II (S01 a S16).
+
+### 2. Arquivamento e Isolamento de Documentos Antigos
+- **Criado diretório de arquivo:** [`docs/antigos_docs/`](docs/antigos_docs/)
+- **8 Relatórios Word (.docx)** (50 MB) movidos de `ENTREGAS_CRISTIANO/` na raiz para [`docs/antigos_docs/entregas_docx/`](docs/antigos_docs/entregas_docx/).
+- **4 Capturas de Testes Locais** (`test_*.png`, `vercel_*.png`) movidas da raiz para [`docs/antigos_docs/prints_testes/`](docs/antigos_docs/prints_testes/).
+- **Pasta Externa Duplicada:** Pasta duplicada fora do git em `Projeto gastronomia na faculdade/ENTREGAS_CRISTIANO` eliminada para poupar espaço em disco e evitar redundâncias.
+- **Raiz do Repositório 100% Limpa:** Sem arquivos pesados, sem imagens avulsas, sem caches de build.
 
 ---
 

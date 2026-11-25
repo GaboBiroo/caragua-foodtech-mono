@@ -10,8 +10,9 @@
 [![Deploy Vercel](https://img.shields.io/badge/Vercel-Produção_Ativa-black?style=for-the-badge&logo=vercel)](https://foddtech.vercel.app/)
 [![Licença MIT](https://img.shields.io/badge/Licen%C3%A7a-MIT-amber?style=for-the-badge)](LICENSE)
 
-> **🚀 Ambiente de Produção Ativo:** [https://foddtech.vercel.app/](https://foddtech.vercel.app/)  
+> **🚀 Ambiente de Produção Ativo:** [https://foddtech.vercel.app/](https://foddtech.vercel.app/) *(Canônico: [https://carafood.vercel.app/](https://carafood.vercel.app/))*  
 > **📦 Repositório Oficial no GitHub:** [github.com/GaboBiroo/caragua-foodtech-mono](https://github.com/GaboBiroo/caragua-foodtech-mono)  
+> **🌟 Documento Mestre Ponta a Ponta:** [`docs/DOCUMENTO_MESTRE_PONTA_A_PONTA_CARAFOOD.md`](docs/DOCUMENTO_MESTRE_PONTA_A_PONTA_CARAFOOD.md)  
 > **📋 Histórico Completo de Mudanças:** Consulte [`CHANGELOG.md`](CHANGELOG.md) e [`HISTORICO_MUDANCAS.md`](HISTORICO_MUDANCAS.md)
 
 ---
@@ -78,10 +79,13 @@ caragua-foodtech-mono/
 │   └── init-db.sql                # Criação de tabelas, índices H3 e colunas de vetor
 │
 ├── docs/                          # 📚 ACERVO DOCUMENTAL COMPLETO (PADRÃO HARVARD / MIT / USP)
-│   ├── academic/                  # Relatórios formais da disciplina APS II (Prof. Cristiano)
-│   │   ├── APSII_S02_CARAGUA_FOODTECH.docx        # Relatório inicial da Semana 2
-│   │   ├── APSII_S10_CARAFOOD.docx                # Relatório consolidado S01-S10 (Base A2)
-│   │   ├── APSII_S10_CARAFOOD_FINAL.docx          # Versão final revisada para submissão A2
+│   ├── DOCUMENTO_MESTRE_PONTA_A_PONTA_CARAFOOD.md # 🌟 Documento Técnico e Arquitetural Mestre
+│   ├── ESCOPO_APSII_PROF_NEGRAO.md # Bíblia de escopo acadêmico da APS II
+│   ├── ROTEIRO_DEFESA_BANCA_E_OPERACAO.md # Roteiro oficial para apresentação e defesa de banca
+│   ├── TCC_RELATORIO_ENGENHARIA_E_BENCHMARKS.md # Relatório formal com métricas e benchmarks
+│   ├── MATRIZ_60_PERGUNTAS_BANCA_TCC.md # Preparação exaustiva para arguição de banca
+│   ├── DOSSIE_BANCA_PITCH_E_ARQUITETURA.md # Pitch executivo para os avaliadores
+│   ├── academic/                  # Dossiês acadêmicos e relatórios parciais consolidados
 │   │   ├── DOSSIE_COMPLETO_CARAFOOD.md            # Dossiê técnico enciclopédico de 740+ linhas
 │   │   ├── dossie_academico_tcc_a2_prof_cristiano.md # Elicitação de requisitos e teoria
 │   │   └── relatorio_tecnico_etapa_1_entrega_parcial.md # Relatório técnico de entrega parcial
@@ -91,10 +95,11 @@ caragua-foodtech-mono/
 │   │   └── arquitetura_frontend_rag_caragua_dossie.md # Arquitetura de UI e streaming
 │   ├── audits/                    # Auditorias de código, segurança e WCAG
 │   ├── research/                  # Dossiês enciclopédicos sobre os 53 bairros e maricultura
-│   ├── screenshots_s10/           # Evidências em alta definição de todas as telas (desktop/mobile)
-│   ├── ESCOPO_APSII_PROF_NEGRAO.md # Bíblia de escopo acadêmico da APS II
-│   ├── ROTEIRO_DEFESA_BANCA_E_OPERACAO.md # Roteiro oficial para apresentação e defesa de banca
-│   └── TCC_RELATORIO_ENGENHARIA_E_BENCHMARKS.md # Relatório formal com métricas e benchmarks
+│   ├── screenshots_s10/           # Evidências visuais das primeiras 10 semanas
+│   ├── screenshots_s11_s16/       # Evidências em alta definição de todas as telas finais
+│   └── antigos_docs/              # 📦 ARQUIVO HISTÓRICO DE DOCUMENTOS ANTIGOS
+│       ├── entregas_docx/         # Relatórios semanais (.docx) preservados de forma isolada
+│       └── prints_testes/         # Capturas e evidências brutas de testes locais
 │
 ├── entregas_aps2/                 # 🎓 SUÍTE COMPLETA DAS 16 ENTREGAS SEMANAIS (S01 A S16)
 │   ├── S01_Registro_Inicial/      # Registro do tema, escopo e integrantes

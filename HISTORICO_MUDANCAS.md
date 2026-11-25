@@ -5,7 +5,34 @@
 
 ---
 
-## 1. 🧹 Resumo da Limpeza e Organização das Pastas
+## 4. 🌟 Atualização Mestre de Governança e Arquivamento (25 de Novembro de 2026)
+
+### 4.1 Documento Mestre de Ponta a Ponta Gerado
+- **Arquivo Criado:** [`docs/DOCUMENTO_MESTRE_PONTA_A_PONTA_CARAFOOD.md`](docs/DOCUMENTO_MESTRE_PONTA_A_PONTA_CARAFOOD.md)
+- **Conteúdo Coberto:**
+  1. Identificação institucional completa (Módulo, Prof. Me. Cristiano S. Negrão, papéis da equipe Gabriel Rodrigues, Matheus Vicente e Pedro Simone);
+  2. Visão de produto, 53 bairros de Caraguá, cultura caiçara, maricultura da Cocanha (AMAPEC) e Colônia Z-8;
+  3. Arquitetura Three-Tier corporativa (Next.js 14, FastAPI assíncrono, PostgreSQL 16 + PostGIS + pgvector, Expo Mobile);
+  4. Inventário exaustivo de todas as 17 rotas estáticas e dinâmicas e endpoints de API;
+  5. Motor RAG de 5 Estágios com IA Local (Ollama qwen2.5:3b) e filtro sanitário de Food Safety;
+  6. Esteira de extração autônoma Playwright e erradicação de comentários falsos;
+  7. Matriz completa das 16 semanas de entregas da APS II (S01 a S16).
+
+---
+
+### 4.2 Arquivamento Seguro de Documentos Antigos e Relatórios Word (`.docx`)
+Atendendo à necessidade de manter a raiz e as pastas ativas 100% limpas de binários obsoletos e capturas avulsas:
+
+| Item | Local Anterior | Novo Local Arquivado | Descrição |
+| :--- | :--- | :--- | :--- |
+| **8 Relatórios Word (.docx)** (50 MB) | `ENTREGAS_CRISTIANO/` (na raiz do monorepo e pasta pai) | [`docs/antigos_docs/entregas_docx/`](docs/antigos_docs/entregas_docx/) | Relatórios semanais S09 a S15 e A1 Final preservados de forma isolada e segura. |
+| **Prints e Testes Locais** (1.8 MB) | Raiz do monorepo (`test_*.png`, `vercel_*.png`) | [`docs/antigos_docs/prints_testes/`](docs/antigos_docs/prints_testes/) | Evidências visuais de testes locais e validações de tela organizadas. |
+| **Caches de build** | Raiz (`tsconfig.tsbuildinfo`) | Excluído | Cache transitório de build TypeScript removido e garantido no `.gitignore`. |
+| **Pasta Duplicada Externa** | Pasta pai (`Projeto gastronomia na faculdade/ENTREGAS_CRISTIANO`) | Removida | Eliminada duplicidade de 50 MB de arquivos pesados fora do Git. |
+
+---
+
+## 1. 🧹 Resumo da Limpeza e Organização das Pastas (Ciclo Anterior - 06 de Novembro de 2026)
 
 ### O que estava desorganizado antes:
 1. **Arquivos pesados `.docx` na raiz:** Havia arquivos como `APSII_S10_CARAFOOD.docx` (6.1 MB) e `APSII_S10_CARAFOOD_FINAL.docx` (2.5 MB) jogados diretamente na raiz do projeto.
@@ -16,12 +43,12 @@
 
 ---
 
-### Como ficou organizado agora:
+### Como ficou organizado:
 
 | Item | Onde ficava antes | Onde está agora | Motivo da mudança |
 | :--- | :--- | :--- | :--- |
-| **Relatório S10 Parcial (6.1 MB)** | Raiz do projeto | `docs/academic/APSII_S10_CARAFOOD.docx` & `entregas_aps2/S10_A2_Entrega_Intermediaria/` | Organização acadêmica; preserva o documento no local oficial da entrega. |
-| **Relatório S10 Final A2 (2.5 MB)** | Raiz do projeto | `docs/academic/APSII_S10_CARAFOOD_FINAL.docx` & `entregas_aps2/S10_A2_Entrega_Intermediaria/` | Versão final consolidada arquivada no acervo acadêmico oficial. |
+| **Relatório S10 Parcial (6.1 MB)** | Raiz do projeto | `docs/antigos_docs/entregas_docx/` & `entregas_aps2/` | Organização acadêmica; preserva o documento no local oficial da entrega. |
+| **Relatório S10 Final A2 (2.5 MB)** | Raiz do projeto | `docs/antigos_docs/entregas_docx/` & `entregas_aps2/` | Versão final consolidada arquivada no acervo acadêmico oficial. |
 | **Dossiê Completo (90 KB)** | Raiz do projeto | `docs/academic/DOSSIE_COMPLETO_CARAFOOD.md` | Dossiê de 740+ linhas consolidando todo o projeto para a banca e para o Prof. Negrão. |
 | **AI Context & Gemini** | Raiz do projeto | `docs/architecture/AI_CONTEXT.md` & `docs/architecture/GEMINI.md` | Removidas as duplicatas da raiz; especificações mantidas na pasta de arquitetura. |
 | **Caches de build** | Raiz do projeto | Removidos (`tsconfig.tsbuildinfo`, `__pycache__`) | Ignorados pelo `.gitignore` para manter o Git limpo. |
@@ -35,6 +62,8 @@
 - **`src/`:** Código-fonte principal da aplicação web em Next.js 14 App Router (feed de pratos, cédula de votação, explorador dos 53 bairros, moderação e IA).
 - **`backend/`:** Servidor em Python FastAPI, banco relacional/vetorial SQLAlchemy, motor RAG de 5 estágios, rotas de IA e scrapers de dados.
 - **`docs/`:** Documentação completa (acadêmica da disciplina APS II, arquitetura de sistemas, auditorias de código e pesquisas gastronômicas).
+  - **`docs/DOCUMENTO_MESTRE_PONTA_A_PONTA_CARAFOOD.md`:** 🌟 Documento central unificado de engenharia e negócios.
+  - **`docs/antigos_docs/`:** Arquivo isolado com relatórios `.docx` antigos e prints de teste.
 - **`entregas_aps2/`:** Todas as 16 entregas semanais (S01 a S16) exigidas pelo Prof. Cristiano Negrão no Centro Universitário Módulo.
 - **`scripts/`:** Ferramentas de automação, pipelines de scraping do Google Maps com Playwright, benchmarks de latência e geradores de relatórios Word.
 - **`docker/`:** Configuração do PostgreSQL com PostGIS (geoespacial) e pgvector (busca vetorial semântica).
@@ -45,10 +74,10 @@
 
 ---
 
-## 3. 🚀 Mudanças Técnicas Recentes
+## 3. 🚀 Recursos de Engenharia em Produção
 
 1. **Purgação de Dados Falsos:** Erradicação total de comentários e notas fictícias geradas por IA.
 2. **Avaliações Reais do Google Maps:** Ingestão de avaliações autênticas de clientes reais de Caraguatatuba com autor, nota de estrelas e data da visita.
 3. **Estados Vazios Elegantes:** Quando um prato não possui avaliação de usuário, o sistema exibe um estado convidativo incentivando o primeiro voto na cédula digital.
 4. **Build 100% Validado:** Compilação do Next.js 14 com 17/17 páginas estáticas e rotas dinâmicas geradas com zero erros (`npm run build`).
-5. **Deploy Vercel:** Sistema em produção no ar em [`https://foddtech.vercel.app/`](https://foddtech.vercel.app/).
+5. **Deploy Vercel:** Sistema em produção no ar em [`https://foddtech.vercel.app/`](https://foddtech.vercel.app/) e [`https://carafood.vercel.app/`](https://carafood.vercel.app/).

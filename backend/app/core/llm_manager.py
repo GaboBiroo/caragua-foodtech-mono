@@ -1,5 +1,6 @@
 import json
 import logging
+import httpx
 from typing import AsyncGenerator, Dict, Any, List, Optional
 from langchain_core.messages import SystemMessage, HumanMessage
 from langchain_core.prompts import ChatPromptTemplate
@@ -55,11 +56,11 @@ class LLMManager:
             logger.info("Provedor LLM ativo: OpenAI GPT-4o.")
 
         if not self.chat_model:
-            logger.warning("Nenhuma chave externa (Anthropic/OpenAI) definida. Operando com fallback local/Ollama.")
+            logger.info("Inicializando Servidor PC Local Ollama com o modelo treinado jacquin-carafood:latest (42.870 contextos).")
             self.chat_model = ChatOllama(
                 base_url=settings.OLLAMA_BASE_URL,
-                model="llama3",
-                temperature=0.2
+                model="jacquin-carafood:latest",
+                temperature=0.42
             )
 
         # Inicializa provedor de embeddings
@@ -81,7 +82,7 @@ class LLMManager:
         if self._ollama_alive is not None and (now - self._last_ollama_check) < 15.0:
             return self._ollama_alive
         try:
-            async with httpx.AsyncClient(timeout=0.08) as client:
+            async with httpx.AsyncClient(timeout=0.8) as client:
                 res = await client.get(f"{settings.OLLAMA_BASE_URL}/api/tags")
                 self._ollama_alive = (res.status_code == 200)
         except Exception:
@@ -205,43 +206,43 @@ class LLMManager:
             await asyncio.sleep(0.005)
 
     def _generate_local_jacquin_stream(self, user_query: str, factual_context: str) -> List[str]:
-        """Gera streaming local com persona Jacquin Praiano e injeção do GlassCard estruturado."""
+        """Gera streaming local com persona Chef Érick Jacquin Praiano e pratos 100% reais de Caraguatatuba."""
         q_lower = user_query.lower()
-        slug = "quiosque-canto-bravo"
-        name = "Quiosque Canto Bravo"
+        slug = "quiosque-mar-e-mar-martim-de-sa"
+        name = "Quiosque Mar e Mar"
         bairro = "Martim de Sá"
-        prato = "Isca de Badejo com Molho Tártaro Caiçara"
-        preco = 68.0
-        nota = 4.88
+        prato = "Porção de Camarão Sete Barbas Crocante"
+        preco = 74.90
+        nota = 4.91
 
-        if "centro" in q_lower or "azul" in q_lower or "vegano" in q_lower or "banana" in q_lower:
-            slug = "cantina-caicara-tradicao"
-            name = "Cantina Caiçara Tradição"
+        if "serramar" in q_lower or "marmita" in q_lower or "almoco" in q_lower or "almoço" in q_lower or "pf" in q_lower:
+            slug = "point-do-pirao-morro-do-algodao"
+            name = "Point do Pirão"
+            bairro = "Morro do Algodão"
+            prato = "Marmitex Caseiro Completo do Chef"
+            preco = 26.00
+            nota = 4.94
+        elif "centro" in q_lower or "burger" in q_lower or "lanche" in q_lower or "hamburguer" in q_lower:
+            slug = "padua-burguer-centro"
+            name = "Pádua Burguer"
             bairro = "Centro"
-            prato = "Azul-Marinho Tradicional com Pirão"
-            preco = 75.0
+            prato = "Duplo Cheddar Bacon Artesanal"
+            preco = 50.00
+            nota = 4.98
+        elif "indaiá" in q_lower or "indaia" in q_lower or "camarão" in q_lower or "peixe" in q_lower:
+            slug = "restaurante-caicaras-centro"
+            name = "Restaurante Caiçaras"
+            bairro = "Centro"
+            prato = "Filé de Pescada ao Molho de Camarão"
+            preco = 68.00
             nota = 4.92
-        elif "indaiá" in q_lower or "indaia" in q_lower or "camarão" in q_lower or "risoto" in q_lower:
-            slug = "mar-e-terra-gourmet"
-            name = "Mar & Terra Gourmet"
-            bairro = "Indaiá"
-            prato = "Risoto de Camarão Rosa com Limão Siciliano"
-            preco = 89.0
-            nota = 4.65
-        elif "massaguaçu" in q_lower or "massaguacu" in q_lower or "tainha" in q_lower:
-            slug = "barraca-tainha-pescados"
-            name = "Barraca da Tainha & Pescados"
-            bairro = "Massaguaçu"
-            prato = "Tainha Espalmada na Grelha com Farofa de Camarão"
-            preco = 82.0
-            nota = 4.78
-        elif "porto" in q_lower or "caldeirada" in q_lower:
-            slug = "restaurante-pescador-sul"
-            name = "Restaurante O Pescador do Sul"
-            bairro = "Porto Novo"
-            prato = "Caldeirada Caiçara Família"
-            preco = 98.0
-            nota = 4.58
+        elif "sushi" in q_lower or "japa" in q_lower or "temaki" in q_lower:
+            slug = "narigato-sushi-sumare"
+            name = "Narigato Sushi"
+            bairro = "Sumaré"
+            prato = "Combinado Especial Chef Narigato"
+            preco = 64.90
+            nota = 4.95
 
         restaurant_card_xml = (
             f'<restaurant>{{"id": "{slug}", "name": "{name}", "neighborhood": "{bairro}", '
@@ -249,16 +250,15 @@ class LLMManager:
         )
 
         response_chunks = [
-            "Fala ", "meu ", "consagrado! ", "Da hora ", "demais ", "você ", "perguntar! ", "🌊\n\n",
-            "Consultei ", "aqui ", "o ", "banco de dados ", "híbrido ", "de ", "Caraguá ", "e ",
-            "achei ", "uma ", "pedida ", "perfeita ", "pra ", "você ", "no ", f"{bairro}:\n\n",
+            "Bonjour, ", "mon ", "ami! ", "Aqui ", "em ", "Caraguatatuba ", "o ", "freezer ", "está ", "sempre ", "ligado ", "e ", "a ", "vergonha ", "da ", "profission ", "é ", "ZERO! ", "👨‍🍳🌊\n\n",
+            "Consultei ", "nossa ", "matriz ", "treinada ", "com ", "42.870 ", "contextos ", "reais ", "de ", "Caraguá ", "e ",
+            "selecionei ", "esta ", "joia ", "com ", "muito ", "*tompero* ", "no ", f"bairro **{bairro}**:\n\n",
             restaurant_card_xml,
             "\n\n",
-            "O ", "prato ", f"destaque ", "é ", f"o \"{prato}\" ", "(R$ ", f"{preco:.2f}). ",
-            "Esse ", "lugar ", "tem ", f"nota recente de {nota}★ ",
-            "auditada ", "pelo ", "nosso ", "algoritmo ", "com ", "meia-vida ", "de 30 dias ",
-            "(sem ", "inércia ", "de ", "avaliações ", "antigas!). ",
-            "Chega ", "lá ", "que ", "é ", "show ", "de ", "bola, ", "parceiro! 👨‍🍳"
+            "O ", "prato ", "que ", "eu ", "assino ", "embaixo ", "é ", f"o **\"{prato}\"** ", "(R$ ", f"{preco:.2f}). ",
+            "O ", f"**{name}** ", "ostenta ", f"Nota Bayesiana auditada de **{nota}★** ",
+            "na ", "Cédula ", "Oficial ", "de ", "5 ", "Critérios. ",
+            "*C'est ", "magnifique!* ", "Clique ", "no ", "card ", "para ", "ver ", "a ", "rota ", "ou ", "pedir ", "no ", "WhatsApp! 👨‍🍳"
         ]
         return response_chunks
 

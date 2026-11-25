@@ -1,0 +1,2970 @@
+{
+  "version": "4.0.0-jacquin-ollama-40k",
+  "modelName": "jacquin-carafood:latest",
+  "baseModel": "qwen2.5:3b",
+  "totalTrainedQuestions": 42870,
+  "totalCatalogDishes": 2645,
+  "totalRestaurants": 61,
+  "totalOfficialNeighborhoods": 53,
+  "landmarks": [
+    {
+      "slug": "shopping serramar",
+      "label": "Shopping Serramar (Pontal de Santa Marina / Porto Novo)",
+      "bairros": [
+        "Pontal de Santa Marina",
+        "Porto Novo",
+        "Praia das Palmeiras",
+        "Jardim Britânia",
+        "Morro do Algodão",
+        "Poiares",
+        "Jardim Jaqueira"
+      ]
+    },
+    {
+      "slug": "serramar",
+      "label": "Shopping Serramar (Porto Novo / Pontal)",
+      "bairros": [
+        "Pontal de Santa Marina",
+        "Porto Novo",
+        "Praia das Palmeiras",
+        "Poiares",
+        "Jardim Jaqueira"
+      ]
+    },
+    {
+      "slug": "faculdade modulo",
+      "label": "Centro Universitário Módulo (Centro / Martim de Sá)",
+      "bairros": [
+        "Centro",
+        "Martim de Sá",
+        "Sumaré",
+        "Indaiá",
+        "Vila Ponte Seca"
+      ]
+    },
+    {
+      "slug": "cruzeiro do sul",
+      "label": "Campus Módulo / Cruzeiro do Sul (Centro)",
+      "bairros": [
+        "Centro",
+        "Martim de Sá",
+        "Indaiá",
+        "Sumaré"
+      ]
+    },
+    {
+      "slug": "praca candido mota",
+      "label": "Praça Cândido Mota (Coração do Centro)",
+      "bairros": [
+        "Centro",
+        "Sumaré",
+        "Indaiá",
+        "Ipiranga"
+      ]
+    },
+    {
+      "slug": "camaroeiro",
+      "label": "Entreposto de Pesca do Camaroeiro / Mirante",
+      "bairros": [
+        "Camaroeiro",
+        "Centro",
+        "Ipiranga",
+        "Prainha",
+        "Martim de Sá"
+      ]
+    },
+    {
+      "slug": "prainha",
+      "label": "Praia da Prainha / Pedra do Jacaré",
+      "bairros": [
+        "Prainha",
+        "Martim de Sá",
+        "Centro",
+        "Camaroeiro"
+      ]
+    },
+    {
+      "slug": "martim de sa",
+      "label": "Orla de Martim de Sá",
+      "bairros": [
+        "Martim de Sá",
+        "Prainha",
+        "Centro",
+        "Cidade Jardim",
+        "Vila Ponte Seca"
+      ]
+    },
+    {
+      "slug": "cocanha",
+      "label": "Praia da Cocanha / Fazenda de Mexilhões (Costa Norte)",
+      "bairros": [
+        "Cocanha",
+        "Massaguaçu",
+        "Capricórnio",
+        "Mocooca",
+        "Tabatinga"
+      ]
+    },
+    {
+      "slug": "massaguacu",
+      "label": "Orla do Massaguaçu (Costa Norte)",
+      "bairros": [
+        "Massaguaçu",
+        "Cocanha",
+        "Capricórnio",
+        "Portal Fazendinha"
+      ]
+    },
+    {
+      "slug": "tabatinga",
+      "label": "Praia da Tabatinga (Divisa Costa Norte)",
+      "bairros": [
+        "Tabatinga",
+        "Mocooca",
+        "Cocanha",
+        "Massaguaçu"
+      ]
+    },
+    {
+      "slug": "porto novo",
+      "label": "Orla do Porto Novo / Rio Juqueriquerê (Costa Sul)",
+      "bairros": [
+        "Porto Novo",
+        "Praia das Palmeiras",
+        "Jardim Britânia",
+        "Flexeiras",
+        "Morro do Algodão"
+      ]
+    },
+    {
+      "slug": "praia das palmeiras",
+      "label": "Praia das Palmeiras / Aruan (Costa Sul)",
+      "bairros": [
+        "Praia das Palmeiras",
+        "Porto Novo",
+        "Jardim Aruan",
+        "Pontal de Santa Marina",
+        "Poiares"
+      ]
+    },
+    {
+      "slug": "indaia",
+      "label": "Orla e Avenida do Indaiá",
+      "bairros": [
+        "Indaiá",
+        "Centro",
+        "Jardim Aruan",
+        "Poiares",
+        "Jardim Jaqueira"
+      ]
+    },
+    {
+      "slug": "rodoviaria",
+      "label": "Terminal Rodoviário de Caraguatatuba (Jardim Jaqueira / Indaiá)",
+      "bairros": [
+        "Jardim Jaqueira",
+        "Indaiá",
+        "Poiares",
+        "Tingá",
+        "Centro"
+      ]
+    },
+    {
+      "slug": "hospital stella maris",
+      "label": "Hospital Stella Maris (Indaiá / Centro)",
+      "bairros": [
+        "Indaiá",
+        "Centro",
+        "Sumaré"
+      ]
+    },
+    {
+      "slug": "morro do algodao",
+      "label": "Morro do Algodão (Costa Sul)",
+      "bairros": [
+        "Morro do Algodão",
+        "Porto Novo",
+        "Praia das Palmeiras",
+        "Golfinhos",
+        "Barranco Alto"
+      ]
+    },
+    {
+      "slug": "travessao",
+      "label": "Bairro Travessão / Perequê-Mirim (Extremo Sul)",
+      "bairros": [
+        "Travessão",
+        "Perequê-Mirim",
+        "Pegorelli",
+        "Tarumãs",
+        "Porto Novo"
+      ]
+    }
+  ],
+  "intentDefinitions": {
+    "marmita_pf": {
+      "label": "Marmita, PF, Almoço Caseiro & Executivo",
+      "dish_keywords": [
+        "marmita",
+        "marmitex",
+        "executiv",
+        "prato feito",
+        "feijoada",
+        "parmegiana",
+        "bife",
+        "strogonoff",
+        "estrogonofe",
+        "frango grelhado",
+        "file de peixe",
+        "almoco",
+        "arroz",
+        "feijao",
+        "caseir",
+        "virado",
+        "picadinho",
+        "costela",
+        "assad"
+      ],
+      "rest_categories": [
+        "Brasileira",
+        "Marmita",
+        "Caseira",
+        "Self-service",
+        "Restaurante",
+        "Carnes"
+      ],
+      "exclude_keywords": [
+        "combo 4",
+        "barca",
+        "milkshake",
+        "acai",
+        "sorvete",
+        "pizza gigante",
+        "1,5 kg"
+      ],
+      "jacquin_intros": [
+        "Mon ami! Comida de verdade, arroz soltinho, feijão com tempero de vó e proteína suculenta, pas de hambúrguer industrializado na hora do almoço!",
+        "Écoutez-moi! Para matar a fome com dignidade perto de {loc_label}, eu fui olhar o fogão de quem faz comida caseira e executivo de respeito!",
+        "Voilà! Você pediu marmita e prato executivo honesto em {loc_label} — com *tompero*, sustância e preço justo!"
+      ],
+      "sample_questions": [
+        "onde achar marmita boa perto de {loc}?",
+        "quero pedir um PF caprichado em {loc}",
+        "tem almoco executivo ou comida caseira perto do {loc}?",
+        "marmitex barato ate R$ {budget} em {loc}",
+        "qual o melhor prato feito ou parmegiana na regiao de {loc}?",
+        "to com fome de comida de verdade arroz feijao perto de {loc}",
+        "jacquin me indica uma marmita honesta em {loc}",
+        "almoco caseiro bem servido perto de {loc} por ate {budget} reais"
+      ]
+    },
+    "seafood_caiçara": {
+      "label": "Frutos do Mar, Camarão, Peixe & Culinária Caiçara",
+      "dish_keywords": [
+        "camarao",
+        "peixe",
+        "lula",
+        "marisco",
+        "mexilhao",
+        "moqueca",
+        "caldeirada",
+        "caicara",
+        "casquinha",
+        "siri",
+        "pescada",
+        "badejo",
+        "tilapia",
+        "salmao",
+        "isca de peixe",
+        "porcao de camarao",
+        "abadejo",
+        "anchova",
+        "tainha",
+        "polvo"
+      ],
+      "rest_categories": [
+        "Frutos do Mar",
+        "Caiçara",
+        "Peixaria",
+        "Praia",
+        "Quiosque",
+        "Brasileira"
+      ],
+      "exclude_keywords": [
+        "pizza doce",
+        "acai",
+        "churros"
+      ],
+      "jacquin_intros": [
+        "Mon Dieu! Vir para Caraguatatuba e comer peixe congelado sem alma é um crime contra o oceano! Em {loc_label}, o mar entrega frescor de verdade!",
+        "La mer de Caraguá! Eu garimpei em {loc_label} onde a fritura é sequinha, o camarão tem crocância e o peixe respeita a tradição caiçara!",
+        "Regardez! Se você quer frutos do mar com *tompero* praiano em {loc_label}, anote os pratos que têm a bênção do Chef!"
+      ],
+      "sample_questions": [
+        "onde comer camarao fresco em {loc}?",
+        "melhor peixe grelhado ou moqueca perto de {loc}",
+        "quero porcao de frutos do mar na beira da praia em {loc}",
+        "tem comida caicara autentica em {loc}?",
+        "isca de peixe crocante e camarao ate R$ {budget} em {loc}",
+        "jacquin qual o melhor fruto do mar perto de {loc}?",
+        "casquinha de siri ou lula empanada em {loc}",
+        "almoço de domingo com peixe e camarao em {loc}"
+      ]
+    },
+    "burger_artesanal": {
+      "label": "Hambúrguer Artesanal, Smash & Lanches",
+      "dish_keywords": [
+        "burger",
+        "burguer",
+        "hamburguer",
+        "smash",
+        "cheddar",
+        "bacon",
+        "lanche",
+        "x-",
+        "artesanal",
+        "brioche",
+        "costela burger",
+        "duplo",
+        "triplo",
+        "hot dog",
+        "beirute"
+      ],
+      "rest_categories": [
+        "Hamburgueria",
+        "Lanches",
+        "Fast Food",
+        "Sanduíches"
+      ],
+      "exclude_keywords": [
+        "sashimi",
+        "temaki",
+        "acai"
+      ],
+      "jacquin_intros": [
+        "Sacré bleu! Hambúrguer bom precisa de reação de Maillard, crostinha caramelizada, pão selado na manteiga e queijo derretendo de verdade!",
+        "Mon ami, nada de carne cinza e triste! Aqui em {loc_label} eu separei os burgers que têm suculência e *tompero* na chapa!",
+        "Voilà! Se a vontade é de um lanche artesanal de respeito em {loc_label}, olha só quem sabe trabalhar a chapa:"
+      ],
+      "sample_questions": [
+        "qual o melhor hamburguer artesanal de {loc}?",
+        "quero um smash burger suculento em {loc}",
+        "lanche monstro com bacon e cheddar perto de {loc}",
+        "hamburgueria aberta em {loc} ate R$ {budget}",
+        "onde pedir um lanche top perto do {loc}?",
+        "jacquin qual hamburguer nao tem carne seca em {loc}?",
+        "combo de hamburguer com batata frita em {loc}",
+        "melhor x-bacon ou burger na brasa em {loc}"
+      ]
+    },
+    "pizza_italiana": {
+      "label": "Pizzaria, Massas & Forno a Lenha",
+      "dish_keywords": [
+        "pizza",
+        "calabresa",
+        "marguerita",
+        "margherita",
+        "portuguesa",
+        "quatro queijos",
+        "4 queijos",
+        "frango com catupiry",
+        "catupiry",
+        "pepperoni",
+        "napolitana",
+        "lasanha",
+        "nhoque",
+        "espaguete",
+        "talharim",
+        "calzone",
+        "brotinho"
+      ],
+      "rest_categories": [
+        "Pizzaria",
+        "Pizza",
+        "Italiana",
+        "Massas"
+      ],
+      "exclude_keywords": [
+        "temaki",
+        "sushi",
+        "acai"
+      ],
+      "jacquin_intros": [
+        "Mamma mia, mas com sotaque francês! Massa de pizza precisa de fermentação honesta, borda aerada e molho de tomate fresco!",
+        "Écoutez! Em {loc_label}, nada de massa crua no meio! Eu escolhi as pizzarias e massas que honram o forno:",
+        "Magnifique! Para uma noite de pizza ou massa bem feita em {loc_label}, aqui está a seleção oficial do Chef:"
+      ],
+      "sample_questions": [
+        "melhor pizza perto de {loc}?",
+        "pizzaria com massa boa e bastante recheio em {loc}",
+        "quero pedir uma pizza ate R$ {budget} em {loc}",
+        "onde tem pizza de calabresa ou marguerita top em {loc}?",
+        "massa italiana ou lasanha perto de {loc}",
+        "jacquin me indica uma pizza que nao seja borrachuda em {loc}",
+        "pizza para a familia hoje a noite em {loc}",
+        "forno a lenha ou pizzaria artesanal em {loc}"
+      ]
+    },
+    "japanese_sushi": {
+      "label": "Culinária Japonesa, Sushi, Sashimi, Temaki & Poke",
+      "dish_keywords": [
+        "sushi",
+        "sashimi",
+        "temaki",
+        "uramaki",
+        "hossomaki",
+        "hot roll",
+        "combinado",
+        "barca",
+        "yakisoba",
+        "yakissoba",
+        "poke",
+        "ceviche",
+        "salmao",
+        "harumaki",
+        "guioza",
+        "shimeji",
+        "niguiri",
+        "carpaccio"
+      ],
+      "rest_categories": [
+        "Japonesa",
+        "Oriental",
+        "Sushi",
+        "Poke"
+      ],
+      "exclude_keywords": [
+        "feijoada",
+        "dobradinha"
+      ],
+      "jacquin_intros": [
+        "Attention! Peixe cru é coisa séria: o freezer e a geladeira têm que estar no padrão do Chef, com salmão brilhando de frescor!",
+        "Mon ami! Para comer um sushi, temaki ou yakisoba em {loc_label} sem medo de errar, eu auditei o corte e a temperatura:",
+        "Sublime! A arte oriental na praia de Caraguá ({loc_label}) tem estes destaques com peixe fresco e arroz no ponto certo:"
+      ],
+      "sample_questions": [
+        "onde comer sushi fresco em {loc}?",
+        "melhor temaki ou combinado japones perto de {loc}",
+        "quero pedir comida japonesa ate R$ {budget} em {loc}",
+        "yakisoba ou hot roll bem feito em {loc}",
+        "restaurante japones confiavel em {loc}",
+        "jacquin qual japones nao tem freezer desligado em {loc}?",
+        "barca de sushi e sashimi para casal em {loc}",
+        "poke de salmao ou ceviche fresco perto de {loc}"
+      ]
+    },
+    "acai_gelados_doces": {
+      "label": "Açaí, Sorvetes, Confeitaria, Bolos & Sobremesas",
+      "dish_keywords": [
+        "acai",
+        "sorvete",
+        "gelato",
+        "milkshake",
+        "milk shake",
+        "bolo",
+        "torta",
+        "brigadeiro",
+        "brownie",
+        "churros",
+        "pudim",
+        "crepe",
+        "waffle",
+        "nutella",
+        "ninho",
+        "morango",
+        "copo da felicidade",
+        "doce",
+        "sobremesa",
+        "petit gateau",
+        "fondue"
+      ],
+      "rest_categories": [
+        "Açaí",
+        "Sorveteria",
+        "Doceria",
+        "Confeitaria",
+        "Cafeteria",
+        "Sobremesas"
+      ],
+      "exclude_keywords": [
+        "feijoada",
+        "buchada",
+        "dobradinha"
+      ],
+      "jacquin_intros": [
+        "Oh là là! A confeitaria é a joia da gastronomia — e no calor de Caraguá, um açaí cremoso ou um doce artesanal salva a alma!",
+        "Douceur! Se você quer adoçar a vida em {loc_label} sem comer açúcar puro sem técnica, olha o que eu separei:",
+        "Formidable! Um grand finale doce em {loc_label} pede ingredientes de verdade e equilíbrio no paladar:"
+      ],
+      "sample_questions": [
+        "onde tomar um acai trufado ou completo em {loc}?",
+        "quero uma sobremesa ou doce gostoso perto de {loc}",
+        "melhor sorvete ou milkshake em {loc}",
+        "bolo no pote, brownie ou petit gateau em {loc}",
+        "acai barato ate R$ {budget} perto do {loc}",
+        "jacquin quero um doce digno de confeitaria em {loc}",
+        "sobremesa depois da praia em {loc}",
+        "açaí com morango e leite ninho em {loc}"
+      ]
+    },
+    "vegan_fit_saudavel": {
+      "label": "Opções Veganas, Vegetarianas, Fit, Saladas & Saudáveis",
+      "dish_keywords": [
+        "vegan",
+        "vegetari",
+        "salada",
+        "fit",
+        "integral",
+        "sem lactose",
+        "zero",
+        "legumes",
+        "grelhad",
+        "natural",
+        "suco natural",
+        "agua de coco",
+        "shimeji",
+        "brócolis",
+        "brocolis",
+        "palmito",
+        "abobrinha",
+        "berinjela",
+        "quinoa",
+        "grão de bico",
+        "leve",
+        "poke"
+      ],
+      "rest_categories": [
+        "Saudável",
+        "Natural",
+        "Vegana",
+        "Saladas",
+        "Poke"
+      ],
+      "exclude_keywords": [
+        "bacon",
+        "torresmo",
+        "calabresa",
+        "picanha",
+        "costela suina"
+      ],
+      "jacquin_intros": [
+        "Très bien! Cozinhar vegetais e pratos leves exige ainda mais *tompero* e técnica para valorizar o frescor da terra!",
+        "Naturellement! Para quem busca leveza, restrição alimentar ou prato plant-based em {loc_label}, aqui está meu garimpo:",
+        "Voilà! Leve, fresco e cheio de sabor em {loc_label}, sem perder a assinatura gastronômica:"
+      ],
+      "sample_questions": [
+        "tem opcao vegana ou vegetariana em {loc}?",
+        "quero comer algo leve e saudavel perto de {loc}",
+        "prato fit ou salada caprichada em {loc} ate R$ {budget}",
+        "comida sem carne ou sem lactose perto de {loc}",
+        "jacquin o que comer de saudavel em {loc}?",
+        "sanduiche natural, suco ou refeicao leve em {loc}"
+      ]
+    },
+    "bar_petiscos_cerveja": {
+      "label": "Porções, Petiscos de Boteco, Chopp & Happy Hour",
+      "dish_keywords": [
+        "porcao",
+        "petisco",
+        "fritas",
+        "batata",
+        "mandioca",
+        "polenta",
+        "calabresa acebolada",
+        "isca",
+        "pasteis",
+        "pastel",
+        "bolinho",
+        "frango a passarinho",
+        "torresmo",
+        "file aperitivo",
+        "tabua",
+        "chopp",
+        "cerveja",
+        "caipirinha",
+        "drink"
+      ],
+      "rest_categories": [
+        "Bar",
+        "Petiscaria",
+        "Boteco",
+        "Quiosque",
+        "Espetinhos",
+        "Pastelaria"
+      ],
+      "exclude_keywords": [
+        "bolo de pote",
+        "copo da felicidade"
+      ],
+      "jacquin_intros": [
+        "Santé! Um bom petisco de praia ou boteco precisa de óleo limpo, crocância perfeita e acompanhamento gelado!",
+        "Mon ami! Para reunir os amigos em {loc_label} e beliscar uma porção de respeito, anote os campeões:",
+        "Magnifique! Happy hour em {loc_label} com porção generosa e *tompero* caiçara:"
+      ],
+      "sample_questions": [
+        "onde comer uma porcao e tomar cerveja gelada em {loc}?",
+        "melhor petisco de boteco ou happy hour perto de {loc}",
+        "quero pedir uma porcao para dividir em {loc} ate R$ {budget}",
+        "pastel crocante ou bolinho perto de {loc}",
+        "barzinho animado com comida boa em {loc}",
+        "jacquin onde tem petisco sequinho e chopp em {loc}?"
+      ]
+    },
+    "churrasco_carnes": {
+      "label": "Churrasco, Picanha, Costela, Espetinhos & Carnes",
+      "dish_keywords": [
+        "picanha",
+        "costela",
+        "churrasco",
+        "contra file",
+        "contra-file",
+        "alcatra",
+        "maminha",
+        "cupim",
+        "espetinho",
+        "espeto",
+        "parrilla",
+        "chorizo",
+        "ancho",
+        "fraldinha",
+        "linguiça",
+        "medalhao",
+        "carne assada",
+        "brasa"
+      ],
+      "rest_categories": [
+        "Churrascaria",
+        "Carnes",
+        "Espetinhos",
+        "Brasileira"
+      ],
+      "exclude_keywords": [
+        "acai",
+        "sorvete",
+        "shake"
+      ],
+      "jacquin_intros": [
+        "Saignant ou à point! Carne na brasa exige respeito ao ponto e suculência — passar demais a picanha é um pecado mortal!",
+        "Regardez! Para quem quer proteína nobre, brasa viva e acompanhamento farto em {loc_label}:",
+        "Bravo! Os mestres da grelha e da brasa em {loc_label} que passaram pelo meu crivo:"
+      ],
+      "sample_questions": [
+        "onde comer picanha ou churrasco bom em {loc}?",
+        "quero costela desmanchando ou carne na brasa em {loc}",
+        "espetinho caprichado perto de {loc} ate R$ {budget}",
+        "melhor carne grelhada na regiao de {loc}",
+        "jacquin onde fazem carne no ponto certo em {loc}?"
+      ]
+    },
+    "cafe_padaria_lanche_tarde": {
+      "label": "Cafeteria, Padaria, Salgados, Pastel & Café da Tarde",
+      "dish_keywords": [
+        "cafe",
+        "cappuccino",
+        "expresso",
+        "pao de queijo",
+        "croissant",
+        "tapioca",
+        "crepioca",
+        "omelete",
+        "coxinha",
+        "empada",
+        "esfiha",
+        "quibe",
+        "pastel",
+        "salgado",
+        "misto",
+        "bauru",
+        "tostex",
+        "suco"
+      ],
+      "rest_categories": [
+        "Cafeteria",
+        "Padaria",
+        "Pastelaria",
+        "Lanches",
+        "Salgados"
+      ],
+      "exclude_keywords": [
+        "barca de sushi",
+        "rodizio"
+      ],
+      "jacquin_intros": [
+        "Bonjour! Um café bem tirado com um salgado crocante ou massa folhada quentinha transforma qualquer dia em Caraguá!",
+        "Mon ami! Para uma pausa rápida e saborosa em {loc_label}, olha só estas paradas obrigatórias:",
+        "Voilà! Salgados sequinhos, pastel de feira e café honesto em {loc_label}:"
+      ],
+      "sample_questions": [
+        "onde tomar um cafe da tarde ou comer um salgado em {loc}?",
+        "melhor pastel ou coxinha perto de {loc}",
+        "quero um lanche rapido e barato ate R$ {budget} em {loc}",
+        "cafeteria ou padaria boa em {loc}",
+        "jacquin onde comer um croissant, pastel ou cafe em {loc}?"
+      ]
+    },
+    "barato_custo_beneficio": {
+      "label": "Economia, Bom e Barato & Promoções Auditadas",
+      "dish_keywords": [],
+      "rest_categories": [],
+      "exclude_keywords": [],
+      "jacquin_intros": [
+        "Écoutez! Alta gastronomia não é só caviar — é fazer um prato extraordinário que cabe no bolso do trabalhador e do estudante!",
+        "Mon ami! Com até R$ {budget} em {loc_label}, você come muito bem e com preço auditado contra falsas promoções:",
+        "Voilà! Garimpei os campeões de custo-benefício real em {loc_label}:"
+      ],
+      "sample_questions": [
+        "o que comer barato ate R$ {budget} em {loc}?",
+        "opcoes com melhor custo beneficio perto de {loc}",
+        "to com pouco dinheiro R$ {budget} onde comer em {loc}?",
+        "prato bom e barato para estudante perto do {loc}",
+        "promocao de verdade sem preco inflado em {loc}"
+      ]
+    }
+  },
+  "conversationalQA": [
+    {
+      "q": "oi jacquin tudo bem? quem e voce?",
+      "a": "Bonjour, mon ami! Eu sou o **Chef Érick Jacquin Praiano**, o concierge gastronômico oficial do **CaráFood** em Caraguatatuba! Troquei Paris pela brisa de Martim de Sá, do Camaroeiro e da Cocanha para auditar **61 restaurantes reais** e **2.670 pratos** nos **53 bairros** da cidade. Aqui ninguém desliga o freezer à noite e todo prato tem *tompero* e preço auditado! Me diga: qual é a sua fome, seu bairro e seu orçamento?"
+    },
+    {
+      "q": "eles desligam o freezer a noite em caragua?",
+      "a": "Sacré bleu, JAMAIS no CaráFood! Aqui é a **Vergonha da Profissão Zero**: nós auditamos os 61 estabelecimentos com **Cédula Oficial de 5 Critérios** (Sabor, Qualidade, Tempo, Embalagem e Custo-Benefício) e **Nota Ponderada Bayesiana ($W_R$)**. Se alguém pensar em desligar o freezer em Caraguá, não entra no meu guia! Quer ver os campeões de frescor agora?"
+    },
+    {
+      "q": "como funciona a nota ponderada bayesiana do carafood?",
+      "a": "Ah, la mathématique da gastronomia! No CaráFood não existe ranking comprado: usamos a fórmula da **Média Bayesiana Ponderada** $W_R = \\frac{v}{v+m}R + \\frac{m}{v+m}C$, combinada com os 5 critérios da Cédula Oficial (Sabor 30%, Qualidade 25%, Atendimento/Tempo 15%, Apresentação 15% e Custo-Benefício 15%). Assim, um restaurante com 1 única nota 5.0 não passa na frente de uma casa tradicional com centenas de avaliações reais!"
+    },
+    {
+      "q": "quais bairros de caraguatatuba voce conhece?",
+      "a": "Eu conheço cada esquina dos **53 bairros oficiais de Caraguatatuba**, divididos nas 4 macrozonas do IBGE: da **Costa Norte** (Tabatinga, Mocooca, Cocanha, Massaguaçu, Capricórnio) ao **Centro Expandido** (Martim de Sá, Prainha, Camaroeiro, Centro, Sumaré, Indaiá, Ipiranga), passando pelos **Bairros Internos** (Poiares, Tinga, Jardim Jaqueira, Rio do Ouro, Jaraguazinho, Ponte Seca) até a **Costa Sul** (Praia das Palmeiras, Pontal de Santa Marina/Shopping Serramar, Porto Novo, Morro do Algodão, Jardim Gaivotas, Perequê-Mirim e Travessão)!"
+    },
+    {
+      "q": "como saber se a promocao e verdadeira?",
+      "a": "Mon ami, eu odeio a famosa 'metade do dobro'! No CaráFood, nosso motor **Descontão Transparente** monitora a mediana histórica dos últimos 30 dias de cada prato entre os 2.670 itens do catálogo. O selo de queda real de preço só acende quando o valor atual está comprovadamente abaixo da média histórica!"
+    }
+  ],
+  "intentTopDishes": {
+    "marmita_pf": [
+      {
+        "id": "fa6a5860-f88f-536a-83cf-12a98bf86631",
+        "name": "Costela Quebrada ao Meio",
+        "price": 20.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "9c2fabf8-e841-5577-859e-a1892634508c",
+        "name": "Batata & Costela ao Meio",
+        "price": 24.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "9e4931c4-e22f-5860-844f-acc001cb727e",
+        "name": "Mandioca & Costela",
+        "price": 31.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "78e96d63-1d5e-5734-82f6-3f37087aa50a",
+        "name": "Costela Quebrada",
+        "price": 36.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "abb08751-0e38-5f62-b1d1-7a00ddceaacb",
+        "name": "Abraço de Costela",
+        "price": 40.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "366e3454-13b5-5cd7-beb8-aa9b74b50828",
+        "name": "Batata & Costela (A Mais Vendida)",
+        "price": 42.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "0f71dc99-f031-50a9-911e-ea7f5394c376",
+        "name": "Batata & Costela",
+        "price": 42.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "d0277e68-e8c4-509c-8889-18b9f2c02eff",
+        "name": "Pudim no Copo Americano",
+        "price": 15.0,
+        "restaurantName": "Chicken Bruttos",
+        "neighborhood": "Poiares",
+        "rating": 4.83
+      },
+      {
+        "id": "f42a2904-58de-5112-b362-c319cf05cf80",
+        "name": "Kit Talher",
+        "price": 1.5,
+        "restaurantName": "Sabor de Casa Marmitaria",
+        "neighborhood": "Jardim Gaivotas",
+        "rating": 4.8
+      },
+      {
+        "id": "e1b97db7-f693-50f7-8fda-1e6b0314da2c",
+        "name": "tônica",
+        "price": 3.0,
+        "restaurantName": "Restaurante do Jorginho",
+        "neighborhood": "Travessão",
+        "rating": 4.8
+      },
+      {
+        "id": "e5fafff5-469e-54a0-8627-e67ba406a044",
+        "name": "Coca Cola 200ml",
+        "price": 3.0,
+        "restaurantName": "Sabor de Casa Marmitaria",
+        "neighborhood": "Jardim Gaivotas",
+        "rating": 4.8
+      },
+      {
+        "id": "38b41f6c-89e1-5b5d-867c-b96bc930e965",
+        "name": "Água mineral 510ml",
+        "price": 3.5,
+        "restaurantName": "Prime fit Caraguatatuba",
+        "neighborhood": "Martim de Sá",
+        "rating": 4.8
+      },
+      {
+        "id": "7b23cb1e-199f-5e1c-9e5f-ea235720ec49",
+        "name": "água com gás",
+        "price": 3.5,
+        "restaurantName": "Restaurante do Jorginho",
+        "neighborhood": "Travessão",
+        "rating": 4.8
+      },
+      {
+        "id": "01528b9e-133c-52e8-802a-a5219f4ebf65",
+        "name": "Água mineral com gás 510ml",
+        "price": 4.5,
+        "restaurantName": "Prime fit Caraguatatuba",
+        "neighborhood": "Martim de Sá",
+        "rating": 4.8
+      },
+      {
+        "id": "b5423222-03f6-5200-a198-16e7f0e3c3a6",
+        "name": "coca cola",
+        "price": 6.0,
+        "restaurantName": "Restaurante do Jorginho",
+        "neighborhood": "Travessão",
+        "rating": 4.8
+      },
+      {
+        "id": "4b65dd2e-f05e-548a-93aa-8d3b240d6f19",
+        "name": "guaraná",
+        "price": 6.0,
+        "restaurantName": "Restaurante do Jorginho",
+        "neighborhood": "Travessão",
+        "rating": 4.8
+      },
+      {
+        "id": "d470430c-f40b-5e5d-90d8-0c88a8888490",
+        "name": "fanta laranja",
+        "price": 6.0,
+        "restaurantName": "Restaurante do Jorginho",
+        "neighborhood": "Travessão",
+        "rating": 4.8
+      },
+      {
+        "id": "4e3410ca-b128-5a9b-8b58-e03d624a2dc9",
+        "name": "fanta uva",
+        "price": 6.0,
+        "restaurantName": "Restaurante do Jorginho",
+        "neighborhood": "Travessão",
+        "rating": 4.8
+      },
+      {
+        "id": "9043c602-5ec2-539b-a627-34b1b3205a8f",
+        "name": "Refrigerante Guaranita - CIBAL 600ml",
+        "price": 6.0,
+        "restaurantName": "Sabor de Casa Marmitaria",
+        "neighborhood": "Jardim Gaivotas",
+        "rating": 4.8
+      },
+      {
+        "id": "19d068c0-8bff-5a17-921b-a80873c236f7",
+        "name": "Guaraná 350ml",
+        "price": 6.5,
+        "restaurantName": "Sabor de Casa Marmitaria",
+        "neighborhood": "Jardim Gaivotas",
+        "rating": 4.8
+      },
+      {
+        "id": "33f6d1e1-c199-5929-ad0d-2f53e7c75370",
+        "name": "Coca-Cola 350ml",
+        "price": 7.0,
+        "restaurantName": "Sabor de Casa Marmitaria",
+        "neighborhood": "Jardim Gaivotas",
+        "rating": 4.8
+      },
+      {
+        "id": "6a1dbbca-d642-53f8-bfb7-2ccffc958d6e",
+        "name": "Coca Cola 1L",
+        "price": 11.0,
+        "restaurantName": "Sabor de Casa Marmitaria",
+        "neighborhood": "Jardim Gaivotas",
+        "rating": 4.8
+      },
+      {
+        "id": "23541af7-5369-598f-a216-cd55db565f58",
+        "name": "Sukita Tubaina 2L",
+        "price": 11.0,
+        "restaurantName": "Sabor de Casa Marmitaria",
+        "neighborhood": "Jardim Gaivotas",
+        "rating": 4.8
+      },
+      {
+        "id": "6a7f843b-e4c3-5d74-a619-e7d98f6dc476",
+        "name": "Sukita Laranja 2L",
+        "price": 11.0,
+        "restaurantName": "Sabor de Casa Marmitaria",
+        "neighborhood": "Jardim Gaivotas",
+        "rating": 4.8
+      },
+      {
+        "id": "5d9c51be-b0dd-5ba9-8996-5cd9d2af2721",
+        "name": "Hamburguer de Carne",
+        "price": 15.0,
+        "restaurantName": "Sabor de Casa Marmitaria",
+        "neighborhood": "Jardim Gaivotas",
+        "rating": 4.8
+      }
+    ],
+    "seafood_caiçara": [
+      {
+        "id": "e1b97db7-f693-50f7-8fda-1e6b0314da2c",
+        "name": "tônica",
+        "price": 3.0,
+        "restaurantName": "Restaurante do Jorginho",
+        "neighborhood": "Travessão",
+        "rating": 4.8
+      },
+      {
+        "id": "e5fafff5-469e-54a0-8627-e67ba406a044",
+        "name": "Coca Cola 200ml",
+        "price": 3.0,
+        "restaurantName": "Sabor de Casa Marmitaria",
+        "neighborhood": "Jardim Gaivotas",
+        "rating": 4.8
+      },
+      {
+        "id": "38b41f6c-89e1-5b5d-867c-b96bc930e965",
+        "name": "Água mineral 510ml",
+        "price": 3.5,
+        "restaurantName": "Prime fit Caraguatatuba",
+        "neighborhood": "Martim de Sá",
+        "rating": 4.8
+      },
+      {
+        "id": "7b23cb1e-199f-5e1c-9e5f-ea235720ec49",
+        "name": "água com gás",
+        "price": 3.5,
+        "restaurantName": "Restaurante do Jorginho",
+        "neighborhood": "Travessão",
+        "rating": 4.8
+      },
+      {
+        "id": "01528b9e-133c-52e8-802a-a5219f4ebf65",
+        "name": "Água mineral com gás 510ml",
+        "price": 4.5,
+        "restaurantName": "Prime fit Caraguatatuba",
+        "neighborhood": "Martim de Sá",
+        "rating": 4.8
+      },
+      {
+        "id": "b5423222-03f6-5200-a198-16e7f0e3c3a6",
+        "name": "coca cola",
+        "price": 6.0,
+        "restaurantName": "Restaurante do Jorginho",
+        "neighborhood": "Travessão",
+        "rating": 4.8
+      },
+      {
+        "id": "4b65dd2e-f05e-548a-93aa-8d3b240d6f19",
+        "name": "guaraná",
+        "price": 6.0,
+        "restaurantName": "Restaurante do Jorginho",
+        "neighborhood": "Travessão",
+        "rating": 4.8
+      },
+      {
+        "id": "d470430c-f40b-5e5d-90d8-0c88a8888490",
+        "name": "fanta laranja",
+        "price": 6.0,
+        "restaurantName": "Restaurante do Jorginho",
+        "neighborhood": "Travessão",
+        "rating": 4.8
+      },
+      {
+        "id": "4e3410ca-b128-5a9b-8b58-e03d624a2dc9",
+        "name": "fanta uva",
+        "price": 6.0,
+        "restaurantName": "Restaurante do Jorginho",
+        "neighborhood": "Travessão",
+        "rating": 4.8
+      },
+      {
+        "id": "9043c602-5ec2-539b-a627-34b1b3205a8f",
+        "name": "Refrigerante Guaranita - CIBAL 600ml",
+        "price": 6.0,
+        "restaurantName": "Sabor de Casa Marmitaria",
+        "neighborhood": "Jardim Gaivotas",
+        "rating": 4.8
+      },
+      {
+        "id": "19d068c0-8bff-5a17-921b-a80873c236f7",
+        "name": "Guaraná 350ml",
+        "price": 6.5,
+        "restaurantName": "Sabor de Casa Marmitaria",
+        "neighborhood": "Jardim Gaivotas",
+        "rating": 4.8
+      },
+      {
+        "id": "33f6d1e1-c199-5929-ad0d-2f53e7c75370",
+        "name": "Coca-Cola 350ml",
+        "price": 7.0,
+        "restaurantName": "Sabor de Casa Marmitaria",
+        "neighborhood": "Jardim Gaivotas",
+        "rating": 4.8
+      },
+      {
+        "id": "6a1dbbca-d642-53f8-bfb7-2ccffc958d6e",
+        "name": "Coca Cola 1L",
+        "price": 11.0,
+        "restaurantName": "Sabor de Casa Marmitaria",
+        "neighborhood": "Jardim Gaivotas",
+        "rating": 4.8
+      },
+      {
+        "id": "23541af7-5369-598f-a216-cd55db565f58",
+        "name": "Sukita Tubaina 2L",
+        "price": 11.0,
+        "restaurantName": "Sabor de Casa Marmitaria",
+        "neighborhood": "Jardim Gaivotas",
+        "rating": 4.8
+      },
+      {
+        "id": "6a7f843b-e4c3-5d74-a619-e7d98f6dc476",
+        "name": "Sukita Laranja 2L",
+        "price": 11.0,
+        "restaurantName": "Sabor de Casa Marmitaria",
+        "neighborhood": "Jardim Gaivotas",
+        "rating": 4.8
+      },
+      {
+        "id": "afc8b771-6732-5d32-906b-f78630c188b0",
+        "name": "Coca-Cola  2 L",
+        "price": 16.0,
+        "restaurantName": "Sabor de Casa Marmitaria",
+        "neighborhood": "Jardim Gaivotas",
+        "rating": 4.8
+      },
+      {
+        "id": "b10132dd-7bb5-52ff-b936-02270e1cc4f9",
+        "name": "filé de peixe'",
+        "price": 16.0,
+        "restaurantName": "Restaurante do Jorginho",
+        "neighborhood": "Travessão",
+        "rating": 4.8
+      },
+      {
+        "id": "9051246c-02b0-5f5b-8826-4d5312b618eb",
+        "name": "peixe c/ molho de camarão",
+        "price": 26.0,
+        "restaurantName": "Restaurante do Jorginho",
+        "neighborhood": "Travessão",
+        "rating": 4.8
+      },
+      {
+        "id": "249aecc8-ec17-50c6-a3a1-2c8eff9233a9",
+        "name": "bobó de camarão",
+        "price": 26.0,
+        "restaurantName": "Restaurante do Jorginho",
+        "neighborhood": "Travessão",
+        "rating": 4.8
+      },
+      {
+        "id": "ccb29039-37c4-56ac-afc1-fe7553492f6d",
+        "name": "Escondidinho de Fraldinha Desfiada 500g",
+        "price": 32.0,
+        "restaurantName": "Sabor de Casa Marmitaria",
+        "neighborhood": "Jardim Gaivotas",
+        "rating": 4.8
+      },
+      {
+        "id": "7a1eeb50-1bbb-5bf5-9841-9810bbf6b537",
+        "name": "Escondidinho de Carne Seca 500g",
+        "price": 35.0,
+        "restaurantName": "Sabor de Casa Marmitaria",
+        "neighborhood": "Jardim Gaivotas",
+        "rating": 4.8
+      },
+      {
+        "id": "0ccbde82-fc01-51bb-b9e9-7afabb595445",
+        "name": "camarão",
+        "price": 42.9,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "1f4e608c-dad8-52d0-ab89-192d3e7e0afc",
+        "name": "camarão",
+        "price": 54.9,
+        "restaurantName": "Pizzaria Venezza",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "61e27bd2-364c-5311-b3d8-8f83040ce3db",
+        "name": "beirute de linguiça bragantina",
+        "price": 65.0,
+        "restaurantName": "Divina Gula Sanduicheria",
+        "neighborhood": "Ipiranga",
+        "rating": 4.8
+      },
+      {
+        "id": "c17a8a3a-ed3a-5a89-9808-8720031acd79",
+        "name": "beirute de lombo",
+        "price": 65.0,
+        "restaurantName": "Divina Gula Sanduicheria",
+        "neighborhood": "Ipiranga",
+        "rating": 4.8
+      }
+    ],
+    "burger_artesanal": [
+      {
+        "id": "4f52fcc7-68d9-53c2-b5ae-8dcb2fcbbb5c",
+        "name": "Água sem gás",
+        "price": 5.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "922c924e-160c-53a5-9930-f6723cfae3e8",
+        "name": "Água com gás",
+        "price": 5.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "15997138-788c-500d-89af-c68130c51a9e",
+        "name": "Dell Vale uva lata",
+        "price": 8.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "25fed8ce-49e9-59bd-93a6-802883b3afeb",
+        "name": "Budweiser lata 350mL",
+        "price": 10.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "f72208b6-2098-5837-be2d-b043ca135641",
+        "name": "Coca Cola 600ml",
+        "price": 11.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "d37aeb0e-fc1e-500b-8d19-7147b625893d",
+        "name": "Guaraná 1 litro",
+        "price": 13.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "90b51fa6-8f23-5369-9939-0296a423d8a9",
+        "name": "Batata Frita",
+        "price": 17.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "f548592a-caa6-5473-ac47-8c8d5e905acd",
+        "name": "Nuggets",
+        "price": 18.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "38549cf7-66f1-559a-9b1f-55724118c04b",
+        "name": "Cebola empanada",
+        "price": 18.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "595eec53-18d2-58fb-9ab6-9a71cc8f1e72",
+        "name": "Ultra Classic",
+        "price": 19.5,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "e3d1b4bb-274f-58e2-a63c-2c5cd67a5fd0",
+        "name": "Ultra Bacon",
+        "price": 19.5,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "32180edf-8c31-5cb8-9887-9933a540970d",
+        "name": "Ultra Salad",
+        "price": 22.5,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "47b7b659-8cd8-5916-8ef8-ee534303e56d",
+        "name": "Fritas Cheddar Bacon",
+        "price": 23.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "9819d6ae-bb0d-5ee2-8542-4e3f6931adc0",
+        "name": "(KIDS) Smashinho 75g",
+        "price": 25.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "4e7235de-89b4-5586-abc6-a68404be5547",
+        "name": "Milk Shake Nutella (440ml)",
+        "price": 27.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "bd059a81-0b98-5615-9d7a-574b0aed36d9",
+        "name": "Box 1 Pessoa - 1 Smash salada + Batata frita + Coca 200ml",
+        "price": 29.9,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "c35adbbf-cc57-514b-90fd-615927e8e4b2",
+        "name": "Start",
+        "price": 31.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "a0f69b75-8dd3-562b-bd2b-e93f899e9e2e",
+        "name": "Yanke",
+        "price": 35.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "f7a3c1aa-fd31-5d16-ae34-7a8d8489d773",
+        "name": "Chicken Crock",
+        "price": 35.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "a461b61b-37e5-53fb-b74d-5773340f8981",
+        "name": "Yanke Gourmet",
+        "price": 37.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "d4750587-aed3-56ab-9a10-6f8b45e66a71",
+        "name": "Brasil",
+        "price": 37.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "473d23c4-ecf7-5056-9ccd-55815d2ca4ba",
+        "name": "Florata Burguer - Vegetariano",
+        "price": 38.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "9a7d89ca-6af7-56cb-b88d-92a975980559",
+        "name": "Yanke Bacon",
+        "price": 39.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "72676f23-abf0-5adf-8c27-8d12316199d6",
+        "name": "Texas Bacon",
+        "price": 39.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "c7817a2b-fa40-5eb2-bb5b-299177e5d25b",
+        "name": "Cheddar Melting 2.0 (Nova Versão)",
+        "price": 41.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      }
+    ],
+    "pizza_italiana": [
+      {
+        "id": "6ce6aaed-5cd4-523a-acb0-f6b6a9d3df51",
+        "name": "Frango | Individual",
+        "price": 34.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "3cf26a4b-48a3-56f5-a921-fe0307ff9a50",
+        "name": "Franbacon | Individual",
+        "price": 38.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "cb14cfb6-bd9c-556a-8a4f-81bdb080c8f1",
+        "name": "Frangolé | Individual",
+        "price": 40.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "836024d6-414f-58d7-bee6-53111ec735df",
+        "name": "Frango GG",
+        "price": 51.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "8a41511d-a0d5-5f99-8c05-4da2457de168",
+        "name": "Kaipirinha | Individual",
+        "price": 59.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "779367b9-0eb4-5f9e-b475-29abc57a47eb",
+        "name": "Franbacon GG",
+        "price": 62.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "d48a725c-1366-5344-b546-77b50a691b9a",
+        "name": "Frangolé GG",
+        "price": 64.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "62e8d858-e5df-5a55-a703-cbe73447c7c5",
+        "name": "Kaipirão 1,3 kg",
+        "price": 89.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "1c5e1b56-b466-5a83-b881-f049b6537342",
+        "name": "KAIPIRÃO SUPREMO 1,5 KG",
+        "price": 99.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "741758c6-ba47-5972-b658-f076b5d17664",
+        "name": "Diquinta",
+        "price": 45.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "e31d383e-13c5-5a0f-a01b-20324f1163ec",
+        "name": "Intolerante (O Mais Pedido)",
+        "price": 52.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "ab66978a-7e6c-5e1e-8e7e-635d51c445d4",
+        "name": "Intolerante",
+        "price": 52.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "b041b327-2e65-5797-a2dd-b116dc27a155",
+        "name": "Maionese de Alho",
+        "price": 3.0,
+        "restaurantName": "XP Hamburgueria Caraguá",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "1dce2ce6-d63b-58ad-9ab4-807c7806ef51",
+        "name": "guaraná pet 273 ml",
+        "price": 3.0,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "f6a7bdb6-58aa-5c5d-832b-173b50c7f85b",
+        "name": "soda pet 200 ml",
+        "price": 3.0,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "c4280cb0-556f-5a5f-a158-2c372419130e",
+        "name": "suco del valle kapo laranja",
+        "price": 3.0,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "d25091b4-37f2-5c55-ab01-d2a2ac0adb90",
+        "name": "suco del valle kapo morango",
+        "price": 3.0,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "3eda29d7-2228-514a-971e-e86e54ef5161",
+        "name": "sukita laranja pet 200 ml",
+        "price": 3.0,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "8d86dbf1-8979-5aa6-a0b4-71ec41f317ea",
+        "name": "sukita uva pet 200 ml",
+        "price": 3.0,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "cc65dc75-1a11-5601-ad8f-3de7497d5417",
+        "name": "água mineral sapucaí 510ml",
+        "price": 3.0,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "02ff17ae-48bf-55a0-b333-cc629080cf60",
+        "name": "suco del valle kapo uva",
+        "price": 3.0,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "a935e5c8-1aa5-5d02-bf60-793b5f75600b",
+        "name": "água mineral lindóia 500ml com gás",
+        "price": 3.5,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "df52b2b6-6496-50af-8202-a2f2cad92dfd",
+        "name": "catupiry",
+        "price": 5.0,
+        "restaurantName": "Divina Gula Sanduicheria",
+        "neighborhood": "Ipiranga",
+        "rating": 4.8
+      },
+      {
+        "id": "10fbeec9-eebe-5b13-9b83-05a0dedb4bdc",
+        "name": "coca - cola zero lata 350ml",
+        "price": 5.0,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "4498e69e-73d6-5424-862e-67f30fb9b7f4",
+        "name": "fanta guaraná lata 350ml",
+        "price": 5.0,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      }
+    ],
+    "japanese_sushi": [
+      {
+        "id": "4cf48378-215d-5062-98d6-14bcfec871f5",
+        "name": "Requeijão cremoso com alho",
+        "price": 12.0,
+        "restaurantName": "SolePizza",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "0bdcb2a0-67ec-5289-85af-f9900b5a1556",
+        "name": "Ninho Trufado de Uva",
+        "price": 16.0,
+        "restaurantName": "INBRASA CARAGUA",
+        "neighborhood": "Centro",
+        "rating": 4.79
+      },
+      {
+        "id": "4c98841b-9d6d-50d0-ad4a-402ca97b2dd5",
+        "name": "Gengibre em Conserva (Gari Shoga) 30 gr",
+        "price": 8.0,
+        "restaurantName": "Point do Japa",
+        "neighborhood": "Porto Novo",
+        "rating": 4.75
+      },
+      {
+        "id": "e865c5c0-2457-503e-984a-f9aae5b2b445",
+        "name": "Porção Mini Harumaki de Legumes ( 5 Unidades )",
+        "price": 18.0,
+        "restaurantName": "Point do Japa",
+        "neighborhood": "Porto Novo",
+        "rating": 4.75
+      },
+      {
+        "id": "ad9ec4f9-2800-52f7-8429-c2bef358b07a",
+        "name": "Pastel de Shimeji com Queijo",
+        "price": 18.0,
+        "restaurantName": "Point do Japa",
+        "neighborhood": "Porto Novo",
+        "rating": 4.75
+      },
+      {
+        "id": "cb79188c-57b2-5f83-97db-a3d449ecb1cf",
+        "name": "Niguiri de Salmão Cru",
+        "price": 20.0,
+        "restaurantName": "Point do Japa",
+        "neighborhood": "Porto Novo",
+        "rating": 4.75
+      },
+      {
+        "id": "c035b188-6015-5536-99dc-c46ef7083324",
+        "name": "Hossomaki Pepino ( Kapamaki)",
+        "price": 21.0,
+        "restaurantName": "Point do Japa",
+        "neighborhood": "Porto Novo",
+        "rating": 4.75
+      },
+      {
+        "id": "f4808cde-d4e7-58fc-ae02-72928fd9bf82",
+        "name": "Gengibre em Conserva (Gari Shoga) 120 gr",
+        "price": 22.0,
+        "restaurantName": "Point do Japa",
+        "neighborhood": "Porto Novo",
+        "rating": 4.75
+      },
+      {
+        "id": "05425da2-0ee2-5a46-9c77-851f9666dcae",
+        "name": "Harumaki de Banana com Chocolate (Rolinho Primavera ) 2 Unidades",
+        "price": 23.0,
+        "restaurantName": "Point do Japa",
+        "neighborhood": "Porto Novo",
+        "rating": 4.75
+      },
+      {
+        "id": "6e5cdc46-19a6-554f-a906-09aa373d8bad",
+        "name": "Hossomaki Kani",
+        "price": 24.0,
+        "restaurantName": "Point do Japa",
+        "neighborhood": "Porto Novo",
+        "rating": 4.75
+      },
+      {
+        "id": "78594bad-1600-5771-b487-6845a56870e0",
+        "name": "Harumaki de Queijo (Rolinho Primavera) 2 Unidades",
+        "price": 26.0,
+        "restaurantName": "Point do Japa",
+        "neighborhood": "Porto Novo",
+        "rating": 4.75
+      },
+      {
+        "id": "12fe6e18-04ab-5519-bf88-1d388c2acf77",
+        "name": "Hossomaki Salmão ( Shakemaki)",
+        "price": 27.0,
+        "restaurantName": "Point do Japa",
+        "neighborhood": "Porto Novo",
+        "rating": 4.75
+      },
+      {
+        "id": "abde28f4-51cd-56a7-b0ee-e2a7e7535b92",
+        "name": "Hot Roll Kani",
+        "price": 31.0,
+        "restaurantName": "Point do Japa",
+        "neighborhood": "Porto Novo",
+        "rating": 4.75
+      },
+      {
+        "id": "08aa1d20-b0e2-5c78-be06-d717c2dd7ab1",
+        "name": "Hot Roll Salmão Philadelfia",
+        "price": 31.0,
+        "restaurantName": "Point do Japa",
+        "neighborhood": "Porto Novo",
+        "rating": 4.75
+      },
+      {
+        "id": "6388146a-23a2-555d-abf8-75a268230d89",
+        "name": "Sashimi de Salmão (5 Cortes)",
+        "price": 31.0,
+        "restaurantName": "Point do Japa",
+        "neighborhood": "Porto Novo",
+        "rating": 4.75
+      },
+      {
+        "id": "d9fab3b5-6fc2-5064-81f2-1d498995bb00",
+        "name": "Vinho Tinto Arroio Suave 750ml",
+        "price": 31.0,
+        "restaurantName": "Point do Japa",
+        "neighborhood": "Porto Novo",
+        "rating": 4.75
+      },
+      {
+        "id": "c287568d-ac98-5396-b3b9-b7eaa7d0d709",
+        "name": "Guioza - 8 Unidades",
+        "price": 33.0,
+        "restaurantName": "Point do Japa",
+        "neighborhood": "Porto Novo",
+        "rating": 4.75
+      },
+      {
+        "id": "b21a5ff8-dd34-5b74-a034-51ae8a73c7a2",
+        "name": "Temaki Salmao Cru",
+        "price": 35.0,
+        "restaurantName": "Point do Japa",
+        "neighborhood": "Porto Novo",
+        "rating": 4.75
+      },
+      {
+        "id": "8897a4e6-8b7e-5762-b0e5-ddbaf0f527c8",
+        "name": "Temaki No Pote Salmão Cru",
+        "price": 35.0,
+        "restaurantName": "Point do Japa",
+        "neighborhood": "Porto Novo",
+        "rating": 4.75
+      },
+      {
+        "id": "cd897b5d-7312-5545-ac54-526a466947e5",
+        "name": "Uramaki Salmão Cru",
+        "price": 35.0,
+        "restaurantName": "Point do Japa",
+        "neighborhood": "Porto Novo",
+        "rating": 4.75
+      },
+      {
+        "id": "188a5f69-b049-5d44-890e-b3872bd65582",
+        "name": "Porção Mini Harumaki de Legumes ( 10 Unidades )",
+        "price": 35.0,
+        "restaurantName": "Point do Japa",
+        "neighborhood": "Porto Novo",
+        "rating": 4.75
+      },
+      {
+        "id": "82f485fb-ad14-56eb-a20d-93108e7623f9",
+        "name": "Yakissoba de Legumes - Pequeno",
+        "price": 36.0,
+        "restaurantName": "Point do Japa",
+        "neighborhood": "Porto Novo",
+        "rating": 4.75
+      },
+      {
+        "id": "030e0368-cd16-5d7d-b8ea-30b680914f91",
+        "name": "Temaki Salmao Philadelfia",
+        "price": 37.0,
+        "restaurantName": "Point do Japa",
+        "neighborhood": "Porto Novo",
+        "rating": 4.75
+      },
+      {
+        "id": "f39b0ce0-5886-512f-b0af-8c0e7f580bea",
+        "name": "Temaki No Pote Salmão Philadelfia",
+        "price": 37.0,
+        "restaurantName": "Point do Japa",
+        "neighborhood": "Porto Novo",
+        "rating": 4.75
+      },
+      {
+        "id": "be690b09-ca24-5477-b401-ccde850a75c4",
+        "name": "Uramaki Salmão Philadelfia",
+        "price": 37.0,
+        "restaurantName": "Point do Japa",
+        "neighborhood": "Porto Novo",
+        "rating": 4.75
+      }
+    ],
+    "acai_gelados_doces": [
+      {
+        "id": "4e7235de-89b4-5586-abc6-a68404be5547",
+        "name": "Milk Shake Nutella (440ml)",
+        "price": 27.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "4d9def3e-afea-5f02-b41d-de588d2c6f44",
+        "name": "Açaí Pádua (440ml)",
+        "price": 29.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "9b77b0d8-0617-523e-ad9d-9706ae8005b7",
+        "name": "Bolo Mau",
+        "price": 14.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "209fa51d-9bac-58f1-949a-6ceb8a9d5326",
+        "name": "Pudim Zero Furinhos Zero Defeitos",
+        "price": 14.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "76ebbd66-e654-5520-9dba-15134eef973e",
+        "name": "Amossi",
+        "price": 17.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "c8f87a41-c445-5008-9711-2eafafe7d2c0",
+        "name": "Bolo ChocoAu!",
+        "price": 26.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "b508a9a5-2971-55cf-86e6-c7939f713435",
+        "name": "MilkShake - 500ml",
+        "price": 36.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "5171b782-075b-5cc8-b223-2b14d859c728",
+        "name": "MilkShake Zero Defeitos - 500ml",
+        "price": 36.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "82e375a6-164b-5537-b389-e790046e2c02",
+        "name": "Eu Amo a BS!",
+        "price": 109.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "d0277e68-e8c4-509c-8889-18b9f2c02eff",
+        "name": "Pudim no Copo Americano",
+        "price": 15.0,
+        "restaurantName": "Chicken Bruttos",
+        "neighborhood": "Poiares",
+        "rating": 4.83
+      },
+      {
+        "id": "3d3e7c60-bfae-50f7-8fb7-3c0a67451d4e",
+        "name": "2 Chicken Bacon + 1 Pudim",
+        "price": 59.9,
+        "restaurantName": "Chicken Bruttos",
+        "neighborhood": "Poiares",
+        "rating": 4.83
+      },
+      {
+        "id": "f3392364-96bf-5957-8cee-d741a3aacf0e",
+        "name": "Paçoquita Rolha - Embalada",
+        "price": 1.0,
+        "restaurantName": "Sabor de Casa Marmitaria",
+        "neighborhood": "Jardim Gaivotas",
+        "rating": 4.8
+      },
+      {
+        "id": "b9e31c38-7ee5-5440-81b4-a0b38f055f79",
+        "name": "fanta laranja 200ml",
+        "price": 2.0,
+        "restaurantName": "Xcoxinha massaguacu",
+        "neighborhood": "Massaguaçu",
+        "rating": 4.8
+      },
+      {
+        "id": "3f166b25-03d4-55b6-8afa-8aa1f0efabec",
+        "name": "guarana caçula 237ml",
+        "price": 2.0,
+        "restaurantName": "Xcoxinha massaguacu",
+        "neighborhood": "Massaguaçu",
+        "rating": 4.8
+      },
+      {
+        "id": "8a9d7c83-d0da-512b-af89-a4df992d43a5",
+        "name": "pepsi caçula 237ml",
+        "price": 2.0,
+        "restaurantName": "Xcoxinha massaguacu",
+        "neighborhood": "Massaguaçu",
+        "rating": 4.8
+      },
+      {
+        "id": "2d4ee22f-bdb3-54bd-954a-e07ac73b67d0",
+        "name": "soda antarctica 237ml caçula",
+        "price": 2.0,
+        "restaurantName": "Xcoxinha massaguacu",
+        "neighborhood": "Massaguaçu",
+        "rating": 4.8
+      },
+      {
+        "id": "c1daac96-af42-571e-9104-90d83b9d9295",
+        "name": "coca cola caçula 200ml",
+        "price": 2.5,
+        "restaurantName": "Xcoxinha massaguacu",
+        "neighborhood": "Massaguaçu",
+        "rating": 4.8
+      },
+      {
+        "id": "1dce2ce6-d63b-58ad-9ab4-807c7806ef51",
+        "name": "guaraná pet 273 ml",
+        "price": 3.0,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "f6a7bdb6-58aa-5c5d-832b-173b50c7f85b",
+        "name": "soda pet 200 ml",
+        "price": 3.0,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "c4280cb0-556f-5a5f-a158-2c372419130e",
+        "name": "suco del valle kapo laranja",
+        "price": 3.0,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "d25091b4-37f2-5c55-ab01-d2a2ac0adb90",
+        "name": "suco del valle kapo morango",
+        "price": 3.0,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "3eda29d7-2228-514a-971e-e86e54ef5161",
+        "name": "sukita laranja pet 200 ml",
+        "price": 3.0,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "8d86dbf1-8979-5aa6-a0b4-71ec41f317ea",
+        "name": "sukita uva pet 200 ml",
+        "price": 3.0,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "cc65dc75-1a11-5601-ad8f-3de7497d5417",
+        "name": "água mineral sapucaí 510ml",
+        "price": 3.0,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "02ff17ae-48bf-55a0-b333-cc629080cf60",
+        "name": "suco del valle kapo uva",
+        "price": 3.0,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      }
+    ],
+    "vegan_fit_saudavel": [
+      {
+        "id": "32180edf-8c31-5cb8-9887-9933a540970d",
+        "name": "Ultra Salad",
+        "price": 22.5,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "bd059a81-0b98-5615-9d7a-574b0aed36d9",
+        "name": "Box 1 Pessoa - 1 Smash salada + Batata frita + Coca 200ml",
+        "price": 29.9,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "473d23c4-ecf7-5056-9ccd-55815d2ca4ba",
+        "name": "Florata Burguer - Vegetariano",
+        "price": 38.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "0fc9b642-2310-53d9-a572-d29396407336",
+        "name": "Coca zero 1 litro",
+        "price": 12.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "12b10887-473a-5c1c-914e-fc333110d8e6",
+        "name": "Salada | Individual",
+        "price": 25.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "72e17d9a-3d80-57e3-aadb-49ac332e0f11",
+        "name": "Salada GG",
+        "price": 39.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "209fa51d-9bac-58f1-949a-6ceb8a9d5326",
+        "name": "Pudim Zero Furinhos Zero Defeitos",
+        "price": 14.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "15dd2b47-f0aa-5c17-adca-3629ceb2746f",
+        "name": "Isso Não é Uma Salada",
+        "price": 21.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "c6195796-1435-5766-ba80-3991064c34a9",
+        "name": "Sem Futuro *VEGETARIANO*",
+        "price": 32.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "05563ca4-af48-5f97-97c1-ce38369dbc9f",
+        "name": "Sem Futuro *VEGETARIANO*",
+        "price": 32.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "5171b782-075b-5cc8-b223-2b14d859c728",
+        "name": "MilkShake Zero Defeitos - 500ml",
+        "price": 36.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "abb08751-0e38-5f62-b1d1-7a00ddceaacb",
+        "name": "Abraço de Costela",
+        "price": 40.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "fe4be45c-36c3-5dec-92e1-27681ca2ba6f",
+        "name": "Coca-Cola Zero 1L",
+        "price": 15.0,
+        "restaurantName": "Chicken Bruttos",
+        "neighborhood": "Poiares",
+        "rating": 4.83
+      },
+      {
+        "id": "d78a6000-f249-530d-ba60-c22b4e29ed88",
+        "name": "Coca Cola  Zero 200ml",
+        "price": 3.0,
+        "restaurantName": "Sabor de Casa Marmitaria",
+        "neighborhood": "Jardim Gaivotas",
+        "rating": 4.8
+      },
+      {
+        "id": "10fbeec9-eebe-5b13-9b83-05a0dedb4bdc",
+        "name": "coca - cola zero lata 350ml",
+        "price": 5.0,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "7802a033-2336-5749-8e92-d3f590acbf79",
+        "name": "tõnica zero lata 350ml",
+        "price": 5.0,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "a060fa96-7ec3-5442-bb34-bdf857adde60",
+        "name": "guaraná antarctica zero",
+        "price": 5.0,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "378100f8-82ad-5344-9c6b-97ab58309ae4",
+        "name": "laranja natural",
+        "price": 6.0,
+        "restaurantName": "Divina Gula Sanduicheria",
+        "neighborhood": "Ipiranga",
+        "rating": 4.8
+      },
+      {
+        "id": "700a555b-78a9-5018-ba8c-de598494f466",
+        "name": "Refrigerante Guaraná Zero Antarctica",
+        "price": 7.0,
+        "restaurantName": "51.304.654 Sorveteria & Açaí Beira Mar",
+        "neighborhood": "Indaiá",
+        "rating": 4.8
+      },
+      {
+        "id": "134644a6-7d80-5e62-8fe1-ff6c8fb87abc",
+        "name": "Coca-Cola Zero 350ml",
+        "price": 7.0,
+        "restaurantName": "Sabor de Casa Marmitaria",
+        "neighborhood": "Jardim Gaivotas",
+        "rating": 4.8
+      },
+      {
+        "id": "02c355bd-3ef9-56c8-b65c-49a5198c1880",
+        "name": "coca -cola zero 600ml",
+        "price": 7.0,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "06b9ddb4-892b-5a1c-ac3c-85f20b31f739",
+        "name": "naturalle maracujá",
+        "price": 7.5,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "1099c73c-50f7-5d1f-a448-d0d7d03d1a85",
+        "name": "naturalle abacaxi",
+        "price": 7.5,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "7d3d7a65-9eb6-593f-b044-559fe7671894",
+        "name": "naturalle goiaba",
+        "price": 7.5,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "10b752ae-7709-55a1-a3b0-4429f00d4a4d",
+        "name": "Coca cola zero lata 350ml",
+        "price": 8.0,
+        "restaurantName": "SolePizza",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      }
+    ],
+    "bar_petiscos_cerveja": [
+      {
+        "id": "90b51fa6-8f23-5369-9939-0296a423d8a9",
+        "name": "Batata Frita",
+        "price": 17.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "47b7b659-8cd8-5916-8ef8-ee534303e56d",
+        "name": "Fritas Cheddar Bacon",
+        "price": 23.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "9819d6ae-bb0d-5ee2-8542-4e3f6931adc0",
+        "name": "(KIDS) Smashinho 75g",
+        "price": 25.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "bd059a81-0b98-5615-9d7a-574b0aed36d9",
+        "name": "Box 1 Pessoa - 1 Smash salada + Batata frita + Coca 200ml",
+        "price": 29.9,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "c35adbbf-cc57-514b-90fd-615927e8e4b2",
+        "name": "Start",
+        "price": 31.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "a0f69b75-8dd3-562b-bd2b-e93f899e9e2e",
+        "name": "Yanke",
+        "price": 35.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "a461b61b-37e5-53fb-b74d-5773340f8981",
+        "name": "Yanke Gourmet",
+        "price": 37.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "d4750587-aed3-56ab-9a10-6f8b45e66a71",
+        "name": "Brasil",
+        "price": 37.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "9a7d89ca-6af7-56cb-b88d-92a975980559",
+        "name": "Yanke Bacon",
+        "price": 39.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "72676f23-abf0-5adf-8c27-8d12316199d6",
+        "name": "Texas Bacon",
+        "price": 39.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "c7817a2b-fa40-5eb2-bb5b-299177e5d25b",
+        "name": "Cheddar Melting 2.0 (Nova Versão)",
+        "price": 41.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "318afcf4-dab6-5832-a51b-21f1d80976a7",
+        "name": "Combo Kids",
+        "price": 45.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "b4043051-0e57-5429-9023-eab75be8afa2",
+        "name": "Duplo Cheddar Bacon",
+        "price": 50.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "3036636e-5053-5269-a103-70ddabef7859",
+        "name": "Box 2 Pessoas - Dois Smash + Batata Frita + Cebolas empanadas + 2 Coca 200ml",
+        "price": 52.9,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "fe695917-01cc-5a00-9b35-b138757ed90b",
+        "name": "2 Yanke Bacon + 2 fritas 100g + Coca 600mL",
+        "price": 69.9,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "1c5e89a7-fd12-5d65-bb19-89c58f6390ed",
+        "name": "Box 3 Smashs + Batata Frita + Cebola empanada",
+        "price": 72.9,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "485b17e3-fcd0-51dd-a006-8f8dde102b36",
+        "name": "Batata Frita (300 gramas)",
+        "price": 19.99,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "3ebbb974-ac3e-5e1a-90cd-709b717dbf3d",
+        "name": "Cachorro Quente | Individual",
+        "price": 24.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "1a66723d-24cf-59d2-8c7e-17495569967e",
+        "name": "Burguer | Individual",
+        "price": 24.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "12b10887-473a-5c1c-914e-fc333110d8e6",
+        "name": "Salada | Individual",
+        "price": 25.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "7eba75d2-0a6d-5800-b2c6-11f2faccc9dc",
+        "name": "Batata com Cheddar (300 gramas)",
+        "price": 25.99,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "39c38450-19c6-579d-be9c-93a529b6c7a3",
+        "name": "Egg | Individual",
+        "price": 28.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "84397e82-b367-5d0a-bce7-fed372b96495",
+        "name": "Batata com Cheddar e Bacon (300 gramas)",
+        "price": 29.99,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "f9f987e5-7e94-58f0-9b1d-93d81c5fe80e",
+        "name": "Bacon | Individual",
+        "price": 32.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "0bead301-ac1e-5c6e-948e-338c90d4b5a7",
+        "name": "Cachorro Quente GG",
+        "price": 33.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      }
+    ],
+    "churrasco_carnes": [
+      {
+        "id": "cb14cfb6-bd9c-556a-8a4f-81bdb080c8f1",
+        "name": "Frangolé | Individual",
+        "price": 40.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "557c953e-4d58-5e07-b005-f88aab3436ea",
+        "name": "Churrasco | Individual",
+        "price": 40.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "3584543e-2231-58be-b01e-1116130ae0e6",
+        "name": "Americano de Contra | Individual",
+        "price": 42.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "8a41511d-a0d5-5f99-8c05-4da2457de168",
+        "name": "Kaipirinha | Individual",
+        "price": 59.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "7785ce24-a906-58e5-bd39-69e92c0def77",
+        "name": "Churrasco GG",
+        "price": 63.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "d48a725c-1366-5344-b546-77b50a691b9a",
+        "name": "Frangolé GG",
+        "price": 64.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "592ed338-0786-5aca-96cc-36b0001f47dc",
+        "name": "Americano de Contra GG",
+        "price": 68.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "62e8d858-e5df-5a55-a703-cbe73447c7c5",
+        "name": "Kaipirão 1,3 kg",
+        "price": 89.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "1c5e1b56-b466-5a83-b881-f049b6537342",
+        "name": "KAIPIRÃO SUPREMO 1,5 KG",
+        "price": 99.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "fa6a5860-f88f-536a-83cf-12a98bf86631",
+        "name": "Costela Quebrada ao Meio",
+        "price": 20.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "9c2fabf8-e841-5577-859e-a1892634508c",
+        "name": "Batata & Costela ao Meio",
+        "price": 24.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "9e4931c4-e22f-5860-844f-acc001cb727e",
+        "name": "Mandioca & Costela",
+        "price": 31.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "64d94819-8730-57e0-8238-db83205424b6",
+        "name": "Coxim!",
+        "price": 35.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "78e96d63-1d5e-5734-82f6-3f37087aa50a",
+        "name": "Costela Quebrada",
+        "price": 36.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "abb08751-0e38-5f62-b1d1-7a00ddceaacb",
+        "name": "Abraço de Costela",
+        "price": 40.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "366e3454-13b5-5cd7-beb8-aa9b74b50828",
+        "name": "Batata & Costela (A Mais Vendida)",
+        "price": 42.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "0f71dc99-f031-50a9-911e-ea7f5394c376",
+        "name": "Batata & Costela",
+        "price": 42.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "e1b97db7-f693-50f7-8fda-1e6b0314da2c",
+        "name": "tônica",
+        "price": 3.0,
+        "restaurantName": "Restaurante do Jorginho",
+        "neighborhood": "Travessão",
+        "rating": 4.8
+      },
+      {
+        "id": "e5fafff5-469e-54a0-8627-e67ba406a044",
+        "name": "Coca Cola 200ml",
+        "price": 3.0,
+        "restaurantName": "Sabor de Casa Marmitaria",
+        "neighborhood": "Jardim Gaivotas",
+        "rating": 4.8
+      },
+      {
+        "id": "38b41f6c-89e1-5b5d-867c-b96bc930e965",
+        "name": "Água mineral 510ml",
+        "price": 3.5,
+        "restaurantName": "Prime fit Caraguatatuba",
+        "neighborhood": "Martim de Sá",
+        "rating": 4.8
+      },
+      {
+        "id": "7b23cb1e-199f-5e1c-9e5f-ea235720ec49",
+        "name": "água com gás",
+        "price": 3.5,
+        "restaurantName": "Restaurante do Jorginho",
+        "neighborhood": "Travessão",
+        "rating": 4.8
+      },
+      {
+        "id": "01528b9e-133c-52e8-802a-a5219f4ebf65",
+        "name": "Água mineral com gás 510ml",
+        "price": 4.5,
+        "restaurantName": "Prime fit Caraguatatuba",
+        "neighborhood": "Martim de Sá",
+        "rating": 4.8
+      },
+      {
+        "id": "b5423222-03f6-5200-a198-16e7f0e3c3a6",
+        "name": "coca cola",
+        "price": 6.0,
+        "restaurantName": "Restaurante do Jorginho",
+        "neighborhood": "Travessão",
+        "rating": 4.8
+      },
+      {
+        "id": "4b65dd2e-f05e-548a-93aa-8d3b240d6f19",
+        "name": "guaraná",
+        "price": 6.0,
+        "restaurantName": "Restaurante do Jorginho",
+        "neighborhood": "Travessão",
+        "rating": 4.8
+      },
+      {
+        "id": "d470430c-f40b-5e5d-90d8-0c88a8888490",
+        "name": "fanta laranja",
+        "price": 6.0,
+        "restaurantName": "Restaurante do Jorginho",
+        "neighborhood": "Travessão",
+        "rating": 4.8
+      }
+    ],
+    "cafe_padaria_lanche_tarde": [
+      {
+        "id": "64d94819-8730-57e0-8238-db83205424b6",
+        "name": "Coxim!",
+        "price": 35.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "2fc46328-a5f9-541d-9779-784125494cbe",
+        "name": "Coxinha de Pastrami",
+        "price": 39.0,
+        "restaurantName": "BS Bgr",
+        "neighborhood": "Indaiá",
+        "rating": 4.89
+      },
+      {
+        "id": "b9e31c38-7ee5-5440-81b4-a0b38f055f79",
+        "name": "fanta laranja 200ml",
+        "price": 2.0,
+        "restaurantName": "Xcoxinha massaguacu",
+        "neighborhood": "Massaguaçu",
+        "rating": 4.8
+      },
+      {
+        "id": "3f166b25-03d4-55b6-8afa-8aa1f0efabec",
+        "name": "guarana caçula 237ml",
+        "price": 2.0,
+        "restaurantName": "Xcoxinha massaguacu",
+        "neighborhood": "Massaguaçu",
+        "rating": 4.8
+      },
+      {
+        "id": "8a9d7c83-d0da-512b-af89-a4df992d43a5",
+        "name": "pepsi caçula 237ml",
+        "price": 2.0,
+        "restaurantName": "Xcoxinha massaguacu",
+        "neighborhood": "Massaguaçu",
+        "rating": 4.8
+      },
+      {
+        "id": "2d4ee22f-bdb3-54bd-954a-e07ac73b67d0",
+        "name": "soda antarctica 237ml caçula",
+        "price": 2.0,
+        "restaurantName": "Xcoxinha massaguacu",
+        "neighborhood": "Massaguaçu",
+        "rating": 4.8
+      },
+      {
+        "id": "c1daac96-af42-571e-9104-90d83b9d9295",
+        "name": "coca cola caçula 200ml",
+        "price": 2.5,
+        "restaurantName": "Xcoxinha massaguacu",
+        "neighborhood": "Massaguaçu",
+        "rating": 4.8
+      },
+      {
+        "id": "c4280cb0-556f-5a5f-a158-2c372419130e",
+        "name": "suco del valle kapo laranja",
+        "price": 3.0,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "d25091b4-37f2-5c55-ab01-d2a2ac0adb90",
+        "name": "suco del valle kapo morango",
+        "price": 3.0,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "02ff17ae-48bf-55a0-b333-cc629080cf60",
+        "name": "suco del valle kapo uva",
+        "price": 3.0,
+        "restaurantName": "Pizzaria Rocha",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "6b4d4d06-9a1e-5cfa-8073-b9f587e44c78",
+        "name": "agua mineral 510ml",
+        "price": 3.0,
+        "restaurantName": "Xcoxinha massaguacu",
+        "neighborhood": "Massaguaçu",
+        "rating": 4.8
+      },
+      {
+        "id": "0788757a-9f3b-5041-916b-9a4825b43a6c",
+        "name": "agua com gas",
+        "price": 3.5,
+        "restaurantName": "Xcoxinha massaguacu",
+        "neighborhood": "Massaguaçu",
+        "rating": 4.8
+      },
+      {
+        "id": "eae1cc07-1e34-5e64-bec1-b8991a23e693",
+        "name": "suco del vale",
+        "price": 3.5,
+        "restaurantName": "The Best Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "71f00062-903e-5455-8ae7-c5c9c7b1f139",
+        "name": "empada frango",
+        "price": 4.0,
+        "restaurantName": "Xcoxinha massaguacu",
+        "neighborhood": "Massaguaçu",
+        "rating": 4.8
+      },
+      {
+        "id": "d17a2029-c470-58d8-ab24-eb7da554f071",
+        "name": "Suco Maguary Laranja 250ml Lata",
+        "price": 4.5,
+        "restaurantName": "Sabor de Casa Marmitaria",
+        "neighborhood": "Jardim Gaivotas",
+        "rating": 4.8
+      },
+      {
+        "id": "2b1f5fdd-a2ab-51ba-af19-bfa3a236509b",
+        "name": "Suco Maguary Uva 250ml Lata",
+        "price": 4.5,
+        "restaurantName": "Sabor de Casa Marmitaria",
+        "neighborhood": "Jardim Gaivotas",
+        "rating": 4.8
+      },
+      {
+        "id": "27a85f98-61b2-5661-a756-891fa1eb2841",
+        "name": "brahma chopp 269ml",
+        "price": 4.5,
+        "restaurantName": "Xcoxinha massaguacu",
+        "neighborhood": "Massaguaçu",
+        "rating": 4.8
+      },
+      {
+        "id": "d281159d-a019-5f07-b9e5-c9bd9aab9cb5",
+        "name": "suco goiaba",
+        "price": 5.0,
+        "restaurantName": "Divina Gula Sanduicheria",
+        "neighborhood": "Ipiranga",
+        "rating": 4.8
+      },
+      {
+        "id": "e40af4e0-d19b-54ba-872e-ab70744ef95f",
+        "name": "coca-cola lata",
+        "price": 5.0,
+        "restaurantName": "The Best Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "e63ec31f-2f69-5091-af25-84699126b070",
+        "name": "guaraná antártica lata",
+        "price": 5.0,
+        "restaurantName": "The Best Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.8
+      },
+      {
+        "id": "ee2b23f5-c1e9-5601-9bd7-387f256c9dde",
+        "name": "enrolado de pizza",
+        "price": 5.0,
+        "restaurantName": "Xcoxinha massaguacu",
+        "neighborhood": "Massaguaçu",
+        "rating": 4.8
+      },
+      {
+        "id": "5fd3491c-58a0-5f63-baec-0a5d5620476b",
+        "name": "enrolado de salsicha com cheddar",
+        "price": 5.0,
+        "restaurantName": "Xcoxinha massaguacu",
+        "neighborhood": "Massaguaçu",
+        "rating": 4.8
+      },
+      {
+        "id": "80f29879-f434-5df5-8611-bf9ffb7d23d8",
+        "name": "esfiha carne",
+        "price": 5.0,
+        "restaurantName": "Xcoxinha massaguacu",
+        "neighborhood": "Massaguaçu",
+        "rating": 4.8
+      },
+      {
+        "id": "d4ff71c9-bad2-555b-8b31-87728faa641e",
+        "name": "coca cola lata 350ml",
+        "price": 5.0,
+        "restaurantName": "Xcoxinha massaguacu",
+        "neighborhood": "Massaguaçu",
+        "rating": 4.8
+      },
+      {
+        "id": "c03a470d-ddc5-590e-a54d-e1935af4cfce",
+        "name": "guarana antarctica lata 350ml",
+        "price": 5.0,
+        "restaurantName": "Xcoxinha massaguacu",
+        "neighborhood": "Massaguaçu",
+        "rating": 4.8
+      }
+    ],
+    "barato_custo_beneficio": [
+      {
+        "id": "90b51fa6-8f23-5369-9939-0296a423d8a9",
+        "name": "Batata Frita",
+        "price": 17.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "f548592a-caa6-5473-ac47-8c8d5e905acd",
+        "name": "Nuggets",
+        "price": 18.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "38549cf7-66f1-559a-9b1f-55724118c04b",
+        "name": "Cebola empanada",
+        "price": 18.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "595eec53-18d2-58fb-9ab6-9a71cc8f1e72",
+        "name": "Ultra Classic",
+        "price": 19.5,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "e3d1b4bb-274f-58e2-a63c-2c5cd67a5fd0",
+        "name": "Ultra Bacon",
+        "price": 19.5,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "32180edf-8c31-5cb8-9887-9933a540970d",
+        "name": "Ultra Salad",
+        "price": 22.5,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "47b7b659-8cd8-5916-8ef8-ee534303e56d",
+        "name": "Fritas Cheddar Bacon",
+        "price": 23.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "9819d6ae-bb0d-5ee2-8542-4e3f6931adc0",
+        "name": "(KIDS) Smashinho 75g",
+        "price": 25.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "4e7235de-89b4-5586-abc6-a68404be5547",
+        "name": "Milk Shake Nutella (440ml)",
+        "price": 27.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "4d9def3e-afea-5f02-b41d-de588d2c6f44",
+        "name": "Açaí Pádua (440ml)",
+        "price": 29.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "bd059a81-0b98-5615-9d7a-574b0aed36d9",
+        "name": "Box 1 Pessoa - 1 Smash salada + Batata frita + Coca 200ml",
+        "price": 29.9,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "c35adbbf-cc57-514b-90fd-615927e8e4b2",
+        "name": "Start",
+        "price": 31.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "a0f69b75-8dd3-562b-bd2b-e93f899e9e2e",
+        "name": "Yanke",
+        "price": 35.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "f7a3c1aa-fd31-5d16-ae34-7a8d8489d773",
+        "name": "Chicken Crock",
+        "price": 35.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "a461b61b-37e5-53fb-b74d-5773340f8981",
+        "name": "Yanke Gourmet",
+        "price": 37.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "d4750587-aed3-56ab-9a10-6f8b45e66a71",
+        "name": "Brasil",
+        "price": 37.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "473d23c4-ecf7-5056-9ccd-55815d2ca4ba",
+        "name": "Florata Burguer - Vegetariano",
+        "price": 38.0,
+        "restaurantName": "Pádua Burguer",
+        "neighborhood": "Centro",
+        "rating": 4.98
+      },
+      {
+        "id": "485b17e3-fcd0-51dd-a006-8f8dde102b36",
+        "name": "Batata Frita (300 gramas)",
+        "price": 19.99,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "3ebbb974-ac3e-5e1a-90cd-709b717dbf3d",
+        "name": "Cachorro Quente | Individual",
+        "price": 24.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "1a66723d-24cf-59d2-8c7e-17495569967e",
+        "name": "Burguer | Individual",
+        "price": 24.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "12b10887-473a-5c1c-914e-fc333110d8e6",
+        "name": "Salada | Individual",
+        "price": 25.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "7eba75d2-0a6d-5800-b2c6-11f2faccc9dc",
+        "name": "Batata com Cheddar (300 gramas)",
+        "price": 25.99,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "39c38450-19c6-579d-be9c-93a529b6c7a3",
+        "name": "Egg | Individual",
+        "price": 28.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "84397e82-b367-5d0a-bce7-fed372b96495",
+        "name": "Batata com Cheddar e Bacon (300 gramas)",
+        "price": 29.99,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      },
+      {
+        "id": "f9f987e5-7e94-58f0-9b1d-93d81c5fe80e",
+        "name": "Bacon | Individual",
+        "price": 32.0,
+        "restaurantName": "Kaipiras Lanches",
+        "neighborhood": "Praia das Palmeiras",
+        "rating": 4.96
+      }
+    ]
+  }
+}

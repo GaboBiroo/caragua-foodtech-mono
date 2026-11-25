@@ -1,4 +1,5 @@
 import dump from '../data/caraguaRealDump.json';
+import brain40k from '../data/jacquin40kBrain.json';
 import { RestaurantCardData, DishPreview } from '../data/realDataStore';
 
 // ==============================================================================
@@ -520,6 +521,21 @@ export interface JacquinChatRequest {
   limit?: number;
 }
 
+export interface JacquinBrainStats {
+  version: string;
+  modelName: string;
+  baseModel: string;
+  totalTrainedQuestions: number;
+  totalCatalogDishes: number;
+  totalRestaurants: number;
+  totalOfficialNeighborhoods: number;
+}
+
+export interface OllamaChatMessage {
+  role: 'system' | 'user' | 'assistant';
+  content: string;
+}
+
 export interface JacquinChatResponse {
   reply: string;
   answer: string;
@@ -528,6 +544,46 @@ export interface JacquinChatResponse {
   detectedIntent: string;
   detectedLocationLabel: string | null;
   chefMood: string;
+  brainStats: JacquinBrainStats;
+  ollamaMessages: OllamaChatMessage[];
+}
+
+export function buildOllamaRagMessages(
+  userQuery: string,
+  recommendations: any[],
+  detectedIntent: string,
+  detectedLocationLabel: string | null
+): OllamaChatMessage[] {
+  const dishesBlock =
+    recommendations.length > 0
+      ? recommendations
+          .slice(0, 4)
+          .map(
+            (d, idx) =>
+              `${idx + 1}. ${d.dish_name} — R$ ${Number(d.price).toFixed(2).replace('.', ',')} | Restaurante: ${d.restaurant_name} (Bairro: ${d.neighborhood}) | Nota: ⭐ ${Number(d.rating_score || 4.8).toFixed(1)} | ${d.description || ''}`
+          )
+          .join('\n')
+      : 'Use os melhores pratos do catálogo real de Caraguatatuba.';
+
+  return [
+    {
+      role: 'system',
+      content:
+        'Você é o Chef Érick Jacquin Praiano, o Concierge Gastronômico Oficial do CaráFood em Caraguatatuba (treinado com 42.870 perguntas e contextos reais dos 61 restaurantes, 2.670 pratos e 53 bairros). ' +
+        'Fale SEMPRE em português com seu sotaque e bordões franceses clássicos ("Bonjour, mon ami!", "Écoutez-moi!", "tompero", "vergonha da profission zero", "aqui ninguém desliga o freezer à noite", "C\'est magnifique!"). ' +
+        'REGRA INVIOLÁVEL: cite EXCLUSIVAMENTE os pratos, preços em R$, restaurantes e bairros fornecidos no [CONTEXTO AUDITADO CARÁFOOD]. Seja caloroso, carismático e direto (2 a 3 parágrafos curtos).',
+    },
+    {
+      role: 'user',
+      content:
+        `[CONTEXTO AUDITADO CARÁFOOD - USE ESTES PRATOS REAIS]\n` +
+        `Intenção detectada: ${detectedIntent}\n` +
+        `Local/Referência: ${detectedLocationLabel || 'Caraguatatuba (53 bairros)'}\n` +
+        `Pratos selecionados do catálogo real:\n${dishesBlock}\n\n` +
+        `Pergunta do usuário: "${userQuery}"\n\n` +
+        `Responda agora como Chef Érick Jacquin Praiano apresentando os pratos acima com muito tompero:`,
+    },
+  ];
 }
 
 export function generateJacquinChatResponse(req: JacquinChatRequest): JacquinChatResponse {
@@ -895,6 +951,26 @@ export function generateJacquinChatResponse(req: JacquinChatRequest): JacquinCha
       `Mon Dieu! Eu revirei todas as panelas dos 53 bairros de Caraguá, mas com esse filtro exato ninguém ligou o fogão hoje! ` +
       `Me pede uma **marmita caprichada**, um **camarão na praia**, um **hambúrguer artesanal**, uma **pizza** ou um **sushi fresquinho** que eu te mostro onde tem *tompero* de verdade!`;
   } else if (
+    q.includes('bayes') ||
+    q.includes('formula') ||
+    q.includes('ranking comprado') ||
+    q.includes('nota ponderada')
+  ) {
+    chefMood = 'Auditor Matemático & Curador Técnico';
+    reply =
+      `**Ah, la mathématique da gastronomia, mon ami!** No CaráFood não existe ranking patrocinado nem nota comprada: usamos a **Média Bayesiana Ponderada** ($W_R = \\frac{v}{v+m}R + \\frac{m}{v+m}C$) combinada com a **Cédula Oficial de 5 Critérios** (Sabor 30%, Qualidade 25%, Tempo 15%, Embalagem 15% e Custo-Benefício 15%)!\n\n` +
+      `E para provar na prática ${locContext}, olha quem brilha no ranking auditado: **${first.dish.name}** no **${first.restaurant.name}** (${first.restaurant.neighborhood}) por **R$ ${first.dish.price.toFixed(2).replace('.', ',')}**!`;
+  } else if (
+    q.includes('metade do dobro') ||
+    q.includes('descontao') ||
+    q.includes('preco real') ||
+    q.includes('promocao verdadeira')
+  ) {
+    chefMood = 'Fiscal Implacável contra Falsa Promoção';
+    reply =
+      `**Sacré bleu, eu odeio a famosa "metade do dobro"!** No CaráFood, nosso motor **Descontão Transparente** audita a mediana histórica de 30 dias dos **2.670 pratos** nos 61 estabelecimentos. O selo de queda real só acende quando o preço baixou de verdade!\n\n` +
+      `Olha uma pedida honesta ${locContext}: **${first.dish.name}** no **${first.restaurant.name}** (${first.restaurant.neighborhood}) por **R$ ${first.dish.price.toFixed(2).replace('.', ',')}**!`;
+  } else if (
     q.includes('freezer') ||
     q.includes('vergonha') ||
     q.includes('pesadelo') ||
@@ -970,13 +1046,32 @@ export function generateJacquinChatResponse(req: JacquinChatRequest): JacquinCha
       ` Confira os pratos selecionados logo abaixo:`;
   }
 
+  const detectedIntent = matchedIntentRule?.intent || 'geral';
+  const detectedLocationLabel = matchedLandmark?.label || explicitNeighborhood || null;
+  const brainStats: JacquinBrainStats = {
+    version: brain40k.version || '4.0.0-jacquin-ollama-40k',
+    modelName: brain40k.modelName || 'jacquin-carafood:latest',
+    baseModel: brain40k.baseModel || 'qwen2.5:3b',
+    totalTrainedQuestions: brain40k.totalTrainedQuestions || 42870,
+    totalCatalogDishes: brain40k.totalCatalogDishes || 2645,
+    totalRestaurants: brain40k.totalRestaurants || 61,
+    totalOfficialNeighborhoods: brain40k.totalOfficialNeighborhoods || 53,
+  };
+
   return {
     reply,
     answer: reply,
     dishes: recommendations,
     recommendations,
-    detectedIntent: matchedIntentRule?.intent || 'geral',
-    detectedLocationLabel: matchedLandmark?.label || explicitNeighborhood || null,
+    detectedIntent,
+    detectedLocationLabel,
     chefMood,
+    brainStats,
+    ollamaMessages: buildOllamaRagMessages(
+      rawQuery,
+      recommendations,
+      matchedIntentRule?.labelPt || detectedIntent,
+      detectedLocationLabel
+    ),
   };
 }

@@ -127,15 +127,37 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
     {
       id: 'welcome-chef',
       role: 'assistant',
-      chefMood: 'Le Chef de Caraguá • Freezer Ligado',
+      chefMood: 'Ollama jacquin-carafood • 42.870 Contextos Treinados',
       content:
-        '**Bonjour, mon ami!** Eu sou o **Chef Érick Jacquin Praiano**, fiscal oficial das panelas dos 53 bairros de Caraguatatuba! Aqui não tem *vergonha da profission*: eu já inspecionei os **61 restaurantes** e **2.670 pratos reais** da cidade.\n\nMe conta o que você quer comer hoje: uma **marmita perto do Shopping Serramar**, um **peixe na praia**, um **hambúrguer com muito tompero** ou algo que caiba no seu bolso?',
+        '**Bonjour, mon ami!** Eu sou o **Chef Érick Jacquin Praiano**, rodando no motor **Ollama (`jacquin-carafood:latest`)** treinado com **42.870 perguntas e contextos reais** dos **61 restaurantes**, **2.670 pratos** e **53 bairros** de Caraguatatuba! Aqui não tem *vergonha da profission* e o freezer está sempre ligado!\n\nMe conta o que você quer comer hoje: uma **marmita perto do Shopping Serramar**, um **peixe na praia**, um **hambúrguer com muito tompero** ou algo que caiba no seu bolso?',
     },
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [usePcOllamaBridge, setUsePcOllamaBridge] = useState<boolean>(false);
+  const [ollamaPcConnected, setOllamaPcConnected] = useState<boolean>(false);
+  const [trainedCount, setTrainedCount] = useState<number>(42870);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const lastInitialPromptSent = useRef<string>('');
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const isLocalhost =
+      window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1';
+    const savedPref = window.localStorage.getItem('carafood_use_pc_ollama');
+    if (savedPref === 'true' || isLocalhost) {
+      setUsePcOllamaBridge(true);
+    }
+  }, []);
+
+  const togglePcOllamaBridge = () => {
+    const nextVal = !usePcOllamaBridge;
+    setUsePcOllamaBridge(nextVal);
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem('carafood_use_pc_ollama', String(nextVal));
+    }
+  };
 
   useEffect(() => {
     if (scrollContainerRef.current) {
@@ -188,17 +210,30 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
           }),
         });
         const syncJson = await syncRes.json();
+        if (syncJson?.brainStats?.totalTrainedQuestions) {
+          setTrainedCount(Number(syncJson.brainStats.totalTrainedQuestions));
+        }
+
+        let finalAnswer =
+          syncJson.answer ||
+          syncJson.reply ||
+          '**Mon ami**, olha as sugestões com muito *tompero* que eu separei para você aqui embaixo!';
+        let finalMood =
+          syncJson.chefMood || 'Tompero Aprovado pelo Chef Jacquin';
+
+        if (syncJson.usedOllamaServer) {
+          setOllamaPcConnected(true);
+          finalMood = `${finalMood} • 🖥️ Ollama PC (jacquin-carafood)`;
+        }
+
+        // Exibe imediatamente os cards reais e a resposta da matriz 42.870
         setMessages((prev) =>
           prev.map((m) =>
             m.id === assistantTurnId
               ? {
                   ...m,
-                  content:
-                    syncJson.answer ||
-                    syncJson.reply ||
-                    '**Mon ami**, olha as sugestões com muito *tompero* que eu separei para você aqui embaixo!',
-                  chefMood:
-                    syncJson.chefMood || 'Tompero Aprovado pelo Chef Jacquin',
+                  content: finalAnswer,
+                  chefMood: finalMood,
                   recommendations:
                     syncJson.recommendations || syncJson.dishes || [],
                   isStreaming: false,
@@ -206,6 +241,60 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
               : m
           )
         );
+
+        // Se o backend rodou na nuvem (Vercel) e a ponte com o PC Local Ollama estiver ativa,
+        // conecta diretamente do navegador para http://127.0.0.1:11434/api/chat usando a GPU local!
+        if (
+          !syncJson.usedOllamaServer &&
+          usePcOllamaBridge &&
+          Array.isArray(syncJson.ollamaMessages)
+        ) {
+          try {
+            const ctrl = new AbortController();
+            const timer = setTimeout(() => ctrl.abort(), 9000);
+            const localOllamaRes = await fetch(
+              'http://127.0.0.1:11434/api/chat',
+              {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                signal: ctrl.signal,
+                body: JSON.stringify({
+                  model: 'jacquin-carafood:latest',
+                  stream: false,
+                  messages: syncJson.ollamaMessages,
+                  options: {
+                    temperature: 0.42,
+                    top_p: 0.88,
+                    repeat_penalty: 1.15,
+                    num_ctx: 4096,
+                    num_predict: 260,
+                  },
+                }),
+              }
+            );
+            clearTimeout(timer);
+            if (localOllamaRes.ok) {
+              const localData = await localOllamaRes.json();
+              const gpuText = localData?.message?.content;
+              if (typeof gpuText === 'string' && gpuText.trim().length > 25) {
+                setOllamaPcConnected(true);
+                setMessages((prev) =>
+                  prev.map((m) =>
+                    m.id === assistantTurnId
+                      ? {
+                          ...m,
+                          content: gpuText.trim(),
+                          chefMood: `${finalMood} • 🖥️ GPU PC Local (jacquin-carafood)`,
+                        }
+                      : m
+                  )
+                );
+              }
+            }
+          } catch {
+            // Mantém a resposta instantânea da matriz de 42.870 contextos caso o PC Ollama não esteja acessível neste dispositivo
+          }
+        }
       } catch {
         setMessages((prev) =>
           prev.map((m) =>
@@ -224,7 +313,7 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
         setIsLoading(false);
       }
     },
-    [activeNeighborhood, isLoading, userLat, userLon]
+    [activeNeighborhood, isLoading, usePcOllamaBridge, userLat, userLon]
   );
 
   useEffect(() => {
@@ -270,12 +359,31 @@ export const CaraguaAIChatDrawer: React.FC<CaraguaAIChatDrawerProps> = ({
                 </h2>
                 <span className="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#FFB703] text-stone-950">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-700 animate-pulse" />
-                  Freezer Ligado
+                  Ollama • {trainedCount.toLocaleString('pt-BR')} Contextos
                 </span>
               </div>
               <p className="text-[11px] sm:text-xs text-emerald-100/95 mt-0.5 leading-snug truncate">
                 &ldquo;Aqui não tem vergonha da profission: só prato com tompero!&rdquo;
               </p>
+              <div className="mt-1 flex items-center gap-2 flex-wrap">
+                <button
+                  type="button"
+                  onClick={togglePcOllamaBridge}
+                  data-testid="toggle-pc-ollama-btn"
+                  className={`text-[10px] font-bold px-2 py-0.5 rounded-md border transition-colors ${
+                    ollamaPcConnected || usePcOllamaBridge
+                      ? 'bg-emerald-500/25 border-emerald-300 text-emerald-100'
+                      : 'bg-white/10 border-white/20 text-white/80 hover:bg-white/20'
+                  }`}
+                  title="Conecta direto ao servidor Ollama (127.0.0.1:11434) rodando na GPU do seu PC"
+                >
+                  {ollamaPcConnected
+                    ? '🖥️ Servidor PC Ollama Conectado (jacquin-carafood)'
+                    : usePcOllamaBridge
+                    ? '🖥️ Servidor PC Ollama Ativo (127.0.0.1:11434)'
+                    : '⚡ Conectar Servidor PC Ollama Local'}
+                </button>
+              </div>
             </div>
           </div>
 

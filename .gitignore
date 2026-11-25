@@ -121,4 +121,6 @@ desktop.ini
 
 !mobile/src/lib/
 !mobile/src/lib/**
+backend/data/training/jacquin_40k_corpus.jsonl
+
 

@@ -19,7 +19,7 @@ from pathlib import Path
 random.seed(42)
 
 ROOT = Path(__file__).resolve().parent.parent
-CATALOG_PATH = ROOT / "src" / "data" / "realCatalog.json"
+CATALOG_PATH = ROOT / "src" / "data" / "caraguaRealDump.json"
 TRAINING_DIR = ROOT / "backend" / "data" / "training"
 CORPUS_PATH = TRAINING_DIR / "jacquin_40k_corpus.jsonl"
 BRAIN_JSON_PATH = ROOT / "src" / "data" / "jacquin40kBrain.json"
@@ -324,38 +324,89 @@ def main():
         catalog = json.load(f)
 
     restaurants = catalog.get("restaurants", [])
+    dish_details = catalog.get("dish_details", {})
     all_dishes = []
+    seen_dish_ids = set()
     neighborhood_map = {}
+    rest_by_id = {}
+    rest_dishes_map = {}
 
     for r in restaurants:
+        rest_by_id[r["id"]] = r
         b = r.get("neighborhood", "Centro")
         neighborhood_map.setdefault(b, []).append(r)
-        for idx, m in enumerate(r.get("menu", [])):
+        rest_cat = ", ".join(r.get("cuisine_types") or []) or "Gastronomia"
+
+        raw_menu = list(r.get("dishes_preview") or []) + list(r.get("dishes") or [])
+        for idx, m in enumerate(raw_menu):
+            did = str(m.get("id") or f"{r['id']}-{idx}")
+            if did in seen_dish_ids:
+                continue
             price = float(m.get("price") or 0)
             if price <= 0:
                 continue
+            seen_dish_ids.add(did)
             intents = classify_dish_intents(
                 m.get("name", ""),
                 m.get("description", ""),
                 m.get("category", ""),
-                r.get("category", ""),
+                rest_cat,
             )
             dish_obj = {
-                "id": str(m.get("id") or f"{r['id']}-{idx}"),
+                "id": did,
                 "name": m.get("name", "").strip(),
                 "description": (m.get("description") or f"Especialidade preparada por {r['name']} no bairro {b}.").strip(),
                 "price": round(price, 2),
-                "category": m.get("category") or r.get("category") or "Especialidade",
-                "imageUrl": m.get("imageUrl") or r.get("imageUrl") or "",
+                "category": m.get("category") or rest_cat,
+                "imageUrl": m.get("image_url") or m.get("imageUrl") or r.get("image_url") or "",
                 "restaurantId": r["id"],
                 "restaurantName": r["name"],
-                "restaurantCategory": r.get("category", "Gastronomia"),
+                "restaurantCategory": rest_cat,
                 "neighborhood": b,
-                "rating": round(float(r.get("rating") or 4.7), 1),
-                "deliveryTime": r.get("deliveryTime") or "30-45 min",
+                "rating": round(float(r.get("bayesian_rating") or r.get("rating_score") or r.get("rating_average") or 4.8), 2),
+                "deliveryTime": "30-45 min",
                 "intents": intents,
             }
             all_dishes.append(dish_obj)
+            rest_dishes_map.setdefault(r["id"], []).append(dish_obj)
+
+    for did, detail in dish_details.items():
+        if did in seen_dish_ids:
+            continue
+        m = detail.get("dish") or {}
+        r_info = detail.get("restaurant") or {}
+        r = rest_by_id.get(r_info.get("id")) or r_info
+        if not m or not r:
+            continue
+        price = float(m.get("price") or 0)
+        if price <= 0:
+            continue
+        seen_dish_ids.add(did)
+        b = r.get("neighborhood", "Centro")
+        rest_cat = ", ".join(r.get("cuisine_types") or []) or "Gastronomia"
+        intents = classify_dish_intents(
+            m.get("name", ""),
+            m.get("description", ""),
+            m.get("category", ""),
+            rest_cat,
+        )
+        dish_obj = {
+            "id": str(m.get("id") or did),
+            "name": m.get("name", "").strip(),
+            "description": (m.get("description") or f"Especialidade preparada por {r.get('name', 'Restaurante')} no bairro {b}.").strip(),
+            "price": round(price, 2),
+            "category": m.get("category") or rest_cat,
+            "imageUrl": m.get("image_url") or r.get("image_url") or "",
+            "restaurantId": r.get("id", ""),
+            "restaurantName": r.get("name", "Restaurante CaráFood"),
+            "restaurantCategory": rest_cat,
+            "neighborhood": b,
+            "rating": round(float(r.get("bayesian_rating") or r.get("rating_score") or r.get("rating_average") or 4.8), 2),
+            "deliveryTime": "30-45 min",
+            "intents": intents,
+        }
+        all_dishes.append(dish_obj)
+        rest_dishes_map.setdefault(r.get("id", ""), []).append(dish_obj)
 
     print(f" -> {len(restaurants)} estabelecimentos | {len(all_dishes)} pratos com preco auditado | {len(neighborhood_map)} bairros com restaurantes ativos.")
 
@@ -377,7 +428,7 @@ def main():
         })
         record_id += 1
 
-    # 2. Dish-specific direct questions across all 2,670 dishes (6 variations per dish -> ~16,020 records)
+    # 2. Dish-specific direct questions across all 2,645+ dishes (10 variations per dish -> ~26,450 records)
     dish_q_patterns = [
         "onde comer {dish} em caraguatatuba?",
         "quanto custa {dish} no {rest} ({bairro})?",
@@ -385,6 +436,10 @@ def main():
         "jacquin o prato {dish} do {rest} vale a pena?",
         "tem {dish} no bairro {bairro}?",
         "me fala sobre {dish} de R$ {price:.0f} no {rest}",
+        "qual o preco de {dish} em {bairro}?",
+        "onde acho {dish} com nota alta em caragua?",
+        "delivery ou retirada de {dish} no {rest}",
+        "dica do chef jacquin para {dish} em {bairro}",
     ]
     for d in all_dishes:
         for pat in dish_q_patterns:
@@ -590,9 +645,12 @@ def main():
     print(f"[4/4] Gerando Modelfile especializado em {MODELFILE_PATH}...")
     rest_summary_lines = []
     for r in restaurants:
-        sample_items = [f"{m.get('name')} (R$ {float(m.get('price', 0)):.2f})" for m in r.get("menu", [])[:4] if float(m.get("price", 0) or 0) > 0]
+        r_dishes = rest_dishes_map.get(r["id"], [])[:4]
+        sample_items = [f"{m['name']} (R$ {m['price']:.2f})" for m in r_dishes]
+        rcat = ", ".join(r.get("cuisine_types") or []) or "Gastronomia"
+        rrating = round(float(r.get("bayesian_rating") or r.get("rating_score") or 4.8), 2)
         rest_summary_lines.append(
-            f"- {r['name']} [{r.get('category', 'Gastronomia')}] — Bairro: {r.get('neighborhood', 'Centro')} (⭐ {r.get('rating', 4.8)}): {', '.join(sample_items)}"
+            f"- {r['name']} [{rcat}] — Bairro: {r.get('neighborhood', 'Centro')} (⭐ {rrating}): {', '.join(sample_items)}"
         )
     rest_knowledge_block = "\n".join(rest_summary_lines)
 
@@ -624,6 +682,12 @@ REGRAS ABSOLUTAS DA SUA PERSONALIDADE E CONHECIMENTO:
 
 CATÁLOGO OFICIAL DOS 61 ESTABELECIMENTOS DE CARAGUATATUBA:
 {rest_knowledge_block}
+
+LEMBRETE FINAL OBRIGATÓRIO DE PERSONA (NUNCA ESQUEÇA):
+- Você é o **Chef Érick Jacquin Praiano**!
+- SEMPRE inicie sua resposta com um bordão autêntico do Chef Jacquin (*"Bonjour, mon ami!"*, *"Écoutez-moi!"*, *"Sacré bleu!"*, *"La mer de Caraguá!"*).
+- SEMPRE use expressões como *"tompero"*, *"vergonha da profissão zero"*, *"aqui ninguém desliga o freezer à noite"* ou *"c'est magnifique"* de forma natural e divertida.
+- Cite os pratos reais numerados (1, 2, 3) com **Nome do Prato**, **R$ Preço**, **Restaurante** e **Bairro**.
 """
 
 MESSAGE user "oi jacquin quem e voce e o freezer ta ligado?"
